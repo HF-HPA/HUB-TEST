@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HF-HPA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Favicon (desktop browsers) -->
+<link rel="icon" type="image/png" href="hpa_logo.png" />
+
+<!-- Apple devices (iPhone/iPad Safari) -->
+<link rel="apple-touch-icon" href="hpa_logo.png" />
+
+<!-- For better compatibility with all Apple devices -->
+<link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+
+  <style>
+    :root {
+      --bg: #0b1720;
+      --bg-alt: #111f2b;
+      --card-bg: #152433;
+      --accent: #61dafb;
+      --accent-soft: rgba(97, 218, 251, 0.15);
+      --text: #f7fbff;
+      --muted: #a6b4c4;
+      --border-subtle: #233546;
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #12283a 0, #050b10 52%, #020509 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      width: 100%;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .title-block h1 {
+      font-size: 1.55rem;
+      font-weight: 650;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-top: 10px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border-radius: 8px 8px 0 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .tab.active {
+      background: rgba(255,255,255,0.18);
+      border-color: var(--border-subtle);
+      border-bottom-color: rgba(255,255,255,0.18);
+      color: var(--text);
+    }
+
+    .tab-content {
+      margin-top: 14px;
+    }
+
+    /* SKU FILTER AREA (SKU Catalogue tab) */
+    .controls {
+      background: rgba(21,37,54,0.95);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    @media (min-width: 900px) {
+      .controls {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .search-wrapper {
+      flex: 2;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: rgba(5,16,26,0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .search-input::placeholder { color: #62758a; }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #62758a;
+    }
+
+    .filters {
+      flex: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+    }
+
+    .filter-input {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: rgba(10,21,32,0.9);
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    /* SKU RESULTS */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .results-header strong { color: var(--text); }
+
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      .sku-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .sku-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sku-card {
+      position: relative;
+      background: radial-gradient(circle at top left, #203447 0, #0c1722 60%, #050b10);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sku-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15,23,42,0.95);
+      border-radius: var(--radius-pill);
+      border: 1px solid #64748b;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+    }
+
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15,23,42,0.7);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    /* ORDER BREAKDOWN */
+    .order-breakdown-wrapper {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(148,197,255,0.18);
+      border: 1px solid rgba(148,197,255,0.7);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    @media (min-width: 640px) {
+      .ob-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .ob-box {
+      background: rgba(148,197,255,0.18);
+      border: 1px solid rgba(148,197,255,0.7);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      min-height: 90px;
+    }
+
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    /* PLANT CARE GUIDE */
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: rgba(5,16,26,0.9);
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #62758a;
+    }
+
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .pc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .pc-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .pc-card {
+      background: radial-gradient(circle at top left, #1f2937 0, #020617 70%);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      padding: 10px 12px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* CARE POPUP */
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .popup {
+      background: #14232f;
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--accent);
+      width: 90%;
+      max-width: 480px;
+    }
+
+    .popup h2 { margin-bottom: 8px; }
+
+    .popup-section-title {
+      font-weight: 600;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .popup-text {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    .popup-close {
+      margin-top: 12px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+        <div class="title-block">
+          <h1>HF-HPA</h1>
+          <p class="subtitle">Central Hub for HPA info.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- TABS -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="catalog">SKU Catalogue</button>
+      <button class="tab" data-tab="orders">Order Breakdown</button>
+      <button class="tab" data-tab="care">Houseplant Care Library</button>
+    </nav>
+
+    <!-- SKU CATALOGUE TAB -->
+    <section id="tab-catalog" class="tab-content">
+      <section class="controls">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">SKU</span>
+            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400 or 1005837400" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Sent In</span>
+            <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Year Sent</span>
+            <select id="yearFilter" class="filter-input">
+              <option value="all">All</option>
+              <option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="results-header">
+        <strong id="resultCount">0</strong> SKUs shown
+      </div>
+
+      <section id="skuGrid" class="sku-grid"></section>
+      <div id="emptyState" class="empty-state hidden">No SKUs match your filters.</div>
+    </section>
+
+    <!-- ORDER BREAKDOWN TAB -->
+    <section id="tab-orders" class="tab-content hidden">
+      <div class="order-breakdown-wrapper">
+        <div class="ob-header-stack">
+          <div class="ob-week-box">
+            Shipping Week #: <span id="obWeekDisplay">TBD</span>
+          </div>
+          <div class="ob-grades-box">
+            Store Grade Shipping: <span id="obGradesDisplay">All stores</span>
+          </div>
+        </div>
+
+        <div class="ob-grid">
+          <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANT CARE GUIDE TAB -->
+    <section id="tab-care" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Houseplant Care Library</div>
+        <div class="pc-search-wrapper">
+          <span class="pc-search-icon">🔎</span>
+          <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
+        </div>
+      </div>
+
+      <div class="pc-grid" id="plantCareGrid">
+        <!-- 43 plant cards -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SKU POPUP -->
+  <div id="popupBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2 id="popupName"></h2>
+      <p><strong>SKU:</strong> <span id="popupSku"></span></p>
+      <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
+      <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
+      <button id="popupClose" class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <!-- PLANT CARE POPUP -->
+  <div id="careBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2 id="careTitle"></h2>
+
+      <div class="popup-section-title">Light</div>
+      <div class="popup-text" id="careLight"></div>
+
+      <div class="popup-section-title">Water</div>
+      <div class="popup-text" id="careWater"></div>
+
+      <div class="popup-section-title">Humidity</div>
+      <div class="popup-text" id="careHumidity"></div>
+
+      <div class="popup-section-title">Temperature</div>
+      <div class="popup-text" id="careTemp"></div>
+
+      <div class="popup-section-title">Soil</div>
+      <div class="popup-text" id="careSoil"></div>
+
+      <div class="popup-section-title">Fertilizer</div>
+      <div class="popup-text" id="careFertilizer"></div>
+
+      <div class="popup-section-title">Toxicity</div>
+      <div class="popup-text" id="careToxicity"></div>
+
+      <div class="popup-section-title">Extra Tips</div>
+      <div class="popup-text" id="careTips"></div>
+
+      <button id="careClose" class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <script>
+    /* ========= CONFIG ========= */
+    const SKU_CSV_URL   = "SKU_Name_2026.csv";
+    const ORDER_CSV_URL = "OrderBreakdown.csv";
+
+    const STORE_GRADES_BY_WEEK = {
+      "6":  "All stores",
+      "7":  "All Stores",
+      "8":  "A/B",
+      "9":  "SKIP",
+      "10": "All Stores",
+      "11": "All Stores",
+      "12": "All Stores",
+      "13": "All Stores"
+    };
+
+    /* ========= TAB LOGIC ========= */
+    const tabs = document.querySelectorAll(".tab");
+    const tabSections = {
+      catalog: document.getElementById("tab-catalog"),
+      orders:  document.getElementById("tab-orders"),
+      care:    document.getElementById("tab-care"),
+    };
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const show = tab.dataset.tab;
+        Object.entries(tabSections).forEach(([key, section]) => {
+          section.classList.toggle("hidden", key !== show);
+        });
+      });
+    });
+
+    /* ========= ORDER BREAKDOWN DOM ========= */
+    const obWeekDisplay   = document.getElementById("obWeekDisplay");
+    const obGradesDisplay = document.getElementById("obGradesDisplay");
+    const obBodies = {
+      FLO: document.getElementById("obFloBody"),
+      FOL: document.getElementById("obFolBody"),
+      UCO: document.getElementById("obUcoBody"),
+      FHB: document.getElementById("obFhbBody"),
+      TRP: document.getElementById("obTrpBody"),
+      SPC: document.getElementById("obSpcBody"),
+    };
+
+    /* ========= SKU DOM ========= */
+    const nameFilter   = document.getElementById("nameFilter");
+    const skuFilter    = document.getElementById("skuFilter");
+    const sentInFilter = document.getElementById("sentInFilter");
+    const yearFilter   = document.getElementById("yearFilter");
+    const skuGrid      = document.getElementById("skuGrid");
+    const resultCount  = document.getElementById("resultCount");
+    const emptyState   = document.getElementById("emptyState");
+
+    /* SKU Popup */
+    const popupBackdrop = document.getElementById("popupBackdrop");
+    const popupName     = document.getElementById("popupName");
+    const popupSku      = document.getElementById("popupSku");
+    const popupSent     = document.getElementById("popupSent");
+    const popupYear     = document.getElementById("popupYear");
+    const popupClose    = document.getElementById("popupClose");
+
+    popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+    popupBackdrop.addEventListener("click", (e) => {
+      if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+    });
+
+    /* ========= PLANT CARE CONFIG ========= */
+
+    const PLANT_TYPES = [
+      "African Violet","Aglaonema","Air Plant","Alocasia","Anthurium","Aralia",
+      "Begonia","Bird of Paradise","Bromeliad","Cactus/Succulent","Calathea","Cordyline","Croton",
+      "Dieffenbachia","Dracaena","Fern","Ficus","Fittonia","Homalomena","Hoya","Hypoestes",
+      "Ivy","Kalanchoe","Lipstick","Maranta","Money Tree","Monstera","Orchid","Palm","Peperomia",
+      "Philodendron","Pothos","Raphidophora","Sansevieria","Schefflera","Scindapsus","Spider Plant",
+      "Spathiphyllum","Stromanthe","Syngonium","Tradescantia","Yucca","Zamioculcas Zamiifolia"
+    ];
+
+    // Helper: normalize key from plant name
+    const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+    const CARE_GUIDES = {};
+
+    // Generic templates, slightly tuned per group
+    function buildGuide(name, opts = {}) {
+      const type = (name || "").toLowerCase();
+      const isSucculent = type.includes("cactus") || type.includes("succulent") || type.includes("yucca");
+      const isFern = type.includes("fern");
+      const isPalm = type.includes("palm");
+      const isAir = type.includes("air plant");
+      const isOrchid = type.includes("orchid");
+      const isLowLight = ["aglaonema","zz","zamioculcas","sansevieria","dracaena","pothos","philodendron","syngonium"].some(k => type.includes(k));
+
+      let light, water, humidity, temp, soil, fertilizer, toxicity, tips;
+
+      if (isAir) {
+        light = "Bright, indirect light is best. Avoid harsh, direct afternoon sun that can scorch the delicate foliage.";
+        water = "Soak plants in room-temperature water for 15–20 minutes about once a week, then shake off excess and allow to dry fully before placing back in holder.";
+        humidity = "Prefers moderate to high humidity. Avoid very dry, heated air; occasional misting is beneficial.";
+        temp = "Ideal range is 60–80°F. Protect from cold drafts and temperatures below 50°F.";
+        soil = "Air plants do not grow in soil. Mount in decorative holders, on driftwood, or in glass terrariums with good air movement.";
+        fertilizer = "Use a very dilute bromeliad or air-plant fertilizer once a month, added to the soaking water.";
+        toxicity = "Generally non-toxic, but always supervise pets that chew plants.";
+        tips = "Provide good air circulation and bright filtered light. If leaf tips brown, increase humidity and adjust watering schedule.";
+      } else if (isSucculent) {
+        light = "Very bright light is ideal. Most succulents and cacti thrive with several hours of direct sun or strong light daily.";
+        water = "Water deeply but infrequently. Allow the soil to dry almost completely before watering again; reduce watering significantly in winter.";
+        humidity = "Prefers low to average humidity. Avoid humid, poorly ventilated spots which can encourage rot.";
+        temp = "Keep between 60–85°F. Protect from frost and cold windowsills in winter.";
+        soil = "Use a gritty, fast-draining cactus/succulent mix. Ensure containers have drainage holes.";
+        fertilizer = "Feed lightly during active growth (spring and summer) with a low-nitrogen cactus fertilizer, diluted to half strength.";
+        toxicity = "Many succulents and cacti can be mildly toxic or spiny. Keep out of reach of children and pets.";
+        tips = "If stems stretch or lose color, they may need more light. Overwatering is the most common issue—when in doubt, wait to water.";
+      } else if (isFern) {
+        light = "Prefers medium to bright, indirect light. Avoid direct sun, which can quickly scorch delicate fronds.";
+        water = "Keep soil evenly moist but not soggy. Water when the surface feels slightly dry; never allow the root ball to fully dry out.";
+        humidity = "High humidity (50–80%) is ideal. Use a humidifier or place in a bathroom with good natural light.";
+        temp = "Best kept between 60–75°F. Protect from drafts, heat vents, and sudden temperature swings.";
+        soil = "Use a rich, peat-based potting mix that retains moisture but drains well.";
+        fertilizer = "Feed lightly every 4–6 weeks during active growth with a balanced, diluted houseplant fertilizer.";
+        toxicity = "Most common ferns are non-toxic, but always verify specific varieties.";
+        tips = "Remove faded or brown fronds to encourage fresh growth. Consistent moisture and humidity are the keys to success.";
+      } else if (isPalm) {
+        light = "Bright, indirect light is preferred. Many palms tolerate some lower light but may grow more slowly.";
+        water = "Water when the top inch of soil feels dry. Avoid letting the plant sit in standing water.";
+        humidity = "Average household humidity is usually adequate; many palms appreciate an occasional misting.";
+        temp = "Keep between 65–80°F. Avoid cold drafts and extremely hot, dry air.";
+        soil = "Use a well-draining, peat-based potting mix. Ensure pots have drainage holes.";
+        fertilizer = "Feed monthly in spring and summer with a balanced, palm-specific or general houseplant fertilizer.";
+        toxicity = "Many interior palms are pet-safe, but always confirm the specific cultivar.";
+        tips = "Wipe dust from fronds periodically. If tips brown, check for low humidity, under-watering, or fertilizer buildup.";
+      } else if (isOrchid) {
+        light = "Bright, indirect light is best. An east facing window is ideal; avoid strong midday sun on leaves.";
+        water = "Water thoroughly, then allow excess to drain. Typically every 7–10 days, depending on medium and environment.";
+        humidity = "Moderate to high humidity (50–70%). Avoid water sitting in the crown of the plant.";
+        temp = "Keep between 65–80°F. Slight nighttime drops can encourage flowering.";
+        soil = "Grow in an orchid mix (bark, moss, or a combination) rather than standard potting soil.";
+        fertilizer = "Use a balanced orchid fertilizer at 1/4–1/2 strength every 2–3 weeks while in active growth.";
+        toxicity = "Most commonly grown Phalaenopsis orchids are considered non-toxic, but always check specific varieties.";
+        tips = "Repot every 1–2 years into fresh orchid mix. If leaves wrinkle or roots turn mushy, adjust watering and drainage.";
+      } else if (isLowLight) {
+        light = "Tolerates low to medium light conditions, making it suitable for interior rooms away from windows.";
+        water = "Allow the top 1–2 inches of soil to dry before watering.";
+        humidity = "Average household humidity is typically adequate but some varieties require 60-80%";
+        temp = "Keep between 60–80°F. Avoid cold drafts and prolonged temperatures below 55°F.";
+        soil = "Use a standard, well-draining indoor potting mix. Avoid compacted, waterlogged soil.";
+        fertilizer = "Feed lightly in spring and summer with a diluted, balanced houseplant fertilizer.";
+        toxicity = "Many low-light favorites (like ZZ, Sansevieria, Aglaonema, Dieffenbachia) are toxic if chewed. Keep away from pets and children.";
+        tips = "Growth will be slower in low light—this is normal. Overwatering is the most common problem; adjust watering to match growth speed.";
+      } else {
+        // Generic foliage template
+        light = "Bright, indirect light is ideal. Many houseplants also tolerate medium light but may grow more slowly.";
+        water = "Water when the top inch of soil feels dry. Avoid letting the plant sit in standing water; empty saucers after watering.";
+        humidity = "Average indoor humidity is usually sufficient; many plants benefit from occasional misting or being grouped together.";
+        temp = "Maintain temperatures between 60–80°F. Protect from cold drafts, hot radiators, and sudden temperature changes.";
+        soil = "Use a well-draining, peat-based houseplant potting mix. Ensure pots have drainage holes.";
+        fertilizer = "Feed lightly during active growth (spring and summer) with a diluted, balanced houseplant fertilizer.";
+        toxicity = "Many ornamental houseplants can be mildly toxic if ingested. Consider placement if pets or children like to chew on plants.";
+        tips = "Rotate the plant every few weeks for even growth. Watch for pests like spider mites, mealybugs, and scale, and address early.";
+      }
+
+      return {
+        title: name,
+        light, water, humidity, temp, soil, fertilizer, toxicity, tips,
+      };
+    }
+
+    PLANT_TYPES.forEach(name => {
+      CARE_GUIDES[slug(name)] = buildGuide(name);
+    });
+
+    /* ========= PLANT CARE UI BUILD ========= */
+    const plantCareGrid = document.getElementById("plantCareGrid");
+    const careSearch    = document.getElementById("careSearch");
+    const careBackdrop  = document.getElementById("careBackdrop");
+    const careTitle     = document.getElementById("careTitle");
+    const careLight     = document.getElementById("careLight");
+    const careWater     = document.getElementById("careWater");
+    const careHumidity  = document.getElementById("careHumidity");
+    const careTemp      = document.getElementById("careTemp");
+    const careSoil      = document.getElementById("careSoil");
+    const careFertilizer= document.getElementById("careFertilizer");
+    const careToxicity  = document.getElementById("careToxicity");
+    const careTips      = document.getElementById("careTips");
+    const careCloseBtn  = document.getElementById("careClose");
+
+    function renderPlantCards() {
+      plantCareGrid.innerHTML = "";
+      PLANT_TYPES.forEach(name => {
+        const id = slug(name);
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.dataset.careId = id;
+        btn.innerHTML = `<div class="pc-card-title">${name}</div>`;
+        btn.addEventListener("click", () => openCarePopup(id));
+        plantCareGrid.appendChild(btn);
+      });
+    }
+
+    function openCarePopup(id) {
+      const guide = CARE_GUIDES[id];
+      if (!guide) return;
+      careTitle.textContent      = guide.title || "";
+      careLight.textContent      = guide.light || "";
+      careWater.textContent      = guide.water || "";
+      careHumidity.textContent   = guide.humidity || "";
+      careTemp.textContent       = guide.temp || "";
+      careSoil.textContent       = guide.soil || "";
+      careFertilizer.textContent = guide.fertilizer || "";
+      careToxicity.textContent   = guide.toxicity || "";
+      careTips.textContent       = guide.tips || "";
+      careBackdrop.style.display = "flex";
+    }
+
+    careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+    careBackdrop.addEventListener("click", (e) => {
+      if (e.target === careBackdrop) careBackdrop.style.display = "none";
+    });
+
+    function filterPlantCards() {
+      const q = (careSearch.value || "").toLowerCase().trim();
+      const cards = plantCareGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const name = (card.textContent || "").toLowerCase();
+        card.style.display = !q || name.includes(q) ? "" : "none";
+      });
+    }
+
+    careSearch.addEventListener("input", filterPlantCards);
+
+    /* ========= CSV HELPERS ========= */
+    function parseCsvLine(line) {
+      const out = [];
+      let cur = "";
+      let quote = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (quote && line[i + 1] === '"') { cur += '"'; i++; }
+          else { quote = !quote; }
+        } else if (ch === "," && !quote) {
+          out.push(cur); cur = "";
+        } else {
+          cur += ch;
+        }
+      }
+      out.push(cur);
+      return out;
+    }
+
+    function parseSkuCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+      const yearIdx = header.indexOf("year sent");
+      const nameIdx = header.indexOf("sku name");
+      const skuIdx  = header.indexOf("sku");
+      const sentIdx = header.indexOf("sent in");
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          yearSent: (row[yearIdx] || "").trim(),
+          name:     (row[nameIdx] || "").trim(),
+          sku:      (row[skuIdx]  || "").trim(),
+          sentIn:   (row[sentIdx] || "").trim(),
+        };
+        if (item.name && item.sku) data.push(item);
+      }
+      return data;
+    }
+
+    function parseOrderCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+      const w = header.indexOf("week");
+      const c = header.indexOf("category");
+      const s = header.indexOf("size");
+      const p = header.indexOf("plant name");
+
+      const out = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          week:     (row[w] || "").trim(),
+          category: (row[c] || "").trim().toUpperCase(),
+          size:     (row[s] || "").trim(),
+          plant:    (row[p] || "").trim(),
+        };
+        if (item.week && item.category && (item.size || item.plant)) out.push(item);
+      }
+      return out;
+    }
+
+    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
+
+    /* ========= SKU RENDERING ========= */
+    let skuData = [];
+    function renderSkuList() {
+      skuGrid.innerHTML = "";
+      const nameQ = (nameFilter.value || "").toLowerCase();
+      const skuQ  = normalizeSku(skuFilter.value || "");
+      const sentQ = (sentInFilter.value || "").toLowerCase();
+      const yearQ = yearFilter.value;
+
+      const filtered = skuData.filter(item => {
+        const itemName = (item.name   || "").toLowerCase();
+        const itemSku  = normalizeSku(item.sku || "");
+        const itemSent = (item.sentIn || "").toLowerCase();
+        const itemYear = item.yearSent || "";
+        return (!nameQ || itemName.includes(nameQ)) &&
+               (!skuQ  || itemSku.includes(skuQ)) &&
+               (!sentQ || itemSent.includes(sentQ)) &&
+               (yearQ === "all" || itemYear === yearQ);
+      });
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "sku-card";
+        card.innerHTML = `
+          <div class="sku-year-pill">${item.yearSent}</div>
+          <div class="sku-name">${item.name}</div>
+          <div class="sku-meta">
+            <div><strong>SKU:</strong> ${item.sku}</div>
+            <div><strong>Sent In:</strong> ${item.sentIn}</div>
+            <div><strong>Year Sent:</strong> ${item.yearSent}</div>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          popupName.textContent = item.name;
+          popupSku.textContent  = item.sku;
+          popupSent.textContent = item.sentIn;
+          popupYear.textContent = item.yearSent;
+          popupBackdrop.style.display = "flex";
+        });
+        skuGrid.appendChild(card);
+      });
+
+      resultCount.textContent = filtered.length;
+      emptyState.classList.toggle("hidden", filtered.length !== 0);
+    }
+
+    nameFilter.addEventListener("input", renderSkuList);
+    skuFilter.addEventListener("input", renderSkuList);
+    sentInFilter.addEventListener("input", renderSkuList);
+    yearFilter.addEventListener("change", renderSkuList);
+
+    /* ========= ORDER BREAKDOWN RENDERING ========= */
+    function applyOrderBreakdown(rows) {
+      if (!rows.length) {
+        obWeekDisplay.textContent = "TBD";
+        obGradesDisplay.textContent = "All stores";
+        Object.values(obBodies).forEach(el => el.textContent = "");
+        return;
+      }
+
+      const weeks = [...new Set(rows.map(r => r.week))];
+      const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+      const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+      const weekRows = rows.filter(r => r.week == latest);
+
+      obWeekDisplay.textContent = latest;
+      obGradesDisplay.textContent =
+        STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+
+      const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+      weekRows.forEach(r => {
+        if (groups[r.category]) {
+          const size  = r.size  || "";
+          const plant = r.plant || "";
+          let line = "";
+          if (size && plant) line = `${size} — ${plant}`;
+          else line = size || plant;
+          if (line) groups[r.category].push(line);
+        }
+      });
+
+      Object.entries(groups).forEach(([cat, lines]) => {
+        const el = obBodies[cat];
+        if (el) el.textContent = lines.join("\n");
+      });
+    }
+
+    /* ========= LOAD CSVs ========= */
+    async function loadSkuCsv() {
+      try {
+        const res = await fetch(SKU_CSV_URL);
+        if (!res.ok) throw new Error("SKU CSV not found");
+        const text = await res.text();
+        skuData = parseSkuCsv(text);
+        renderSkuList();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading SKU_Name_2026.csv. Make sure it exists in your repo.");
+      }
+    }
+
+    async function loadOrderCsv() {
+      try {
+        const res = await fetch(ORDER_CSV_URL);
+        if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+        const text = await res.text();
+        const rows = parseOrderCsv(text);
+        applyOrderBreakdown(rows);
+      } catch (err) {
+        console.error(err);
+        // Leave breakdown blank if file missing
+      }
+    }
+
+    /* ========= INIT ========= */
+    renderPlantCards = renderPlantCards || (() => {});
+    renderPlantCards();
+    filterPlantCards();
+    loadSkuCsv();
+    loadOrderCsv();
+  </script>
+</body>
+</html>
+
