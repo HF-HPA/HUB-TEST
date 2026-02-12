@@ -915,45 +915,302 @@ const PLANTS = [
     commonName: "Monstera Deliciosa",
     scientificName: "Monstera deliciosa",
     image: "images/plants/monstera_deliciosa.jpg",
-    light: "Bright, indirect light. Tolerates some gentle morning sun but avoid harsh midday rays.",
-    water: "Water when the top 1–2 inches of soil are dry. In winter, let it dry slightly more between waterings.",
-    humidity: "Prefers higher humidity (50–70%), but adapts to average indoor levels. Brown leaf edges often indicate low humidity or inconsistent watering.",
-    temp: "Ideal range is 65–85°F. Avoid cold drafts and temps below 55°F.",
-    soil: "Chunky, well‑draining aroid mix (potting soil + bark + perlite). Avoid dense, waterlogged media.",
-    fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced liquid fertilizer at 1/4–1/2 strength.",
-    toxicity: "Toxic to pets and people if ingested (calcium oxalate crystals). Keep away from chewers.",
-    tips: "Provide a moss pole or support for climbing; larger, fenestrated leaves develop on more mature, well‑supported vines."
+    light: "Bright, indirect light. A bit of soft morning sun is fine, but avoid strong midday sun that can scorch leaves.",
+    water: "Water when the top 1–2 inches of soil are dry. In winter, let it dry slightly more between waterings to avoid root rot.",
+    humidity: "Prefers higher humidity (50–70%). Brown leaf edges often mean the air is too dry or watering is inconsistent.",
+    temp: "Ideal range is 65–85°F. Keep away from cold drafts and areas below 55°F.",
+    soil: "Chunky, well-draining aroid mix (potting soil + bark + perlite). Avoid dense, compacted soil that stays soggy.",
+    fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced liquid fertilizer at 1/4–1/2 strength. Skip or reduce in winter.",
+    toxicity: "Toxic to pets and people if ingested (calcium oxalate crystals). Keep out of reach of chewers.",
+    tips: "Give it a moss pole or stake so it can climb and grow larger, fenestrated leaves. Rotate the pot regularly for even growth."
   },
+
   {
     id: "spathiphyllum_peace_lily",
     commonName: "Peace Lily",
     scientificName: "Spathiphyllum spp.",
     image: "images/plants/peace_lily.jpg",
-    light: "Medium to bright, indirect light. Tolerates low light but will bloom less.",
-    water: "Keep soil lightly moist; water when the top 1 inch feels dry. Peace lilies visibly droop when thirsty but avoid letting them wilt repeatedly.",
-    humidity: "Enjoys moderate to high humidity (40–70%). Brown tips can signal dry air or inconsistent watering.",
-    temp: "Best between 65–80°F. Sensitive to cold drafts.",
-    soil: "Rich, well‑draining potting mix with good organic matter.",
-    fertilizer: "Feed lightly every 6–8 weeks in spring and summer with a balanced houseplant fertilizer.",
-    toxicity: "Mildly toxic if ingested. Keep out of reach of pets and children.",
-    tips: "Remove spent blooms and yellow leaves to keep the plant tidy. If leaves yellow heavily, check for overwatering or poor drainage."
+    light: "Medium to bright, indirect light. Tolerates lower light but may flower less.",
+    water: "Keep soil lightly, evenly moist. Water when the top inch feels dry. They droop when thirsty but avoid letting them wilt constantly.",
+    humidity: "Enjoys moderate to high humidity (40–70%). Brown tips can indicate dry air, inconsistent watering, or fertilizer build-up.",
+    temp: "Prefers 65–80°F. Do not expose to cold drafts or temperatures below about 55°F.",
+    soil: "Rich, peat-based, well-draining indoor mix.",
+    fertilizer: "Feed lightly every 6–8 weeks in spring and summer with a balanced houseplant fertilizer. Flush soil occasionally to prevent salt build-up.",
+    toxicity: "Mildly toxic if ingested. Keep away from pets and small children.",
+    tips: "Remove spent blooms and yellow leaves at the base. If it stops blooming, check light levels—slightly brighter, indirect light usually helps."
   },
+
   {
     id: "sansevieria_snake_plant",
     commonName: "Snake Plant",
     scientificName: "Dracaena trifasciata (Sansevieria)",
     image: "images/plants/snake_plant.jpg",
-    light: "Very adaptable: low to bright, indirect light. Avoid intense, all‑day direct sun behind glass.",
-    water: "Let soil dry almost completely between waterings. In low light or winter, water very sparingly.",
-    humidity: "Average household humidity is fine.",
-    temp: "Prefer 65–85°F. Protect from cold windowsills and temps below 50°F.",
-    soil: "Fast‑draining, gritty mix (cactus/succulent mix works well).",
-    fertilizer: "Light feeder; fertilize 2–3 times per growing season at half strength.",
+    light: "Very adaptable: low to bright, indirect light. Color and growth are best with bright, indirect light.",
+    water: "Let soil dry almost completely between waterings. In winter or low light, water very sparingly.",
+    humidity: "Average indoor humidity is fine. Does well in dry air.",
+    temp: "Thrives between 60–85°F. Protect from cold drafts and temps below 50°F.",
+    soil: "Fast-draining, gritty mix (cactus/succulent mix works well). Use pots with drainage holes.",
+    fertilizer: "Light feeder. Fertilize 2–3 times during the growing season at half strength.",
+    toxicity: "Toxic if ingested by pets or people. Keep away from nibblers.",
+    tips: "Overwatering is the main cause of issues. If leaves become mushy at the base, check for rot and cut away affected parts."
+  },
+
+  {
+    id: "zz_plant",
+    commonName: "ZZ Plant",
+    scientificName: "Zamioculcas zamiifolia",
+    image: "images/plants/zz_plant.jpg",
+    light: "Low to bright, indirect light. Avoid strong direct sun which can scorch leaves.",
+    water: "Allow soil to dry out most of the way between waterings. Thick rhizomes store water, so it tolerates drought.",
+    humidity: "Average home humidity is fine.",
+    temp: "Ideal range is 65–80°F. Avoid cold drafts and temps below 55°F.",
+    soil: "Well-draining potting mix with added perlite or sand. Never let it sit in water.",
+    fertilizer: "Fertilize lightly 2–3 times per growing season with a balanced liquid fertilizer.",
     toxicity: "Toxic if ingested. Keep away from pets and children.",
-    tips: "Overwatering is the main killer. If leaves flop or become mushy at the base, check for root rot and repot in drier mix."
+    tips: "Great for low-light corners, but growth will be faster in brighter, indirect light. Overwatering is much more dangerous than underwatering."
+  },
+
+  {
+    id: "golden_pothos",
+    commonName: "Golden Pothos",
+    scientificName: "Epipremnum aureum",
+    image: "images/plants/golden_pothos.jpg",
+    light: "Bright, indirect light is ideal but it will tolerate low light. Variegation may fade in very low light.",
+    water: "Water when the top 1–2 inches of soil are dry. Slightly drought-tolerant; avoid constantly soggy soil.",
+    humidity: "Average indoor humidity is fine. Appreciates a bit more humidity but doesn’t demand it.",
+    temp: "Prefers 65–85°F. Keep away from cold drafts.",
+    soil: "Well-draining indoor mix. A chunky mix with perlite works very well.",
+    fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced, diluted fertilizer.",
+    toxicity: "Toxic if ingested (calcium oxalate). Keep out of reach of pets and children.",
+    tips: "Pinch or trim vines to encourage fuller, bushier growth. Easily propagated in water from cuttings."
+  },
+
+  {
+    id: "heartleaf_philodendron",
+    commonName: "Heartleaf Philodendron",
+    scientificName: "Philodendron hederaceum",
+    image: "images/plants/heartleaf_philodendron.jpg",
+    light: "Medium to bright, indirect light. Tolerates lower light but grows slower.",
+    water: "Keep soil slightly moist, allowing the top 1 inch to dry between waterings. Reduce watering in winter.",
+    humidity: "Average humidity is fine, but it appreciates a bit more for lush growth.",
+    temp: "Ideal range is 65–80°F. Avoid cold drafts and chilly windowsills.",
+    soil: "Well-draining indoor mix with some perlite or bark for airiness.",
+    fertilizer: "Feed lightly once a month during spring and summer with a balanced liquid fertilizer.",
+    toxicity: "Toxic if ingested (calcium oxalate). Keep away from pets and children.",
+    tips: "Pinch or cut back stems to keep it compact or let it trail/climb. Wipe dusty leaves so they can photosynthesize better."
+  },
+
+  {
+    id: "spider_plant",
+    commonName: "Spider Plant",
+    scientificName: "Chlorophytum comosum",
+    image: "images/plants/spider_plant.jpg",
+    light: "Bright to moderate, indirect light. Avoid very dark corners or harsh, direct midday sun.",
+    water: "Keep soil slightly moist. Water when the top 1 inch is dry; let it dry a bit more in winter.",
+    humidity: "Average indoor humidity is usually fine. Brown tips can come from dry air, tap water salts, or inconsistent watering.",
+    temp: "Comfortable at normal room temps (65–75°F). Protect from drafts and cold windows.",
+    soil: "Rich, well-draining potting mix.",
+    fertilizer: "Feed every 4–6 weeks in spring and summer. Too much fertilizer can increase brown tips.",
+    toxicity: "Generally considered non-toxic, but supervise pets that like to chew.",
+    tips: "Produces “pups” on long stems—easy to root in water or soil. Trim brown tips and remove old leaves to keep it tidy."
+  },
+
+  {
+    id: "fiddle_leaf_fig",
+    commonName: "Fiddle Leaf Fig",
+    scientificName: "Ficus lyrata",
+    image: "images/plants/fiddle_leaf_fig.jpg",
+    light: "Very bright, indirect light. A spot near a large, bright window is ideal. Avoid sudden changes in light.",
+    water: "Water thoroughly when the top 1–2 inches are dry. Ensure excellent drainage; hates “wet feet.”",
+    humidity: "Prefers moderate to high humidity. Very dry air can cause crispy edges and leaf drop.",
+    temp: "Ideal range is 65–80°F. Avoid cold drafts, AC blasts, and sudden temperature swings.",
+    soil: "Well-draining indoor mix with added bark or perlite.",
+    fertilizer: "Feed every 4 weeks in spring and summer with a balanced fertilizer. Hold off in winter.",
+    toxicity: "Sap can be irritating and the plant is mildly toxic if ingested.",
+    tips: "Doesn’t like to be moved frequently. Rotate the pot occasionally for even growth and gently wipe leaves to remove dust."
+  },
+
+  {
+    id: "boston_fern",
+    commonName: "Boston Fern",
+    scientificName: "Nephrolepis exaltata",
+    image: "images/plants/boston_fern.jpg",
+    light: "Bright, indirect light. Avoid direct afternoon sun which can scorch fronds.",
+    water: "Keep soil consistently moist but not waterlogged. Do not allow the root ball to dry out completely.",
+    humidity: "Loves high humidity (50–80%). Great for bathrooms with windows or near a humidifier.",
+    temp: "Prefers 60–75°F. Sensitive to hot, dry air and cold drafts.",
+    soil: "Rich, peat-based mix that retains moisture but drains well.",
+    fertilizer: "Feed lightly every 4–6 weeks during the growing season with a diluted balanced fertilizer.",
+    toxicity: "Generally considered non-toxic.",
+    tips: "Trim old, brown fronds to encourage new growth. If fronds crisp up, increase humidity and check watering habits."
+  },
+
+  {
+    id: "calathea",
+    commonName: "Calathea (Prayer Plant Group)",
+    scientificName: "Calathea spp.",
+    image: "images/plants/calathea.jpg",
+    light: "Medium to bright, indirect light. No direct sun, which can fade patterns and crisp leaves.",
+    water: "Keep soil moderately moist. Water when the top 1 inch feels just barely dry. Use filtered or dechlorinated water if your tap water is hard.",
+    humidity: "High humidity (60%+). Dry air leads to crispy edges. Benefits from humidifiers and pebble trays.",
+    temp: "65–80°F, away from drafts and sudden temperature swings.",
+    soil: "Light, airy, well-draining mix with some organic matter and perlite.",
+    fertilizer: "Feed monthly in spring and summer with a diluted, balanced fertilizer.",
+    toxicity: "Generally considered non-toxic to pets.",
+    tips: "Very sensitive to inconsistent care. Keep environment stable—same spot, steady moisture, and humidity."
+  },
+
+  {
+    id: "phalaenopsis_orchid",
+    commonName: "Moth Orchid",
+    scientificName: "Phalaenopsis spp.",
+    image: "images/plants/phalaenopsis_orchid.jpg",
+    light: "Bright, indirect light. East-facing windows are ideal, or filtered light behind sheer curtains.",
+    water: "Water when the orchid bark is nearly dry, typically every 7–10 days. Water thoroughly, then let excess drain completely.",
+    humidity: "Prefers 50–70% humidity. Avoid water sitting in the crown to prevent rot.",
+    temp: "Daytime 70–80°F, nighttime around 60–65°F. Slight drops in night temps can encourage blooming.",
+    soil: "Special orchid mix (bark, sphagnum moss, or a combo). Never standard potting soil.",
+    fertilizer: "Use a balanced orchid fertilizer at 1/4–1/2 strength every 2–4 weeks during active growth.",
+    toxicity: "Generally considered non-toxic.",
+    tips: "After flowers fade, you can cut the spike back to a node to sometimes encourage a side shoot, or cut it off completely to focus on new growth."
+  },
+
+  {
+    id: "bird_of_paradise",
+    commonName: "Bird of Paradise",
+    scientificName: "Strelitzia reginae / nicolai",
+    image: "images/plants/bird_of_paradise.jpg",
+    light: "Very bright light with several hours of direct sun indoors is best.",
+    water: "Water when the top 1–2 inches of soil are dry. Keep slightly more moist in active growth and a bit drier in winter.",
+    humidity: "Prefers moderate to high humidity, but tolerates average indoor levels.",
+    temp: "65–85°F. Avoid cold drafts and temperatures below about 55°F.",
+    soil: "Rich, well-draining potting mix. Containers must have drainage holes.",
+    fertilizer: "Feed every 4 weeks in spring and summer with a balanced fertilizer.",
+    toxicity: "Mildly toxic if ingested. Keep away from pets and children.",
+    tips: "Needs strong light to flower indoors and can get large. Dust leaves and provide a sturdy pot as it matures."
+  },
+
+  {
+    id: "aglaonema_chinese_evergreen",
+    commonName: "Chinese Evergreen",
+    scientificName: "Aglaonema spp.",
+    image: "images/plants/aglaonema.jpg",
+    light: "Low to medium, indirect light; many varieties tolerate lower light well. Variegated types appreciate brighter, indirect light.",
+    water: "Water when the top 1–2 inches of soil are dry. Avoid letting it sit in water.",
+    humidity: "Average indoor humidity is usually fine; appreciates a bit more in dry homes.",
+    temp: "65–80°F. Very sensitive to cold drafts and temperatures below 60°F.",
+    soil: "Standard well-draining indoor potting mix.",
+    fertilizer: "Feed every 6–8 weeks in spring and summer with a balanced, diluted fertilizer.",
+    toxicity: "Toxic if ingested. Keep out of reach of pets and children.",
+    tips: "Great low-light plant. Rotate periodically for even growth and wipe dust from leaves to keep them glossy."
+  },
+
+  {
+    id: "dracaena_corn_plant",
+    commonName: "Corn Plant Dracaena",
+    scientificName: "Dracaena fragrans",
+    image: "images/plants/dracaena_corn_plant.jpg",
+    light: "Medium to bright, indirect light. Tolerates lower light but grows more slowly.",
+    water: "Water when the top 1–2 inches are dry. Sensitive to overwatering and poor drainage.",
+    humidity: "Average humidity is fine. Brown leaf tips can be from dry air or fluoride in tap water.",
+    temp: "65–80°F. Protect from cold drafts.",
+    soil: "Well-draining indoor mix; avoid heavy soils that stay wet.",
+    fertilizer: "Feed every 6–8 weeks in the growing season with a diluted balanced fertilizer.",
+    toxicity: "Toxic to pets if ingested.",
+    tips: "Use filtered water or let tap water sit overnight if you see brown tips from fluoride or salts. Trim leaf tips for a neater look."
+  },
+
+  {
+    id: "dieffenbachia_dumb_cane",
+    commonName: "Dieffenbachia (Dumb Cane)",
+    scientificName: "Dieffenbachia spp.",
+    image: "images/plants/dieffenbachia.jpg",
+    light: "Bright, indirect light is best. Tolerates medium light but avoid harsh direct sun.",
+    water: "Keep soil lightly moist, letting the top inch dry before watering again. Avoid extremes of very dry or very soggy.",
+    humidity: "Enjoys moderate to high humidity.",
+    temp: "65–80°F. Protect from cold drafts.",
+    soil: "Rich, well-draining potting mix.",
+    fertilizer: "Feed every 4–6 weeks during spring and summer with a balanced fertilizer.",
+    toxicity: "Highly toxic if ingested (can cause mouth/throat irritation). Keep well away from pets and children.",
+    tips: "Rotate regularly to keep stems straight and prevent leaning toward the light. Prune leggy canes to encourage new growth."
+  },
+
+  {
+    id: "hoya_carnosa",
+    commonName: "Hoya (Wax Plant)",
+    scientificName: "Hoya carnosa",
+    image: "images/plants/hoya_carnosa.jpg",
+    light: "Bright, indirect light, with a little gentle direct sun if possible. Too little light reduces flowering.",
+    water: "Water when the top 1–2 inches of soil are dry. Hoya roots dislike staying constantly wet.",
+    humidity: "Average to moderately high humidity is appreciated but not always required.",
+    temp: "65–80°F. Avoid cold drafts.",
+    soil: "Loose, well-draining mix (similar to an aroid or succulent mix with bark and perlite).",
+    fertilizer: "Feed lightly every 4–6 weeks in the growing season. Slightly higher phosphorus can support flowering.",
+    toxicity: "Generally considered non-toxic, but always supervise pets.",
+    tips: "Do not remove old flower spurs; blooms often return on the same spurs. Hoyas like to be slightly snug in their pot."
+  },
+
+  {
+    id: "african_violet",
+    commonName: "African Violet",
+    scientificName: "Saintpaulia ionantha",
+    image: "images/plants/african_violet.jpg",
+    light: "Bright, indirect light. Avoid direct sun on leaves, which can scorch.",
+    water: "Keep soil evenly moist but not soggy. Water from the bottom or carefully at the soil surface to keep water off leaves.",
+    humidity: "Enjoys moderate humidity; avoid cold, drafty windowsills.",
+    temp: "65–75°F, with minimal temperature swings.",
+    soil: "Light, airy African violet mix that drains well.",
+    fertilizer: "Use a fertilizer formulated for African violets at low strength every few weeks while actively growing.",
+    toxicity: "Generally considered non-toxic.",
+    tips: "Remove spent blooms and yellow leaves to keep plants tidy. Rotate regularly for a symmetrical rosette."
+  },
+
+  {
+    id: "parlor_palm",
+    commonName: "Parlor Palm",
+    scientificName: "Chamaedorea elegans",
+    image: "images/plants/parlor_palm.jpg",
+    light: "Low to medium, indirect light. Avoid harsh, direct sun which can burn fronds.",
+    water: "Water when the top inch of soil is dry. Do not allow the pot to sit in standing water.",
+    humidity: "Average humidity is fine; appreciates a bit more in very dry homes.",
+    temp: "65–80°F. Avoid drafts and cold windowsills.",
+    soil: "Well-draining potting mix with some peat and perlite.",
+    fertilizer: "Feed lightly every 6–8 weeks during the growing season with a balanced fertilizer.",
+    toxicity: "Generally considered non-toxic.",
+    tips: "Remove brown or yellowing fronds at the base. Grows slowly but is very tolerant of typical indoor conditions."
+  },
+
+  {
+    id: "rubber_plant",
+    commonName: "Rubber Plant",
+    scientificName: "Ficus elastica",
+    image: "images/plants/rubber_plant.jpg",
+    light: "Bright, indirect light; can handle some gentle direct sun. Lower light slows growth and may cause leaf drop.",
+    water: "Water when the top 1–2 inches are dry. Avoid leaving the roots in soggy soil.",
+    humidity: "Average household humidity is usually fine.",
+    temp: "65–80°F. Avoid drafts and sudden temperature swings.",
+    soil: "Well-draining potting mix with some perlite or bark.",
+    fertilizer: "Feed every 4–6 weeks during spring and summer with a balanced fertilizer.",
+    toxicity: "Sap can be irritating; plant is considered mildly toxic if ingested.",
+    tips: "Wipe large leaves to remove dust. Prune the top to encourage branching if you want a bushier shape."
+  },
+
+  {
+    id: "syngonium_arrowhead",
+    commonName: "Arrowhead Vine",
+    scientificName: "Syngonium podophyllum",
+    image: "images/plants/syngonium_arrowhead.jpg",
+    light: "Medium to bright, indirect light. Variegated varieties appreciate a bit more light.",
+    water: "Water when the top 1–2 inches of soil are dry. Slightly more moisture-loving than pothos but still dislikes soggy soil.",
+    humidity: "Enjoys moderate to high humidity.",
+    temp: "65–80°F. Protect from cold drafts.",
+    soil: "Well-draining indoor mix with some perlite.",
+    fertilizer: "Feed every 4–6 weeks during the growing season with a balanced fertilizer.",
+    toxicity: "Toxic if ingested (calcium oxalate). Keep away from pets and children.",
+    tips: "Starts bushy and becomes more vine-like with age. Trim regularly if you prefer a compact plant or provide a pole to climb."
   }
-  // 👉 Add more plant objects here following the same structure
 ];
+``
 
 /* ========= PLANT CARE UI BUILD ========= */
 const plantCareGrid = document.getElementById("plantCareGrid");
@@ -1436,4 +1693,5 @@ loadOrderCsv();
 </body>
 </html>
 ``
+
 
