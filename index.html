@@ -146,10 +146,11 @@
   z-index: 10;
 }
 
-.dropdown-menu {
-  position: fixed;
-  top: 60px;
-  left: 220px;
+dropdown-menu {
+  display: flex;
+  flex-direction: column;   /* <<< makes items stack vertically */
+  gap: 0;                    /* optional: removes spacing */
+}
 
   margin-top: 0;
   background: #020617;
@@ -1539,6 +1540,7 @@ document.addEventListener("click", (e) => {
   </script>
 </body>
 </html>
+
 
 
 
