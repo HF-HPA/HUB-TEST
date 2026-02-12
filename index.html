@@ -1456,35 +1456,35 @@ Replace everything from your current `<!DOCTYPE html>` down through `</style>` w
   </main>
 </body>
 
-  <script>
-    /* ========= CONFIG ========= */
-    const SKU_CSV_URL   = "SKU_Name_2026.csv";
-    const ORDER_CSV_URL = "OrderBreakdown.csv";
 
-    const STORE_GRADES_BY_WEEK = {
-      "6":  "All stores",
-      "7":  "All Stores",
-      "8":  "A/B",
-      "9":  "SKIP",
-      "10": "All Stores",
-      "11": "All Stores",
-      "12": "All Stores",
-      "13": "All Stores"
-    };
+<script>
+/* ========= CONFIG ========= */
+const SKU_CSV_URL   = "SKU_Name_2026.csv";
+const ORDER_CSV_URL = "OrderBreakdown.csv";
 
-   
+const STORE_GRADES_BY_WEEK = {
+  "6":  "All stores",
+  "7":  "All Stores",
+  "8":  "A/B",
+  "9":  "SKIP",
+  "10": "All Stores",
+  "11": "All Stores",
+  "12": "All Stores",
+  "13": "All Stores"
+};
+
 /* ========= TAB + DROPDOWN LOGIC ========= */
 const tabs = document.querySelectorAll(".tab");
 const tabSections = {
-  catalog:      document.getElementById("tab-catalog"),
-  orders:       document.getElementById("tab-orders"),
+  catalog:       document.getElementById("tab-catalog"),
+  orders:        document.getElementById("tab-orders"),
   "care-library": document.getElementById("tab-care-library"),
   "pest-id":      document.getElementById("tab-pest-id"),
 };
 
-const plantCareTab   = document.getElementById("plantCareTab");
-const plantCareMenu  = document.getElementById("plantCareMenu");
-const dropdownItems  = document.querySelectorAll(".dropdown-item");
+const plantCareTab  = document.getElementById("plantCareTab");
+const plantCareMenu = document.getElementById("plantCareMenu");
+const dropdownItems = document.querySelectorAll(".dropdown-item");
 
 // Helper to show a tab by key ("catalog", "orders", "care-library", "pest-id")
 function showTab(key) {
@@ -1508,21 +1508,21 @@ function showTab(key) {
 // Clicks on SKU / Orders tabs behave normally
 tabs.forEach(tab => {
   const tabKey = tab.dataset.tab;
-  if (!tabKey) return; // Plant Care tab is handled separately
+  if (!tabKey) return; // Plant Care tab has no data-tab; handled separately
 
   tab.addEventListener("click", () => {
-    if (tab === plantCareTab) return; // handled below
+    if (tab === plantCareTab) return; // dropdown behavior, not direct switch
     plantCareMenu.classList.add("hidden");
     showTab(tabKey);
   });
 });
 
-// Clicking Plant Care just toggles the dropdown
+// Clicking Plant Care toggles dropdown
 plantCareTab.addEventListener("click", () => {
   plantCareMenu.classList.toggle("hidden");
 });
 
-// Clicking dropdown items selects that view
+// Dropdown items -> switch view
 dropdownItems.forEach(item => {
   item.addEventListener("click", () => {
     const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
@@ -1531,55 +1531,52 @@ dropdownItems.forEach(item => {
   });
 });
 
-// Optional: close dropdown when clicking elsewhere
+// Close dropdown when clicking elsewhere
 document.addEventListener("click", (e) => {
   if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
     plantCareMenu.classList.add("hidden");
   }
 });
 
-    /* ========= ORDER BREAKDOWN DOM ========= */
-    const obWeekDisplay   = document.getElementById("obWeekDisplay");
-    const obGradesDisplay = document.getElementById("obGradesDisplay");
-    const obBodies = {
-      FLO: document.getElementById("obFloBody"),
-      FOL: document.getElementById("obFolBody"),
-      UCO: document.getElementById("obUcoBody"),
-      FHB: document.getElementById("obFhbBody"),
-      TRP: document.getElementById("obTrpBody"),
-      SPC: document.getElementById("obSpcBody"),
-    };
+/* ========= ORDER BREAKDOWN DOM ========= */
+const obWeekDisplay   = document.getElementById("obWeekDisplay");
+const obGradesDisplay = document.getElementById("obGradesDisplay");
+const obBodies = {
+  FLO: document.getElementById("obFloBody"),
+  FOL: document.getElementById("obFolBody"),
+  UCO: document.getElementById("obUcoBody"),
+  FHB: document.getElementById("obFhbBody"),
+  TRP: document.getElementById("obTrpBody"),
+  SPC: document.getElementById("obSpcBody"),
+};
 
-    /* ========= SKU DOM ========= */
-    const nameFilter   = document.getElementById("nameFilter");
-    const skuFilter    = document.getElementById("skuFilter");
-    const sentInFilter = document.getElementById("sentInFilter");
-    const yearFilter   = document.getElementById("yearFilter");
-    const skuGrid      = document.getElementById("skuGrid");
-    const resultCount  = document.getElementById("resultCount");
-    const emptyState   = document.getElementById("emptyState");
+/* ========= SKU DOM ========= */
+const nameFilter   = document.getElementById("nameFilter");
+const skuFilter    = document.getElementById("skuFilter");
+const sentInFilter = document.getElementById("sentInFilter");
+const yearFilter   = document.getElementById("yearFilter");
+const skuGrid      = document.getElementById("skuGrid");
+const resultCount  = document.getElementById("resultCount");
+const emptyState   = document.getElementById("emptyState");
 
-    /* SKU Popup */
-    const popupBackdrop = document.getElementById("popupBackdrop");
-    const popupName     = document.getElementById("popupName");
-    const popupSku      = document.getElementById("popupSku");
-    const popupSent     = document.getElementById("popupSent");
-    const popupYear     = document.getElementById("popupYear");
-    const popupClose    = document.getElementById("popupClose");
+/* SKU Popup */
+const popupBackdrop = document.getElementById("popupBackdrop");
+const popupName     = document.getElementById("popupName");
+const popupSku      = document.getElementById("popupSku");
+const popupSent     = document.getElementById("popupSent");
+const popupYear     = document.getElementById("popupYear");
+const popupClose    = document.getElementById("popupClose");
 
-    popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
-    popupBackdrop.addEventListener("click", (e) => {
-      if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
-    });
+popupClose.addEventListener("click", () => {
+  popupBackdrop.style.display = "none";
+});
+popupBackdrop.addEventListener("click", (e) => {
+  if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+});
 
-  
+
 /* ========= PLANT CARE CONFIG (PER-PLANT) ========= */
 
-/*
-  NOTE: You can expand this list over time.
-  Each entry has its OWN care details + an image path.
-  Put your plant images in e.g. /images/plants/ and match the filenames.
-*/
 const PLANTS = [
   {
     id: "monstera_deliciosa",
@@ -1595,7 +1592,6 @@ const PLANTS = [
     toxicity: "Toxic to pets and people if ingested (calcium oxalate crystals). Keep out of reach of chewers.",
     tips: "Give it a moss pole or stake so it can climb and grow larger, fenestrated leaves. Rotate the pot regularly for even growth."
   },
-
   {
     id: "spathiphyllum_peace_lily",
     commonName: "Peace Lily",
@@ -1610,7 +1606,6 @@ const PLANTS = [
     toxicity: "Mildly toxic if ingested. Keep away from pets and small children.",
     tips: "Remove spent blooms and yellow leaves at the base. If it stops blooming, check light levels—slightly brighter, indirect light usually helps."
   },
-
   {
     id: "sansevieria_snake_plant",
     commonName: "Snake Plant",
@@ -1625,7 +1620,6 @@ const PLANTS = [
     toxicity: "Toxic if ingested by pets or people. Keep away from nibblers.",
     tips: "Overwatering is the main cause of issues. If leaves become mushy at the base, check for rot and cut away affected parts."
   },
-
   {
     id: "zz_plant",
     commonName: "ZZ Plant",
@@ -1640,7 +1634,6 @@ const PLANTS = [
     toxicity: "Toxic if ingested. Keep away from pets and children.",
     tips: "Great for low-light corners, but growth will be faster in brighter, indirect light. Overwatering is much more dangerous than underwatering."
   },
-
   {
     id: "golden_pothos",
     commonName: "Golden Pothos",
@@ -1655,7 +1648,6 @@ const PLANTS = [
     toxicity: "Toxic if ingested (calcium oxalate). Keep out of reach of pets and children.",
     tips: "Pinch or trim vines to encourage fuller, bushier growth. Easily propagated in water from cuttings."
   },
-
   {
     id: "heartleaf_philodendron",
     commonName: "Heartleaf Philodendron",
@@ -1670,7 +1662,6 @@ const PLANTS = [
     toxicity: "Toxic if ingested (calcium oxalate). Keep away from pets and children.",
     tips: "Pinch or cut back stems to keep it compact or let it trail/climb. Wipe dusty leaves so they can photosynthesize better."
   },
-
   {
     id: "spider_plant",
     commonName: "Spider Plant",
@@ -1685,7 +1676,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic, but supervise pets that like to chew.",
     tips: "Produces “pups” on long stems—easy to root in water or soil. Trim brown tips and remove old leaves to keep it tidy."
   },
-
   {
     id: "fiddle_leaf_fig",
     commonName: "Fiddle Leaf Fig",
@@ -1700,7 +1690,6 @@ const PLANTS = [
     toxicity: "Sap can be irritating and the plant is mildly toxic if ingested.",
     tips: "Doesn’t like to be moved frequently. Rotate the pot occasionally for even growth and gently wipe leaves to remove dust."
   },
-
   {
     id: "boston_fern",
     commonName: "Boston Fern",
@@ -1715,7 +1704,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic.",
     tips: "Trim old, brown fronds to encourage new growth. If fronds crisp up, increase humidity and check watering habits."
   },
-
   {
     id: "calathea",
     commonName: "Calathea (Prayer Plant Group)",
@@ -1730,7 +1718,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic to pets.",
     tips: "Very sensitive to inconsistent care. Keep environment stable—same spot, steady moisture, and humidity."
   },
-
   {
     id: "phalaenopsis_orchid",
     commonName: "Moth Orchid",
@@ -1745,7 +1732,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic.",
     tips: "After flowers fade, you can cut the spike back to a node to sometimes encourage a side shoot, or cut it off completely to focus on new growth."
   },
-
   {
     id: "bird_of_paradise",
     commonName: "Bird of Paradise",
@@ -1760,7 +1746,6 @@ const PLANTS = [
     toxicity: "Mildly toxic if ingested. Keep away from pets and children.",
     tips: "Needs strong light to flower indoors and can get large. Dust leaves and provide a sturdy pot as it matures."
   },
-
   {
     id: "aglaonema_chinese_evergreen",
     commonName: "Chinese Evergreen",
@@ -1775,7 +1760,6 @@ const PLANTS = [
     toxicity: "Toxic if ingested. Keep out of reach of pets and children.",
     tips: "Great low-light plant. Rotate periodically for even growth and wipe dust from leaves to keep them glossy."
   },
-
   {
     id: "dracaena_corn_plant",
     commonName: "Corn Plant Dracaena",
@@ -1790,7 +1774,6 @@ const PLANTS = [
     toxicity: "Toxic to pets if ingested.",
     tips: "Use filtered water or let tap water sit overnight if you see brown tips from fluoride or salts. Trim leaf tips for a neater look."
   },
-
   {
     id: "dieffenbachia_dumb_cane",
     commonName: "Dieffenbachia (Dumb Cane)",
@@ -1805,7 +1788,6 @@ const PLANTS = [
     toxicity: "Highly toxic if ingested (can cause mouth/throat irritation). Keep well away from pets and children.",
     tips: "Rotate regularly to keep stems straight and prevent leaning toward the light. Prune leggy canes to encourage new growth."
   },
-
   {
     id: "hoya_carnosa",
     commonName: "Hoya (Wax Plant)",
@@ -1820,7 +1802,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic, but always supervise pets.",
     tips: "Do not remove old flower spurs; blooms often return on the same spurs. Hoyas like to be slightly snug in their pot."
   },
-
   {
     id: "african_violet",
     commonName: "African Violet",
@@ -1835,7 +1816,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic.",
     tips: "Remove spent blooms and yellow leaves to keep plants tidy. Rotate regularly for a symmetrical rosette."
   },
-
   {
     id: "parlor_palm",
     commonName: "Parlor Palm",
@@ -1850,7 +1830,6 @@ const PLANTS = [
     toxicity: "Generally considered non-toxic.",
     tips: "Remove brown or yellowing fronds at the base. Grows slowly but is very tolerant of typical indoor conditions."
   },
-
   {
     id: "rubber_plant",
     commonName: "Rubber Plant",
@@ -1865,7 +1844,6 @@ const PLANTS = [
     toxicity: "Sap can be irritating; plant is considered mildly toxic if ingested.",
     tips: "Wipe large leaves to remove dust. Prune the top to encourage branching if you want a bushier shape."
   },
-
   {
     id: "syngonium_arrowhead",
     commonName: "Arrowhead Vine",
@@ -1881,7 +1859,6 @@ const PLANTS = [
     tips: "Starts bushy and becomes more vine-like with age. Trim regularly if you prefer a compact plant or provide a pole to climb."
   }
 ];
-``
 
 /* ========= PLANT CARE UI BUILD ========= */
 const plantCareGrid = document.getElementById("plantCareGrid");
@@ -1939,7 +1916,9 @@ function openCarePopup(id) {
   careBackdrop.style.display = "flex";
 }
 
-careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+careCloseBtn.addEventListener("click", () => {
+  careBackdrop.style.display = "none";
+});
 careBackdrop.addEventListener("click", (e) => {
   if (e.target === careBackdrop) careBackdrop.style.display = "none";
 });
@@ -1956,38 +1935,6 @@ function filterPlantCards() {
 careSearch.addEventListener("input", filterPlantCards);
 
 
-    function openCarePopup(id) {
-      const guide = CARE_GUIDES[id];
-      if (!guide) return;
-      careTitle.textContent      = guide.title || "";
-      careLight.textContent      = guide.light || "";
-      careWater.textContent      = guide.water || "";
-      careHumidity.textContent   = guide.humidity || "";
-      careTemp.textContent       = guide.temp || "";
-      careSoil.textContent       = guide.soil || "";
-      careFertilizer.textContent = guide.fertilizer || "";
-      careToxicity.textContent   = guide.toxicity || "";
-      careTips.textContent       = guide.tips || "";
-      careBackdrop.style.display = "flex";
-    }
-
-    careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-    careBackdrop.addEventListener("click", (e) => {
-      if (e.target === careBackdrop) careBackdrop.style.display = "none";
-    });
-
-    function filterPlantCards() {
-      const q = (careSearch.value || "").toLowerCase().trim();
-      const cards = plantCareGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const name = (card.textContent || "").toLowerCase();
-        card.style.display = !q || name.includes(q) ? "" : "none";
-      });
-    }
-
-    careSearch.addEventListener("input", filterPlantCards);
-
-  
 /* ========= PEST IDENTIFICATION CONFIG ========= */
 
 const PESTS = [
@@ -2131,7 +2078,9 @@ function openPestPopup(id) {
   pestBackdrop.style.display = "flex";
 }
 
-pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+pestCloseBtn.addEventListener("click", () => {
+  pestBackdrop.style.display = "none";
+});
 pestBackdrop.addEventListener("click", (e) => {
   if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
 });
@@ -2146,207 +2095,190 @@ function filterPestCards() {
 }
 
 pestSearch.addEventListener("input", filterPestCards);
-``
 
-    /* ========= PLANT CARE VIEW DROPDOWN LOGIC ========= */
-    const plantCareViewSelect = document.getElementById("plantCareViewSelect");
-    const careLibraryPanel    = document.getElementById("care-library-panel");
-    const pestPanel           = document.getElementById("pest-panel");
+ 
+/* ========= CSV HELPERS ========= */
+function parseCsvLine(line) {
+  const out = [];
+  let cur = "";
+  let quote = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (quote && line[i + 1] === '"') { cur += '"'; i++; }
+      else { quote = !quote; }
+    } else if (ch === "," && !quote) {
+      out.push(cur); cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
 
-    plantCareViewSelect.addEventListener("change", () => {
-      const view = plantCareViewSelect.value;
-      if (view === "care-library") {
-        careLibraryPanel.classList.remove("hidden");
-        pestPanel.classList.add("hidden");
-      } else {
-        careLibraryPanel.classList.add("hidden");
-        pestPanel.classList.remove("hidden");
-      }
+function parseSkuCsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+  if (!lines.length) return [];
+  const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+  const yearIdx = header.indexOf("year sent");
+  const nameIdx = header.indexOf("sku name");
+  const skuIdx  = header.indexOf("sku");
+  const sentIdx = header.indexOf("sent in");
+
+  const data = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCsvLine(lines[i]);
+    const item = {
+      yearSent: (row[yearIdx] || "").trim(),
+      name:     (row[nameIdx] || "").trim(),
+      sku:      (row[skuIdx]  || "").trim(),
+      sentIn:   (row[sentIdx] || "").trim(),
+    };
+    if (item.name && item.sku) data.push(item);
+  }
+  return data;
+}
+
+function parseOrderCsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+  if (!lines.length) return [];
+  const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+  const w = header.indexOf("week");
+  const c = header.indexOf("category");
+  const s = header.indexOf("size");
+  const p = header.indexOf("plant name");
+
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCsvLine(lines[i]);
+    const item = {
+      week:     (row[w] || "").trim(),
+      category: (row[c] || "").trim().toUpperCase(),
+      size:     (row[s] || "").trim(),
+      plant:    (row[p] || "").trim(),
+    };
+    if (item.week && item.category && (item.size || item.plant)) out.push(item);
+  }
+  return out;
+}
+
+const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
+
+/* ========= SKU RENDERING ========= */
+let skuData = [];
+function renderSkuList() {
+  skuGrid.innerHTML = "";
+  const nameQ = (nameFilter.value || "").toLowerCase();
+  const skuQ  = normalizeSku(skuFilter.value || "");
+  const sentQ = (sentInFilter.value || "").toLowerCase();
+  const yearQ = yearFilter.value;
+
+  const filtered = skuData.filter(item => {
+    const itemName = (item.name   || "").toLowerCase();
+    const itemSku  = normalizeSku(item.sku || "");
+    const itemSent = (item.sentIn || "").toLowerCase();
+    const itemYear = item.yearSent || "";
+    return (!nameQ || itemName.includes(nameQ)) &&
+           (!skuQ  || itemSku.includes(skuQ)) &&
+           (!sentQ || itemSent.includes(sentQ)) &&
+           (yearQ === "all" || itemYear === yearQ);
+  });
+
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "sku-card";
+    card.innerHTML = `
+      <div class="sku-year-pill">${item.yearSent}</div>
+      <div class="sku-name">${item.name}</div>
+      <div class="sku-meta">
+        <div><strong>SKU:</strong> ${item.sku}</div>
+        <div><strong>Sent In:</strong> ${item.sentIn}</div>
+        <div><strong>Year Sent:</strong> ${item.yearSent}</div>
+      </div>
+    `;
+    card.addEventListener("click", () => {
+      popupName.textContent = item.name;
+      popupSku.textContent  = item.sku;
+      popupSent.textContent = item.sentIn;
+      popupYear.textContent = item.yearSent;
+      popupBackdrop.style.display = "flex";
     });
+    skuGrid.appendChild(card);
+  });
 
-    /* ========= CSV HELPERS ========= */
-    function parseCsvLine(line) {
-      const out = [];
-      let cur = "";
-      let quote = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          if (quote && line[i + 1] === '"') { cur += '"'; i++; }
-          else { quote = !quote; }
-        } else if (ch === "," && !quote) {
-          out.push(cur); cur = "";
-        } else {
-          cur += ch;
-        }
-      }
-      out.push(cur);
-      return out;
+  resultCount.textContent = filtered.length;
+  emptyState.classList.toggle("hidden", filtered.length !== 0);
+}
+
+nameFilter.addEventListener("input", renderSkuList);
+skuFilter.addEventListener("input", renderSkuList);
+sentInFilter.addEventListener("input", renderSkuList);
+yearFilter.addEventListener("change", renderSkuList);
+
+/* ========= ORDER BREAKDOWN RENDERING ========= */
+function applyOrderBreakdown(rows) {
+  if (!rows.length) {
+    obWeekDisplay.textContent = "TBD";
+    obGradesDisplay.textContent = "All stores";
+    Object.values(obBodies).forEach(el => el.textContent = "");
+    return;
+  }
+
+  const weeks = [...new Set(rows.map(r => r.week))];
+  const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+  const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+  const weekRows = rows.filter(r => r.week == latest);
+
+  obWeekDisplay.textContent = latest;
+  obGradesDisplay.textContent =
+    STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+
+  const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+  weekRows.forEach(r => {
+    if (groups[r.category]) {
+      const size  = r.size  || "";
+      const plant = r.plant || "";
+      let line = "";
+      if (size && plant) line = `${size} — ${plant}`;
+      else line = size || plant;
+      if (line) groups[r.category].push(line);
     }
+  });
 
-    function parseSkuCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
-      const yearIdx = header.indexOf("year sent");
-      const nameIdx = header.indexOf("sku name");
-      const skuIdx  = header.indexOf("sku");
-      const sentIdx = header.indexOf("sent in");
+  Object.entries(groups).forEach(([cat, lines]) => {
+    const el = obBodies[cat];
+    if (el) el.textContent = lines.join("\n");
+  });
+}
 
-      const data = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const item = {
-          yearSent: (row[yearIdx] || "").trim(),
-          name:     (row[nameIdx] || "").trim(),
-          sku:      (row[skuIdx]  || "").trim(),
-          sentIn:   (row[sentIdx] || "").trim(),
-        };
-        if (item.name && item.sku) data.push(item);
-      }
-      return data;
-    }
+/* ========= LOAD CSVs ========= */
+async function loadSkuCsv() {
+  try {
+    const res = await fetch(SKU_CSV_URL);
+    if (!res.ok) throw new Error("SKU CSV not found");
+    const text = await res.text();
+    skuData = parseSkuCsv(text);
+    renderSkuList();
+  } catch (err) {
+    console.error(err);
+    alert("Error loading SKU_Name_2026.csv. Make sure it exists in your repo.");
+  }
+}
 
-    function parseOrderCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
-      const w = header.indexOf("week");
-      const c = header.indexOf("category");
-      const s = header.indexOf("size");
-      const p = header.indexOf("plant name");
-
-      const out = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const item = {
-          week:     (row[w] || "").trim(),
-          category: (row[c] || "").trim().toUpperCase(),
-          size:     (row[s] || "").trim(),
-          plant:    (row[p] || "").trim(),
-        };
-        if (item.week && item.category && (item.size || item.plant)) out.push(item);
-      }
-      return out;
-    }
-
-    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
-
-    /* ========= SKU RENDERING ========= */
-    let skuData = [];
-    function renderSkuList() {
-      skuGrid.innerHTML = "";
-      const nameQ = (nameFilter.value || "").toLowerCase();
-      const skuQ  = normalizeSku(skuFilter.value || "");
-      const sentQ = (sentInFilter.value || "").toLowerCase();
-      const yearQ = yearFilter.value;
-
-      const filtered = skuData.filter(item => {
-        const itemName = (item.name   || "").toLowerCase();
-        const itemSku  = normalizeSku(item.sku || "");
-        const itemSent = (item.sentIn || "").toLowerCase();
-        const itemYear = item.yearSent || "";
-        return (!nameQ || itemName.includes(nameQ)) &&
-               (!skuQ  || itemSku.includes(skuQ)) &&
-               (!sentQ || itemSent.includes(sentQ)) &&
-               (yearQ === "all" || itemYear === yearQ);
-      });
-
-      filtered.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "sku-card";
-        card.innerHTML = `
-          <div class="sku-year-pill">${item.yearSent}</div>
-          <div class="sku-name">${item.name}</div>
-          <div class="sku-meta">
-            <div><strong>SKU:</strong> ${item.sku}</div>
-            <div><strong>Sent In:</strong> ${item.sentIn}</div>
-            <div><strong>Year Sent:</strong> ${item.yearSent}</div>
-          </div>
-        `;
-        card.addEventListener("click", () => {
-          popupName.textContent = item.name;
-          popupSku.textContent  = item.sku;
-          popupSent.textContent = item.sentIn;
-          popupYear.textContent = item.yearSent;
-          popupBackdrop.style.display = "flex";
-        });
-        skuGrid.appendChild(card);
-      });
-
-      resultCount.textContent = filtered.length;
-      emptyState.classList.toggle("hidden", filtered.length !== 0);
-    }
-
-    nameFilter.addEventListener("input", renderSkuList);
-    skuFilter.addEventListener("input", renderSkuList);
-    sentInFilter.addEventListener("input", renderSkuList);
-    yearFilter.addEventListener("change", renderSkuList);
-
-    /* ========= ORDER BREAKDOWN RENDERING ========= */
-    function applyOrderBreakdown(rows) {
-      if (!rows.length) {
-        obWeekDisplay.textContent = "TBD";
-        obGradesDisplay.textContent = "All stores";
-        Object.values(obBodies).forEach(el => el.textContent = "");
-        return;
-      }
-
-      const weeks = [...new Set(rows.map(r => r.week))];
-      const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
-      const latest = numeric.length ? Math.max(...numeric) : weeks[0];
-      const weekRows = rows.filter(r => r.week == latest);
-
-      obWeekDisplay.textContent = latest;
-      obGradesDisplay.textContent =
-        STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
-
-      const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
-
-      weekRows.forEach(r => {
-        if (groups[r.category]) {
-          const size  = r.size  || "";
-          const plant = r.plant || "";
-          let line = "";
-          if (size && plant) line = `${size} — ${plant}`;
-          else line = size || plant;
-          if (line) groups[r.category].push(line);
-        }
-      });
-
-      Object.entries(groups).forEach(([cat, lines]) => {
-        const el = obBodies[cat];
-        if (el) el.textContent = lines.join("\n");
-      });
-    }
-
-    /* ========= LOAD CSVs ========= */
-    async function loadSkuCsv() {
-      try {
-        const res = await fetch(SKU_CSV_URL);
-        if (!res.ok) throw new Error("SKU CSV not found");
-        const text = await res.text();
-        skuData = parseSkuCsv(text);
-        renderSkuList();
-      } catch (err) {
-        console.error(err);
-        alert("Error loading SKU_Name_2026.csv. Make sure it exists in your repo.");
-      }
-    }
-
-    async function loadOrderCsv() {
-      try {
-        const res = await fetch(ORDER_CSV_URL);
-        if (!res.ok) throw new Error("OrderBreakdown.csv not found");
-        const text = await res.text();
-        const rows = parseOrderCsv(text);
-        applyOrderBreakdown(rows);
-      } catch (err) {
-        console.error(err);
-        // Leave breakdown blank if file missing
-      }
-    }
-
+async function loadOrderCsv() {
+  try {
+    const res = await fetch(ORDER_CSV_URL);
+    if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+    const text = await res.text();
+    const rows = parseOrderCsv(text);
+    applyOrderBreakdown(rows);
+  } catch (err) {
+    console.error(err);
+    // Leave breakdown blank if file missing
+  }
+}
 
 /* ========= INIT ========= */
 renderPlantCards();
@@ -2356,14 +2288,13 @@ filterPestCards();
 loadSkuCsv();
 loadOrderCsv();
 
-// Default view: SKU tab is already visible from HTML;
-// if you want, you can default to Care Library instead by calling:
-// showTab("care-library");
+// Default visible tab is SKU Catalogue (already not hidden in HTML)
+</script>
 
-  </script>
 </body>
 </html>
 ``
+
 
 
 
