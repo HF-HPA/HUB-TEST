@@ -732,63 +732,71 @@
       "13": "All Stores"
     };
 
-    /* ========= TAB + DROPDOWN LOGIC ========= */
-    const tabs = document.querySelectorAll(".tab");
-    const tabSections = {
-      catalog:       document.getElementById("tab-catalog"),
-      orders:        document.getElementById("tab-orders"),
-      "care-library": document.getElementById("tab-care-library"),
-      "pest-id":      document.getElementById("tab-pest-id"),
-    };
+   
+/* ========= TAB + DROPDOWN LOGIC ========= */
+const tabs = document.querySelectorAll(".tab");
+const tabSections = {
+  catalog:       document.getElementById("tab-catalog"),
+  orders:        document.getElementById("tab-orders"),
+  "care-library": document.getElementById("tab-care-library"),
+  "pest-id":      document.getElementById("tab-pest-id"),
+};
 
-    const plantCareTab  = document.getElementById("plantCareTab");
-    const plantCareMenu = document.getElementById("plantCareMenu");
-    const dropdownItems = document.querySelectorAll(".dropdown-item");
+const plantCareTab  = document.getElementById("plantCareTab");
+const plantCareMenu = document.getElementById("plantCareMenu");
+const dropdownItems = document.querySelectorAll(".dropdown-item");
 
-    function showTab(key) {
-      Object.entries(tabSections).forEach(([k, section]) => {
-        section.classList.toggle("hidden", k !== key);
-      });
+// Helper to show a tab by key ("catalog", "orders", "care-library", "pest-id")
+function showTab(key) {
+  Object.entries(tabSections).forEach(([k, section]) => {
+    section.classList.toggle("hidden", k !== key);
+  });
 
-      tabs.forEach(t => t.classList.remove("active"));
+  // Highlight correct main tab
+  tabs.forEach(t => t.classList.remove("active"));
 
-      if (key === "catalog") {
-        document.querySelector('[data-tab="catalog"]').classList.add("active");
-      } else if (key === "orders") {
-        document.querySelector('[data-tab="orders"]').classList.add("active");
-      } else if (key === "care-library" || key === "pest-id") {
-        plantCareTab.classList.add("active");
-      }
-    }
+  if (key === "catalog") {
+    document.querySelector('[data-tab="catalog"]').classList.add("active");
+  } else if (key === "orders") {
+    document.querySelector('[data-tab="orders"]').classList.add("active");
+  } else if (key === "care-library" || key === "pest-id") {
+    // Any plant-care related view highlights the Plant Care tab
+    plantCareTab.classList.add("active");
+  }
+}
 
-    tabs.forEach(tab => {
-      const tabKey = tab.dataset.tab;
-      if (!tabKey) return;
+// Clicks on SKU / Orders tabs behave normally
+tabs.forEach(tab => {
+  const tabKey = tab.dataset.tab;
+  if (!tabKey) return; // Plant Care tab has no data-tab; handled separately
 
-      tab.addEventListener("click", () => {
-        if (tab === plantCareTab) return;
-        plantCareMenu.classList.add("hidden");
-        showTab(tabKey);
-      });
-    });
+  tab.addEventListener("click", () => {
+    if (tab === plantCareTab) return; // dropdown behavior, not direct switch
+    plantCareMenu.classList.add("hidden");
+    showTab(tabKey);
+  });
+});
 
-    plantCareTab.addEventListener("click", () => {
-      plantCareMenu.classList.toggle("hidden");
-    });
+// Clicking Plant Care toggles dropdown
+plantCareTab.addEventListener("click", () => {
+  plantCareMenu.classList.toggle("hidden");
+});
 
-    dropdownItems.forEach(item => {
-      item.addEventListener("click", () => {
-        const targetTab = item.dataset.targetTab;
-        plantCareMenu.classList.add("hidden");
-        showTab(targetTab);
-      });
-    });
+// Dropdown items -> switch view
+dropdownItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
+    plantCareMenu.classList.add("hidden");
+    showTab(targetTab);
+  });
+});
 
-    document.addEventListener("click", (e) => {
-      if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
-        plantCareMenu.classList.add("hidden");
-      }
-    });
+// Close dropdown when clicking elsewhere
+document.addEventListener("click", (e) => {
+  if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
+    plantCareMenu.classList.add("hidden");
+  }
+});
 
     /* ========= ORDER BREAKDOWN DOM ========= */
     const obWeekDisplay   = document.getElementById("obWeekDisplay");
@@ -1534,3 +1542,4 @@
   </script>
 </body>
 </html>
+
