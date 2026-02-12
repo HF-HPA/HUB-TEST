@@ -136,40 +136,42 @@
       margin-top: 14px;
     }
 
-  
 /* PLANT CARE TAB DROPDOWN */
-
-
 .tab-dropdown {
-  position: relative;  /* anchor point for absolute menu */
-  z-index: 30;         /* above tab bar */
+  position: relative;   /* just to keep it in the tab bar flow */
+  display: inline-block;
 }
 
+/* Actual floating menu */
 .dropdown-menu {
-  position: absolute;  
-  top: calc(100% + 4px); 
-  left: 0;
+  position: fixed;      /* <— key: overlay relative to viewport */
+  top: 0;               /* will be overridden in JS */
+  left: 0;              /* will be overridden in JS */
 
   background: rgba(15,23,42,0.95);
-  border-radius: 0 0 10px 10px;
+  border-radius: 10px;
   border: 1px solid var(--border-subtle);
   min-width: 180px;
   padding: 6px 0;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
 
   display: flex;
   flex-direction: column;
-  z-index: 999;        /* ensure it floats over content */
+  z-index: 999;         /* hover over everything */
 }
 
+/* Dropdown items (unchanged, but keep these) */
 .dropdown-item {
-  display: block;  
+  display: block;
   width: 100%;
   padding: 10px 14px;
   text-align: left;
   background: transparent;
   color: var(--text);
+  font-size: 0.85rem;
   border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .dropdown-item:hover {
@@ -753,9 +755,49 @@ const tabSections = {
   "pest-id":      document.getElementById("tab-pest-id"),
 };
 
+
+// ========= PLANT CARE DROPDOWN (overlay) =========
 const plantCareTab  = document.getElementById("plantCareTab");
 const plantCareMenu = document.getElementById("plantCareMenu");
 const dropdownItems = document.querySelectorAll(".dropdown-item");
+
+function togglePlantCareMenu() {
+  // If we’re about to show it, position it under the tab
+  if (plantCareMenu.classList.contains("hidden")) {
+    const rect = plantCareTab.getBoundingClientRect();
+
+    // Position just under the Plant Care tab
+    plantCareMenu.style.top  = `${rect.bottom + 4}px`;
+    plantCareMenu.style.left = `${rect.left}px`;
+  }
+
+  plantCareMenu.classList.toggle("hidden");
+}
+
+// Clicking Plant Care opens/closes the overlay dropdown
+plantCareTab.addEventListener("click", (e) => {
+  e.stopPropagation();           // don’t trigger document click
+  togglePlantCareMenu();
+});
+
+// Clicking dropdown items selects that view and closes the menu
+dropdownItems.forEach(item => {
+  item.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
+    plantCareMenu.classList.add("hidden");
+    showTab(targetTab);
+  });
+});
+
+// Click outside -> close dropdown
+document.addEventListener("click", (e) => {
+  if (!plantCareMenu.classList.contains("hidden")) {
+    if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
+      plantCareMenu.classList.add("hidden");
+    }
+  }
+});
 
 // Helper to show a tab by key ("catalog", "orders", "care-library", "pest-id")
 function showTab(key) {
@@ -1553,6 +1595,7 @@ document.addEventListener("click", (e) => {
   </script>
 </body>
 </html>
+
 
 
 
