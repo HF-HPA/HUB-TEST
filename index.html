@@ -139,33 +139,31 @@
 
   
 /* PLANT CARE TAB DROPDOWN */
+
 .tab-dropdown {
-  /* no longer needs to be relative for positioning */
-  position: relative;
+  position: relative;       /* anchor for the absolute menu */
   display: inline-block;
   z-index: 10;
 }
 
-
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
+  position: absolute;       /* anchored to tab-dropdown, not viewport */
+  top: calc(100% + 4px);    /* just below the Plant Care tab */
   left: 0;
-  margin-top: 4px;
 
-  background: rgba(15, 23, 42, 0.95);  /* matches your card/bg theme */
-  border: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.95);  /* matches your dark UI */
   border-radius: 0 0 10px 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-
+  border: 1px solid var(--border-subtle);
   min-width: 180px;
   padding: 6px 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
 
   display: flex;
-  flex-direction: column;   /* <<< STACK ITEMS */
+  flex-direction: column;   /* stack items vertically */
   gap: 0;
-  z-index: 50;
+  z-index: 40;
 }
+
 
 /* DROPDOWN ITEMS — full width, themed, left-aligned */
 .dropdown-item {
@@ -1566,6 +1564,7 @@ document.addEventListener("click", (e) => {
   </script>
 </body>
 </html>
+
 
 
 
