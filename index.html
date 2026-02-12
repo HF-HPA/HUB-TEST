@@ -202,6 +202,53 @@
       font-size: 0.8rem;
     }
 
+* PLANT CARE TAB DROPDOWN */
+.tab-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+  background: #020617;
+  border-radius: 0 0 10px 10px;
+  border: 1px solid var(--border-subtle);
+  min-width: 160px;
+  padding: 4px 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  z-index: 40;
+}
+
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.dropdown-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* POPUP IMAGES */
+.popup-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-subtle);
+}
+``
+
     /* SKU RESULTS */
     .results-header {
       display: flex;
@@ -516,11 +563,27 @@
     </header>
 
     <!-- TABS -->
-    <nav class="tabs">
-      <button class="tab active" data-tab="catalog">SKU Catalogue</button>
-      <button class="tab" data-tab="orders">Order Breakdown</button>
-      <button class="tab" data-tab="care">Plant Care</button>
-    </nav>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="catalog">SKU Catalogue</button>
+  <button class="tab" data-tab="orders">Order Breakdown</button>
+
+  <!-- Plant Care tab with dropdown -->
+  <div class="tab-dropdown">
+    <button class="tab" id="plantCareTab" type="button">
+      Plant Care ▾
+    </button>
+    <div class="dropdown-menu hidden" id="plantCareMenu">
+      <button class="dropdown-item" data-target-tab="care-library" type="button">
+        Care Library
+      </button>
+      <button class="dropdown-item" data-target-tab="pest-id" type="button">
+        Pest Identification
+      </button>
+    </div>
+  </div>
+</nav>
+
 
     <!-- SKU CATALOGUE TAB -->
     <section id="tab-catalog" class="tab-content">
@@ -581,17 +644,43 @@
     </section>
 
     <!-- PLANT CARE TAB -->
-    <section id="tab-care" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Plant Care</div>
-        <div class="pc-view-select-wrapper">
-          <span class="pc-view-label">View:</span>
-          <select id="plantCareViewSelect" class="pc-view-select">
-            <option value="care-library">Care Library</option>
-            <option value="pest-id">Pest Identification</option>
-          </select>
-        </div>
-      </div>
+
+<!-- CARE LIBRARY TAB -->
+<section id="tab-care-library" class="tab-content hidden">
+  <div class="pc-header">
+    <div class="pc-title">Care Library</div>
+    <div class="pc-search-wrapper">
+      <span class="pc-search-icon">🔎</span>
+      <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
+    </div>
+  </div>
+
+  <div class="pc-grid" id="plantCareGrid">
+    <!-- plant cards created via JS -->
+  </div>
+</section>
+
+<!-- PEST IDENTIFICATION TAB -->
+<section id="tab-pest-id" class="tab-content hidden">
+  <div class="pc-header">
+    <div class="pc-title">Pest Identification</div>
+    <div class="pc-search-wrapper">
+      <span class="pc-search-icon">🔎</span>
+      <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+    </div>
+  </div>
+
+  <div class="pc-grid" id="pestGrid">
+    <!-- pest cards created via JS -->
+  </div>
+</section>
+
+
+  <div class="pc-grid" id="pestGrid">
+    <!-- pest cards created via JS -->
+  </div>
+</section>
+
 
       <!-- CARE LIBRARY PANEL -->
       <section id="care-library-panel">
@@ -638,59 +727,64 @@
   </div>
 
   <!-- PLANT CARE POPUP -->
-  <div id="careBackdrop" class="popup-backdrop">
-    <div class="popup">
-      <h2 id="careTitle"></h2>
+<div id="careBackdrop" class="popup-backdrop">
+  <div class="popup">
+    <img id="careImage" class="popup-image" alt="" />
+    <h2 id="careTitle"></h2>
 
-      <div class="popup-section-title">Light</div>
-      <div class="popup-text" id="careLight"></div>
+    <div class="popup-section-title">Light</div>
+    <div class="popup-text" id="careLight"></div>
 
-      <div class="popup-section-title">Water</div>
-      <div class="popup-text" id="careWater"></div>
+    <div class="popup-section-title">Water</div>
+    <div class="popup-text" id="careWater"></div>
 
-      <div class="popup-section-title">Humidity</div>
-      <div class="popup-text" id="careHumidity"></div>
+    <div class="popup-section-title">Humidity</div>
+    <div class="popup-text" id="careHumidity"></div>
 
-      <div class="popup-section-title">Temperature</div>
-      <div class="popup-text" id="careTemp"></div>
+    <div class="popup-section-title">Temperature</div>
+    <div class="popup-text" id="careTemp"></div>
 
-      <div class="popup-section-title">Soil</div>
-      <div class="popup-text" id="careSoil"></div>
+    <div class="popup-section-title">Soil</div>
+    <div class="popup-text" id="careSoil"></div>
 
-      <div class="popup-section-title">Fertilizer</div>
-      <div class="popup-text" id="careFertilizer"></div>
+    <div class="popup-section-title">Fertilizer</div>
+    <div class="popup-text" id="careFertilizer"></div>
 
-      <div class="popup-section-title">Toxicity</div>
-      <div class="popup-text" id="careToxicity"></div>
+    <div class="popup-section-title">Toxicity</div>
+    <div class="popup-text" id="careToxicity"></div>
 
-      <div class="popup-section-title">Extra Tips</div>
-      <div class="popup-text" id="careTips"></div>
+    <div class="popup-section-title">Extra Tips</div>
+    <div class="popup-text" id="careTips"></div>
 
-      <button id="careClose" class="popup-close">Close</button>
-    </div>
+    <button id="careClose" class="popup-close">Close</button>
   </div>
+</div>
+``
+
 
   <!-- PEST POPUP -->
-  <div id="pestBackdrop" class="popup-backdrop">
-    <div class="popup">
-      <h2 id="pestTitle"></h2>
 
-      <div class="popup-section-title">What it looks like</div>
-      <div class="popup-text" id="pestLooksLike"></div>
+<div id="pestBackdrop" class="popup-backdrop">
+  <div class="popup">
+    <img id="pestImage" class="popup-image" alt="" />
+    <h2 id="pestTitle"></h2>
 
-      <div class="popup-section-title">Where you see it</div>
-      <div class="popup-text" id="pestWhere"></div>
+    <div class="popup-section-title">What it looks like</div>
+    <div class="popup-text" id="pestLooksLike"></div>
 
-      <div class="popup-section-title">Damage & symptoms</div>
-      <div class="popup-text" id="pestSymptoms"></div>
+    <div class="popup-section-title">Where you see it</div>
+    <div class="popup-text" id="pestWhere"></div>
 
-      <div class="popup-section-title">Treatment</div>
-      <div class="popup-text" id="pestTreatment"></div>
+    <div class="popup-section-title">Damage & symptoms</div>
+    <div class="popup-text" id="pestSymptoms"></div>
 
-      <button id="pestClose" class="popup-close">Close</button>
-    </div>
+    <div class="popup-section-title">Treatment</div>
+    <div class="popup-text" id="pestTreatment"></div>
+
+    <button id="pestClose" class="popup-close">Close</button>
   </div>
-
+</div>
+  
   <script>
     /* ========= CONFIG ========= */
     const SKU_CSV_URL   = "SKU_Name_2026.csv";
@@ -707,24 +801,71 @@
       "13": "All Stores"
     };
 
-    /* ========= TAB LOGIC ========= */
-    const tabs = document.querySelectorAll(".tab");
-    const tabSections = {
-      catalog: document.getElementById("tab-catalog"),
-      orders:  document.getElementById("tab-orders"),
-      care:    document.getElementById("tab-care"),
-    };
+   
+/* ========= TAB + DROPDOWN LOGIC ========= */
+const tabs = document.querySelectorAll(".tab");
+const tabSections = {
+  catalog:      document.getElementById("tab-catalog"),
+  orders:       document.getElementById("tab-orders"),
+  "care-library": document.getElementById("tab-care-library"),
+  "pest-id":      document.getElementById("tab-pest-id"),
+};
 
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-        const show = tab.dataset.tab;
-        Object.entries(tabSections).forEach(([key, section]) => {
-          section.classList.toggle("hidden", key !== show);
-        });
-      });
-    });
+const plantCareTab   = document.getElementById("plantCareTab");
+const plantCareMenu  = document.getElementById("plantCareMenu");
+const dropdownItems  = document.querySelectorAll(".dropdown-item");
+
+// Helper to show a tab by key ("catalog", "orders", "care-library", "pest-id")
+function showTab(key) {
+  Object.entries(tabSections).forEach(([k, section]) => {
+    section.classList.toggle("hidden", k !== key);
+  });
+
+  // Highlight correct main tab
+  tabs.forEach(t => t.classList.remove("active"));
+
+  if (key === "catalog") {
+    document.querySelector('[data-tab="catalog"]').classList.add("active");
+  } else if (key === "orders") {
+    document.querySelector('[data-tab="orders"]').classList.add("active");
+  } else if (key === "care-library" || key === "pest-id") {
+    // Any plant-care related view highlights the Plant Care tab
+    plantCareTab.classList.add("active");
+  }
+}
+
+// Clicks on SKU / Orders tabs behave normally
+tabs.forEach(tab => {
+  const tabKey = tab.dataset.tab;
+  if (!tabKey) return; // Plant Care tab is handled separately
+
+  tab.addEventListener("click", () => {
+    if (tab === plantCareTab) return; // handled below
+    plantCareMenu.classList.add("hidden");
+    showTab(tabKey);
+  });
+});
+
+// Clicking Plant Care just toggles the dropdown
+plantCareTab.addEventListener("click", () => {
+  plantCareMenu.classList.toggle("hidden");
+});
+
+// Clicking dropdown items selects that view
+dropdownItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
+    plantCareMenu.classList.add("hidden");
+    showTab(targetTab);
+  });
+});
+
+// Optional: close dropdown when clicking elsewhere
+document.addEventListener("click", (e) => {
+  if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
+    plantCareMenu.classList.add("hidden");
+  }
+});
 
     /* ========= ORDER BREAKDOWN DOM ========= */
     const obWeekDisplay   = document.getElementById("obWeekDisplay");
@@ -760,137 +901,132 @@
       if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
     });
 
-    /* ========= PLANT CARE CONFIG ========= */
+  
+/* ========= PLANT CARE CONFIG (PER-PLANT) ========= */
 
-    const PLANT_TYPES = [
-      "African Violet","Aglaonema","Air Plant","Alocasia","Anthurium","Aralia",
-      "Begonia","Bird of Paradise","Bromeliad","Cactus/Succulent","Calathea","Cordyline","Croton",
-      "Dieffenbachia","Dracaena","Fern","Ficus","Fittonia","Homalomena","Hoya","Hypoestes",
-      "Ivy","Kalanchoe","Lipstick","Maranta","Money Tree","Monstera","Orchid","Palm","Peperomia",
-      "Philodendron","Pothos","Raphidophora","Sansevieria","Schefflera","Scindapsus","Spider Plant",
-      "Spathiphyllum","Stromanthe","Syngonium","Tradescantia","Yucca","Zamioculcas Zamiifolia"
-    ];
+/*
+  NOTE: You can expand this list over time.
+  Each entry has its OWN care details + an image path.
+  Put your plant images in e.g. /images/plants/ and match the filenames.
+*/
+const PLANTS = [
+  {
+    id: "monstera_deliciosa",
+    commonName: "Monstera Deliciosa",
+    scientificName: "Monstera deliciosa",
+    image: "images/plants/monstera_deliciosa.jpg",
+    light: "Bright, indirect light. Tolerates some gentle morning sun but avoid harsh midday rays.",
+    water: "Water when the top 1–2 inches of soil are dry. In winter, let it dry slightly more between waterings.",
+    humidity: "Prefers higher humidity (50–70%), but adapts to average indoor levels. Brown leaf edges often indicate low humidity or inconsistent watering.",
+    temp: "Ideal range is 65–85°F. Avoid cold drafts and temps below 55°F.",
+    soil: "Chunky, well‑draining aroid mix (potting soil + bark + perlite). Avoid dense, waterlogged media.",
+    fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced liquid fertilizer at 1/4–1/2 strength.",
+    toxicity: "Toxic to pets and people if ingested (calcium oxalate crystals). Keep away from chewers.",
+    tips: "Provide a moss pole or support for climbing; larger, fenestrated leaves develop on more mature, well‑supported vines."
+  },
+  {
+    id: "spathiphyllum_peace_lily",
+    commonName: "Peace Lily",
+    scientificName: "Spathiphyllum spp.",
+    image: "images/plants/peace_lily.jpg",
+    light: "Medium to bright, indirect light. Tolerates low light but will bloom less.",
+    water: "Keep soil lightly moist; water when the top 1 inch feels dry. Peace lilies visibly droop when thirsty but avoid letting them wilt repeatedly.",
+    humidity: "Enjoys moderate to high humidity (40–70%). Brown tips can signal dry air or inconsistent watering.",
+    temp: "Best between 65–80°F. Sensitive to cold drafts.",
+    soil: "Rich, well‑draining potting mix with good organic matter.",
+    fertilizer: "Feed lightly every 6–8 weeks in spring and summer with a balanced houseplant fertilizer.",
+    toxicity: "Mildly toxic if ingested. Keep out of reach of pets and children.",
+    tips: "Remove spent blooms and yellow leaves to keep the plant tidy. If leaves yellow heavily, check for overwatering or poor drainage."
+  },
+  {
+    id: "sansevieria_snake_plant",
+    commonName: "Snake Plant",
+    scientificName: "Dracaena trifasciata (Sansevieria)",
+    image: "images/plants/snake_plant.jpg",
+    light: "Very adaptable: low to bright, indirect light. Avoid intense, all‑day direct sun behind glass.",
+    water: "Let soil dry almost completely between waterings. In low light or winter, water very sparingly.",
+    humidity: "Average household humidity is fine.",
+    temp: "Prefer 65–85°F. Protect from cold windowsills and temps below 50°F.",
+    soil: "Fast‑draining, gritty mix (cactus/succulent mix works well).",
+    fertilizer: "Light feeder; fertilize 2–3 times per growing season at half strength.",
+    toxicity: "Toxic if ingested. Keep away from pets and children.",
+    tips: "Overwatering is the main killer. If leaves flop or become mushy at the base, check for root rot and repot in drier mix."
+  }
+  // 👉 Add more plant objects here following the same structure
+];
 
-    // Helper: normalize key from plant name
-    const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+/* ========= PLANT CARE UI BUILD ========= */
+const plantCareGrid = document.getElementById("plantCareGrid");
+const careSearch    = document.getElementById("careSearch");
+const careBackdrop  = document.getElementById("careBackdrop");
+const careImage     = document.getElementById("careImage");
+const careTitle     = document.getElementById("careTitle");
+const careLight     = document.getElementById("careLight");
+const careWater     = document.getElementById("careWater");
+const careHumidity  = document.getElementById("careHumidity");
+const careTemp      = document.getElementById("careTemp");
+const careSoil      = document.getElementById("careSoil");
+const careFertilizer= document.getElementById("careFertilizer");
+const careToxicity  = document.getElementById("careToxicity");
+const careTips      = document.getElementById("careTips");
+const careCloseBtn  = document.getElementById("careClose");
 
-    const CARE_GUIDES = {};
+function renderPlantCards() {
+  plantCareGrid.innerHTML = "";
+  PLANTS.forEach(plant => {
+    const btn = document.createElement("button");
+    btn.className = "pc-card";
+    btn.dataset.plantId = plant.id;
+    btn.innerHTML = `
+      <div class="pc-card-title">${plant.commonName}</div>
+      <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+    `;
+    btn.addEventListener("click", () => openCarePopup(plant.id));
+    plantCareGrid.appendChild(btn);
+  });
+}
 
-    // Generic templates, slightly tuned per group
-    function buildGuide(name, opts = {}) {
-      const type = (name || "").toLowerCase();
-      const isSucculent = type.includes("cactus") || type.includes("succulent") || type.includes("yucca");
-      const isFern = type.includes("fern");
-      const isPalm = type.includes("palm");
-      const isAir = type.includes("air plant");
-      const isOrchid = type.includes("orchid");
-      const isLowLight = ["aglaonema","zz","zamioculcas","sansevieria","dracaena","pothos","philodendron","syngonium"].some(k => type.includes(k));
+function openCarePopup(id) {
+  const plant = PLANTS.find(p => p.id === id);
+  if (!plant) return;
 
-      let light, water, humidity, temp, soil, fertilizer, toxicity, tips;
+  careTitle.textContent      = plant.commonName || "";
+  careLight.textContent      = plant.light || "";
+  careWater.textContent      = plant.water || "";
+  careHumidity.textContent   = plant.humidity || "";
+  careTemp.textContent       = plant.temp || "";
+  careSoil.textContent       = plant.soil || "";
+  careFertilizer.textContent = plant.fertilizer || "";
+  careToxicity.textContent   = plant.toxicity || "";
+  careTips.textContent       = plant.tips || "";
 
-      if (isAir) {
-        light = "Bright, indirect light is best. Avoid harsh, direct afternoon sun that can scorch the delicate foliage.";
-        water = "Soak plants in room-temperature water for 15–20 minutes about once a week, then shake off excess and allow to dry fully before placing back in holder.";
-        humidity = "Prefers moderate to high humidity. Avoid very dry, heated air; occasional misting is beneficial.";
-        temp = "Ideal range is 60–80°F. Protect from cold drafts and temperatures below 50°F.";
-        soil = "Air plants do not grow in soil. Mount in decorative holders, on driftwood, or in glass terrariums with good air movement.";
-        fertilizer = "Use a very dilute bromeliad or air-plant fertilizer once a month, added to the soaking water.";
-        toxicity = "Generally non-toxic, but always supervise pets that chew plants.";
-        tips = "Provide good air circulation and bright filtered light. If leaf tips brown, increase humidity and adjust watering schedule.";
-      } else if (isSucculent) {
-        light = "Very bright light is ideal. Most succulents and cacti thrive with several hours of direct sun or strong light daily.";
-        water = "Water deeply but infrequently. Allow the soil to dry almost completely before watering again; reduce watering significantly in winter.";
-        humidity = "Prefers low to average humidity. Avoid humid, poorly ventilated spots which can encourage rot.";
-        temp = "Keep between 60–85°F. Protect from frost and cold windowsills in winter.";
-        soil = "Use a gritty, fast-draining cactus/succulent mix. Ensure containers have drainage holes.";
-        fertilizer = "Feed lightly during active growth (spring and summer) with a low-nitrogen cactus fertilizer, diluted to half strength.";
-        toxicity = "Many succulents and cacti can be mildly toxic or spiny. Keep out of reach of children and pets.";
-        tips = "If stems stretch or lose color, they may need more light. Overwatering is the most common issue—when in doubt, wait to water.";
-      } else if (isFern) {
-        light = "Prefers medium to bright, indirect light. Avoid direct sun, which can quickly scorch delicate fronds.";
-        water = "Keep soil evenly moist but not soggy. Water when the surface feels slightly dry; never allow the root ball to fully dry out.";
-        humidity = "High humidity (50–80%) is ideal. Use a humidifier or place in a bathroom with good natural light.";
-        temp = "Best kept between 60–75°F. Protect from drafts, heat vents, and sudden temperature swings.";
-        soil = "Use a rich, peat-based potting mix that retains moisture but drains well.";
-        fertilizer = "Feed lightly every 4–6 weeks during active growth with a balanced, diluted houseplant fertilizer.";
-        toxicity = "Most common ferns are non-toxic, but always verify specific varieties.";
-        tips = "Remove faded or brown fronds to encourage fresh growth. Consistent moisture and humidity are the keys to success.";
-      } else if (isPalm) {
-        light = "Bright, indirect light is preferred. Many palms tolerate some lower light but may grow more slowly.";
-        water = "Water when the top inch of soil feels dry. Avoid letting the plant sit in standing water.";
-        humidity = "Average household humidity is usually adequate; many palms appreciate an occasional misting.";
-        temp = "Keep between 65–80°F. Avoid cold drafts and extremely hot, dry air.";
-        soil = "Use a well-draining, peat-based potting mix. Ensure pots have drainage holes.";
-        fertilizer = "Feed monthly in spring and summer with a balanced, palm-specific or general houseplant fertilizer.";
-        toxicity = "Many interior palms are pet-safe, but always confirm the specific cultivar.";
-        tips = "Wipe dust from fronds periodically. If tips brown, check for low humidity, under-watering, or fertilizer buildup.";
-      } else if (isOrchid) {
-        light = "Bright, indirect light is best. An east facing window is ideal; avoid strong midday sun on leaves.";
-        water = "Water thoroughly, then allow excess to drain. Typically every 7–10 days, depending on medium and environment.";
-        humidity = "Moderate to high humidity (50–70%). Avoid water sitting in the crown of the plant.";
-        temp = "Keep between 65–80°F. Slight nighttime drops can encourage flowering.";
-        soil = "Grow in an orchid mix (bark, moss, or a combination) rather than standard potting soil.";
-        fertilizer = "Use a balanced orchid fertilizer at 1/4–1/2 strength every 2–3 weeks while in active growth.";
-        toxicity = "Most commonly grown Phalaenopsis orchids are considered non-toxic, but always check specific varieties.";
-        tips = "Repot every 1–2 years into fresh orchid mix. If leaves wrinkle or roots turn mushy, adjust watering and drainage.";
-      } else if (isLowLight) {
-        light = "Tolerates low to medium light conditions, making it suitable for interior rooms away from windows.";
-        water = "Allow the top 1–2 inches of soil to dry before watering.";
-        humidity = "Average household humidity is typically adequate but some varieties require 60-80%.";
-        temp = "Keep between 60–80°F. Avoid cold drafts and prolonged temperatures below 55°F.";
-        soil = "Use a standard, well-draining indoor potting mix. Avoid compacted, waterlogged soil.";
-        fertilizer = "Feed lightly in spring and summer with a diluted, balanced houseplant fertilizer.";
-        toxicity = "Many low-light favorites (like ZZ, Sansevieria, Aglaonema, Dieffenbachia) are toxic if chewed. Keep away from pets and children.";
-        tips = "Growth will be slower in low light—this is normal. Overwatering is the most common problem; adjust watering to match growth speed.";
-      } else {
-        // Generic foliage template
-        light = "Bright, indirect light is ideal. Many houseplants also tolerate medium light but may grow more slowly.";
-        water = "Water when the top inch of soil feels dry. Avoid letting the plant sit in standing water; empty saucers after watering.";
-        humidity = "Average indoor humidity is usually sufficient; many plants benefit from occasional misting or being grouped together.";
-        temp = "Maintain temperatures between 60–80°F. Protect from cold drafts, hot radiators, and sudden temperature changes.";
-        soil = "Use a well-draining, peat-based houseplant potting mix. Ensure pots have drainage holes.";
-        fertilizer = "Feed lightly during active growth (spring and summer) with a diluted, balanced houseplant fertilizer.";
-        toxicity = "Many ornamental houseplants can be mildly toxic if ingested. Consider placement if pets or children like to chew on plants.";
-        tips = "Rotate the plant every few weeks for even growth. Watch for pests like spider mites, mealybugs, and scale, and address early.";
-      }
+  if (plant.image) {
+    careImage.src = plant.image;
+    careImage.alt = plant.commonName || "";
+    careImage.style.display = "";
+  } else {
+    careImage.style.display = "none";
+  }
 
-      return {
-        title: name,
-        light, water, humidity, temp, soil, fertilizer, toxicity, tips,
-      };
-    }
+  careBackdrop.style.display = "flex";
+}
 
-    PLANT_TYPES.forEach(name => {
-      CARE_GUIDES[slug(name)] = buildGuide(name);
-    });
+careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+careBackdrop.addEventListener("click", (e) => {
+  if (e.target === careBackdrop) careBackdrop.style.display = "none";
+});
 
-    /* ========= PLANT CARE UI BUILD ========= */
-    const plantCareGrid = document.getElementById("plantCareGrid");
-    const careSearch    = document.getElementById("careSearch");
-    const careBackdrop  = document.getElementById("careBackdrop");
-    const careTitle     = document.getElementById("careTitle");
-    const careLight     = document.getElementById("careLight");
-    const careWater     = document.getElementById("careWater");
-    const careHumidity  = document.getElementById("careHumidity");
-    const careTemp      = document.getElementById("careTemp");
-    const careSoil      = document.getElementById("careSoil");
-    const careFertilizer= document.getElementById("careFertilizer");
-    const careToxicity  = document.getElementById("careToxicity");
-    const careTips      = document.getElementById("careTips");
-    const careCloseBtn  = document.getElementById("careClose");
+function filterPlantCards() {
+  const q = (careSearch.value || "").toLowerCase().trim();
+  const cards = plantCareGrid.querySelectorAll(".pc-card");
+  cards.forEach(card => {
+    const txt = (card.textContent || "").toLowerCase();
+    card.style.display = !q || txt.includes(q) ? "" : "none";
+  });
+}
 
-    function renderPlantCards() {
-      plantCareGrid.innerHTML = "";
-      PLANT_TYPES.forEach(name => {
-        const id = slug(name);
-        const btn = document.createElement("button");
-        btn.className = "pc-card";
-        btn.dataset.careId = id;
-        btn.innerHTML = `<div class="pc-card-title">${name}</div>`;
-        btn.addEventListener("click", () => openCarePopup(id));
-        plantCareGrid.appendChild(btn);
-      });
-    }
+careSearch.addEventListener("input", filterPlantCards);
+
 
     function openCarePopup(id) {
       const guide = CARE_GUIDES[id];
@@ -923,184 +1059,166 @@
 
     careSearch.addEventListener("input", filterPlantCards);
 
-    /* ========= PEST IDENTIFICATION CONFIG ========= */
+  
+/* ========= PEST IDENTIFICATION CONFIG ========= */
 
-    // Common houseplant pests (not literally every pest, but a very broad list)
-    const PESTS = [
-      {
-        id: "aphids",
-        name: "Aphids",
-        looksLike: "Soft-bodied, pear-shaped insects (green, black, brown, or red) clustered on new growth and undersides of leaves.",
-        where: "Tender new shoots, flower buds, and the undersides of young leaves.",
-        symptoms: "Sticky honeydew, curled or distorted new growth, sooty mold growing on the honeydew.",
-        treatment: "Rinse plant under lukewarm water. Treat with insecticidal soap or neem oil, repeating weekly until under control. Isolate heavily infested plants."
-      },
-      {
-        id: "mealybugs",
-        name: "Mealybugs",
-        looksLike: "White, cottony or fuzzy clumps along stems, leaf joints, and sometimes on roots.",
-        where: "Leaf nodes, undersides of leaves, along stems, and occasionally in the soil near the crown.",
-        symptoms: "Sticky honeydew, leaf yellowing, stunted growth, and sooty mold. Plants may look weak overall.",
-        treatment: "Dab visible bugs with cotton swabs dipped in alcohol. Follow up with repeated applications of neem oil or insecticidal soap. Consider repotting if root mealybugs are present."
-      },
-      {
-        id: "spider_mites",
-        name: "Spider Mites",
-        looksLike: "Tiny moving specks (red, yellow, or brown) and fine webbing between leaves and stems.",
-        where: "On the undersides of leaves and in the junctions of stems, especially in dry, warm conditions.",
-        symptoms: "Speckled, stippled leaves, fine webbing, leaf drop, and a general dull appearance to foliage.",
-        treatment: "Rinse plants thoroughly, increase humidity, and treat with miticide, neem oil, or insecticidal soap every few days. Isolate severely infested plants."
-      },
-      {
-        id: "thrips",
-        name: "Thrips",
-        looksLike: "Very slender, tiny insects that move quickly; often brown or black, sometimes winged.",
-        where: "Inside flowers, along leaf veins, and on new growth. Shake plant over white paper to see them move.",
-        symptoms: "Silvery or bronzed streaks on leaves, black specks of droppings, deformed flowers, and bud drop.",
-        treatment: "Prune heavily infested parts. Use sticky traps, then treat with insecticidal soap or systemic insecticide labeled for thrips on houseplants."
-      },
-      {
-        id: "whiteflies",
-        name: "Whiteflies",
-        looksLike: "Tiny white moth-like insects that fly up in a cloud when the plant is disturbed.",
-        where: "On undersides of leaves, especially near the top of the plant.",
-        symptoms: "Sticky honeydew, yellowing leaves, reduced vigor, and sooty mold on leaves.",
-        treatment: "Use yellow sticky traps, regularly vacuum or shake adults off, and treat leaves with insecticidal soap or neem oil, repeating weekly."
-      },
-      {
-        id: "fungus_gnats",
-        name: "Fungus Gnats",
-        looksLike: "Small black flies that hover around soil and walk on the surface of the potting mix.",
-        where: "Top of the soil, around drainage holes, and near windows when disturbed.",
-        symptoms: "Nuisance adults; larvae can damage fine roots, causing yellowing, wilting, or stunted growth in seedlings and young plants.",
-        treatment: "Allow soil to dry more between waterings, use yellow sticky traps, and treat soil with biological controls (e.g., B.t.i) or beneficial nematodes."
-      },
-      {
-        id: "scale_soft",
-        name: "Soft Scale",
-        looksLike: "Rounded or oval bumps (tan, brown, or black) attached to stems and leaf midribs; may exude honeydew.",
-        where: "On stems, leaf midribs, and sometimes undersides of leaves.",
-        symptoms: "Sticky honeydew, sooty mold, yellowing foliage, and decline in plant vigor.",
-        treatment: "Scrape or wipe off adults, prune heavily infested stems, and treat with horticultural oil or systemic insecticide according to label."
-      },
-      {
-        id: "scale_armored",
-        name: "Armored Scale",
-        looksLike: "Hard, shell-like bumps firmly attached to stems or leaves; often gray or brown.",
-        where: "Stems and older leaves, especially on woody houseplants.",
-        symptoms: "Yellowing leaves, dieback of twigs, and general decline. Less honeydew than soft scale.",
-        treatment: "Physically remove with a soft brush or cloth, then use horticultural oil sprays, repeating as needed."
-      },
-      {
-        id: "root_mealybugs",
-        name: "Root Mealybugs",
-        looksLike: "White, cottony masses on roots and in soil around the root ball.",
-        where: "Within the potting mix and on roots, often near the edges of the pot.",
-        symptoms: "Unexplained wilting, poor growth, and white cottony bits when you remove the plant from the pot.",
-        treatment: "Discard highly infested soil, wash roots, and repot in fresh mix. Treat with systemic insecticide if appropriate and isolate plant."
-      },
-      {
-        id: "root_aphids",
-        name: "Root Aphids",
-        looksLike: "Small, aphid-like insects on roots; may be pale, white, or brown, sometimes with waxy coating.",
-        where: "On roots and in the soil around the root zone.",
-        symptoms: "Stunted, yellowing plants that don’t respond to normal feeding or watering; poor root development.",
-        treatment: "Repot into fresh soil, discard heavily infested media, and use soil drenches labeled for root aphids or beneficial nematodes."
-      },
-      {
-        id: "broad_mites",
-        name: "Broad Mites",
-        looksLike: "Extremely small (almost invisible) mites; damage seen more than the pest.",
-        where: "New growth, buds, and young leaves of many tropical houseplants.",
-        symptoms: "Twisted, hardened, or puckered new leaves; distorted flowers; bronzed foliage.",
-        treatment: "Remove affected growth if possible. Treat repeatedly with miticides or sulfur-based products labeled for broad mites; keep plant isolated."
-      },
-      {
-        id: "cyclamen_mites",
-        name: "Cyclamen Mites",
-        looksLike: "Microscopic mites; similar to broad mites in behavior.",
-        where: "In tight buds and crown of plants, especially African violets and cyclamen.",
-        symptoms: "Stunted, contorted new leaves and distorted flowers; growth rosette may look crowded and deformed.",
-        treatment: "Remove the worst-affected growth. Use miticides labeled for cyclamen mites and maintain higher humidity. Severely damaged plants are often discarded."
-      },
-      {
-        id: "springtails",
-        name: "Springtails",
-        looksLike: "Tiny white or gray jumping insects that flick when disturbed on damp soil.",
-        where: "Surface of very moist potting mix and around drainage holes.",
-        symptoms: "Generally cosmetic; large populations indicate constantly wet soil and can stress roots.",
-        treatment: "Let soil dry more between waterings, improve drainage, and remove excess debris on soil surface."
-      },
-      {
-        id: "shore_flies",
-        name: "Shore Flies",
-        looksLike: "Small, dark flies with short antennae and sometimes spotted wings, resembling tiny houseflies.",
-        where: "Around very wet growing areas and algae-covered surfaces, often in greenhouses.",
-        symptoms: "Primarily a nuisance; do not usually damage plants directly but indicate overly wet conditions.",
-        treatment: "Improve drainage, reduce standing water, clean algae, and use sticky traps to monitor populations."
-      },
-      {
-        id: "snails_slugs",
-        name: "Slugs & Snails",
-        looksLike: "Soft-bodied mollusks (slugs) or shelled snails; slime trails on pots and benches.",
-        where: "On soil surface, underside of pots, or hiding in cool, damp spots; more common in greenhouses and outdoor containers.",
-        symptoms: "Irregular chew holes in leaves, missing seedlings, slime trails.",
-        treatment: "Hand-pick at night, use barriers and traps, or apply iron phosphate baits labeled for container or greenhouse use."
-      }
-    ];
+const PESTS = [
+  {
+    id: "aphids",
+    name: "Aphids",
+    image: "images/pests/aphids.jpg",
+    looksLike: "Soft-bodied, pear-shaped insects (green, black, brown, or red) clustering on tender growth.",
+    where: "New shoots, flower buds, and undersides of young leaves.",
+    symptoms: "Sticky honeydew, curled or distorted new growth, sooty mold on leaves.",
+    treatment: "Rinse with lukewarm water, then treat with insecticidal soap or neem oil weekly until controlled. Isolate heavily infested plants."
+  },
+  {
+    id: "thrips",
+    name: "Thrips",
+    image: "images/pests/thrips.jpg",
+    looksLike: "Very slender, tiny insects that move quickly; often dark or straw colored.",
+    where: "Inside flowers, along leaf veins, and on new growth.",
+    symptoms: "Silvery or bronzed streaks on leaves, black specks of frass, distorted flowers and buds.",
+    treatment: "Prune heavily affected parts, use sticky traps, and treat with insecticidal soap or a product labeled for thrips on houseplants."
+  },
+  {
+    id: "scale",
+    name: "Scale",
+    image: "images/pests/scale.jpg",
+    looksLike: "Rounded or oval bumps (tan, brown, or gray) stuck to stems and leaf midribs.",
+    where: "Stems, leaf midribs, and undersides of leaves.",
+    symptoms: "Sticky honeydew, sooty mold, yellowing leaves, and general decline.",
+    treatment: "Gently scrape or wipe off adults, prune worst areas, and follow with horticultural oil or systemic treatment per label."
+  },
+  {
+    id: "mealybugs",
+    name: "Mealybugs",
+    image: "images/pests/mealybugs.jpg",
+    looksLike: "White, cottony clumps on stems, leaf joints, and sometimes roots.",
+    where: "Leaf nodes, undersides of leaves, along stems, sometimes in soil near the crown.",
+    symptoms: "Sticky honeydew, leaf yellowing, stunted growth, sooty mold.",
+    treatment: "Dab visible insects with alcohol-soaked cotton swabs; apply neem oil or insecticidal soap repeatedly. Consider repotting for root mealybugs."
+  },
+  {
+    id: "whiteflies",
+    name: "Whiteflies",
+    image: "images/pests/whiteflies.jpg",
+    looksLike: "Tiny white, moth-like insects that fly up when the plant is disturbed.",
+    where: "Undersides of leaves, especially near the top of the plant.",
+    symptoms: "Sticky honeydew, yellowing leaves, reduced vigor, sooty mold.",
+    treatment: "Use yellow sticky traps, shake adults off regularly, and treat with insecticidal soap or neem oil weekly."
+  },
+  {
+    id: "broad_mites",
+    name: "Broad Mites",
+    image: "images/pests/broad_mites.jpg",
+    looksLike: "Too small to see easily; damage is more obvious than the mites themselves.",
+    where: "New growth, buds, and young leaves of many tropical plants.",
+    symptoms: "Twisted, hardened, or puckered new leaves; distorted or aborted flowers.",
+    treatment: "Remove severely damaged growth and treat with miticides or sulfur products labeled for broad mites. Keep affected plants isolated."
+  },
+  {
+    id: "spider_mites",
+    name: "Spider Mites",
+    image: "images/pests/spider_mites.jpg",
+    looksLike: "Tiny moving dots (red, yellow, or brown) plus fine webbing between leaves and stems.",
+    where: "Undersides of leaves and leaf/stem junctions, especially in warm, dry conditions.",
+    symptoms: "Stippled, speckled leaves, fine webbing, leaf drop, dull foliage.",
+    treatment: "Rinse foliage thoroughly, raise humidity, and apply miticide, neem oil, or insecticidal soap every few days until resolved."
+  },
+  {
+    id: "fungus_gnats",
+    name: "Fungus Gnats",
+    image: "images/pests/fungus_gnats.jpg",
+    looksLike: "Small black flies hovering around soil or running over the surface.",
+    where: "Top of the soil, around drainage holes, near windows.",
+    symptoms: "Adult gnats are mostly a nuisance; larvae can damage fine roots, causing yellowing or poor growth, especially in seedlings.",
+    treatment: "Let soil dry more between waterings, use yellow sticky traps, and treat soil with B.t.i or beneficial nematodes."
+  },
+  {
+    id: "cyclamen_mites",
+    name: "Cyclamen Mites",
+    image: "images/pests/cyclamen_mites.jpg",
+    looksLike: "Microscopic mites hidden in tight growth; not usually visible without magnification.",
+    where: "In crowns and buds of plants like African violets and cyclamen.",
+    symptoms: "Stunted, distorted new leaves; deformed flowers; crowded growth rosette.",
+    treatment: "Remove severely damaged leaves, use miticides labeled for cyclamen mites, and keep plants isolated; badly affected plants are often discarded."
+  },
+  {
+    id: "slugs_snails",
+    name: "Slugs & Snails",
+    image: "images/pests/slugs_snails.jpg",
+    looksLike: "Soft-bodied slugs or shelled snails; slime trails on pots and benches.",
+    where: "Soil surface, underside of pots, and damp, shady areas indoors or in greenhouses.",
+    symptoms: "Irregular chew holes in leaves, missing seedlings, slime trails.",
+    treatment: "Hand-pick at night, use traps and barriers, or apply iron phosphate baits labeled for container or greenhouse use."
+  }
+];
 
-    /* ========= PEST UI BUILD ========= */
-    const pestGrid      = document.getElementById("pestGrid");
-    const pestSearch    = document.getElementById("pestSearch");
-    const pestBackdrop  = document.getElementById("pestBackdrop");
-    const pestTitle     = document.getElementById("pestTitle");
-    const pestLooksLike = document.getElementById("pestLooksLike");
-    const pestWhere     = document.getElementById("pestWhere");
-    const pestSymptoms  = document.getElementById("pestSymptoms");
-    const pestTreatment = document.getElementById("pestTreatment");
-    const pestCloseBtn  = document.getElementById("pestClose");
+/* ========= PEST UI BUILD ========= */
+const pestGrid      = document.getElementById("pestGrid");
+const pestSearch    = document.getElementById("pestSearch");
+const pestBackdrop  = document.getElementById("pestBackdrop");
+const pestImage     = document.getElementById("pestImage");
+const pestTitle     = document.getElementById("pestTitle");
+const pestLooksLike = document.getElementById("pestLooksLike");
+const pestWhere     = document.getElementById("pestWhere");
+const pestSymptoms  = document.getElementById("pestSymptoms");
+const pestTreatment = document.getElementById("pestTreatment");
+const pestCloseBtn  = document.getElementById("pestClose");
 
-    function renderPestCards() {
-      pestGrid.innerHTML = "";
-      PESTS.forEach(pest => {
-        const btn = document.createElement("button");
-        btn.className = "pc-card";
-        btn.dataset.pestId = pest.id;
-        btn.innerHTML = `
-          <div class="pc-card-title">${pest.name}</div>
-          <div class="pc-card-subtitle">${pest.symptoms}</div>
-        `;
-        btn.addEventListener("click", () => openPestPopup(pest.id));
-        pestGrid.appendChild(btn);
-      });
-    }
+function renderPestCards() {
+  pestGrid.innerHTML = "";
+  PESTS.forEach(pest => {
+    const btn = document.createElement("button");
+    btn.className = "pc-card";
+    btn.dataset.pestId = pest.id;
+    btn.innerHTML = `
+      <div class="pc-card-title">${pest.name}</div>
+      <div class="pc-card-subtitle">${pest.symptoms}</div>
+    `;
+    btn.addEventListener("click", () => openPestPopup(pest.id));
+    pestGrid.appendChild(btn);
+  });
+}
 
-    function openPestPopup(id) {
-      const pest = PESTS.find(p => p.id === id);
-      if (!pest) return;
-      pestTitle.textContent     = pest.name || "";
-      pestLooksLike.textContent = pest.looksLike || "";
-      pestWhere.textContent     = pest.where || "";
-      pestSymptoms.textContent  = pest.symptoms || "";
-      pestTreatment.textContent = pest.treatment || "";
-      pestBackdrop.style.display = "flex";
-    }
+function openPestPopup(id) {
+  const pest = PESTS.find(p => p.id === id);
+  if (!pest) return;
 
-    pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-    pestBackdrop.addEventListener("click", (e) => {
-      if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-    });
+  pestTitle.textContent     = pest.name || "";
+  pestLooksLike.textContent = pest.looksLike || "";
+  pestWhere.textContent     = pest.where || "";
+  pestSymptoms.textContent  = pest.symptoms || "";
+  pestTreatment.textContent = pest.treatment || "";
 
-    function filterPestCards() {
-      const q = (pestSearch.value || "").toLowerCase().trim();
-      const cards = pestGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const txt = (card.textContent || "").toLowerCase();
-        card.style.display = !q || txt.includes(q) ? "" : "none";
-      });
-    }
+  if (pest.image) {
+    pestImage.src = pest.image;
+    pestImage.alt = pest.name || "";
+    pestImage.style.display = "";
+  } else {
+    pestImage.style.display = "none";
+  }
 
-    pestSearch.addEventListener("input", filterPestCards);
+  pestBackdrop.style.display = "flex";
+}
+
+pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+pestBackdrop.addEventListener("click", (e) => {
+  if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+});
+
+function filterPestCards() {
+  const q = (pestSearch.value || "").toLowerCase().trim();
+  const cards = pestGrid.querySelectorAll(".pc-card");
+  cards.forEach(card => {
+    const txt = (card.textContent || "").toLowerCase();
+    card.style.display = !q || txt.includes(q) ? "" : "none";
+  });
+}
+
+pestSearch.addEventListener("input", filterPestCards);
+``
 
     /* ========= PLANT CARE VIEW DROPDOWN LOGIC ========= */
     const plantCareViewSelect = document.getElementById("plantCareViewSelect");
@@ -1301,14 +1419,21 @@
       }
     }
 
-    /* ========= INIT ========= */
-    renderPlantCards();
-    filterPlantCards();
-    renderPestCards();
-    filterPestCards();
-    loadSkuCsv();
-    loadOrderCsv();
+
+/* ========= INIT ========= */
+renderPlantCards();
+filterPlantCards();
+renderPestCards();
+filterPestCards();
+loadSkuCsv();
+loadOrderCsv();
+
+// Default view: SKU tab is already visible from HTML;
+// if you want, you can default to Care Library instead by calling:
+// showTab("care-library");
+
   </script>
 </body>
 </html>
 ``
+
