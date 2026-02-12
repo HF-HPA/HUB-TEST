@@ -137,42 +137,31 @@
       margin-top: 14px;
     }
 
-    /* PLANT CARE TAB DROPDOWN */
-    .tab-dropdown {
-      position: relative;
-      display: inline-block;
-      z-index: 10;
-    }
+  
+/* PLANT CARE TAB DROPDOWN */
+.tab-dropdown {
+  /* no longer needs to be relative for positioning */
+  position: relative;
+  display: inline-block;
+  z-index: 10;
+}
 
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      margin-top: 2px;
-      background: #020617;
-      border-radius: 0 0 10px 10px;
-      border: 1px solid var(--border-subtle);
-      min-width: 160px;
-      padding: 4px 0;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-      z-index: 40;
-    }
+.dropdown-menu {
+  position: fixed;           /* <— key change: fixed to viewport */
+  top: 60px;                 /* adjust this up/down to sit under your tab bar */
+  right: 16px;               /* or change to left:16px; if you prefer it left aligned */
+  /* left: auto;            /* make sure left isn't also set when using right */
 
-    .dropdown-item {
-      width: 100%;
-      text-align: left;
-      border: none;
-      background: transparent;
-      color: var(--text);
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background var(--transition-fast);
-    }
+  margin-top: 0;
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  min-width: 160px;
+  padding: 4px 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  z-index: 999;              /* above everything else */
+}
 
-    .dropdown-item:hover {
-      background: rgba(255,255,255,0.08);
-    }
 
     /* SKU FILTER AREA (SKU Catalogue tab) */
     .controls {
@@ -1551,6 +1540,7 @@ document.addEventListener("click", (e) => {
   </script>
 </body>
 </html>
+
 
 
 
