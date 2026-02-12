@@ -5,14 +5,14 @@
   <title>HF-HPA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Favicon (desktop browsers) -->
-<link rel="icon" type="image/png" href="hpa_logo.png" />
+  <!-- Favicon (desktop browsers) -->
+  <link rel="icon" type="image/png" href="hpa_logo.png" />
 
-<!-- Apple devices (iPhone/iPad Safari) -->
-<link rel="apple-touch-icon" href="hpa_logo.png" />
+  <!-- Apple devices (iPhone/iPad Safari) -->
+  <link rel="apple-touch-icon" href="hpa_logo.png" />
 
-<!-- For better compatibility with all Apple devices -->
-<link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+  <!-- For better compatibility with all Apple devices -->
+  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
 
   <style>
     :root {
@@ -352,7 +352,7 @@
       color: var(--text);
     }
 
-    /* PLANT CARE GUIDE */
+    /* PLANT CARE (common styles) */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -427,7 +427,34 @@
       font-size: 0.95rem;
     }
 
-    /* CARE POPUP */
+    /* PLANT CARE SUB-TABS */
+    .subtabs {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .subtab {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+
+    .subtab-active {
+      background: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    /* CARE POPUP / GENERIC POPUP */
     .popup-backdrop {
       position: fixed;
       inset: 0;
@@ -490,7 +517,7 @@
     <nav class="tabs">
       <button class="tab active" data-tab="catalog">SKU Catalogue</button>
       <button class="tab" data-tab="orders">Order Breakdown</button>
-      <button class="tab" data-tab="care">Houseplant Care Library</button>
+      <button class="tab" data-tab="care">Plant Care</button>
     </nav>
 
     <!-- SKU CATALOGUE TAB -->
@@ -551,19 +578,42 @@
       </div>
     </section>
 
-    <!-- PLANT CARE GUIDE TAB -->
+    <!-- PLANT CARE TAB -->
     <section id="tab-care" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Houseplant Care Library</div>
-        <div class="pc-search-wrapper">
-          <span class="pc-search-icon">🔎</span>
-          <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
-        </div>
+      <!-- SUB-TABS -->
+      <div class="subtabs">
+        <button class="subtab subtab-active" data-subtab="care-library">Care Library</button>
+        <button class="subtab" data-subtab="pest-id">Pest Identification</button>
       </div>
 
-      <div class="pc-grid" id="plantCareGrid">
-        <!-- 43 plant cards -->
-      </div>
+      <!-- CARE LIBRARY PANEL (moved old content here) -->
+      <section id="care-library-panel">
+        <div class="pc-header">
+          <div class="pc-title">Care Library</div>
+          <div class="pc-search-wrapper">
+            <span class="pc-search-icon">🔎</span>
+            <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
+          </div>
+        </div>
+
+        <div class="pc-grid" id="plantCareGrid">
+          <!-- plant cards created via JS -->
+        </div>
+      </section>
+
+      <!-- PEST IDENTIFICATION PANEL -->
+      <section id="pest-panel" class="hidden">
+        <div class="pc-header">
+          <div class="pc-title">Pest Identification</div>
+        </div>
+
+        <div class="pest-content">
+          <p style="color: var(--muted); font-size: 0.9rem;">
+            Use this section to identify common houseplant pests and how to treat them.
+            (Placeholder content for now – we can build this out next.)
+          </p>
+        </div>
+      </section>
     </section>
 
   </main>
@@ -1027,8 +1077,30 @@
       }
     }
 
+    /* ========= PLANT CARE SUB-TABS LOGIC ========= */
+    const subtabs = document.querySelectorAll(".subtab");
+    const careLibraryPanel = document.getElementById("care-library-panel");
+    const pestPanel = document.getElementById("pest-panel");
+
+    subtabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Toggle active class
+        subtabs.forEach(b => b.classList.remove("subtab-active"));
+        btn.classList.add("subtab-active");
+
+        const target = btn.dataset.subtab;
+        // Show/hide panels
+        if (target === "care-library") {
+          careLibraryPanel.classList.remove("hidden");
+          pestPanel.classList.add("hidden");
+        } else if (target === "pest-id") {
+          careLibraryPanel.classList.add("hidden");
+          pestPanel.classList.remove("hidden");
+        }
+      });
+    });
+
     /* ========= INIT ========= */
-    renderPlantCards = renderPlantCards || (() => {});
     renderPlantCards();
     filterPlantCards();
     loadSkuCsv();
@@ -1036,4 +1108,3 @@
   </script>
 </body>
 </html>
-
