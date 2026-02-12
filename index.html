@@ -427,34 +427,36 @@
       font-size: 0.95rem;
     }
 
-    /* PLANT CARE SUB-TABS */
-    .subtabs {
-      display: inline-flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      border-radius: var(--radius-pill);
-      padding: 4px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .subtab {
-      border: none;
-      background: transparent;
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
       color: var(--muted);
-      font-size: 0.85rem;
-      padding: 6px 14px;
+    }
+
+    /* PLANT CARE VIEW DROPDOWN */
+    .pc-view-select-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .pc-view-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .pc-view-select {
       border-radius: var(--radius-pill);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-    }
-
-    .subtab-active {
-      background: rgba(255,255,255,0.12);
+      border: 1px solid var(--border-subtle);
+      background: rgba(10,21,32,0.9);
+      padding: 6px 12px;
       color: var(--text);
+      font-size: 0.85rem;
     }
 
-    /* CARE POPUP / GENERIC POPUP */
+    /* POPUPS */
     .popup-backdrop {
       position: fixed;
       inset: 0;
@@ -580,13 +582,18 @@
 
     <!-- PLANT CARE TAB -->
     <section id="tab-care" class="tab-content hidden">
-      <!-- SUB-TABS -->
-      <div class="subtabs">
-        <button class="subtab subtab-active" data-subtab="care-library">Care Library</button>
-        <button class="subtab" data-subtab="pest-id">Pest Identification</button>
+      <div class="pc-header">
+        <div class="pc-title">Plant Care</div>
+        <div class="pc-view-select-wrapper">
+          <span class="pc-view-label">View:</span>
+          <select id="plantCareViewSelect" class="pc-view-select">
+            <option value="care-library">Care Library</option>
+            <option value="pest-id">Pest Identification</option>
+          </select>
+        </div>
       </div>
 
-      <!-- CARE LIBRARY PANEL (moved old content here) -->
+      <!-- CARE LIBRARY PANEL -->
       <section id="care-library-panel">
         <div class="pc-header">
           <div class="pc-title">Care Library</div>
@@ -605,13 +612,14 @@
       <section id="pest-panel" class="hidden">
         <div class="pc-header">
           <div class="pc-title">Pest Identification</div>
+          <div class="pc-search-wrapper">
+            <span class="pc-search-icon">🔎</span>
+            <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+          </div>
         </div>
 
-        <div class="pest-content">
-          <p style="color: var(--muted); font-size: 0.9rem;">
-            Use this section to identify common houseplant pests and how to treat them.
-            (Placeholder content for now – we can build this out next.)
-          </p>
+        <div class="pc-grid" id="pestGrid">
+          <!-- pest cards created via JS -->
         </div>
       </section>
     </section>
@@ -659,6 +667,27 @@
       <div class="popup-text" id="careTips"></div>
 
       <button id="careClose" class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <!-- PEST POPUP -->
+  <div id="pestBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2 id="pestTitle"></h2>
+
+      <div class="popup-section-title">What it looks like</div>
+      <div class="popup-text" id="pestLooksLike"></div>
+
+      <div class="popup-section-title">Where you see it</div>
+      <div class="popup-text" id="pestWhere"></div>
+
+      <div class="popup-section-title">Damage & symptoms</div>
+      <div class="popup-text" id="pestSymptoms"></div>
+
+      <div class="popup-section-title">Treatment</div>
+      <div class="popup-text" id="pestTreatment"></div>
+
+      <button id="pestClose" class="popup-close">Close</button>
     </div>
   </div>
 
@@ -807,7 +836,7 @@
       } else if (isLowLight) {
         light = "Tolerates low to medium light conditions, making it suitable for interior rooms away from windows.";
         water = "Allow the top 1–2 inches of soil to dry before watering.";
-        humidity = "Average household humidity is typically adequate but some varieties require 60-80%";
+        humidity = "Average household humidity is typically adequate but some varieties require 60-80%.";
         temp = "Keep between 60–80°F. Avoid cold drafts and prolonged temperatures below 55°F.";
         soil = "Use a standard, well-draining indoor potting mix. Avoid compacted, waterlogged soil.";
         fertilizer = "Feed lightly in spring and summer with a diluted, balanced houseplant fertilizer.";
@@ -893,6 +922,201 @@
     }
 
     careSearch.addEventListener("input", filterPlantCards);
+
+    /* ========= PEST IDENTIFICATION CONFIG ========= */
+
+    // Common houseplant pests (not literally every pest, but a very broad list)
+    const PESTS = [
+      {
+        id: "aphids",
+        name: "Aphids",
+        looksLike: "Soft-bodied, pear-shaped insects (green, black, brown, or red) clustered on new growth and undersides of leaves.",
+        where: "Tender new shoots, flower buds, and the undersides of young leaves.",
+        symptoms: "Sticky honeydew, curled or distorted new growth, sooty mold growing on the honeydew.",
+        treatment: "Rinse plant under lukewarm water. Treat with insecticidal soap or neem oil, repeating weekly until under control. Isolate heavily infested plants."
+      },
+      {
+        id: "mealybugs",
+        name: "Mealybugs",
+        looksLike: "White, cottony or fuzzy clumps along stems, leaf joints, and sometimes on roots.",
+        where: "Leaf nodes, undersides of leaves, along stems, and occasionally in the soil near the crown.",
+        symptoms: "Sticky honeydew, leaf yellowing, stunted growth, and sooty mold. Plants may look weak overall.",
+        treatment: "Dab visible bugs with cotton swabs dipped in alcohol. Follow up with repeated applications of neem oil or insecticidal soap. Consider repotting if root mealybugs are present."
+      },
+      {
+        id: "spider_mites",
+        name: "Spider Mites",
+        looksLike: "Tiny moving specks (red, yellow, or brown) and fine webbing between leaves and stems.",
+        where: "On the undersides of leaves and in the junctions of stems, especially in dry, warm conditions.",
+        symptoms: "Speckled, stippled leaves, fine webbing, leaf drop, and a general dull appearance to foliage.",
+        treatment: "Rinse plants thoroughly, increase humidity, and treat with miticide, neem oil, or insecticidal soap every few days. Isolate severely infested plants."
+      },
+      {
+        id: "thrips",
+        name: "Thrips",
+        looksLike: "Very slender, tiny insects that move quickly; often brown or black, sometimes winged.",
+        where: "Inside flowers, along leaf veins, and on new growth. Shake plant over white paper to see them move.",
+        symptoms: "Silvery or bronzed streaks on leaves, black specks of droppings, deformed flowers, and bud drop.",
+        treatment: "Prune heavily infested parts. Use sticky traps, then treat with insecticidal soap or systemic insecticide labeled for thrips on houseplants."
+      },
+      {
+        id: "whiteflies",
+        name: "Whiteflies",
+        looksLike: "Tiny white moth-like insects that fly up in a cloud when the plant is disturbed.",
+        where: "On undersides of leaves, especially near the top of the plant.",
+        symptoms: "Sticky honeydew, yellowing leaves, reduced vigor, and sooty mold on leaves.",
+        treatment: "Use yellow sticky traps, regularly vacuum or shake adults off, and treat leaves with insecticidal soap or neem oil, repeating weekly."
+      },
+      {
+        id: "fungus_gnats",
+        name: "Fungus Gnats",
+        looksLike: "Small black flies that hover around soil and walk on the surface of the potting mix.",
+        where: "Top of the soil, around drainage holes, and near windows when disturbed.",
+        symptoms: "Nuisance adults; larvae can damage fine roots, causing yellowing, wilting, or stunted growth in seedlings and young plants.",
+        treatment: "Allow soil to dry more between waterings, use yellow sticky traps, and treat soil with biological controls (e.g., B.t.i) or beneficial nematodes."
+      },
+      {
+        id: "scale_soft",
+        name: "Soft Scale",
+        looksLike: "Rounded or oval bumps (tan, brown, or black) attached to stems and leaf midribs; may exude honeydew.",
+        where: "On stems, leaf midribs, and sometimes undersides of leaves.",
+        symptoms: "Sticky honeydew, sooty mold, yellowing foliage, and decline in plant vigor.",
+        treatment: "Scrape or wipe off adults, prune heavily infested stems, and treat with horticultural oil or systemic insecticide according to label."
+      },
+      {
+        id: "scale_armored",
+        name: "Armored Scale",
+        looksLike: "Hard, shell-like bumps firmly attached to stems or leaves; often gray or brown.",
+        where: "Stems and older leaves, especially on woody houseplants.",
+        symptoms: "Yellowing leaves, dieback of twigs, and general decline. Less honeydew than soft scale.",
+        treatment: "Physically remove with a soft brush or cloth, then use horticultural oil sprays, repeating as needed."
+      },
+      {
+        id: "root_mealybugs",
+        name: "Root Mealybugs",
+        looksLike: "White, cottony masses on roots and in soil around the root ball.",
+        where: "Within the potting mix and on roots, often near the edges of the pot.",
+        symptoms: "Unexplained wilting, poor growth, and white cottony bits when you remove the plant from the pot.",
+        treatment: "Discard highly infested soil, wash roots, and repot in fresh mix. Treat with systemic insecticide if appropriate and isolate plant."
+      },
+      {
+        id: "root_aphids",
+        name: "Root Aphids",
+        looksLike: "Small, aphid-like insects on roots; may be pale, white, or brown, sometimes with waxy coating.",
+        where: "On roots and in the soil around the root zone.",
+        symptoms: "Stunted, yellowing plants that don’t respond to normal feeding or watering; poor root development.",
+        treatment: "Repot into fresh soil, discard heavily infested media, and use soil drenches labeled for root aphids or beneficial nematodes."
+      },
+      {
+        id: "broad_mites",
+        name: "Broad Mites",
+        looksLike: "Extremely small (almost invisible) mites; damage seen more than the pest.",
+        where: "New growth, buds, and young leaves of many tropical houseplants.",
+        symptoms: "Twisted, hardened, or puckered new leaves; distorted flowers; bronzed foliage.",
+        treatment: "Remove affected growth if possible. Treat repeatedly with miticides or sulfur-based products labeled for broad mites; keep plant isolated."
+      },
+      {
+        id: "cyclamen_mites",
+        name: "Cyclamen Mites",
+        looksLike: "Microscopic mites; similar to broad mites in behavior.",
+        where: "In tight buds and crown of plants, especially African violets and cyclamen.",
+        symptoms: "Stunted, contorted new leaves and distorted flowers; growth rosette may look crowded and deformed.",
+        treatment: "Remove the worst-affected growth. Use miticides labeled for cyclamen mites and maintain higher humidity. Severely damaged plants are often discarded."
+      },
+      {
+        id: "springtails",
+        name: "Springtails",
+        looksLike: "Tiny white or gray jumping insects that flick when disturbed on damp soil.",
+        where: "Surface of very moist potting mix and around drainage holes.",
+        symptoms: "Generally cosmetic; large populations indicate constantly wet soil and can stress roots.",
+        treatment: "Let soil dry more between waterings, improve drainage, and remove excess debris on soil surface."
+      },
+      {
+        id: "shore_flies",
+        name: "Shore Flies",
+        looksLike: "Small, dark flies with short antennae and sometimes spotted wings, resembling tiny houseflies.",
+        where: "Around very wet growing areas and algae-covered surfaces, often in greenhouses.",
+        symptoms: "Primarily a nuisance; do not usually damage plants directly but indicate overly wet conditions.",
+        treatment: "Improve drainage, reduce standing water, clean algae, and use sticky traps to monitor populations."
+      },
+      {
+        id: "snails_slugs",
+        name: "Slugs & Snails",
+        looksLike: "Soft-bodied mollusks (slugs) or shelled snails; slime trails on pots and benches.",
+        where: "On soil surface, underside of pots, or hiding in cool, damp spots; more common in greenhouses and outdoor containers.",
+        symptoms: "Irregular chew holes in leaves, missing seedlings, slime trails.",
+        treatment: "Hand-pick at night, use barriers and traps, or apply iron phosphate baits labeled for container or greenhouse use."
+      }
+    ];
+
+    /* ========= PEST UI BUILD ========= */
+    const pestGrid      = document.getElementById("pestGrid");
+    const pestSearch    = document.getElementById("pestSearch");
+    const pestBackdrop  = document.getElementById("pestBackdrop");
+    const pestTitle     = document.getElementById("pestTitle");
+    const pestLooksLike = document.getElementById("pestLooksLike");
+    const pestWhere     = document.getElementById("pestWhere");
+    const pestSymptoms  = document.getElementById("pestSymptoms");
+    const pestTreatment = document.getElementById("pestTreatment");
+    const pestCloseBtn  = document.getElementById("pestClose");
+
+    function renderPestCards() {
+      pestGrid.innerHTML = "";
+      PESTS.forEach(pest => {
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.dataset.pestId = pest.id;
+        btn.innerHTML = `
+          <div class="pc-card-title">${pest.name}</div>
+          <div class="pc-card-subtitle">${pest.symptoms}</div>
+        `;
+        btn.addEventListener("click", () => openPestPopup(pest.id));
+        pestGrid.appendChild(btn);
+      });
+    }
+
+    function openPestPopup(id) {
+      const pest = PESTS.find(p => p.id === id);
+      if (!pest) return;
+      pestTitle.textContent     = pest.name || "";
+      pestLooksLike.textContent = pest.looksLike || "";
+      pestWhere.textContent     = pest.where || "";
+      pestSymptoms.textContent  = pest.symptoms || "";
+      pestTreatment.textContent = pest.treatment || "";
+      pestBackdrop.style.display = "flex";
+    }
+
+    pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+    pestBackdrop.addEventListener("click", (e) => {
+      if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+    });
+
+    function filterPestCards() {
+      const q = (pestSearch.value || "").toLowerCase().trim();
+      const cards = pestGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    pestSearch.addEventListener("input", filterPestCards);
+
+    /* ========= PLANT CARE VIEW DROPDOWN LOGIC ========= */
+    const plantCareViewSelect = document.getElementById("plantCareViewSelect");
+    const careLibraryPanel    = document.getElementById("care-library-panel");
+    const pestPanel           = document.getElementById("pest-panel");
+
+    plantCareViewSelect.addEventListener("change", () => {
+      const view = plantCareViewSelect.value;
+      if (view === "care-library") {
+        careLibraryPanel.classList.remove("hidden");
+        pestPanel.classList.add("hidden");
+      } else {
+        careLibraryPanel.classList.add("hidden");
+        pestPanel.classList.remove("hidden");
+      }
+    });
 
     /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
@@ -1077,34 +1301,14 @@
       }
     }
 
-    /* ========= PLANT CARE SUB-TABS LOGIC ========= */
-    const subtabs = document.querySelectorAll(".subtab");
-    const careLibraryPanel = document.getElementById("care-library-panel");
-    const pestPanel = document.getElementById("pest-panel");
-
-    subtabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        // Toggle active class
-        subtabs.forEach(b => b.classList.remove("subtab-active"));
-        btn.classList.add("subtab-active");
-
-        const target = btn.dataset.subtab;
-        // Show/hide panels
-        if (target === "care-library") {
-          careLibraryPanel.classList.remove("hidden");
-          pestPanel.classList.add("hidden");
-        } else if (target === "pest-id") {
-          careLibraryPanel.classList.add("hidden");
-          pestPanel.classList.remove("hidden");
-        }
-      });
-    });
-
     /* ========= INIT ========= */
     renderPlantCards();
     filterPlantCards();
+    renderPestCards();
+    filterPestCards();
     loadSkuCsv();
     loadOrderCsv();
   </script>
 </body>
 </html>
+``
