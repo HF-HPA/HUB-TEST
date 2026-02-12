@@ -130,6 +130,42 @@
       margin-top: 14px;
     }
 
+    /* PLANT CARE TAB DROPDOWN (top nav) */
+    .tab-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 2px;
+      background: #020617;
+      border-radius: 0 0 10px 10px;
+      border: 1px solid var(--border-subtle);
+      min-width: 160px;
+      padding: 4px 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      z-index: 40;
+    }
+
+    .dropdown-item {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
     /* SKU FILTER AREA (SKU Catalogue tab) */
     .controls {
       background: rgba(21,37,54,0.95);
@@ -201,53 +237,6 @@
       color: var(--text);
       font-size: 0.8rem;
     }
-
-* PLANT CARE TAB DROPDOWN */
-.tab-dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 2px;
-  background: #020617;
-  border-radius: 0 0 10px 10px;
-  border: 1px solid var(--border-subtle);
-  min-width: 160px;
-  padding: 4px 0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-  z-index: 40;
-}
-
-.dropdown-item {
-  width: 100%;
-  text-align: left;
-  border: none;
-  background: transparent;
-  color: var(--text);
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
-
-.dropdown-item:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-/* POPUP IMAGES */
-.popup-image {
-  width: 100%;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border: 1px solid var(--border-subtle);
-}
-``
 
     /* SKU RESULTS */
     .results-header {
@@ -399,7 +388,7 @@
       color: var(--text);
     }
 
-    /* PLANT CARE (common styles) */
+    /* PLANT CARE (shared styles) */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -480,30 +469,752 @@
       color: var(--muted);
     }
 
-    /* PLANT CARE VIEW DROPDOWN */
-    .pc-view-select-wrapper {
-      display: flex;
+    /* POPUPS */
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
       align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 4px;
+      justify-content: center;
+      z-index: 50;
     }
 
-    .pc-view-label {
+    .popup {
+      background: #14232f;
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--accent);
+      width: 90%;
+      max-width: 480px;
+    }
+
+    .popup h2 { margin-bottom: 8px; }
+
+    .popup-section-title {
+      font-weight: 600;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .popup-text {
       font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    .popup-close {
+      margin-top: 12px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    /* POPUP IMAGES */
+    .popup-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+        <div class="title-block">
+          <h1>HF-HPA</h1>
+          <p class="subtitle">Central Hub for HPA info.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- TABS -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="catalog">SKU Catalogue</button>
+      <button class="tab" data-tab="orders">Order Breakdown</button>
+
+      <!-- Plant Care tab with dropdown -->
+      <div class="tab-dropdown">
+        <button class="tab" id="plantCareTab" type="button">
+          Plant Care ▾
+        </button>
+        <div class="dropdown-menu hidden" id="plantCareMenu">
+          <button class="dropdown-item" data-target-tab="care-library" type="button">
+            Care Library
+          </button>
+          <button class="dropdown-item" data-target-tab="pest-id" type="button">
+            Pest Identification
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- SKU CATALOGUE TAB -->
+    <section id="tab-catalog" class="tab-content">
+      <section class="controls">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">SKU</span>
+            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400 or 1005837400" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Sent In</span>
+            <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Year Sent</span>
+            <select id="yearFilter" class="filter-input">
+              <option value="all">All</option>
+              <option>2022</option>
+              <option>2023</option>
+              <option>2024</option>
+              <option>2025</option>
+              <option>2026</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="results-header">
+        <strong id="resultCount">0</strong> SKUs shown
+      </div>
+
+      <section id="skuGrid" class="sku-grid"></section>
+      <div id="emptyState" class="empty-state hidden">No SKUs match your filters.</div>
+    </section>
+
+    <!-- ORDER BREAKDOWN TAB -->
+    <section id="tab-orders" class="tab-content hidden">
+      <div class="order-breakdown-wrapper">
+        <div class="ob-header-stack">
+          <div class="ob-week-box">
+            Shipping Week #: <span id="obWeekDisplay">TBD</span>
+          </div>
+          <div class="ob-grades-box">
+            Store Grade Shipping: <span id="obGradesDisplay">All stores</span>
+          </div>
+        </div>
+
+        <div class="ob-grid">
+          <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
+          <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARE LIBRARY TAB -->
+    <section id="tab-care-library" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Care Library</div>
+        <div class="pc-search-wrapper">
+          <span class="pc-search-icon">🔎</span>
+          <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
+        </div>
+      </div>
+
+      <div class="pc-grid" id="plantCareGrid">
+        <!-- plant cards via JS -->
+      </div>
+    </section>
+
+    <!-- PEST IDENTIFICATION TAB -->
+    <section id="tab-pest-id" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Pest Identification</div>
+        <div class="pc-search-wrapper">
+          <span class="pc-search-icon">🔎</span>
+          <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+        </div>
+      </div>
+
+      <div class="pc-grid" id="pestGrid">
+        <!-- pest cards via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SKU POPUP -->
+  <div id="popupBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2 id="popupName"></h2>
+      <p><strong>SKU:</strong> <span id="popupSku"></span></p>
+      <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
+      <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
+      <button id="popupClose" class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <!-- PLANT CARE POPUP -->
+  <div id="careBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <img id="careImage" class="popup-image" alt="" />
+      <h2 id="careTitle"></h2>
+
+      <div class="popup-section-title">Light</div>
+      <div class="popup-text" id="careLight"></div>
+
+      <div class="popup-section-title">Water</div>
+      <div class="popup-text" id="careWater"></div>
+
+      <div class="popup-section-title">Humidity</div>
+      <div class="popup-text" id="careHumidity"></div>
+
+      <div class="popup-section-title">Temperature</div>
+      <div class="popup-text" id="careTemp"></div>
+
+      <div class="popup-section-title">Soil</div>
+      <div class="popup-text" id="careSoil"></div>
+
+      <div class="popup-section-title">Fertilizer</div>
+      <div class="popup-text" id="careFertilizer"></div>
+
+      <div class="popup-section-title">Toxicity</div>
+      <div class="popup-text" id="careToxicity"></div>
+
+      <div class="popup-section-title">Extra Tips</div>
+      <div class="popup-text" id="careTips"></div>
+
+      <button id="careClose" class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <!-- PEST POPUP -->
+  <div id="pestBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <img id="pestImage" class="popup-image" altGreat catch sharing the whole file — there are a few things in there that *definitely* would break the page:
+
+- A broken CSS comment: `* PLANT CARE TAB DROPDOWN */` (missing the opening `/*`)
+- Stray backticks like `` `` and ``` ``` inside CSS/JS
+- Duplicate HTML sections for:
+  - `tab-care-library`
+  - `pestGrid`
+  - `care-library-panel` / `pest-panel`
+- Old JS functions still referencing `CARE_GUIDES` and `plantCareViewSelect` that no longer exist
+
+Those combined will stop the browser from parsing the file correctly, so **nothing** runs.
+
+Let’s fix this by giving you a **clean, working HTML** in **three sections**:
+
+1. `<head>` + all CSS  
+2. `<body>` markup (header, tabs, sections, popups)  
+3. `<script>` with all JavaScript (tabs, CSV, plant library, pests)
+
+This version:
+
+- Uses the **Plant Care tab with a dropdown** (Care Library / Pest Identification)  
+- Keeps **SKU Catalogue** + **Order Breakdown** working  
+- Includes your **per‑plant Care Library list** and **10-pest list**  
+- Shows **images in the plant & pest popups** if the image paths exist
+
+---
+
+## 🔹 SECTION 1 – `<head>` + CSS
+
+Replace everything from your current `<!DOCTYPE html>` down through `</style>` with this:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HF-HPA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Favicon (desktop browsers) -->
+  <link rel="icon" type="image/png" href="hpa_logo.png" />
+
+  <!-- Apple devices (iPhone/iPad Safari) -->
+  <link rel="apple-touch-icon" href="hpa_logo.png" />
+
+  <!-- For better compatibility with all Apple devices -->
+  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+
+  <style>
+    :root {
+      --bg: #0b1720;
+      --bg-alt: #111f2b;
+      --card-bg: #152433;
+      --accent: #61dafb;
+      --accent-soft: rgba(97, 218, 251, 0.15);
+      --text: #f7fbff;
+      --muted: #a6b4c4;
+      --border-subtle: #233546;
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #12283a 0, #050b10 52%, #020509 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      width: 100%;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .title-block h1 {
+      font-size: 1.55rem;
+      font-weight: 650;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
       color: var(--muted);
     }
 
-    .pc-view-select {
+    /* TABS */
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-top: 10px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border-radius: 8px 8px 0 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .tab.active {
+      background: rgba(255,255,255,0.18);
+      border-color: var(--border-subtle);
+      border-bottom-color: rgba(255,255,255,0.18);
+      color: var(--text);
+    }
+
+    .tab-content {
+      margin-top: 14px;
+    }
+
+    /* PLANT CARE TAB DROPDOWN */
+    .tab-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 2px;
+      background: #020617;
+      border-radius: 0 0 10px 10px;
+      border: 1px solid var(--border-subtle);
+      min-width: 160px;
+      padding: 4px 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      z-index: 40;
+    }
+
+    .dropdown-item {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* SKU FILTER AREA (SKU Catalogue tab) */
+    .controls {
+      background: rgba(21,37,54,0.95);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    @media (min-width: 900px) {
+      .controls {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .search-wrapper {
+      flex: 2;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: rgba(5,16,26,0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .search-input::placeholder { color: #62758a; }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #62758a;
+    }
+
+    .filters {
+      flex: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+    }
+
+    .filter-input {
       border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
       background: rgba(10,21,32,0.9);
-      padding: 6px 12px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    /* SKU RESULTS */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .results-header strong { color: var(--text); }
+
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      .sku-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .sku-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sku-card {
+      position: relative;
+      background: radial-gradient(circle at top left, #203447 0, #0c1722 60%, #050b10);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sku-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15,23,42,0.95);
+      border-radius: var(--radius-pill);
+      border: 1px solid #64748b;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+    }
+
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15,23,42,0.7);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    /* ORDER BREAKDOWN */
+    .order-breakdown-wrapper {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(148,197,255,0.18);
+      border: 1px solid rgba(148,197,255,0.7);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    @media (min-width: 640px) {
+      .ob-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .ob-box {
+      background: rgba(148,197,255,0.18);
+      border: 1px solid rgba(148,197,255,0.7);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      min-height: 90px;
+    }
+
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    /* PLANT / PEST CARDS */
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: rgba(5,16,26,0.9);
       color: var(--text);
       font-size: 0.85rem;
     }
 
-    /* POPUPS */
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #62758a;
+    }
+
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .pc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .pc-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .pc-card {
+      background: radial-gradient(circle at top left, #1f2937 0, #020617 70%);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      padding: 10px 12px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* POPUP IMAGES */
+    .popup-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* POPUPS (generic) */
     .popup-backdrop {
       position: fixed;
       inset: 0;
@@ -563,27 +1274,27 @@
     </header>
 
     <!-- TABS -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="catalog">SKU Catalogue</button>
+      <button class="tab" data-tab="orders">Order Breakdown</button>
 
-<nav class="tabs">
-  <button class="tab active" data-tab="catalog">SKU Catalogue</button>
-  <button class="tab" data-tab="orders">Order Breakdown</button>
+      <!-- Plant Care dropdown -->
+      <div class="tab-dropdown">
+        <button class="tab" id="plantCareTab" type="button">
+          Plant Care ▾
+        </button>
 
-  <!-- Plant Care tab with dropdown -->
-  <div class="tab-dropdown">
-    <button class="tab" id="plantCareTab" type="button">
-      Plant Care ▾
-    </button>
-    <div class="dropdown-menu hidden" id="plantCareMenu">
-      <button class="dropdown-item" data-target-tab="care-library" type="button">
-        Care Library
-      </button>
-      <button class="dropdown-item" data-target-tab="pest-id" type="button">
-        Pest Identification
-      </button>
-    </div>
-  </div>
-</nav>
-
+        <!-- Dropdown menu -->
+        <div class="dropdown-menu hidden" id="plantCareMenu">
+          <button class="dropdown-item" data-target-tab="care-library" type="button">
+            Care Library
+          </button>
+          <button class="dropdown-item" data-target-tab="pest-id" type="button">
+            Pest Identification
+          </button>
+        </div>
+      </div>
+    </nav>
 
     <!-- SKU CATALOGUE TAB -->
     <section id="tab-catalog" class="tab-content">
@@ -596,17 +1307,23 @@
         <div class="filters">
           <div class="filter-group">
             <span class="filter-label">SKU</span>
-            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400 or 1005837400" />
+            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
           </div>
+
           <div class="filter-group">
             <span class="filter-label">Sent In</span>
             <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
           </div>
+
           <div class="filter-group">
             <span class="filter-label">Year Sent</span>
             <select id="yearFilter" class="filter-input">
               <option value="all">All</option>
-              <option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option>
+              <option>2022</option>
+              <option>2023</option>
+              <option>2024</option>
+              <option>2025</option>
+              <option>2026</option>
             </select>
           </div>
         </div>
@@ -643,148 +1360,102 @@
       </div>
     </section>
 
-    <!-- PLANT CARE TAB -->
-
-<!-- CARE LIBRARY TAB -->
-<section id="tab-care-library" class="tab-content hidden">
-  <div class="pc-header">
-    <div class="pc-title">Care Library</div>
-    <div class="pc-search-wrapper">
-      <span class="pc-search-icon">🔎</span>
-      <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
-    </div>
-  </div>
-
-  <div class="pc-grid" id="plantCareGrid">
-    <!-- plant cards created via JS -->
-  </div>
-</section>
-
-<!-- PEST IDENTIFICATION TAB -->
-<section id="tab-pest-id" class="tab-content hidden">
-  <div class="pc-header">
-    <div class="pc-title">Pest Identification</div>
-    <div class="pc-search-wrapper">
-      <span class="pc-search-icon">🔎</span>
-      <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-    </div>
-  </div>
-
-  <div class="pc-grid" id="pestGrid">
-    <!-- pest cards created via JS -->
-  </div>
-</section>
-
-
-  <div class="pc-grid" id="pestGrid">
-    <!-- pest cards created via JS -->
-  </div>
-</section>
-
-
-      <!-- CARE LIBRARY PANEL -->
-      <section id="care-library-panel">
-        <div class="pc-header">
-          <div class="pc-title">Care Library</div>
-          <div class="pc-search-wrapper">
-            <span class="pc-search-icon">🔎</span>
-            <input id="careSearch" class="pc-search-input" placeholder="Search plant types..." />
-          </div>
+    <!-- CARE LIBRARY TAB -->
+    <section id="tab-care-library" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Care Library</div>
+        <div class="pc-search-wrapper">
+          <span class="pc-search-icon">🔎</span>
+          <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
         </div>
+      </div>
 
-        <div class="pc-grid" id="plantCareGrid">
-          <!-- plant cards created via JS -->
-        </div>
-      </section>
-
-      <!-- PEST IDENTIFICATION PANEL -->
-      <section id="pest-panel" class="hidden">
-        <div class="pc-header">
-          <div class="pc-title">Pest Identification</div>
-          <div class="pc-search-wrapper">
-            <span class="pc-search-icon">🔎</span>
-            <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-          </div>
-        </div>
-
-        <div class="pc-grid" id="pestGrid">
-          <!-- pest cards created via JS -->
-        </div>
-      </section>
+      <div class="pc-grid" id="plantCareGrid"></div>
     </section>
 
-  </main>
+    <!-- PEST IDENTIFICATION TAB -->
+    <section id="tab-pest-id" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Pest Identification</div>
+        <div class="pc-search-wrapper">
+          <span class="pc-search-icon">🔎</span>
+          <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+        </div>
+      </div>
 
-  <!-- SKU POPUP -->
-  <div id="popupBackdrop" class="popup-backdrop">
-    <div class="popup">
-      <h2 id="popupName"></h2>
-      <p><strong>SKU:</strong> <span id="popupSku"></span></p>
-      <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
-      <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
-      <button id="popupClose" class="popup-close">Close</button>
+      <div class="pc-grid" id="pestGrid"></div>
+    </section>
+
+
+    <!-- SKU POPUP -->
+    <div id="popupBackdrop" class="popup-backdrop">
+      <div class="popup">
+        <h2 id="popupName"></h2>
+        <p><strong>SKU:</strong> <span id="popupSku"></span></p>
+        <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
+        <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
+        <button id="popupClose" class="popup-close">Close</button>
+      </div>
     </div>
-  </div>
 
-  <!-- PLANT CARE POPUP -->
-<div id="careBackdrop" class="popup-backdrop">
-  <div class="popup">
-    <img id="careImage" class="popup-image" alt="" />
-    <h2 id="careTitle"></h2>
+    <!-- PLANT CARE POPUP -->
+    <div id="careBackdrop" class="popup-backdrop">
+      <div class="popup">
+        <img id="careImage" class="popup-image" alt="" />
+        <h2 id="careTitle"></h2>
 
-    <div class="popup-section-title">Light</div>
-    <div class="popup-text" id="careLight"></div>
+        <div class="popup-section-title">Light</div>
+        <div class="popup-text" id="careLight"></div>
 
-    <div class="popup-section-title">Water</div>
-    <div class="popup-text" id="careWater"></div>
+        <div class="popup-section-title">Water</div>
+        <div class="popup-text" id="careWater"></div>
 
-    <div class="popup-section-title">Humidity</div>
-    <div class="popup-text" id="careHumidity"></div>
+        <div class="popup-section-title">Humidity</div>
+        <div class="popup-text" id="careHumidity"></div>
 
-    <div class="popup-section-title">Temperature</div>
-    <div class="popup-text" id="careTemp"></div>
+        <div class="popup-section-title">Temperature</div>
+        <div class="popup-text" id="careTemp"></div>
 
-    <div class="popup-section-title">Soil</div>
-    <div class="popup-text" id="careSoil"></div>
+        <div class="popup-section-title">Soil</div>
+        <div class="popup-text" id="careSoil"></div>
 
-    <div class="popup-section-title">Fertilizer</div>
-    <div class="popup-text" id="careFertilizer"></div>
+        <div class="popup-section-title">Fertilizer</div>
+        <div class="popup-text" id="careFertilizer"></div>
 
-    <div class="popup-section-title">Toxicity</div>
-    <div class="popup-text" id="careToxicity"></div>
+        <div class="popup-section-title">Toxicity</div>
+        <div class="popup-text" id="careToxicity"></div>
 
-    <div class="popup-section-title">Extra Tips</div>
-    <div class="popup-text" id="careTips"></div>
+        <div class="popup-section-title">Extra Tips</div>
+        <div class="popup-text" id="careTips"></div>
 
-    <button id="careClose" class="popup-close">Close</button>
-  </div>
-</div>
-``
+        <button id="careClose" class="popup-close">Close</button>
+      </div>
+    </div>
 
+    <!-- PEST POPUP -->
+    <div id="pestBackdrop" class="popup-backdrop">
+      <div class="popup">
+        <img id="pestImage" class="popup-image" alt="" />
+        <h2 id="pestTitle"></h2>
 
-  <!-- PEST POPUP -->
+        <div class="popup-section-title">What it looks like</div>
+        <div class="popup-text" id="pestLooksLike"></div>
 
-<div id="pestBackdrop" class="popup-backdrop">
-  <div class="popup">
-    <img id="pestImage" class="popup-image" alt="" />
-    <h2 id="pestTitle"></h2>
+        <div class="popup-section-title">Where you see it</div>
+        <div class="popup-text" id="pestWhere"></div>
 
-    <div class="popup-section-title">What it looks like</div>
-    <div class="popup-text" id="pestLooksLike"></div>
+        <div class="popup-section-title">Damage & symptoms</div>
+        <div class="popup-text" id="pestSymptoms"></div>
 
-    <div class="popup-section-title">Where you see it</div>
-    <div class="popup-text" id="pestWhere"></div>
+        <div class="popup-section-title">Treatment</div>
+        <div class="popup-text" id="pestTreatment"></div>
 
-    <div class="popup-section-title">Damage & symptoms</div>
-    <div class="popup-text" id="pestSymptoms"></div>
+        <button id="pestClose" class="popup-close">Close</button>
+      </div>
+    </div>
+  </main>
+</body>
 
-    <div class="popup-section-title">Treatment</div>
-    <div class="popup-text" id="pestTreatment"></div>
-
-    <button id="pestClose" class="popup-close">Close</button>
-  </div>
-</div>
-  
   <script>
     /* ========= CONFIG ========= */
     const SKU_CSV_URL   = "SKU_Name_2026.csv";
@@ -1693,5 +2364,6 @@ loadOrderCsv();
 </body>
 </html>
 ``
+
 
 
