@@ -90,18 +90,24 @@
 
     /* TABS */
 .tabs {
+  position: relative;        /* <– THIS fixes the clipping */
+  z-index: 20;               /* ensure dropdown can appear above content */
+
   display: flex;
   flex-direction: row;
   gap: 6px;
   border-bottom: 1px solid var(--border-subtle);
   margin-top: 10px;
   flex-wrap: nowrap;
+
   overflow-x: auto;
-  overflow-y: visible;     /* important */
+  overflow-y: visible;       /* must be visible! */
+
   padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
+
 
     .tabs::-webkit-scrollbar {
       display: none;
@@ -133,52 +139,44 @@
   
 /* PLANT CARE TAB DROPDOWN */
 
+
 .tab-dropdown {
-  position: relative;       /* anchor for the absolute menu */
-  display: inline-block;
-  z-index: 10;
+  position: relative;  /* anchor point for absolute menu */
+  z-index: 30;         /* above tab bar */
 }
 
 .dropdown-menu {
-  position: absolute;       /* anchored to tab-dropdown, not viewport */
-  top: calc(100% + 4px);    /* just below the Plant Care tab */
+  position: absolute;  
+  top: calc(100% + 4px); 
   left: 0;
 
-  background: rgba(15, 23, 42, 0.95);  /* matches your dark UI */
+  background: rgba(15,23,42,0.95);
   border-radius: 0 0 10px 10px;
   border: 1px solid var(--border-subtle);
   min-width: 180px;
   padding: 6px 0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
 
   display: flex;
-  flex-direction: column;   /* stack items vertically */
-  gap: 0;
-  z-index: 40;
+  flex-direction: column;
+  z-index: 999;        /* ensure it floats over content */
 }
 
-
-
 .dropdown-item {
-  display: block;             /* full-width lines */
+  display: block;  
   width: 100%;
   padding: 10px 14px;
   text-align: left;
-
   background: transparent;
   color: var(--text);
-  font-size: 0.85rem;
-
   border: none;
-  cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .dropdown-item:hover {
-  background: rgba(255,255,255,0.08); /* same hover feel as tabs */
+  background: rgba(255,255,255,0.08);
 }
 
-    /* SKU FILTER AREA (SKU Catalogue tab) */
+   /* SKU FILTER AREA (SKU Catalogue tab) */
     .controls {
       background: rgba(21,37,54,0.95);
       border-radius: var(--radius-lg);
@@ -1555,6 +1553,7 @@ document.addEventListener("click", (e) => {
   </script>
 </body>
 </html>
+
 
 
 
