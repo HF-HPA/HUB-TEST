@@ -5,13 +5,9 @@
   <title>HF-HPA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Favicon (desktop browsers) -->
+  <!-- Favicon / Icons -->
   <link rel="icon" type="image/png" href="hpa_logo.png" />
-
-  <!-- Apple devices (iPhone/iPad Safari) -->
   <link rel="apple-touch-icon" href="hpa_logo.png" />
-
-  <!-- For better compatibility with all Apple devices -->
   <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
 
   <style>
@@ -88,26 +84,19 @@
       color: var(--muted);
     }
 
-    /* TABS */
-.tabs {
-  position: relative;        /* <– THIS fixes the clipping */
-  z-index: 20;               /* ensure dropdown can appear above content */
-
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-top: 10px;
-  flex-wrap: nowrap;
-
-  overflow-x: auto;
-  overflow-y: visible;       /* must be visible! */
-
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
+    /* TOP TABS */
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-top: 10px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
 
     .tabs::-webkit-scrollbar {
       display: none;
@@ -136,49 +125,11 @@
       margin-top: 14px;
     }
 
-/* PLANT CARE TAB DROPDOWN */
-.tab-dropdown {
-  position: relative;   /* just to keep it in the tab bar flow */
-  display: inline-block;
-}
+    .hidden {
+      display: none;
+    }
 
-/* Actual floating menu */
-.dropdown-menu {
-  position: fixed;      /* <— key: overlay relative to viewport */
-  top: 0;               /* will be overridden in JS */
-  left: 0;              /* will be overridden in JS */
-
-  background: rgba(15,23,42,0.95);
-  border-radius: 10px;
-  border: 1px solid var(--border-subtle);
-  min-width: 180px;
-  padding: 6px 0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-
-  display: flex;
-  flex-direction: column;
-  z-index: 999;         /* hover over everything */
-}
-
-/* Dropdown items (unchanged, but keep these) */
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 10px 14px;
-  text-align: left;
-  background: transparent;
-  color: var(--text);
-  font-size: 0.85rem;
-  border: none;
-  cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-.dropdown-item:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-   /* SKU FILTER AREA (SKU Catalogue tab) */
+    /* SKU FILTER AREA */
     .controls {
       background: rgba(21,37,54,0.95);
       border-radius: var(--radius-lg);
@@ -400,6 +351,29 @@
       color: var(--text);
     }
 
+    /* PLANT CARE INNER TABS */
+    .inner-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .inner-tab {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .inner-tab.active {
+      background: rgba(255,255,255,0.18);
+      border-color: var(--border-subtle);
+      color: var(--text);
+    }
+
     /* PLANT / PEST CARDS */
     .pc-header {
       display: flex;
@@ -533,7 +507,6 @@
       cursor: pointer;
     }
 
-    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -550,29 +523,14 @@
       </div>
     </header>
 
-    <!-- TABS -->
+    <!-- TOP TABS -->
     <nav class="tabs">
       <button class="tab active" data-tab="catalog">SKU Catalogue</button>
       <button class="tab" data-tab="orders">Order Breakdown</button>
-
-      <!-- Plant Care dropdown -->   
-<div class="tab-dropdown">
-  <button class="tab" id="plantCareTab" type="button">
-    Plant Care ▾
-  </button>
-  <div class="dropdown-menu hidden" id="plantCareMenu">
-    <button class="dropdown-item" data-target-tab="care-library" type="button">
-      Care Library
-    </button>
-    <button class="dropdown-item" data-target-tab="pest-id" type="button">
-      Pest Identification
-    </button>
-  </div>
-</div>
-
+      <button class="tab" data-tab="plant-care">Plant Care</button>
     </nav>
 
-    <!-- SKU CATALOGUE TAB -->
+    <!-- ================== SKU CATALOGUE TAB ================== -->
     <section id="tab-catalog" class="tab-content">
       <section class="controls">
         <div class="search-wrapper">
@@ -611,7 +569,7 @@
       <div id="emptyState" class="empty-state hidden">No SKUs match your filters.</div>
     </section>
 
-    <!-- ORDER BREAKDOWN TAB -->
+    <!-- ================== ORDER BREAKDOWN TAB ================== -->
     <section id="tab-orders" class="tab-content hidden">
       <div class="order-breakdown-wrapper">
         <div class="ob-header-stack">
@@ -634,30 +592,42 @@
       </div>
     </section>
 
-    <!-- CARE LIBRARY TAB -->
-    <section id="tab-care-library" class="tab-content hidden">
+    <!-- ================== PLANT CARE TAB ================== -->
+    <section id="tab-plant-care" class="tab-content hidden">
       <div class="pc-header">
-        <div class="pc-title">Care Library</div>
-        <div class="pc-search-wrapper">
-          <span class="pc-search-icon">🔎</span>
-          <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
-        </div>
+        <div class="pc-title">Plant Care</div>
       </div>
 
-      <div class="pc-grid" id="plantCareGrid"></div>
-    </section>
-
-    <!-- PEST IDENTIFICATION TAB -->
-    <section id="tab-pest-id" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Pest Identification</div>
-        <div class="pc-search-wrapper">
-          <span class="pc-search-icon">🔎</span>
-          <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-        </div>
+      <!-- INNER TABS -->
+      <div class="inner-tabs">
+        <!-- note: no inner-tab has .active initially (your Option C) -->
+        <button class="inner-tab" data-inner="care-library">Care Library</button>
+        <button class="inner-tab" data-inner="pest-id">Pest Identification</button>
       </div>
 
-      <div class="pc-grid" id="pestGrid"></div>
+      <!-- CARE LIBRARY CONTENT -->
+      <section id="inner-care-library" class="inner-content hidden">
+        <div class="pc-header">
+          <div class="pc-title">Care Library</div>
+          <div class="pc-search-wrapper">
+            <span class="pc-search-icon">🔎</span>
+            <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+          </div>
+        </div>
+        <div class="pc-grid" id="plantCareGrid"></div>
+      </section>
+
+      <!-- PEST IDENTIFICATION CONTENT -->
+      <section id="inner-pest-id" class="inner-content hidden">
+        <div class="pc-header">
+          <div class="pc-title">Pest Identification</div>
+          <div class="pc-search-wrapper">
+            <span class="pc-search-icon">🔎</span>
+            <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+          </div>
+        </div>
+        <div class="pc-grid" id="pestGrid"></div>
+      </section>
     </section>
 
     <!-- SKU POPUP -->
@@ -731,8 +701,10 @@
 
   <script>
     /* ========= CONFIG ========= */
-    const SKU_CSV_URL   = "SKU_Name_2026.csv";
-    const ORDER_CSV_URL = "OrderBreakdown.csv";
+    const SKU_CSV_URL    = "SKU_Name_2026.csv";
+    const ORDER_CSV_URL  = "OrderBreakdown.csv";
+    const PLANT_CSV_URL  = "plants.csv";
+    const PEST_CSV_URL   = "pests.csv";
 
     const STORE_GRADES_BY_WEEK = {
       "6":  "All stores",
@@ -745,111 +717,58 @@
       "13": "All Stores"
     };
 
-   
-/* ========= TAB + DROPDOWN LOGIC ========= */
-const tabs = document.querySelectorAll(".tab");
-const tabSections = {
-  catalog:       document.getElementById("tab-catalog"),
-  orders:        document.getElementById("tab-orders"),
-  "care-library": document.getElementById("tab-care-library"),
-  "pest-id":      document.getElementById("tab-pest-id"),
-};
+    let PLANTS = [];
+    let PESTS  = [];
+    let skuData = [];
 
+    /* ========= TOP-LEVEL TABS ========= */
+    const tabs = document.querySelectorAll(".tab");
+    const tabSections = {
+      "catalog":    document.getElementById("tab-catalog"),
+      "orders":     document.getElementById("tab-orders"),
+      "plant-care": document.getElementById("tab-plant-care")
+    };
 
-// ========= PLANT CARE DROPDOWN (overlay) =========
-const plantCareTab  = document.getElementById("plantCareTab");
-const plantCareMenu = document.getElementById("plantCareMenu");
-const dropdownItems = document.querySelectorAll(".dropdown-item");
-
-function togglePlantCareMenu() {
-  // If we’re about to show it, position it under the tab
-  if (plantCareMenu.classList.contains("hidden")) {
-    const rect = plantCareTab.getBoundingClientRect();
-
-    // Position just under the Plant Care tab
-    plantCareMenu.style.top  = `${rect.bottom + 4}px`;
-    plantCareMenu.style.left = `${rect.left}px`;
-  }
-
-  plantCareMenu.classList.toggle("hidden");
-}
-
-// Clicking Plant Care opens/closes the overlay dropdown
-plantCareTab.addEventListener("click", (e) => {
-  e.stopPropagation();           // don’t trigger document click
-  togglePlantCareMenu();
-});
-
-// Clicking dropdown items selects that view and closes the menu
-dropdownItems.forEach(item => {
-  item.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
-    plantCareMenu.classList.add("hidden");
-    showTab(targetTab);
-  });
-});
-
-// Click outside -> close dropdown
-document.addEventListener("click", (e) => {
-  if (!plantCareMenu.classList.contains("hidden")) {
-    if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
-      plantCareMenu.classList.add("hidden");
+    function showTopTab(key) {
+      Object.entries(tabSections).forEach(([k, section]) => {
+        section.classList.toggle("hidden", k !== key);
+      });
+      tabs.forEach(t => t.classList.remove("active"));
+      const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
+      if (activeTab) activeTab.classList.add("active");
     }
-  }
-});
 
-// Helper to show a tab by key ("catalog", "orders", "care-library", "pest-id")
-function showTab(key) {
-  Object.entries(tabSections).forEach(([k, section]) => {
-    section.classList.toggle("hidden", k !== key);
-  });
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.tab;
+        if (!key) return;
+        showTopTab(key);
+      });
+    });
 
-  // Highlight correct main tab
-  tabs.forEach(t => t.classList.remove("active"));
+    /* ========= INNER TABS (PLANT CARE) ========= */
+    const innerTabs = document.querySelectorAll(".inner-tab");
+    const innerSections = {
+      "care-library": document.getElementById("inner-care-library"),
+      "pest-id":      document.getElementById("inner-pest-id")
+    };
 
-  if (key === "catalog") {
-    document.querySelector('[data-tab="catalog"]').classList.add("active");
-  } else if (key === "orders") {
-    document.querySelector('[data-tab="orders"]').classList.add("active");
-  } else if (key === "care-library" || key === "pest-id") {
-    // Any plant-care related view highlights the Plant Care tab
-    plantCareTab.classList.add("active");
-  }
-}
+    function showInnerTab(key) {
+      Object.entries(innerSections).forEach(([k, section]) => {
+        section.classList.toggle("hidden", k !== key);
+      });
+      innerTabs.forEach(t => t.classList.remove("active"));
+      const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
+      if (active) active.classList.add("active");
+    }
 
-// Clicks on SKU / Orders tabs behave normally
-tabs.forEach(tab => {
-  const tabKey = tab.dataset.tab;
-  if (!tabKey) return; // Plant Care tab has no data-tab; handled separately
-
-  tab.addEventListener("click", () => {
-    if (tab === plantCareTab) return; // dropdown behavior, not direct switch
-    plantCareMenu.classList.add("hidden");
-    showTab(tabKey);
-  });
-});
-
-// Clicking Plant Care toggles dropdown
-plantCareTab.addEventListener("click", () => {
-  plantCareMenu.classList.toggle("hidden");
-});
-
-// Dropdown items -> switch view
-dropdownItems.forEach(item => {
-  item.addEventListener("click", () => {
-    const targetTab = item.dataset.targetTab; // "care-library" or "pest-id"
-    plantCareMenu.classList.add("hidden");
-    showTab(targetTab);
-  });
-});
-
-// Close dropdown when clicking elsewhere
-document.addEventListener("click", (e) => {
-  if (!plantCareTab.contains(e.target) && !plantCareMenu.contains(e.target)) {
-    plantCareMenu.classList.add("hidden");
-  }
-});
+    innerTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.inner;
+        if (!key) return;
+        showInnerTab(key);
+      });
+    });
 
     /* ========= ORDER BREAKDOWN DOM ========= */
     const obWeekDisplay   = document.getElementById("obWeekDisplay");
@@ -860,7 +779,7 @@ document.addEventListener("click", (e) => {
       UCO: document.getElementById("obUcoBody"),
       FHB: document.getElementById("obFhbBody"),
       TRP: document.getElementById("obTrpBody"),
-      SPC: document.getElementById("obSpcBody"),
+      SPC: document.getElementById("obSpcBody")
     };
 
     /* ========= SKU DOM ========= */
@@ -879,297 +798,12 @@ document.addEventListener("click", (e) => {
     const popupYear     = document.getElementById("popupYear");
     const popupClose    = document.getElementById("popupClose");
 
-    popupClose.addEventListener("click", () => {
-      popupBackdrop.style.display = "none";
-    });
+    popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
     popupBackdrop.addEventListener("click", (e) => {
       if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
     });
 
-    /* ========= PLANT CARE CONFIG ========= */
-    const PLANTS = [
-      {
-        id: "monstera_deliciosa",
-        commonName: "Monstera Deliciosa",
-        scientificName: "Monstera deliciosa",
-        image: "images/plants/monstera_deliciosa.jpg",
-        light: "Bright, indirect light. A bit of soft morning sun is fine, but avoid strong midday sun that can scorch leaves.",
-        water: "Water when the top 1–2 inches of soil are dry. In winter, let it dry slightly more between waterings to avoid root rot.",
-        humidity: "Prefers higher humidity (50–70%). Brown leaf edges often mean the air is too dry or watering is inconsistent.",
-        temp: "Ideal range is 65–85°F. Keep away from cold drafts and areas below 55°F.",
-        soil: "Chunky, well-draining aroid mix (potting soil + bark + perlite). Avoid dense, compacted soil that stays soggy.",
-        fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced liquid fertilizer at 1/4–1/2 strength. Skip or reduce in winter.",
-        toxicity: "Toxic to pets and people if ingested (calcium oxalate crystals). Keep out of reach of chewers.",
-        tips: "Give it a moss pole or stake so it can climb and grow larger, fenestrated leaves. Rotate the pot regularly for even growth."
-      },
-      {
-        id: "spathiphyllum_peace_lily",
-        commonName: "Peace Lily",
-        scientificName: "Spathiphyllum spp.",
-        image: "images/plants/peace_lily.jpg",
-        light: "Medium to bright, indirect light. Tolerates lower light but may flower less.",
-        water: "Keep soil lightly, evenly moist. Water when the top inch feels dry. They droop when thirsty but avoid letting them wilt constantly.",
-        humidity: "Enjoys moderate to high humidity (40–70%). Brown tips can indicate dry air, inconsistent watering, or fertilizer build-up.",
-        temp: "Prefers 65–80°F. Do not expose to cold drafts or temperatures below about 55°F.",
-        soil: "Rich, peat-based, well-draining indoor mix.",
-        fertilizer: "Feed lightly every 6–8 weeks in spring and summer with a balanced houseplant fertilizer. Flush soil occasionally to prevent salt build-up.",
-        toxicity: "Mildly toxic if ingested. Keep away from pets and small children.",
-        tips: "Remove spent blooms and yellow leaves at the base. If it stops blooming, check light levels—slightly brighter, indirect light usually helps."
-      },
-      {
-        id: "sansevieria_snake_plant",
-        commonName: "Snake Plant",
-        scientificName: "Dracaena trifasciata (Sansevieria)",
-        image: "images/plants/snake_plant.jpg",
-        light: "Very adaptable: low to bright, indirect light. Color and growth are best with bright, indirect light.",
-        water: "Let soil dry almost completely between waterings. In winter or low light, water very sparingly.",
-        humidity: "Average indoor humidity is fine. Does well in dry air.",
-        temp: "Thrives between 60–85°F. Protect from cold drafts and temps below 50°F.",
-        soil: "Fast-draining, gritty mix (cactus/succulent mix works well). Use pots with drainage holes.",
-        fertilizer: "Light feeder. Fertilize 2–3 times during the growing season at half strength.",
-        toxicity: "Toxic if ingested by pets or people. Keep away from nibblers.",
-        tips: "Overwatering is the main cause of issues. If leaves become mushy at the base, check for rot and cut away affected parts."
-      },
-      {
-        id: "zz_plant",
-        commonName: "ZZ Plant",
-        scientificName: "Zamioculcas zamiifolia",
-        image: "images/plants/zz_plant.jpg",
-        light: "Low to bright, indirect light. Avoid strong direct sun which can scorch leaves.",
-        water: "Allow soil to dry out most of the way between waterings. Thick rhizomes store water, so it tolerates drought.",
-        humidity: "Average home humidity is fine.",
-        temp: "Ideal range is 65–80°F. Avoid cold drafts and temps below 55°F.",
-        soil: "Well-draining potting mix with added perlite or sand. Never let it sit in water.",
-        fertilizer: "Fertilize lightly 2–3 times per growing season with a balanced liquid fertilizer.",
-        toxicity: "Toxic if ingested. Keep away from pets and children.",
-        tips: "Great for low-light corners, but growth will be faster in brighter, indirect light. Overwatering is much more dangerous than underwatering."
-      },
-      {
-        id: "golden_pothos",
-        commonName: "Golden Pothos",
-        scientificName: "Epipremnum aureum",
-        image: "images/plants/golden_pothos.jpg",
-        light: "Bright, indirect light is ideal but it will tolerate low light. Variegation may fade in very low light.",
-        water: "Water when the top 1–2 inches of soil are dry. Slightly drought-tolerant; avoid constantly soggy soil.",
-        humidity: "Average indoor humidity is fine. Appreciates a bit more humidity but doesn’t demand it.",
-        temp: "Prefers 65–85°F. Keep away from cold drafts.",
-        soil: "Well-draining indoor mix. A chunky mix with perlite works very well.",
-        fertilizer: "Feed every 4–6 weeks in spring and summer with a balanced, diluted fertilizer.",
-        toxicity: "Toxic if ingested (calcium oxalate). Keep out of reach of pets and children.",
-        tips: "Pinch or trim vines to encourage fuller, bushier growth. Easily propagated in water from cuttings."
-      },
-      {
-        id: "heartleaf_philodendron",
-        commonName: "Heartleaf Philodendron",
-        scientificName: "Philodendron hederaceum",
-        image: "images/plants/heartleaf_philodendron.jpg",
-        light: "Medium to bright, indirect light. Tolerates lower light but grows slower.",
-        water: "Keep soil slightly moist, allowing the top 1 inch to dry between waterings. Reduce watering in winter.",
-        humidity: "Average humidity is fine, but it appreciates a bit more for lush growth.",
-        temp: "Ideal range is 65–80°F. Avoid cold drafts and chilly windowsills.",
-        soil: "Well-draining indoor mix with some perlite or bark for airiness.",
-        fertilizer: "Feed lightly once a month during spring and summer with a balanced liquid fertilizer.",
-        toxicity: "Toxic if ingested (calcium oxalate). Keep away from pets and children.",
-        tips: "Pinch or cut back stems to keep it compact or let it trail/climb. Wipe dusty leaves so they can photosynthesize better."
-      },
-      {
-        id: "spider_plant",
-        commonName: "Spider Plant",
-        scientificName: "Chlorophytum comosum",
-        image: "images/plants/spider_plant.jpg",
-        light: "Bright to moderate, indirect light. Avoid very dark corners or harsh, direct midday sun.",
-        water: "Keep soil slightly moist. Water when the top 1 inch is dry; let it dry a bit more in winter.",
-        humidity: "Average indoor humidity is usually fine. Brown tips can come from dry air, tap water salts, or inconsistent watering.",
-        temp: "Comfortable at normal room temps (65–75°F). Protect from drafts and cold windows.",
-        soil: "Rich, well-draining potting mix.",
-        fertilizer: "Feed every 4–6 weeks in spring and summer. Too much fertilizer can increase brown tips.",
-        toxicity: "Generally considered non-toxic, but supervise pets that like to chew.",
-        tips: "Produces “pups” on long stems—easy to root in water or soil. Trim brown tips and remove old leaves to keep it tidy."
-      },
-      {
-        id: "fiddle_leaf_fig",
-        commonName: "Fiddle Leaf Fig",
-        scientificName: "Ficus lyrata",
-        image: "images/plants/fiddle_leaf_fig.jpg",
-        light: "Very bright, indirect light. A spot near a large, bright window is ideal. Avoid sudden changes in light.",
-        water: "Water thoroughly when the top 1–2 inches are dry. Ensure excellent drainage; hates “wet feet.”",
-        humidity: "Prefers moderate to high humidity. Very dry air can cause crispy edges and leaf drop.",
-        temp: "Ideal range is 65–80°F. Avoid cold drafts, AC blasts, and sudden temperature swings.",
-        soil: "Well-draining indoor mix with added bark or perlite.",
-        fertilizer: "Feed every 4 weeks in spring and summer with a balanced fertilizer. Hold off in winter.",
-        toxicity: "Sap can be irritating and the plant is mildly toxic if ingested.",
-        tips: "Doesn’t like to be moved frequently. Rotate the pot occasionally for even growth and gently wipe leaves to remove dust."
-      },
-      {
-        id: "boston_fern",
-        commonName: "Boston Fern",
-        scientificName: "Nephrolepis exaltata",
-        image: "images/plants/boston_fern.jpg",
-        light: "Bright, indirect light. Avoid direct afternoon sun which can scorch fronds.",
-        water: "Keep soil consistently moist but not waterlogged. Do not allow the root ball to dry out completely.",
-        humidity: "Loves high humidity (50–80%). Great for bathrooms with windows or near a humidifier.",
-        temp: "Prefers 60–75°F. Sensitive to hot, dry air and cold drafts.",
-        soil: "Rich, peat-based mix that retains moisture but drains well.",
-        fertilizer: "Feed lightly every 4–6 weeks during the growing season with a diluted balanced fertilizer.",
-        toxicity: "Generally considered non-toxic.",
-        tips: "Trim old, brown fronds to encourage new growth. If fronds crisp up, increase humidity and check watering habits."
-      },
-      {
-        id: "calathea",
-        commonName: "Calathea (Prayer Plant Group)",
-        scientificName: "Calathea spp.",
-        image: "images/plants/calathea.jpg",
-        light: "Medium to bright, indirect light. No direct sun, which can fade patterns and crisp leaves.",
-        water: "Keep soil moderately moist. Water when the top 1 inch feels just barely dry. Use filtered or dechlorinated water if your tap water is hard.",
-        humidity: "High humidity (60%+). Dry air leads to crispy edges. Benefits from humidifiers and pebble trays.",
-        temp: "65–80°F, away from drafts and sudden temperature swings.",
-        soil: "Light, airy, well-draining mix with some organic matter and perlite.",
-        fertilizer: "Feed monthly in spring and summer with a diluted, balanced fertilizer.",
-        toxicity: "Generally considered non-toxic to pets.",
-        tips: "Very sensitive to inconsistent care. Keep environment stable—same spot, steady moisture, and humidity."
-      },
-      {
-        id: "phalaenopsis_orchid",
-        commonName: "Moth Orchid",
-        scientificName: "Phalaenopsis spp.",
-        image: "images/plants/phalaenopsis_orchid.jpg",
-        light: "Bright, indirect light. East-facing windows are ideal, or filtered light behind sheer curtains.",
-        water: "Water when the orchid bark is nearly dry, typically every 7–10 days. Water thoroughly, then let excess drain completely.",
-        humidity: "Prefers 50–70% humidity. Avoid water sitting in the crown to prevent rot.",
-        temp: "Daytime 70–80°F, nighttime around 60–65°F. Slight drops in night temps can encourage blooming.",
-        soil: "Special orchid mix (bark, sphagnum moss, or a combo). Never standard potting soil.",
-        fertilizer: "Use a balanced orchid fertilizer at 1/4–1/2 strength every 2–4 weeks during active growth.",
-        toxicity: "Generally considered non-toxic.",
-        tips: "After flowers fade, you can cut the spike back to a node to sometimes encourage a side shoot, or cut it off completely to focus on new growth."
-      },
-      {
-        id: "bird_of_paradise",
-        commonName: "Bird of Paradise",
-        scientificName: "Strelitzia reginae / nicolai",
-        image: "images/plants/bird_of_paradise.jpg",
-        light: "Very bright light with several hours of direct sun indoors is best.",
-        water: "Water when the top 1–2 inches of soil are dry. Keep slightly more moist in active growth and a bit drier in winter.",
-        humidity: "Prefers moderate to high humidity, but tolerates average indoor levels.",
-        temp: "65–85°F. Avoid cold drafts and temperatures below about 55°F.",
-        soil: "Rich, well-draining potting mix. Containers must have drainage holes.",
-        fertilizer: "Feed every 4 weeks in spring and summer with a balanced fertilizer.",
-        toxicity: "Mildly toxic if ingested. Keep away from pets and children.",
-        tips: "Needs strong light to flower indoors and can get large. Dust leaves and provide a sturdy pot as it matures."
-      },
-      {
-        id: "aglaonema_chinese_evergreen",
-        commonName: "Chinese Evergreen",
-        scientificName: "Aglaonema spp.",
-        image: "images/plants/aglaonema.jpg",
-        light: "Low to medium, indirect light; many varieties tolerate lower light well. Variegated types appreciate brighter, indirect light.",
-        water: "Water when the top 1–2 inches of soil are dry. Avoid letting it sit in water.",
-        humidity: "Average indoor humidity is usually fine; appreciates a bit more in dry homes.",
-        temp: "65–80°F. Very sensitive to cold drafts and temperatures below 60°F.",
-        soil: "Standard well-draining indoor potting mix.",
-        fertilizer: "Feed every 6–8 weeks in spring and summer with a balanced, diluted fertilizer.",
-        toxicity: "Toxic if ingested. Keep out of reach of pets and children.",
-        tips: "Great low-light plant. Rotate periodically for even growth and wipe dust from leaves to keep them glossy."
-      },
-      {
-        id: "dracaena_corn_plant",
-        commonName: "Corn Plant Dracaena",
-        scientificName: "Dracaena fragrans",
-        image: "images/plants/dracaena_corn_plant.jpg",
-        light: "Medium to bright, indirect light. Tolerates lower light but grows more slowly.",
-        water: "Water when the top 1–2 inches are dry. Sensitive to overwatering and poor drainage.",
-        humidity: "Average humidity is fine. Brown leaf tips can be from dry air or fluoride in tap water.",
-        temp: "65–80°F. Protect from cold drafts.",
-        soil: "Well-draining indoor mix; avoid heavy soils that stay wet.",
-        fertilizer: "Feed every 6–8 weeks in the growing season with a diluted balanced fertilizer.",
-        toxicity: "Toxic to pets if ingested.",
-        tips: "Use filtered water or let tap water sit overnight if you see brown tips from fluoride or salts. Trim leaf tips for a neater look."
-      },
-      {
-        id: "dieffenbachia_dumb_cane",
-        commonName: "Dieffenbachia (Dumb Cane)",
-        scientificName: "Dieffenbachia spp.",
-        image: "images/plants/dieffenbachia.jpg",
-        light: "Bright, indirect light is best. Tolerates medium light but avoid harsh direct sun.",
-        water: "Keep soil lightly moist, letting the top inch dry before watering again. Avoid extremes of very dry or very soggy.",
-        humidity: "Enjoys moderate to high humidity.",
-        temp: "65–80°F. Protect from cold drafts.",
-        soil: "Rich, well-draining potting mix.",
-        fertilizer: "Feed every 4–6 weeks during spring and summer with a balanced fertilizer.",
-        toxicity: "Highly toxic if ingested (can cause mouth/throat irritation). Keep well away from pets and children.",
-        tips: "Rotate regularly to keep stems straight and prevent leaning toward the light. Prune leggy canes to encourage new growth."
-      },
-      {
-        id: "hoya_carnosa",
-        commonName: "Hoya (Wax Plant)",
-        scientificName: "Hoya carnosa",
-        image: "images/plants/hoya_carnosa.jpg",
-        light: "Bright, indirect light, with a little gentle direct sun if possible. Too little light reduces flowering.",
-        water: "Water when the top 1–2 inches of soil are dry. Hoya roots dislike staying constantly wet.",
-        humidity: "Average to moderately high humidity is appreciated but not always required.",
-        temp: "65–80°F. Avoid cold drafts.",
-        soil: "Loose, well-draining mix (similar to an aroid or succulent mix with bark and perlite).",
-        fertilizer: "Feed lightly every 4–6 weeks in the growing season. Slightly higher phosphorus can support flowering.",
-        toxicity: "Generally considered non-toxic, but always supervise pets.",
-        tips: "Do not remove old flower spurs; blooms often return on the same spurs. Hoyas like to be slightly snug in their pot."
-      },
-      {
-        id: "african_violet",
-        commonName: "African Violet",
-        scientificName: "Saintpaulia ionantha",
-        image: "images/plants/african_violet.jpg",
-        light: "Bright, indirect light. Avoid direct sun on leaves, which can scorch.",
-        water: "Keep soil evenly moist but not soggy. Water from the bottom or carefully at the soil surface to keep water off leaves.",
-        humidity: "Enjoys moderate humidity; avoid cold, drafty windowsills.",
-        temp: "65–75°F, with minimal temperature swings.",
-        soil: "Light, airy African violet mix that drains well.",
-        fertilizer: "Use a fertilizer formulated for African violets at low strength every few weeks while actively growing.",
-        toxicity: "Generally considered non-toxic.",
-        tips: "Remove spent blooms and yellow leaves to keep plants tidy. Rotate regularly for a symmetrical rosette."
-      },
-      {
-        id: "parlor_palm",
-        commonName: "Parlor Palm",
-        scientificName: "Chamaedorea elegans",
-        image: "images/plants/parlor_palm.jpg",
-        light: "Low to medium, indirect light. Avoid harsh, direct sun which can burn fronds.",
-        water: "Water when the top inch of soil is dry. Do not allow the pot to sit in standing water.",
-        humidity: "Average humidity is fine; appreciates a bit more in very dry homes.",
-        temp: "65–80°F. Avoid drafts and cold windowsills.",
-        soil: "Well-draining potting mix with some peat and perlite.",
-        fertilizer: "Feed lightly every 6–8 weeks during the growing season with a balanced fertilizer.",
-        toxicity: "Generally considered non-toxic.",
-        tips: "Remove brown or yellowing fronds at the base. Grows slowly but is very tolerant of typical indoor conditions."
-      },
-      {
-        id: "rubber_plant",
-        commonName: "Rubber Plant",
-        scientificName: "Ficus elastica",
-        image: "images/plants/rubber_plant.jpg",
-        light: "Bright, indirect light; can handle some gentle direct sun. Lower light slows growth and may cause leaf drop.",
-        water: "Water when the top 1–2 inches are dry. Avoid leaving the roots in soggy soil.",
-        humidity: "Average household humidity is usually fine.",
-        temp: "65–80°F. Avoid drafts and sudden temperature swings.",
-        soil: "Well-draining potting mix with some perlite or bark.",
-        fertilizer: "Feed every 4–6 weeks during spring and summer with a balanced fertilizer.",
-        toxicity: "Sap can be irritating; plant is considered mildly toxic if ingested.",
-        tips: "Wipe large leaves to remove dust. Prune the top to encourage branching if you want a bushier shape."
-      },
-      {
-        id: "syngonium_arrowhead",
-        commonName: "Arrowhead Vine",
-        scientificName: "Syngonium podophyllum",
-        image: "images/plants/syngonium_arrowhead.jpg",
-        light: "Medium to bright, indirect light. Variegated varieties appreciate a bit more light.",
-        water: "Water when the top 1–2 inches of soil are dry. Slightly more moisture-loving than pothos but still dislikes soggy soil.",
-        humidity: "Enjoys moderate to high humidity.",
-        temp: "65–80°F. Protect from cold drafts.",
-        soil: "Well-draining indoor mix with some perlite.",
-        fertilizer: "Feed every 4–6 weeks during the growing season with a balanced fertilizer.",
-        toxicity: "Toxic if ingested (calcium oxalate). Keep away from pets and children.",
-        tips: "Starts bushy and becomes more vine-like with age. Trim regularly if you prefer a compact plant or provide a pole to climb."
-      }
-    ];
-
+    /* ========= PLANT CARE DOM ========= */
     const plantCareGrid = document.getElementById("plantCareGrid");
     const careSearch    = document.getElementById("careSearch");
     const careBackdrop  = document.getElementById("careBackdrop");
@@ -1185,158 +819,12 @@ document.addEventListener("click", (e) => {
     const careTips      = document.getElementById("careTips");
     const careCloseBtn  = document.getElementById("careClose");
 
-    function renderPlantCards() {
-      plantCareGrid.innerHTML = "";
-      PLANTS.forEach(plant => {
-        const btn = document.createElement("button");
-        btn.className = "pc-card";
-        btn.dataset.plantId = plant.id;
-        btn.innerHTML = `
-          <div class="pc-card-title">${plant.commonName}</div>
-          <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
-        `;
-        btn.addEventListener("click", () => openCarePopup(plant.id));
-        plantCareGrid.appendChild(btn);
-      });
-    }
-
-    function openCarePopup(id) {
-      const plant = PLANTS.find(p => p.id === id);
-      if (!plant) return;
-
-      careTitle.textContent      = plant.commonName || "";
-      careLight.textContent      = plant.light || "";
-      careWater.textContent      = plant.water || "";
-      careHumidity.textContent   = plant.humidity || "";
-      careTemp.textContent       = plant.temp || "";
-      careSoil.textContent       = plant.soil || "";
-      careFertilizer.textContent = plant.fertilizer || "";
-      careToxicity.textContent   = plant.toxicity || "";
-      careTips.textContent       = plant.tips || "";
-
-      if (plant.image) {
-        careImage.src = plant.image;
-        careImage.alt = plant.commonName || "";
-        careImage.style.display = "";
-      } else {
-        careImage.style.display = "none";
-      }
-
-      careBackdrop.style.display = "flex";
-    }
-
-    careCloseBtn.addEventListener("click", () => {
-      careBackdrop.style.display = "none";
-    });
+    careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
     careBackdrop.addEventListener("click", (e) => {
       if (e.target === careBackdrop) careBackdrop.style.display = "none";
     });
 
-    function filterPlantCards() {
-      const q = (careSearch.value || "").toLowerCase().trim();
-      const cards = plantCareGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const txt = (card.textContent || "").toLowerCase();
-        card.style.display = !q || txt.includes(q) ? "" : "none";
-      });
-    }
-
-    careSearch.addEventListener("input", filterPlantCards);
-
-    /* ========= PEST IDENTIFICATION ========= */
-    const PESTS = [
-      {
-        id: "aphids",
-        name: "Aphids",
-        image: "images/pests/aphids.jpg",
-        looksLike: "Soft-bodied, pear-shaped insects (green, black, brown, or red) clustering on tender growth.",
-        where: "New shoots, flower buds, and undersides of young leaves.",
-        symptoms: "Sticky honeydew, curled or distorted new growth, sooty mold on leaves.",
-        treatment: "Rinse with lukewarm water, then treat with insecticidal soap or neem oil weekly until controlled. Isolate heavily infested plants."
-      },
-      {
-        id: "thrips",
-        name: "Thrips",
-        image: "images/pests/thrips.jpg",
-        looksLike: "Very slender, tiny insects that move quickly; often dark or straw colored.",
-        where: "Inside flowers, along leaf veins, and on new growth.",
-        symptoms: "Silvery or bronzed streaks on leaves, black specks of frass, distorted flowers and buds.",
-        treatment: "Prune heavily affected parts, use sticky traps, and treat with insecticidal soap or a product labeled for thrips on houseplants."
-      },
-      {
-        id: "scale",
-        name: "Scale",
-        image: "images/pests/scale.jpg",
-        looksLike: "Rounded or oval bumps (tan, brown, or gray) stuck to stems and leaf midribs.",
-        where: "Stems, leaf midribs, and undersides of leaves.",
-        symptoms: "Sticky honeydew, sooty mold, yellowing leaves, and general decline.",
-        treatment: "Gently scrape or wipe off adults, prune worst areas, and follow with horticultural oil or systemic treatment per label."
-      },
-      {
-        id: "mealybugs",
-        name: "Mealybugs",
-        image: "images/pests/mealybugs.jpg",
-        looksLike: "White, cottony clumps on stems, leaf joints, and sometimes roots.",
-        where: "Leaf nodes, undersides of leaves, along stems, sometimes in soil near the crown.",
-        symptoms: "Sticky honeydew, leaf yellowing, stunted growth, sooty mold.",
-        treatment: "Dab visible insects with alcohol-soaked cotton swabs; apply neem oil or insecticidal soap repeatedly. Consider repotting for root mealybugs."
-      },
-      {
-        id: "whiteflies",
-        name: "Whiteflies",
-        image: "images/pests/whiteflies.jpg",
-        looksLike: "Tiny white, moth-like insects that fly up when the plant is disturbed.",
-        where: "Undersides of leaves, especially near the top of the plant.",
-        symptoms: "Sticky honeydew, yellowing leaves, reduced vigor, sooty mold.",
-        treatment: "Use yellow sticky traps, shake adults off regularly, and treat with insecticidal soap or neem oil weekly."
-      },
-      {
-        id: "broad_mites",
-        name: "Broad Mites",
-        image: "images/pests/broad_mites.jpg",
-        looksLike: "Too small to see easily; damage is more obvious than the mites themselves.",
-        where: "New growth, buds, and young leaves of many tropical plants.",
-        symptoms: "Twisted, hardened, or puckered new leaves; distorted or aborted flowers.",
-        treatment: "Remove severely damaged growth and treat with miticides or sulfur products labeled for broad mites. Keep affected plants isolated."
-      },
-      {
-        id: "spider_mites",
-        name: "Spider Mites",
-        image: "images/pests/spider_mites.jpg",
-        looksLike: "Tiny moving dots (red, yellow, or brown) plus fine webbing between leaves and stems.",
-        where: "Undersides of leaves and leaf/stem junctions, especially in warm, dry conditions.",
-        symptoms: "Stippled, speckled leaves, fine webbing, leaf drop, dull foliage.",
-        treatment: "Rinse foliage thoroughly, raise humidity, and apply miticide, neem oil, or insecticidal soap every few days until resolved."
-      },
-      {
-        id: "fungus_gnats",
-        name: "Fungus Gnats",
-        image: "images/pests/fungus_gnats.jpg",
-        looksLike: "Small black flies hovering around soil or running over the surface.",
-        where: "Top of the soil, around drainage holes, near windows.",
-        symptoms: "Adult gnats are mostly a nuisance; larvae can damage fine roots, causing yellowing or poor growth, especially in seedlings.",
-        treatment: "Let soil dry more between waterings, use yellow sticky traps, and treat soil with B.t.i or beneficial nematodes."
-      },
-      {
-        id: "cyclamen_mites",
-        name: "Cyclamen Mites",
-        image: "images/pests/cyclamen_mites.jpg",
-        looksLike: "Microscopic mites hidden in tight growth; not usually visible without magnification.",
-        where: "In crowns and buds of plants like African violets and cyclamen.",
-        symptoms: "Stunted, distorted new leaves; deformed flowers; crowded growth rosette.",
-        treatment: "Remove severely damaged leaves, use miticides labeled for cyclamen mites, and keep plants isolated; badly affected plants are often discarded."
-      },
-      {
-        id: "slugs_snails",
-        name: "Slugs & Snails",
-        image: "images/pests/slugs_snails.jpg",
-        looksLike: "Soft-bodied slugs or shelled snails; slime trails on pots and benches.",
-        where: "Soil surface, underside of pots, and damp, shady areas indoors or in greenhouses.",
-        symptoms: "Irregular chew holes in leaves, missing seedlings, slime trails.",
-        treatment: "Hand-pick at night, use traps and barriers, or apply iron phosphate baits labeled for container or greenhouse use."
-      }
-    ];
-
+    /* ========= PEST DOM ========= */
     const pestGrid      = document.getElementById("pestGrid");
     const pestSearch    = document.getElementById("pestSearch");
     const pestBackdrop  = document.getElementById("pestBackdrop");
@@ -1348,59 +836,10 @@ document.addEventListener("click", (e) => {
     const pestTreatment = document.getElementById("pestTreatment");
     const pestCloseBtn  = document.getElementById("pestClose");
 
-    function renderPestCards() {
-      pestGrid.innerHTML = "";
-      PESTS.forEach(pest => {
-        const btn = document.createElement("button");
-        btn.className = "pc-card";
-        btn.dataset.pestId = pest.id;
-        btn.innerHTML = `
-          <div class="pc-card-title">${pest.name}</div>
-          <div class="pc-card-subtitle">${pest.symptoms}</div>
-        `;
-        btn.addEventListener("click", () => openPestPopup(pest.id));
-        pestGrid.appendChild(btn);
-      });
-    }
-
-    function openPestPopup(id) {
-      const pest = PESTS.find(p => p.id === id);
-      if (!pest) return;
-
-      pestTitle.textContent     = pest.name || "";
-      pestLooksLike.textContent = pest.looksLike || "";
-      pestWhere.textContent     = pest.where || "";
-      pestSymptoms.textContent  = pest.symptoms || "";
-      pestTreatment.textContent = pest.treatment || "";
-
-      if (pest.image) {
-        pestImage.src = pest.image;
-        pestImage.alt = pest.name || "";
-        pestImage.style.display = "";
-      } else {
-        pestImage.style.display = "none";
-      }
-
-      pestBackdrop.style.display = "flex";
-    }
-
-    pestCloseBtn.addEventListener("click", () => {
-      pestBackdrop.style.display = "none";
-    });
+    pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
     pestBackdrop.addEventListener("click", (e) => {
       if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
     });
-
-    function filterPestCards() {
-      const q = (pestSearch.value || "").toLowerCase().trim();
-      const cards = pestGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const txt = (card.textContent || "").toLowerCase();
-        card.style.display = !q || txt.includes(q) ? "" : "none";
-      });
-    }
-
-    pestSearch.addEventListener("input", filterPestCards);
 
     /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
@@ -1425,7 +864,7 @@ document.addEventListener("click", (e) => {
     function parseSkuCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const yearIdx = header.indexOf("year sent");
       const nameIdx = header.indexOf("sku name");
       const skuIdx  = header.indexOf("sku");
@@ -1438,7 +877,7 @@ document.addEventListener("click", (e) => {
           yearSent: (row[yearIdx] || "").trim(),
           name:     (row[nameIdx] || "").trim(),
           sku:      (row[skuIdx]  || "").trim(),
-          sentIn:   (row[sentIdx] || "").trim(),
+          sentIn:   (row[sentIdx] || "").trim()
         };
         if (item.name && item.sku) data.push(item);
       }
@@ -1448,7 +887,7 @@ document.addEventListener("click", (e) => {
     function parseOrderCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-      const header = lines[0].split(",").map(h => h.toLowerCase().trim());
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const w = header.indexOf("week");
       const c = header.indexOf("category");
       const s = header.indexOf("size");
@@ -1461,17 +900,104 @@ document.addEventListener("click", (e) => {
           week:     (row[w] || "").trim(),
           category: (row[c] || "").trim().toUpperCase(),
           size:     (row[s] || "").trim(),
-          plant:    (row[p] || "").trim(),
+          plant:    (row[p] || "").trim()
         };
         if (item.week && item.category && (item.size || item.plant)) out.push(item);
       }
       return out;
     }
 
+    function parsePlantCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id:            header.indexOf("id"),
+        commonName:    header.indexOf("common_name"),
+        scientific:    header.indexOf("scientific_name"),
+        image:         header.indexOf("image"),
+        light:         header.indexOf("light"),
+        water:         header.indexOf("water"),
+        humidity:      header.indexOf("humidity"),
+        temp:          header.indexOf("temp"),
+        soil:          header.indexOf("soil"),
+        fertilizer:    header.indexOf("fertilizer"),
+        toxicity:      header.indexOf("toxicity"),
+        tips:          header.indexOf("tips")
+      };
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+        if (!commonName) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        data.push({
+          id,
+          commonName,
+          scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
+          image:          idx.image      >= 0 ? (row[idx.image]      || "").trim() : "",
+          light:          idx.light      >= 0 ? (row[idx.light]      || "").trim() : "",
+          water:          idx.water      >= 0 ? (row[idx.water]      || "").trim() : "",
+          humidity:       idx.humidity   >= 0 ? (row[idx.humidity]   || "").trim() : "",
+          temp:           idx.temp       >= 0 ? (row[idx.temp]       || "").trim() : "",
+          soil:           idx.soil       >= 0 ? (row[idx.soil]       || "").trim() : "",
+          fertilizer:     idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
+          toxicity:       idx.toxicity   >= 0 ? (row[idx.toxicity]   || "").trim() : "",
+          tips:           idx.tips       >= 0 ? (row[idx.tips]       || "").trim() : ""
+        });
+      }
+      return data;
+    }
+
+    function parsePestCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id:        header.indexOf("id"),
+        name:      header.indexOf("name"),
+        image:     header.indexOf("image"),
+        looksLike: header.indexOf("looks_like"),
+        where:     header.indexOf("where"),
+        symptoms:  header.indexOf("symptoms"),
+        treatment: header.indexOf("treatment")
+      };
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const name = idx.name >= 0 ? (row[idx.name] || "").trim() : "";
+        if (!name) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || name.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        data.push({
+          id,
+          name,
+          image:     idx.image     >= 0 ? (row[idx.image]     || "").trim() : "",
+          looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
+          where:     idx.where     >= 0 ? (row[idx.where]     || "").trim() : "",
+          symptoms:  idx.symptoms  >= 0 ? (row[idx.symptoms]  || "").trim() : "",
+          treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
+        });
+      }
+      return data;
+    }
+
     const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
     /* ========= SKU RENDERING ========= */
-    let skuData = [];
     function renderSkuList() {
       skuGrid.innerHTML = "";
       const nameQ = (nameFilter.value || "").toLowerCase();
@@ -1558,7 +1084,107 @@ document.addEventListener("click", (e) => {
       });
     }
 
-    /* ========= LOAD CSVs ========= */
+    /* ========= PLANT RENDERING ========= */
+    function renderPlantCards() {
+      plantCareGrid.innerHTML = "";
+      PLANTS.forEach(plant => {
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.dataset.plantId = plant.id;
+        btn.innerHTML = `
+          <div class="pc-card-title">${plant.commonName}</div>
+          <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+        `;
+        btn.addEventListener("click", () => openCarePopup(plant.id));
+        plantCareGrid.appendChild(btn);
+      });
+    }
+
+    function openCarePopup(id) {
+      const plant = PLANTS.find(p => p.id === id);
+      if (!plant) return;
+
+      careTitle.textContent      = plant.commonName || "";
+      careLight.textContent      = plant.light || "";
+      careWater.textContent      = plant.water || "";
+      careHumidity.textContent   = plant.humidity || "";
+      careTemp.textContent       = plant.temp || "";
+      careSoil.textContent       = plant.soil || "";
+      careFertilizer.textContent = plant.fertilizer || "";
+      careToxicity.textContent   = plant.toxicity || "";
+      careTips.textContent       = plant.tips || "";
+
+      if (plant.image) {
+        careImage.src = plant.image;
+        careImage.alt = plant.commonName || "";
+        careImage.style.display = "";
+      } else {
+        careImage.style.display = "none";
+      }
+
+      careBackdrop.style.display = "flex";
+    }
+
+    function filterPlantCards() {
+      const q = (careSearch.value || "").toLowerCase().trim();
+      const cards = plantCareGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    careSearch.addEventListener("input", filterPlantCards);
+
+    /* ========= PEST RENDERING ========= */
+    function renderPestCards() {
+      pestGrid.innerHTML = "";
+      PESTS.forEach(pest => {
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.dataset.pestId = pest.id;
+        btn.innerHTML = `
+          <div class="pc-card-title">${pest.name}</div>
+          <div class="pc-card-subtitle">${pest.symptoms}</div>
+        `;
+        btn.addEventListener("click", () => openPestPopup(pest.id));
+        pestGrid.appendChild(btn);
+      });
+    }
+
+    function openPestPopup(id) {
+      const pest = PESTS.find(p => p.id === id);
+      if (!pest) return;
+
+      pestTitle.textContent     = pest.name || "";
+      pestLooksLike.textContent = pest.looksLike || "";
+      pestWhere.textContent     = pest.where || "";
+      pestSymptoms.textContent  = pest.symptoms || "";
+      pestTreatment.textContent = pest.treatment || "";
+
+      if (pest.image) {
+        pestImage.src = pest.image;
+        pestImage.alt = pest.name || "";
+        pestImage.style.display = "";
+      } else {
+        pestImage.style.display = "none";
+      }
+
+      pestBackdrop.style.display = "flex";
+    }
+
+    function filterPestCards() {
+      const q = (pestSearch.value || "").toLowerCase().trim();
+      const cards = pestGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    pestSearch.addEventListener("input", filterPestCards);
+
+    /* ========= LOADERS ========= */
     async function loadSkuCsv() {
       try {
         const res = await fetch(SKU_CSV_URL);
@@ -1568,7 +1194,7 @@ document.addEventListener("click", (e) => {
         renderSkuList();
       } catch (err) {
         console.error(err);
-        alert("Error loading SKU_Name_2026.csv. Make sure it exists in your repo.");
+        alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
       }
     }
 
@@ -1581,31 +1207,44 @@ document.addEventListener("click", (e) => {
         applyOrderBreakdown(rows);
       } catch (err) {
         console.error(err);
-        // Leave breakdown blank if file missing
+      }
+    }
+
+    async function loadPlantCsv() {
+      try {
+        const res = await fetch(PLANT_CSV_URL);
+        if (!res.ok) throw new Error("plants.csv not found");
+        const text = await res.text();
+        PLANTS = parsePlantCsv(text);
+        renderPlantCards();
+        filterPlantCards();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading plants.csv. Check file name and headers.");
+      }
+    }
+
+    async function loadPestCsv() {
+      try {
+        const res = await fetch(PEST_CSV_URL);
+        if (!res.ok) throw new Error("pests.csv not found");
+        const text = await res.text();
+        PESTS = parsePestCsv(text);
+        renderPestCards();
+        filterPestCards();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading pests.csv. Check file name and headers.");
       }
     }
 
     /* ========= INIT ========= */
-    renderPlantCards();
-    filterPlantCards();
-    renderPestCards();
-    filterPestCards();
     loadSkuCsv();
     loadOrderCsv();
+    loadPlantCsv();
+    loadPestCsv();
+    // Top tab defaults to "catalog" via HTML (active class + visible section)
+    // Plant Care inner tabs start with no selection (your Option C)
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
