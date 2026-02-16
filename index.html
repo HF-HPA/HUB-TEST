@@ -974,8 +974,8 @@
 
   </main>
 
-  <!-- EMAILJS SDK -->
-  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+  <!-- EmailJS SDK (v3, compatible with init('publicKey')) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
   <script>
     /* ========= CONFIG ========= */
@@ -999,214 +999,6 @@
     let PESTS  = [];
     let skuData = [];
     let allOrderRows = [];
-
-    // Initialize EmailJS with your real public key
-    if (window.emailjs) {
-      emailjs.init("l1fAepv1nVhYn7SJR");
-    }
-
-    /* ========= TOP-LEVEL TABS ========= */
-    const tabs = document.querySelectorAll(".tab");
-    const tabSections = {
-      "catalog":      document.getElementById("tab-catalog"),
-      "orders":       document.getElementById("tab-orders"),
-      "plant-care":   document.getElementById("tab-plant-care"),
-      "damage-claim": document.getElementById("tab-damage-claim"),
-      "trends":       document.getElementById("tab-trends")
-    };
-
-    function showTopTab(key) {
-      Object.entries(tabSections).forEach(([k, section]) => {
-        if (!section) return;
-        section.classList.toggle("hidden", k !== key);
-      });
-      tabs.forEach(t => t.classList.remove("active"));
-      const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
-      if (activeTab) activeTab.classList.add("active");
-    }
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        const key = tab.dataset.tab;
-        if (!key) return;
-        showTopTab(key);
-      });
-    });
-
-    /* ========= INNER TABS (PLANT CARE) ========= */
-    const innerTabs = document.querySelectorAll(".inner-tab");
-    const innerSections = {
-      "care-library": document.getElementById("inner-care-library"),
-      "pest-id":      document.getElementById("inner-pest-id")
-    };
-
-    function showInnerTab(key) {
-      Object.entries(innerSections).forEach(([k, section]) => {
-        if (!section) return;
-        section.classList.toggle("hidden", k !== key);
-      });
-      innerTabs.forEach(t => t.classList.remove("active"));
-      const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
-      if (active) active.classList.add("active");
-    }
-
-    innerTabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        const key = tab.dataset.inner;
-        if (!key) return;
-        showInnerTab(key);
-      });
-    });
-
-    /* ========= DAMAGE CLAIM INNER TABS ========= */
-    const damageTabs = document.querySelectorAll(".damage-inner-tab");
-    const damageSections = {
-      cold:  document.getElementById("damage-cold"),
-      pest:  document.getElementById("damage-pest"),
-      store: document.getElementById("damage-store")
-    };
-
-    function showDamageTab(key) {
-      Object.entries(damageSections).forEach(([k, section]) => {
-        if (!section) return;
-        section.classList.toggle("hidden", k !== key);
-      });
-      damageTabs.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.damage === key);
-      });
-    }
-
-    damageTabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.damage;
-        if (key) showDamageTab(key);
-      });
-    });
-
-    /* ========= ORDER BREAKDOWN DOM ========= */
-    const obWeekDisplay   = document.getElementById("obWeekDisplay");
-    const obGradesDisplay = document.getElementById("obGradesDisplay");
-    const obBodies = {
-      FLO: document.getElementById("obFloBody"),
-      FOL: document.getElementById("obFolBody"),
-      UCO: document.getElementById("obUcoBody"),
-      FHB: document.getElementById("obFhbBody"),
-      TRP: document.getElementById("obTrpBody"),
-      SPC: document.getElementById("obSpcBody")
-    };
-
-    /* ========= SKU DOM ========= */
-    const nameFilter   = document.getElementById("nameFilter");
-    const skuFilter    = document.getElementById("skuFilter");
-    const sentInFilter = document.getElementById("sentInFilter");
-    const yearFilter   = document.getElementById("yearFilter");
-    const skuGrid      = document.getElementById("skuGrid");
-    const resultCount  = document.getElementById("resultCount");
-    const emptyState   = document.getElementById("emptyState");
-
-    const popupBackdrop = document.getElementById("popupBackdrop");
-    const popupName     = document.getElementById("popupName");
-    const popupSku      = document.getElementById("popupSku");
-    const popupSent     = document.getElementById("popupSent");
-    const popupYear     = document.getElementById("popupYear");
-    const popupClose    = document.getElementById("popupClose");
-
-    popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
-    popupBackdrop.addEventListener("click", e => {
-      if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
-    });
-
-    /* ========= PLANT CARE DOM ========= */
-    const plantCareGrid   = document.getElementById("plantCareGrid");
-    const careSearch      = document.getElementById("careSearch");
-    const careBackdrop    = document.getElementById("careBackdrop");
-    const careImage       = document.getElementById("careImage");
-    const careTitle       = document.getElementById("careTitle");
-    const careLight       = document.getElementById("careLight");
-    const careWater       = document.getElementById("careWater");
-    const careHumidityEl  = document.getElementById("careHumidity");
-    const careTemp        = document.getElementById("careTemp");
-    const careSoil        = document.getElementById("careSoil");
-    const careFertilizer  = document.getElementById("careFertilizer");
-    const careToxicity    = document.getElementById("careToxicity");
-    const careTips        = document.getElementById("careTips");
-    const careCloseBtn    = document.getElementById("careClose");
-
-    careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-    careBackdrop.addEventListener("click", e => {
-      if (e.target === careBackdrop) careBackdrop.style.display = "none";
-    });
-
-    /* ========= PEST DOM ========= */
-    const pestGrid           = document.getElementById("pestGrid");
-    const pestSearch         = document.getElementById("pestSearch");
-    const pestBackdrop       = document.getElementById("pestBackdrop");
-    const pestImage          = document.getElementById("pestImage");
-    const pestTitle          = document.getElementById("pestTitle");
-    const pestScientificName = document.getElementById("pestScientificName");
-    const pestLooksLike      = document.getElementById("pestLooksLike");
-    const pestIdentification = document.getElementById("pestIdentification");
-    const pestPrevention     = document.getElementById("pestPrevention");
-    const pestTreatment      = document.getElementById("pestTreatment");
-    const pestCloseBtn       = document.getElementById("pestClose");
-
-    pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-    pestBackdrop.addEventListener("click", e => {
-      if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-    });
-
-    /* ========= TRENDS DOM ========= */
-    const trendsForm    = document.getElementById("trendsForm");
-    const trendsMessage = document.getElementById("trendsMessage");
-    const trendsImages  = document.getElementById("trendsImages");
-    const trendsStatus  = document.getElementById("trendsStatus");
-
-    const EMAILJS_SERVICE_ID  = "service_73p3pi4";
-    const EMAILJS_TEMPLATE_ID = "template_9zrl7vi";
-
-    if (trendsForm && window.emailjs) {
-      trendsForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        trendsStatus.textContent = "";
-
-        const msg   = (trendsMessage.value || "").trim();
-        const files = trendsImages.files;
-
-        // Require message
-        if (!msg) {
-          trendsStatus.textContent = "Please enter a message before sending.";
-          trendsStatus.style.color = "#fb7185";
-          return;
-        }
-
-        // Require at least one image
-        if (!files || files.length === 0) {
-          trendsStatus.textContent = "Please attach at least one image.";
-          trendsStatus.style.color = "#fb7185";
-          return;
-        }
-
-        trendsStatus.textContent = "Sending...";
-        trendsStatus.style.color = "#a5b4fc";
-
-        emailjs
-          .sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, trendsForm)
-          .then(() => {
-            trendsStatus.textContent = "Sent! Thank you for sharing this trend with the Social team.";
-            trendsStatus.style.color = "#4ade80";
-            // Popup confirmation
-            alert("Your trend email has been sent to Social@hampshirefarms.com!");
-            // Stay on Trends tab, just clear the form
-            trendsForm.reset();
-          })
-          .catch((err) => {
-            console.error(err);
-            trendsStatus.textContent =
-              "There was an error sending this. Please try again or email Social@hampshirefarms.com directly.";
-            trendsStatus.style.color = "#fb7185";
-          });
-      });
-    }
 
     /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
@@ -1366,250 +1158,456 @@
 
     const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
-    /* ========= SKU RENDERING ========= */
-    function renderSkuList() {
-      skuGrid.innerHTML = "";
-      const nameQ = (nameFilter.value || "").toLowerCase();
-      const skuQ  = normalizeSku(skuFilter.value || "");
-      const sentQ = (sentInFilter.value || "").toLowerCase();
-      const yearQ = yearFilter.value;
-
-      const filtered = skuData.filter(item => {
-        const itemName = (item.name   || "").toLowerCase();
-        const itemSku  = normalizeSku(item.sku || "");
-        const itemSent = (item.sentIn || "").toLowerCase();
-        const itemYear = item.yearSent || "";
-        return (!nameQ || itemName.includes(nameQ)) &&
-               (!skuQ  || itemSku.includes(skuQ)) &&
-               (!sentQ || itemSent.includes(sentQ)) &&
-               (yearQ === "all" || itemYear === yearQ);
-      });
-
-      filtered.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "sku-card";
-        card.innerHTML = `
-          <div class="sku-year-pill">${item.yearSent}</div>
-          <div class="sku-name">${item.name}</div>
-          <div class="sku-meta">
-            <div><strong>SKU:</strong> ${item.sku}</div>
-            <div><strong>Sent In:</strong> ${item.sentIn}</div>
-            <div><strong>Year Sent:</strong> ${item.yearSent}</div>
-          </div>
-        `;
-        card.addEventListener("click", () => {
-          popupName.textContent = item.name;
-          popupSku.textContent  = item.sku;
-          popupSent.textContent = item.sentIn;
-          popupYear.textContent = item.yearSent;
-          popupBackdrop.style.display = "flex";
-        });
-        skuGrid.appendChild(card);
-      });
-
-      resultCount.textContent = filtered.length;
-      emptyState.classList.toggle("hidden", filtered.length !== 0);
-    }
-
-    nameFilter.addEventListener("input", renderSkuList);
-    skuFilter.addEventListener("input", renderSkuList);
-    sentInFilter.addEventListener("input", renderSkuList);
-    yearFilter.addEventListener("change", renderSkuList);
-
-    /* ========= ORDER BREAKDOWN RENDERING ========= */
-    function applyOrderBreakdown(rows) {
-      if (!rows.length) {
-        obWeekDisplay.textContent = "TBD";
-        obGradesDisplay.textContent = "All stores";
-        Object.values(obBodies).forEach(el => el.textContent = "");
-        return;
-      }
-
-      const weeks = [...new Set(rows.map(r => r.week))];
-      const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
-      const latest = numeric.length ? Math.max(...numeric) : weeks[0];
-      const weekRows = rows.filter(r => r.week == latest);
-
-      obWeekDisplay.textContent = latest;
-      obGradesDisplay.textContent =
-        STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
-
-      const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
-
-      weekRows.forEach(r => {
-        if (groups[r.category]) {
-          const size  = r.size  || "";
-          const plant = r.plant || "";
-          let line = "";
-          if (size && plant) line = `${size} — ${plant}`;
-          else line = size || plant;
-          if (line) groups[r.category].push(line);
-        }
-      });
-
-      Object.entries(groups).forEach(([cat, lines]) => {
-        const el = obBodies[cat];
-        if (el) el.textContent = lines.join("\n");
-      });
-    }
-
-    /* ========= PLANT RENDERING ========= */
-    function renderPlantCards() {
-      plantCareGrid.innerHTML = "";
-      PLANTS.forEach(plant => {
-        const btn = document.createElement("button");
-        btn.className = "pc-card";
-        btn.dataset.plantId = plant.id;
-        btn.innerHTML = `
-          <div class="pc-card-title">${plant.commonName}</div>
-          <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
-        `;
-        btn.addEventListener("click", () => openCarePopup(plant.id));
-        plantCareGrid.appendChild(btn);
-      });
-    }
-
-    function openCarePopup(id) {
-      const plant = PLANTS.find(p => p.id === id);
-      if (!plant) return;
-
-      careTitle.textContent      = plant.commonName || "";
-      careLight.textContent      = plant.light || "";
-      careWater.textContent      = plant.water || "";
-      careHumidityEl.textContent = plant.humidity || "";
-      careTemp.textContent       = plant.temp || "";
-      careSoil.textContent       = plant.soil || "";
-      careFertilizer.textContent = plant.fertilizer || "";
-      careToxicity.textContent   = plant.toxicity || "";
-      careTips.textContent       = plant.tips || "";
-
-      if (plant.image) {
-        careImage.src = plant.image;
-        careImage.alt = plant.commonName || "";
-        careImage.style.display = "";
-      } else {
-        careImage.style.display = "none";
-      }
-
-      careBackdrop.style.display = "flex";
-    }
-
-    function filterPlantCards() {
-      const q = (careSearch.value || "").toLowerCase().trim();
-      const cards = plantCareGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const txt = (card.textContent || "").toLowerCase();
-        card.style.display = !q || txt.includes(q) ? "" : "none";
-      });
-    }
-
-    careSearch.addEventListener("input", filterPlantCards);
-
-    /* ========= PEST RENDERING ========= */
-    function renderPestCards() {
-      pestGrid.innerHTML = "";
-      PESTS.forEach(pest => {
-        const card = document.createElement("button");
-        card.className = "pc-card";
-        card.dataset.pestId = pest.id;
-        card.innerHTML = `
-          <div class="pc-card-title">${pest.commonName}</div>
-          <div class="pc-card-subtitle">${pest.identification || ""}</div>
-        `;
-        card.addEventListener("click", () => openPestPopup(pest.id));
-        pestGrid.appendChild(card);
-      });
-    }
-
-    function openPestPopup(id) {
-      const pest = PESTS.find(p => p.id === id);
-      if (!pest) return;
-
-      pestTitle.textContent          = pest.commonName || "";
-      pestScientificName.textContent = pest.scientificName || "";
-      pestLooksLike.textContent      = pest.looksLike || "";
-      pestIdentification.textContent = pest.identification || "";
-      pestPrevention.textContent     = pest.prevention || "";
-      pestTreatment.textContent      = pest.treatment || "";
-
-      if (pest.image) {
-        pestImage.src = pest.image;
-        pestImage.alt = pest.commonName || pest.scientificName || "";
-        pestImage.style.display = "";
-      } else {
-        pestImage.style.display = "none";
-      }
-
-      pestBackdrop.style.display = "flex";
-    }
-
-    function filterPestCards() {
-      const q = (pestSearch.value || "").toLowerCase().trim();
-      const cards = pestGrid.querySelectorAll(".pc-card");
-      cards.forEach(card => {
-        const txt = (card.textContent || "").toLowerCase();
-        card.style.display = !q || txt.includes(q) ? "" : "none";
-      });
-    }
-
-    pestSearch.addEventListener("input", filterPestCards);
-
-    /* ========= LOADERS ========= */
-    async function loadSkuCsv() {
-      try {
-        const res = await fetch(SKU_CSV_URL);
-        if (!res.ok) throw new Error("SKU CSV not found");
-        const text = await res.text();
-        skuData = parseSkuCsv(text);
-        renderSkuList();
-      } catch (err) {
-        console.error(err);
-        alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
-      }
-    }
-
-    async function loadOrderCsv() {
-      try {
-        const res = await fetch(ORDER_CSV_URL);
-        if (!res.ok) throw new Error("OrderBreakdown.csv not found");
-        const text = await res.text();
-        allOrderRows = parseOrderCsv(text);
-        applyOrderBreakdown(allOrderRows);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function loadPlantCsv() {
-      try {
-        const res = await fetch(PLANT_CSV_URL);
-        if (!res.ok) throw new Error("plants.csv not found");
-        const text = await res.text();
-        PLANTS = parsePlantCsv(text);
-        renderPlantCards();
-        filterPlantCards();
-      } catch (err) {
-        console.error(err);
-        alert("Error loading plants.csv. Check file name and headers.");
-      }
-    }
-
-    async function loadPestCsv() {
-      try {
-        const res = await fetch(PEST_CSV_URL);
-        if (!res.ok) throw new Error("pests.csv not found");
-        const text = await res.text();
-        PESTS = parsePestCsv(text);
-        renderPestCards();
-        filterPestCards();
-      } catch (err) {
-        console.error(err);
-        alert("Error loading pests.csv. Check file name and headers.");
-      }
-    }
-
-    /* ========= INIT ========= */
+    /* ========= MAIN INIT ========= */
     document.addEventListener("DOMContentLoaded", () => {
+      // Initialize EmailJS
+      if (window.emailjs) {
+        emailjs.init("l1fAepv1nVhYn7SJR");
+      }
+
+      /* ========= TOP-LEVEL TABS ========= */
+      const tabs = document.querySelectorAll(".tab");
+      const tabSections = {
+        "catalog":      document.getElementById("tab-catalog"),
+        "orders":       document.getElementById("tab-orders"),
+        "plant-care":   document.getElementById("tab-plant-care"),
+        "damage-claim": document.getElementById("tab-damage-claim"),
+        "trends":       document.getElementById("tab-trends")
+      };
+
+      function showTopTab(key) {
+        Object.entries(tabSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        tabs.forEach(t => t.classList.remove("active"));
+        const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
+        if (activeTab) activeTab.classList.add("active");
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const key = tab.dataset.tab;
+          if (!key) return;
+          showTopTab(key);
+        });
+      });
+
+      /* ========= PLANT CARE INNER TABS ========= */
+      const innerTabs = document.querySelectorAll(".inner-tab");
+      const innerSections = {
+        "care-library": document.getElementById("inner-care-library"),
+        "pest-id":      document.getElementById("inner-pest-id")
+      };
+
+      function showInnerTab(key) {
+        Object.entries(innerSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        innerTabs.forEach(t => t.classList.remove("active"));
+        const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
+        if (active) active.classList.add("active");
+      }
+
+      innerTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const key = tab.dataset.inner;
+          if (!key) return;
+          showInnerTab(key);
+        });
+      });
+
+      /* ========= DAMAGE CLAIM INNER TABS ========= */
+      const damageTabs = document.querySelectorAll(".damage-inner-tab");
+      const damageSections = {
+        cold:  document.getElementById("damage-cold"),
+        pest:  document.getElementById("damage-pest"),
+        store: document.getElementById("damage-store")
+      };
+
+      function showDamageTab(key) {
+        Object.entries(damageSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        damageTabs.forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.damage === key);
+        });
+      }
+
+      damageTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.damage;
+          if (key) showDamageTab(key);
+        });
+      });
+
+      /* ========= ORDER DOM ========= */
+      const obWeekDisplay   = document.getElementById("obWeekDisplay");
+      const obGradesDisplay = document.getElementById("obGradesDisplay");
+      const obBodies = {
+        FLO: document.getElementById("obFloBody"),
+        FOL: document.getElementById("obFolBody"),
+        UCO: document.getElementById("obUcoBody"),
+        FHB: document.getElementById("obFhbBody"),
+        TRP: document.getElementById("obTrpBody"),
+        SPC: document.getElementById("obSpcBody")
+      };
+
+      /* ========= SKU DOM ========= */
+      const nameFilter   = document.getElementById("nameFilter");
+      const skuFilter    = document.getElementById("skuFilter");
+      const sentInFilter = document.getElementById("sentInFilter");
+      const yearFilter   = document.getElementById("yearFilter");
+      const skuGrid      = document.getElementById("skuGrid");
+      const resultCount  = document.getElementById("resultCount");
+      const emptyState   = document.getElementById("emptyState");
+
+      const popupBackdrop = document.getElementById("popupBackdrop");
+      const popupName     = document.getElementById("popupName");
+      const popupSku      = document.getElementById("popupSku");
+      const popupSent     = document.getElementById("popupSent");
+      const popupYear     = document.getElementById("popupYear");
+      const popupClose    = document.getElementById("popupClose");
+
+      popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+      popupBackdrop.addEventListener("click", e => {
+        if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+      });
+
+      /* ========= PLANT CARE DOM ========= */
+      const plantCareGrid   = document.getElementById("plantCareGrid");
+      const careSearch      = document.getElementById("careSearch");
+      const careBackdrop    = document.getElementById("careBackdrop");
+      const careImage       = document.getElementById("careImage");
+      const careTitle       = document.getElementById("careTitle");
+      const careLight       = document.getElementById("careLight");
+      const careWater       = document.getElementById("careWater");
+      const careHumidityEl  = document.getElementById("careHumidity");
+      const careTemp        = document.getElementById("careTemp");
+      const careSoil        = document.getElementById("careSoil");
+      const careFertilizer  = document.getElementById("careFertilizer");
+      const careToxicity    = document.getElementById("careToxicity");
+      const careTips        = document.getElementById("careTips");
+      const careCloseBtn    = document.getElementById("careClose");
+
+      careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+      careBackdrop.addEventListener("click", e => {
+        if (e.target === careBackdrop) careBackdrop.style.display = "none";
+      });
+
+      /* ========= PEST DOM ========= */
+      const pestGrid           = document.getElementById("pestGrid");
+      const pestSearch         = document.getElementById("pestSearch");
+      const pestBackdrop       = document.getElementById("pestBackdrop");
+      const pestImage          = document.getElementById("pestImage");
+      const pestTitle          = document.getElementById("pestTitle");
+      const pestScientificName = document.getElementById("pestScientificName");
+      const pestLooksLike      = document.getElementById("pestLooksLike");
+      const pestIdentification = document.getElementById("pestIdentification");
+      const pestPrevention     = document.getElementById("pestPrevention");
+      const pestTreatment      = document.getElementById("pestTreatment");
+      const pestCloseBtn       = document.getElementById("pestClose");
+
+      pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+      pestBackdrop.addEventListener("click", e => {
+        if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+      });
+
+      /* ========= TRENDS DOM & EMAILJS SEND ========= */
+      const trendsForm    = document.getElementById("trendsForm");
+      const trendsMessage = document.getElementById("trendsMessage");
+      const trendsImages  = document.getElementById("trendsImages");
+      const trendsStatus  = document.getElementById("trendsStatus");
+
+      const EMAILJS_SERVICE_ID  = "service_73p3pi4";
+      const EMAILJS_TEMPLATE_ID = "template_9zrl7vi";
+
+      if (trendsForm && window.emailjs) {
+        trendsForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          trendsStatus.textContent = "";
+
+          const msg   = (trendsMessage.value || "").trim();
+          const files = trendsImages.files;
+
+          if (!msg) {
+            trendsStatus.textContent = "Please enter a message before sending.";
+            trendsStatus.style.color = "#fb7185";
+            return;
+          }
+
+          if (!files || files.length === 0) {
+            trendsStatus.textContent = "Please attach at least one image.";
+            trendsStatus.style.color = "#fb7185";
+            return;
+          }
+
+          trendsStatus.textContent = "Sending...";
+          trendsStatus.style.color = "#a5b4fc";
+
+          emailjs
+            .sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, trendsForm)
+            .then(() => {
+              trendsStatus.textContent =
+                "Sent! Thank you for sharing this trend with the Social team.";
+              trendsStatus.style.color = "#4ade80";
+              alert("Your trend email has been sent to Social@hampshirefarms.com!");
+              trendsForm.reset();
+            })
+            .catch((err) => {
+              console.error(err);
+              trendsStatus.textContent =
+                "There was an error sending this. Please try again or email Social@hampshirefarms.com directly.";
+              trendsStatus.style.color = "#fb7185";
+            });
+        });
+      }
+
+      /* ========= SKU RENDERING ========= */
+      function renderSkuList() {
+        skuGrid.innerHTML = "";
+        const nameQ = (nameFilter.value || "").toLowerCase();
+        const skuQ  = normalizeSku(skuFilter.value || "");
+        const sentQ = (sentInFilter.value || "").toLowerCase();
+        const yearQ = yearFilter.value;
+
+        const filtered = skuData.filter(item => {
+          const itemName = (item.name   || "").toLowerCase();
+          const itemSku  = normalizeSku(item.sku || "");
+          const itemSent = (item.sentIn || "").toLowerCase();
+          const itemYear = item.yearSent || "";
+          return (!nameQ || itemName.includes(nameQ)) &&
+                 (!skuQ  || itemSku.includes(skuQ)) &&
+                 (!sentQ || itemSent.includes(sentQ)) &&
+                 (yearQ === "all" || itemYear === yearQ);
+        });
+
+        filtered.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "sku-card";
+          card.innerHTML = `
+            <div class="sku-year-pill">${item.yearSent}</div>
+            <div class="sku-name">${item.name}</div>
+            <div class="sku-meta">
+              <div><strong>SKU:</strong> ${item.sku}</div>
+              <div><strong>Sent In:</strong> ${item.sentIn}</div>
+              <div><strong>Year Sent:</strong> ${item.yearSent}</div>
+            </div>
+          `;
+          card.addEventListener("click", () => {
+            popupName.textContent = item.name;
+            popupSku.textContent  = item.sku;
+            popupSent.textContent = item.sentIn;
+            popupYear.textContent = item.yearSent;
+            popupBackdrop.style.display = "flex";
+          });
+          skuGrid.appendChild(card);
+        });
+
+        resultCount.textContent = filtered.length;
+        emptyState.classList.toggle("hidden", filtered.length !== 0);
+      }
+
+      nameFilter.addEventListener("input", renderSkuList);
+      skuFilter.addEventListener("input", renderSkuList);
+      sentInFilter.addEventListener("input", renderSkuList);
+      yearFilter.addEventListener("change", renderSkuList);
+
+      /* ========= ORDER BREAKDOWN RENDERING ========= */
+      function applyOrderBreakdown(rows) {
+        if (!rows.length) {
+          obWeekDisplay.textContent = "TBD";
+          obGradesDisplay.textContent = "All stores";
+          Object.values(obBodies).forEach(el => el.textContent = "");
+          return;
+        }
+
+        const weeks = [...new Set(rows.map(r => r.week))];
+        const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+        const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+        const weekRows = rows.filter(r => r.week == latest);
+
+        obWeekDisplay.textContent = latest;
+        obGradesDisplay.textContent =
+          STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+
+        const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+        weekRows.forEach(r => {
+          if (groups[r.category]) {
+            const size  = r.size  || "";
+            const plant = r.plant || "";
+            let line = "";
+            if (size && plant) line = `${size} — ${plant}`;
+            else line = size || plant;
+            if (line) groups[r.category].push(line);
+          }
+        });
+
+        Object.entries(groups).forEach(([cat, lines]) => {
+          const el = obBodies[cat];
+          if (el) el.textContent = lines.join("\n");
+        });
+      }
+
+      /* ========= PLANT RENDERING ========= */
+      function renderPlantCards() {
+        plantCareGrid.innerHTML = "";
+        PLANTS.forEach(plant => {
+          const btn = document.createElement("button");
+          btn.className = "pc-card";
+          btn.dataset.plantId = plant.id;
+          btn.innerHTML = `
+            <div class="pc-card-title">${plant.commonName}</div>
+            <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+          `;
+          btn.addEventListener("click", () => openCarePopup(plant.id));
+          plantCareGrid.appendChild(btn);
+        });
+      }
+
+      function openCarePopup(id) {
+        const plant = PLANTS.find(p => p.id === id);
+        if (!plant) return;
+
+        careTitle.textContent      = plant.commonName || "";
+        careLight.textContent      = plant.light || "";
+        careWater.textContent      = plant.water || "";
+        careHumidityEl.textContent = plant.humidity || "";
+        careTemp.textContent       = plant.temp || "";
+        careSoil.textContent       = plant.soil || "";
+        careFertilizer.textContent = plant.fertilizer || "";
+        careToxicity.textContent   = plant.toxicity || "";
+        careTips.textContent       = plant.tips || "";
+
+        if (plant.image) {
+          careImage.src = plant.image;
+          careImage.alt = plant.commonName || "";
+          careImage.style.display = "";
+        } else {
+          careImage.style.display = "none";
+        }
+
+        careBackdrop.style.display = "flex";
+      }
+
+      function filterPlantCards() {
+        const q = (careSearch.value || "").toLowerCase().trim();
+        const cards = plantCareGrid.querySelectorAll(".pc-card");
+        cards.forEach(card => {
+          const txt = (card.textContent || "").toLowerCase();
+          card.style.display = !q || txt.includes(q) ? "" : "none";
+        });
+      }
+
+      careSearch.addEventListener("input", filterPlantCards);
+
+      /* ========= PEST RENDERING ========= */
+      function renderPestCards() {
+        pestGrid.innerHTML = "";
+        PESTS.forEach(pest => {
+          const card = document.createElement("button");
+          card.className = "pc-card";
+          card.dataset.pestId = pest.id;
+          card.innerHTML = `
+            <div class="pc-card-title">${pest.commonName}</div>
+            <div class="pc-card-subtitle">${pest.identification || ""}</div>
+          `;
+          card.addEventListener("click", () => openPestPopup(pest.id));
+          pestGrid.appendChild(card);
+        });
+      }
+
+      function openPestPopup(id) {
+        const pest = PESTS.find(p => p.id === id);
+        if (!pest) return;
+
+        pestTitle.textContent          = pest.commonName || "";
+        pestScientificName.textContent = pest.scientificName || "";
+        pestLooksLike.textContent      = pest.looksLike || "";
+        pestIdentification.textContent = pest.identification || "";
+        pestPrevention.textContent     = pest.prevention || "";
+        pestTreatment.textContent      = pest.treatment || "";
+
+        if (pest.image) {
+          pestImage.src = pest.image;
+          pestImage.alt = pest.commonName || pest.scientificName || "";
+          pestImage.style.display = "";
+        } else {
+          pestImage.style.display = "none";
+        }
+
+        pestBackdrop.style.display = "flex";
+      }
+
+      function filterPestCards() {
+        const q = (pestSearch.value || "").toLowerCase().trim();
+        const cards = pestGrid.querySelectorAll(".pc-card");
+        cards.forEach(card => {
+          const txt = (card.textContent || "").toLowerCase();
+          card.style.display = !q || txt.includes(q) ? "" : "none";
+        });
+      }
+
+      pestSearch.addEventListener("input", filterPestCards);
+
+      /* ========= LOADERS ========= */
+      async function loadSkuCsv() {
+        try {
+          const res = await fetch(SKU_CSV_URL);
+          if (!res.ok) throw new Error("SKU CSV not found");
+          const text = await res.text();
+          skuData = parseSkuCsv(text);
+          renderSkuList();
+        } catch (err) {
+          console.error(err);
+          alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
+        }
+      }
+
+      async function loadOrderCsv() {
+        try {
+          const res = await fetch(ORDER_CSV_URL);
+          if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+          const text = await res.text();
+          allOrderRows = parseOrderCsv(text);
+          applyOrderBreakdown(allOrderRows);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadPlantCsv() {
+        try {
+          const res = await fetch(PLANT_CSV_URL);
+          if (!res.ok) throw new Error("plants.csv not found");
+          const text = await res.text();
+          PLANTS = parsePlantCsv(text);
+          renderPlantCards();
+          filterPlantCards();
+        } catch (err) {
+          console.error(err);
+          alert("Error loading plants.csv. Check file name and headers.");
+        }
+      }
+
+      async function loadPestCsv() {
+        try {
+          const res = await fetch(PEST_CSV_URL);
+          if (!res.ok) throw new Error("pests.csv not found");
+          const text = await res.text();
+          PESTS = parsePestCsv(text);
+          renderPestCards();
+          filterPestCards();
+        } catch (err) {
+          console.error(err);
+          alert("Error loading pests.csv. Check file name and headers.");
+        }
+      }
+
+      /* ========= INITIAL VIEW ========= */
       showTopTab("catalog");
       showInnerTab("care-library");
       showDamageTab("cold");
