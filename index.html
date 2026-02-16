@@ -1194,6 +1194,9 @@
           .then(() => {
             trendsStatus.textContent = "Sent! Thank you for sharing this trend with the Social team.";
             trendsStatus.style.color = "#4ade80";
+            // Popup confirmation
+            alert("Your trend email has been sent to Social@hampshirefarms.com!");
+            // Stay on Trends tab, just clear the form
             trendsForm.reset();
           })
           .catch((err) => {
