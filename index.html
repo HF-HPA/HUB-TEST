@@ -858,7 +858,16 @@
         </p>
       </div>
 
-      <form id="trendsForm" class="trends-form" enctype="multipart/form-data">
+      <form
+        id="trendsForm"
+        class="trends-form"
+        enctype="multipart/form-data"
+        method="POST"
+      >
+        <!-- Web3Forms access key (FREE) -->
+        <input type="hidden" name="access_key" value="c5df9e6a-b1d6-4db3-9d37-dcf35146938d" />
+        <input type="hidden" name="subject" value="HF-HPA Trend Submission" />
+
         <div class="form-group">
           <label for="trendsMessage">
             Message <span class="required">*</span>
@@ -878,7 +887,7 @@
           <input
             type="file"
             id="trendsImages"
-            name="images"
+            name="attachments[]"
             accept="image/*"
             multiple
             required
@@ -974,9 +983,6 @@
 
   </main>
 
-  <!-- EmailJS SDK (v3, compatible with init('publicKey')) -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
   <script>
     /* ========= CONFIG ========= */
     const SKU_CSV_URL   = "SKU_Name_2026.csv";
@@ -999,6 +1005,8 @@
     let PESTS  = [];
     let skuData = [];
     let allOrderRows = [];
+
+    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
     /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
@@ -1156,15 +1164,8 @@
       return pests;
     }
 
-    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
-
-    /* ========= MAIN INIT ========= */
+    /* ========= APP LOGIC ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      // Initialize EmailJS
-      if (window.emailjs) {
-        emailjs.init("l1fAepv1nVhYn7SJR");
-      }
-
       /* ========= TOP-LEVEL TABS ========= */
       const tabs = document.querySelectorAll(".tab");
       const tabSections = {
@@ -1315,17 +1316,14 @@
         if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
       });
 
-      /* ========= TRENDS DOM & EMAILJS SEND ========= */
+      /* ========= TRENDS DOM & WEB3FORMS SEND ========= */
       const trendsForm    = document.getElementById("trendsForm");
       const trendsMessage = document.getElementById("trendsMessage");
       const trendsImages  = document.getElementById("trendsImages");
       const trendsStatus  = document.getElementById("trendsStatus");
 
-      const EMAILJS_SERVICE_ID  = "service_73p3pi4";
-      const EMAILJS_TEMPLATE_ID = "template_9zrl7vi";
-
-      if (trendsForm && window.emailjs) {
-        trendsForm.addEventListener("submit", function (e) {
+      if (trendsForm) {
+        trendsForm.addEventListener("submit", async function (e) {
           e.preventDefault();
           trendsStatus.textContent = "";
 
@@ -1333,7 +1331,7 @@
           const files = trendsImages.files;
 
           if (!msg) {
-            trendsStatus.textContent = "Please enter a message before sending.";
+            trendsStatus.textContent = "Please enter a message.";
             trendsStatus.style.color = "#fb7185";
             return;
           }
@@ -1347,21 +1345,31 @@
           trendsStatus.textContent = "Sending...";
           trendsStatus.style.color = "#a5b4fc";
 
-          emailjs
-            .sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, trendsForm)
-            .then(() => {
-              trendsStatus.textContent =
-                "Sent! Thank you for sharing this trend with the Social team.";
-              trendsStatus.style.color = "#4ade80";
-              alert("Your trend email has been sent to Social@hampshirefarms.com!");
-              trendsForm.reset();
-            })
-            .catch((err) => {
-              console.error(err);
-              trendsStatus.textContent =
-                "There was an error sending this. Please try again or email Social@hampshirefarms.com directly.";
-              trendsStatus.style.color = "#fb7185";
+          try {
+            const formData = new FormData(trendsForm);
+
+            const response = await fetch("https://api.web3forms.com/submit", {
+              method: "POST",
+              body: formData
             });
+
+            const result = await response.json();
+
+            if (result.success) {
+              trendsStatus.textContent = "Sent! Thank you for sharing this trend with the Social team.";
+              trendsStatus.style.color = "#4ade80";
+              alert("Your trend email has been sent (with images) to Social@hampshirefarms.com!");
+              trendsForm.reset();
+            } else {
+              console.error(result);
+              trendsStatus.textContent = "Error sending. Please try again.";
+              trendsStatus.style.color = "#fb7185";
+            }
+          } catch (err) {
+            console.error(err);
+            trendsStatus.textContent = "Network error. Please try again.";
+            trendsStatus.style.color = "#fb7185";
+          }
         });
       }
 
@@ -1607,7 +1615,7 @@
         }
       }
 
-      /* ========= INITIAL VIEW ========= */
+      /* ========= INITIALIZE VIEW ========= */
       showTopTab("catalog");
       showInnerTab("care-library");
       showDamageTab("cold");
