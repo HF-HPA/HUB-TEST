@@ -858,7 +858,7 @@
         </p>
       </div>
 
-      <form id="trendsForm" class="trends-form">
+      <form id="trendsForm" class="trends-form" enctype="multipart/form-data">
         <div class="form-group">
           <label for="trendsMessage">
             Message <span class="required">*</span>
@@ -974,8 +974,8 @@
 
   </main>
 
-!-- EMAILJS SDK -->
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+  <!-- EMAILJS SDK -->
+  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
 
   <script>
     /* ========= CONFIG ========= */
@@ -1000,9 +1000,9 @@
     let skuData = [];
     let allOrderRows = [];
 
-    // Initialize EmailJS – replace with your actual public key
+    // Initialize EmailJS with your real public key
     if (window.emailjs) {
-      emailjs.init(l1fAepv1nVhYn7SJR);
+      emailjs.init("l1fAepv1nVhYn7SJR");
     }
 
     /* ========= TOP-LEVEL TABS ========= */
@@ -1161,7 +1161,6 @@
     const trendsImages  = document.getElementById("trendsImages");
     const trendsStatus  = document.getElementById("trendsStatus");
 
-    // Replace with your actual EmailJS IDs
     const EMAILJS_SERVICE_ID  = "service_73p3pi4";
     const EMAILJS_TEMPLATE_ID = "template_9zrl7vi";
 
@@ -1173,12 +1172,14 @@
         const msg   = (trendsMessage.value || "").trim();
         const files = trendsImages.files;
 
+        // Require message
         if (!msg) {
           trendsStatus.textContent = "Please enter a message before sending.";
           trendsStatus.style.color = "#fb7185";
           return;
         }
 
+        // Require at least one image
         if (!files || files.length === 0) {
           trendsStatus.textContent = "Please attach at least one image.";
           trendsStatus.style.color = "#fb7185";
@@ -1618,4 +1619,3 @@
   </script>
 </body>
 </html>
-
