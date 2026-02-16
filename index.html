@@ -356,6 +356,7 @@
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
+      flex-wrap: wrap;
     }
 
     .inner-tab {
@@ -372,6 +373,34 @@
       background: rgba(255,255,255,0.18);
       border-color: var(--border-subtle);
       color: var(--text);
+    }
+
+    /* DAMAGE INNER TABS */
+    .damage-inner-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .damage-inner-tab {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .damage-inner-tab.active {
+      background: rgba(255,255,255,0.18);
+      border-color: var(--border-subtle);
+      color: var(--text);
+    }
+
+    .damage-inner-content {
+      margin-top: 6px;
     }
 
     /* PLANT / PEST CARDS */
@@ -506,6 +535,60 @@
       padding: 8px 14px;
       cursor: pointer;
     }
+
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    /* TRENDS FORM */
+    .trends-form {
+      max-width: 560px;
+      background: rgba(21,37,54,0.95);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .trends-form .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .trends-form label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .trends-form .required {
+      color: #fb7185;
+    }
+
+    .trends-form textarea,
+    .trends-form input[type="text"],
+    .trends-form input[type="file"] {
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10,21,32,0.9);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+
+    .trends-form textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .trends-form small {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
   </style>
 </head>
 
@@ -528,6 +611,8 @@
       <button class="tab active" data-tab="catalog">SKU Catalogue</button>
       <button class="tab" data-tab="orders">Order Breakdown</button>
       <button class="tab" data-tab="plant-care">Plant Care</button>
+      <button class="tab" data-tab="damage-claim">Damage Claim</button>
+      <button class="tab" data-tab="trends">Trends</button>
     </nav>
 
     <!-- SKU CATALOGUE TAB -->
@@ -574,20 +659,40 @@
       <div class="order-breakdown-wrapper">
         <div class="ob-header-stack">
           <div class="ob-week-box">
-            Shipping Week #: <span id="obWeekDisplay">TBD</span>
+            Shipping Week #:
+            <span id="obWeekDisplay">TBD</span>
           </div>
           <div class="ob-grades-box">
-            Store Grade Shipping: <span id="obGradesDisplay">All stores</span>
+            Store Grade Shipping:
+            <span id="obGradesDisplay">All stores</span>
           </div>
         </div>
 
         <div class="ob-grid">
-          <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
-          <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
-          <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
-          <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
-          <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
-          <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
+          <div class="ob-box">
+            <div class="ob-box-title">FLO</div>
+            <div id="obFloBody" class="ob-box-body"></div>
+          </div>
+          <div class="ob-box">
+            <div class="ob-box-title">FOL</div>
+            <div id="obFolBody" class="ob-box-body"></div>
+          </div>
+          <div class="ob-box">
+            <div class="ob-box-title">UCO</div>
+            <div id="obUcoBody" class="ob-box-body"></div>
+          </div>
+          <div class="ob-box">
+            <div class="ob-box-title">FHB</div>
+            <div id="obFhbBody" class="ob-box-body"></div>
+          </div>
+          <div class="ob-box">
+            <div class="ob-box-title">TRP</div>
+            <div id="obTrpBody" class="ob-box-body"></div>
+          </div>
+          <div class="ob-box">
+            <div class="ob-box-title">SPC</div>
+            <div id="obSpcBody" class="ob-box-body"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -627,6 +732,176 @@
         </div>
         <div class="pc-grid" id="pestGrid"></div>
       </section>
+    </section>
+
+    <!-- DAMAGE CLAIM TAB -->
+    <section id="tab-damage-claim" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Damage Claims</div>
+        <p class="subtitle">
+          Choose a damage type to see guidance and documentation tips for claims.
+        </p>
+      </div>
+
+      <div class="damage-inner-tabs">
+        <button class="damage-inner-tab active" data-damage="cold">Cold Damage</button>
+        <button class="damage-inner-tab" data-damage="pest">Pest Damage</button>
+        <button class="damage-inner-tab" data-damage="store">Store Claim</button>
+      </div>
+
+      <!-- COLD DAMAGE CONTENT -->
+      <section id="damage-cold" class="damage-inner-content">
+        <div class="pc-grid">
+          <div class="pc-card">
+            <div class="pc-card-title">How to Recognize Cold Damage</div>
+            <div class="pc-card-subtitle">
+              Symptoms, timing, and what to document.
+            </div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Leaves may appear water‑soaked, translucent, or darkened<br />
+              • New growth may be limp or collapsed<br />
+              • Damage often appears a day or two after exposure (during shipping or on racks near doors)<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">What to Photograph</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Full table/rack views showing quantity and signage<br />
+              • Close‑ups of worst damage and a “typical” plant<br />
+              • Photo of any temperature‑related cause (open doors, broken heater, snow/ice on racks, etc.)<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">Notes for the Claim</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Date product arrived and date damage was noticed<br />
+              • Store #, department, and contact name<br />
+              • Approximate % of affected product by table or rack<br />
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PEST DAMAGE CONTENT -->
+      <section id="damage-pest" class="damage-inner-content hidden">
+        <div class="pc-grid">
+          <div class="pc-card">
+            <div class="pc-card-title">How to Recognize Pest Damage</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Sticky leaves, webbing, speckling, or chewing<br />
+              • Visible pests on leaf undersides, in soil, or on stems<br />
+              • Compare with the Pest Identification tab if unsure<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">What to Photograph</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Clear close‑ups of insects or webbing (phone macro if possible)<br />
+              • Overhead shot of affected tables/racks<br />
+              • Any nearby conditions that may contribute (standing water, older stock, etc.)<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">Notes for the Claim</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Date product arrived and date pests were first seen<br />
+              • Whether product was treated at store (and with what)<br />
+              • Estimated % loss and which SKUs are impacted<br />
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STORE CLAIM CONTENT -->
+      <section id="damage-store" class="damage-inner-content hidden">
+        <div class="pc-grid">
+          <div class="pc-card">
+            <div class="pc-card-title">When to File a Store Claim</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Major losses tied to weather, pests, or handling<br />
+              • Product received in poor condition on arrival<br />
+              • Large price/signage errors creating markdowns<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">Required Information</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Store # and contact name<br />
+              • Date &amp; PO/Load/Invoice # (if available)<br />
+              • SKUs, quantities, and estimated retail $$ impacted<br />
+            </p>
+          </div>
+
+          <div class="pc-card">
+            <div class="pc-card-title">Best Practices</div>
+            <p class="subtitle" style="margin-top:6px;">
+              • Isolate and clearly mark damaged product<br />
+              • Take photos before discarding anything<br />
+              • Submit claims promptly while product is still on site<br />
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- TRENDS TAB -->
+    <section id="tab-trends" class="tab-content hidden">
+      <div class="pc-header">
+        <div class="pc-title">Trends</div>
+        <p class="subtitle">
+          Share store trends, displays, and social‑worthy moments with the HF team.
+        </p>
+      </div>
+
+      <form id="trendsForm" class="trends-form">
+        <div class="form-group">
+          <label for="trendsMessage">
+            Message <span class="required">*</span>
+          </label>
+          <textarea
+            id="trendsMessage"
+            name="message"
+            placeholder="Describe the trend, display, or idea..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="trendsImages">
+            Upload Photos <span class="required">*</span>
+          </label>
+          <input
+            type="file"
+            id="trendsImages"
+            name="images"
+            accept="image/*"
+            multiple
+            required
+          />
+          <small>Attach at least one clear photo (table, endcap, signage, etc.).</small>
+        </div>
+
+        <div class="form-group">
+          <label for="trendsName">Your Name (optional)</label>
+          <input
+            type="text"
+            id="trendsName"
+            name="from_name"
+            placeholder="Name / store / role..."
+          />
+        </div>
+
+        <button type="submit" class="popup-close">
+          Send to Social@hampshirefarms.com
+        </button>
+
+        <div id="trendsStatus" class="subtitle" style="margin-top:8px;"></div>
+      </form>
     </section>
 
     <!-- SKU POPUP -->
@@ -698,562 +973,648 @@
     </div>
 
   </main>
-<script>
-  /* ========= CONFIG ========= */
-  const SKU_CSV_URL    = "SKU_Name_2026.csv";
-  const ORDER_CSV_URL  = "OrderBreakdown.csv";
-  const PLANT_CSV_URL  = "plants.csv";
-  const PEST_CSV_URL   = "pests.csv";
 
-  const STORE_GRADES_BY_WEEK = {
-    "6":  "All stores",
-    "7":  "All Stores",
-    "8":  "A/B",
-    "9":  "SKIP",
-    "10": "All Stores",
-    "11": "All Stores",
-    "12": "All Stores",
-    "13": "All Stores"
-  };
+  <!-- EMAILJS SDK -->
+  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
 
-  let PLANTS = [];
-  let PESTS  = [];
-  let skuData = [];
+  <script>
+    /* ========= CONFIG ========= */
+    const SKU_CSV_URL   = "SKU_Name_2026.csv";
+    const ORDER_CSV_URL = "OrderBreakdown.csv";
+    const PLANT_CSV_URL = "plants.csv";
+    const PEST_CSV_URL  = "pests.csv";
 
-  /* ========= TOP-LEVEL TABS ========= */
-  const tabs = document.querySelectorAll(".tab");
-  const tabSections = {
-    "catalog":    document.getElementById("tab-catalog"),
-    "orders":     document.getElementById("tab-orders"),
-    "plant-care": document.getElementById("tab-plant-care")
-  };
+    const STORE_GRADES_BY_WEEK = {
+      "6":  "All stores",
+      "7":  "All Stores",
+      "8":  "A/B",
+      "9":  "SKIP",
+      "10": "All Stores",
+      "11": "All Stores",
+      "12": "All Stores",
+      "13": "All Stores"
+    };
 
-  function showTopTab(key) {
-    Object.entries(tabSections).forEach(([k, section]) => {
-      section.classList.toggle("hidden", k !== key);
+    let PLANTS = [];
+    let PESTS  = [];
+    let skuData = [];
+    let allOrderRows = [];
+
+    // Initialize EmailJS – replace with your actual public key
+    if (window.emailjs) {
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+    }
+
+    /* ========= TOP-LEVEL TABS ========= */
+    const tabs = document.querySelectorAll(".tab");
+    const tabSections = {
+      "catalog":      document.getElementById("tab-catalog"),
+      "orders":       document.getElementById("tab-orders"),
+      "plant-care":   document.getElementById("tab-plant-care"),
+      "damage-claim": document.getElementById("tab-damage-claim"),
+      "trends":       document.getElementById("tab-trends")
+    };
+
+    function showTopTab(key) {
+      Object.entries(tabSections).forEach(([k, section]) => {
+        if (!section) return;
+        section.classList.toggle("hidden", k !== key);
+      });
+      tabs.forEach(t => t.classList.remove("active"));
+      const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
+      if (activeTab) activeTab.classList.add("active");
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.tab;
+        if (!key) return;
+        showTopTab(key);
+      });
     });
-    tabs.forEach(t => t.classList.remove("active"));
-    const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
-    if (activeTab) activeTab.classList.add("active");
-  }
 
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      const key = tab.dataset.tab;
-      if (!key) return;
-      showTopTab(key);
+    /* ========= INNER TABS (PLANT CARE) ========= */
+    const innerTabs = document.querySelectorAll(".inner-tab");
+    const innerSections = {
+      "care-library": document.getElementById("inner-care-library"),
+      "pest-id":      document.getElementById("inner-pest-id")
+    };
+
+    function showInnerTab(key) {
+      Object.entries(innerSections).forEach(([k, section]) => {
+        if (!section) return;
+        section.classList.toggle("hidden", k !== key);
+      });
+      innerTabs.forEach(t => t.classList.remove("active"));
+      const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
+      if (active) active.classList.add("active");
+    }
+
+    innerTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.inner;
+        if (!key) return;
+        showInnerTab(key);
+      });
     });
-  });
 
-  /* ========= INNER TABS (PLANT CARE) ========= */
-  const innerTabs = document.querySelectorAll(".inner-tab");
-  const innerSections = {
-    "care-library": document.getElementById("inner-care-library"),
-    "pest-id":      document.getElementById("inner-pest-id")
-  };
+    /* ========= DAMAGE CLAIM INNER TABS ========= */
+    const damageTabs = document.querySelectorAll(".damage-inner-tab");
+    const damageSections = {
+      cold:  document.getElementById("damage-cold"),
+      pest:  document.getElementById("damage-pest"),
+      store: document.getElementById("damage-store")
+    };
 
-  function showInnerTab(key) {
-    Object.entries(innerSections).forEach(([k, section]) => {
-      section.classList.toggle("hidden", k !== key);
+    function showDamageTab(key) {
+      Object.entries(damageSections).forEach(([k, section]) => {
+        if (!section) return;
+        section.classList.toggle("hidden", k !== key);
+      });
+      damageTabs.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.damage === key);
+      });
+    }
+
+    damageTabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.damage;
+        if (key) showDamageTab(key);
+      });
     });
-    innerTabs.forEach(t => t.classList.remove("active"));
-    const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
-    if (active) active.classList.add("active");
-  }
 
-  innerTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      const key = tab.dataset.inner;
-      if (!key) return;
-      showInnerTab(key);
+    /* ========= ORDER BREAKDOWN DOM ========= */
+    const obWeekDisplay   = document.getElementById("obWeekDisplay");
+    const obGradesDisplay = document.getElementById("obGradesDisplay");
+    const obBodies = {
+      FLO: document.getElementById("obFloBody"),
+      FOL: document.getElementById("obFolBody"),
+      UCO: document.getElementById("obUcoBody"),
+      FHB: document.getElementById("obFhbBody"),
+      TRP: document.getElementById("obTrpBody"),
+      SPC: document.getElementById("obSpcBody")
+    };
+
+    /* ========= SKU DOM ========= */
+    const nameFilter   = document.getElementById("nameFilter");
+    const skuFilter    = document.getElementById("skuFilter");
+    const sentInFilter = document.getElementById("sentInFilter");
+    const yearFilter   = document.getElementById("yearFilter");
+    const skuGrid      = document.getElementById("skuGrid");
+    const resultCount  = document.getElementById("resultCount");
+    const emptyState   = document.getElementById("emptyState");
+
+    const popupBackdrop = document.getElementById("popupBackdrop");
+    const popupName     = document.getElementById("popupName");
+    const popupSku      = document.getElementById("popupSku");
+    const popupSent     = document.getElementById("popupSent");
+    const popupYear     = document.getElementById("popupYear");
+    const popupClose    = document.getElementById("popupClose");
+
+    popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+    popupBackdrop.addEventListener("click", e => {
+      if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
     });
-  });
 
-  /* ========= ORDER BREAKDOWN DOM ========= */
-  const obWeekDisplay   = document.getElementById("obWeekDisplay");
-  const obGradesDisplay = document.getElementById("obGradesDisplay");
-  const obBodies = {
-    FLO: document.getElementById("obFloBody"),
-    FOL: document.getElementById("obFolBody"),
-    UCO: document.getElementById("obUcoBody"),
-    FHB: document.getElementById("obFhbBody"),
-    TRP: document.getElementById("obTrpBody"),
-    SPC: document.getElementById("obSpcBody")
-  };
+    /* ========= PLANT CARE DOM ========= */
+    const plantCareGrid   = document.getElementById("plantCareGrid");
+    const careSearch      = document.getElementById("careSearch");
+    const careBackdrop    = document.getElementById("careBackdrop");
+    const careImage       = document.getElementById("careImage");
+    const careTitle       = document.getElementById("careTitle");
+    const careLight       = document.getElementById("careLight");
+    const careWater       = document.getElementById("careWater");
+    const careHumidityEl  = document.getElementById("careHumidity");
+    const careTemp        = document.getElementById("careTemp");
+    const careSoil        = document.getElementById("careSoil");
+    const careFertilizer  = document.getElementById("careFertilizer");
+    const careToxicity    = document.getElementById("careToxicity");
+    const careTips        = document.getElementById("careTips");
+    const careCloseBtn    = document.getElementById("careClose");
 
-  /* ========= SKU DOM ========= */
-  const nameFilter   = document.getElementById("nameFilter");
-  const skuFilter    = document.getElementById("skuFilter");
-  const sentInFilter = document.getElementById("sentInFilter");
-  const yearFilter   = document.getElementById("yearFilter");
-  const skuGrid      = document.getElementById("skuGrid");
-  const resultCount  = document.getElementById("resultCount");
-  const emptyState   = document.getElementById("emptyState");
+    careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+    careBackdrop.addEventListener("click", e => {
+      if (e.target === careBackdrop) careBackdrop.style.display = "none";
+    });
 
-  const popupBackdrop = document.getElementById("popupBackdrop");
-  const popupName     = document.getElementById("popupName");
-  const popupSku      = document.getElementById("popupSku");
-  const popupSent     = document.getElementById("popupSent");
-  const popupYear     = document.getElementById("popupYear");
-  const popupClose    = document.getElementById("popupClose");
+    /* ========= PEST DOM ========= */
+    const pestGrid           = document.getElementById("pestGrid");
+    const pestSearch         = document.getElementById("pestSearch");
+    const pestBackdrop       = document.getElementById("pestBackdrop");
+    const pestImage          = document.getElementById("pestImage");
+    const pestTitle          = document.getElementById("pestTitle");
+    const pestScientificName = document.getElementById("pestScientificName");
+    const pestLooksLike      = document.getElementById("pestLooksLike");
+    const pestIdentification = document.getElementById("pestIdentification");
+    const pestPrevention     = document.getElementById("pestPrevention");
+    const pestTreatment      = document.getElementById("pestTreatment");
+    const pestCloseBtn       = document.getElementById("pestClose");
 
-  popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
-  popupBackdrop.addEventListener("click", e => {
-    if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
-  });
+    pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+    pestBackdrop.addEventListener("click", e => {
+      if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+    });
 
-  /* ========= PLANT CARE DOM ========= */
-  const plantCareGrid   = document.getElementById("plantCareGrid");
-  const careSearch      = document.getElementById("careSearch");
-  const careBackdrop    = document.getElementById("careBackdrop");
-  const careImage       = document.getElementById("careImage");
-  const careTitle       = document.getElementById("careTitle");
-  const careLight       = document.getElementById("careLight");
-  const careWater       = document.getElementById("careWater");
-  const careHumidityEl  = document.getElementById("careHumidity");
-  const careTemp        = document.getElementById("careTemp");
-  const careSoil        = document.getElementById("careSoil");
-  const careFertilizer  = document.getElementById("careFertilizer");
-  const careToxicity    = document.getElementById("careToxicity");
-  const careTips        = document.getElementById("careTips");
-  const careCloseBtn    = document.getElementById("careClose");
+    /* ========= TRENDS DOM ========= */
+    const trendsForm    = document.getElementById("trendsForm");
+    const trendsMessage = document.getElementById("trendsMessage");
+    const trendsImages  = document.getElementById("trendsImages");
+    const trendsStatus  = document.getElementById("trendsStatus");
 
-  careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-  careBackdrop.addEventListener("click", e => {
-    if (e.target === careBackdrop) careBackdrop.style.display = "none";
-  });
+    // Replace with your actual EmailJS IDs
+    const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
 
-  /* ========= PEST DOM ========= */
-  const pestGrid           = document.getElementById("pestGrid");
-  const pestSearch         = document.getElementById("pestSearch");
-  const pestBackdrop       = document.getElementById("pestBackdrop");
-  const pestImage          = document.getElementById("pestImage");
-  const pestTitle          = document.getElementById("pestTitle");
-  const pestScientificName = document.getElementById("pestScientificName");
-  const pestLooksLike      = document.getElementById("pestLooksLike");
-  const pestIdentification = document.getElementById("pestIdentification");
-  const pestPrevention     = document.getElementById("pestPrevention");
-  const pestTreatment      = document.getElementById("pestTreatment");
-  const pestCloseBtn       = document.getElementById("pestClose");
+    if (trendsForm && window.emailjs) {
+      trendsForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        trendsStatus.textContent = "";
 
-  pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-  pestBackdrop.addEventListener("click", e => {
-    if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-  });
+        const msg   = (trendsMessage.value || "").trim();
+        const files = trendsImages.files;
 
-  /* ========= CSV HELPERS ========= */
-  function parseCsvLine(line) {
-    const out = [];
-    let cur = "";
-    let quote = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        if (quote && line[i + 1] === '"') { cur += '"'; i++; }
-        else { quote = !quote; }
-      } else if (ch === "," && !quote) {
-        out.push(cur); cur = "";
+        if (!msg) {
+          trendsStatus.textContent = "Please enter a message before sending.";
+          trendsStatus.style.color = "#fb7185";
+          return;
+        }
+
+        if (!files || files.length === 0) {
+          trendsStatus.textContent = "Please attach at least one image.";
+          trendsStatus.style.color = "#fb7185";
+          return;
+        }
+
+        trendsStatus.textContent = "Sending...";
+        trendsStatus.style.color = "#a5b4fc";
+
+        emailjs
+          .sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, trendsForm)
+          .then(() => {
+            trendsStatus.textContent = "Sent! Thank you for sharing this trend with the Social team.";
+            trendsStatus.style.color = "#4ade80";
+            trendsForm.reset();
+          })
+          .catch((err) => {
+            console.error(err);
+            trendsStatus.textContent =
+              "There was an error sending this. Please try again or email Social@hampshirefarms.com directly.";
+            trendsStatus.style.color = "#fb7185";
+          });
+      });
+    }
+
+    /* ========= CSV HELPERS ========= */
+    function parseCsvLine(line) {
+      const out = [];
+      let cur = "";
+      let quote = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (quote && line[i + 1] === '"') { cur += '"'; i++; }
+          else { quote = !quote; }
+        } else if (ch === "," && !quote) {
+          out.push(cur); cur = "";
+        } else {
+          cur += ch;
+        }
+      }
+      out.push(cur);
+      return out;
+    }
+
+    function parseSkuCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+      const yearIdx = header.indexOf("year sent");
+      const nameIdx = header.indexOf("sku name");
+      const skuIdx  = header.indexOf("sku");
+      const sentIdx = header.indexOf("sent in");
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          yearSent: (row[yearIdx] || "").trim(),
+          name:     (row[nameIdx] || "").trim(),
+          sku:      (row[skuIdx]  || "").trim(),
+          sentIn:   (row[sentIdx] || "").trim()
+        };
+        if (item.name && item.sku) data.push(item);
+      }
+      return data;
+    }
+
+    function parseOrderCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+      const w = header.indexOf("week");
+      const c = header.indexOf("category");
+      const s = header.indexOf("size");
+      const p = header.indexOf("plant name");
+
+      const out = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          week:     (row[w] || "").trim(),
+          category: (row[c] || "").trim().toUpperCase(),
+          size:     (row[s] || "").trim(),
+          plant:    (row[p] || "").trim()
+        };
+        if (item.week && item.category && (item.size || item.plant)) out.push(item);
+      }
+      return out;
+    }
+
+    function parsePlantCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id:            header.indexOf("id"),
+        commonName:    header.indexOf("common_name"),
+        scientific:    header.indexOf("scientific_name"),
+        image:         header.indexOf("image"),
+        light:         header.indexOf("light"),
+        water:         header.indexOf("water"),
+        humidity:      header.indexOf("humidity"),
+        temp:          header.indexOf("temp"),
+        soil:          header.indexOf("soil"),
+        fertilizer:    header.indexOf("fertilizer"),
+        toxicity:      header.indexOf("toxicity"),
+        tips:          header.indexOf("tips")
+      };
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+        if (!commonName) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        data.push({
+          id,
+          commonName,
+          scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
+          image:          idx.image      >= 0 ? (row[idx.image]      || "").trim() : "",
+          light:          idx.light      >= 0 ? (row[idx.light]      || "").trim() : "",
+          water:          idx.water      >= 0 ? (row[idx.water]      || "").trim() : "",
+          humidity:       idx.humidity   >= 0 ? (row[idx.humidity]   || "").trim() : "",
+          temp:           idx.temp       >= 0 ? (row[idx.temp]       || "").trim() : "",
+          soil:           idx.soil       >= 0 ? (row[idx.soil]       || "").trim() : "",
+          fertilizer:     idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
+          toxicity:       idx.toxicity   >= 0 ? (row[idx.toxicity]   || "").trim() : "",
+          tips:           idx.tips       >= 0 ? (row[idx.tips]       || "").trim() : ""
+        });
+      }
+      return data;
+    }
+
+    function parsePestCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id:             header.indexOf("id"),
+        commonName:     header.indexOf("common_name"),
+        scientificName: header.indexOf("scientific_name"),
+        image:          header.indexOf("image"),
+        looksLike:      header.indexOf("what_they_look_like"),
+        identification: header.indexOf("identification"),
+        prevention:     header.indexOf("prevention"),
+        treatment:      header.indexOf("treatment")
+      };
+
+      const pests = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+        if (!commonName) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        pests.push({
+          id,
+          commonName,
+          scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
+          image:          idx.image          >= 0 ? (row[idx.image]          || "").trim() : "",
+          looksLike:      idx.looksLike      >= 0 ? (row[idx.looksLike]      || "").trim() : "",
+          identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
+          prevention:     idx.prevention     >= 0 ? (row[idx.prevention]     || "").trim() : "",
+          treatment:      idx.treatment      >= 0 ? (row[idx.treatment]      || "").trim() : ""
+        });
+      }
+      return pests;
+    }
+
+    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
+
+    /* ========= SKU RENDERING ========= */
+    function renderSkuList() {
+      skuGrid.innerHTML = "";
+      const nameQ = (nameFilter.value || "").toLowerCase();
+      const skuQ  = normalizeSku(skuFilter.value || "");
+      const sentQ = (sentInFilter.value || "").toLowerCase();
+      const yearQ = yearFilter.value;
+
+      const filtered = skuData.filter(item => {
+        const itemName = (item.name   || "").toLowerCase();
+        const itemSku  = normalizeSku(item.sku || "");
+        const itemSent = (item.sentIn || "").toLowerCase();
+        const itemYear = item.yearSent || "";
+        return (!nameQ || itemName.includes(nameQ)) &&
+               (!skuQ  || itemSku.includes(skuQ)) &&
+               (!sentQ || itemSent.includes(sentQ)) &&
+               (yearQ === "all" || itemYear === yearQ);
+      });
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "sku-card";
+        card.innerHTML = `
+          <div class="sku-year-pill">${item.yearSent}</div>
+          <div class="sku-name">${item.name}</div>
+          <div class="sku-meta">
+            <div><strong>SKU:</strong> ${item.sku}</div>
+            <div><strong>Sent In:</strong> ${item.sentIn}</div>
+            <div><strong>Year Sent:</strong> ${item.yearSent}</div>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          popupName.textContent = item.name;
+          popupSku.textContent  = item.sku;
+          popupSent.textContent = item.sentIn;
+          popupYear.textContent = item.yearSent;
+          popupBackdrop.style.display = "flex";
+        });
+        skuGrid.appendChild(card);
+      });
+
+      resultCount.textContent = filtered.length;
+      emptyState.classList.toggle("hidden", filtered.length !== 0);
+    }
+
+    nameFilter.addEventListener("input", renderSkuList);
+    skuFilter.addEventListener("input", renderSkuList);
+    sentInFilter.addEventListener("input", renderSkuList);
+    yearFilter.addEventListener("change", renderSkuList);
+
+    /* ========= ORDER BREAKDOWN RENDERING ========= */
+    function applyOrderBreakdown(rows) {
+      if (!rows.length) {
+        obWeekDisplay.textContent = "TBD";
+        obGradesDisplay.textContent = "All stores";
+        Object.values(obBodies).forEach(el => el.textContent = "");
+        return;
+      }
+
+      const weeks = [...new Set(rows.map(r => r.week))];
+      const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+      const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+      const weekRows = rows.filter(r => r.week == latest);
+
+      obWeekDisplay.textContent = latest;
+      obGradesDisplay.textContent =
+        STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+
+      const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+      weekRows.forEach(r => {
+        if (groups[r.category]) {
+          const size  = r.size  || "";
+          const plant = r.plant || "";
+          let line = "";
+          if (size && plant) line = `${size} — ${plant}`;
+          else line = size || plant;
+          if (line) groups[r.category].push(line);
+        }
+      });
+
+      Object.entries(groups).forEach(([cat, lines]) => {
+        const el = obBodies[cat];
+        if (el) el.textContent = lines.join("\n");
+      });
+    }
+
+    /* ========= PLANT RENDERING ========= */
+    function renderPlantCards() {
+      plantCareGrid.innerHTML = "";
+      PLANTS.forEach(plant => {
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.dataset.plantId = plant.id;
+        btn.innerHTML = `
+          <div class="pc-card-title">${plant.commonName}</div>
+          <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+        `;
+        btn.addEventListener("click", () => openCarePopup(plant.id));
+        plantCareGrid.appendChild(btn);
+      });
+    }
+
+    function openCarePopup(id) {
+      const plant = PLANTS.find(p => p.id === id);
+      if (!plant) return;
+
+      careTitle.textContent      = plant.commonName || "";
+      careLight.textContent      = plant.light || "";
+      careWater.textContent      = plant.water || "";
+      careHumidityEl.textContent = plant.humidity || "";
+      careTemp.textContent       = plant.temp || "";
+      careSoil.textContent       = plant.soil || "";
+      careFertilizer.textContent = plant.fertilizer || "";
+      careToxicity.textContent   = plant.toxicity || "";
+      careTips.textContent       = plant.tips || "";
+
+      if (plant.image) {
+        careImage.src = plant.image;
+        careImage.alt = plant.commonName || "";
+        careImage.style.display = "";
       } else {
-        cur += ch;
+        careImage.style.display = "none";
+      }
+
+      careBackdrop.style.display = "flex";
+    }
+
+    function filterPlantCards() {
+      const q = (careSearch.value || "").toLowerCase().trim();
+      const cards = plantCareGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    careSearch.addEventListener("input", filterPlantCards);
+
+    /* ========= PEST RENDERING ========= */
+    function renderPestCards() {
+      pestGrid.innerHTML = "";
+      PESTS.forEach(pest => {
+        const card = document.createElement("button");
+        card.className = "pc-card";
+        card.dataset.pestId = pest.id;
+        card.innerHTML = `
+          <div class="pc-card-title">${pest.commonName}</div>
+          <div class="pc-card-subtitle">${pest.identification || ""}</div>
+        `;
+        card.addEventListener("click", () => openPestPopup(pest.id));
+        pestGrid.appendChild(card);
+      });
+    }
+
+    function openPestPopup(id) {
+      const pest = PESTS.find(p => p.id === id);
+      if (!pest) return;
+
+      pestTitle.textContent          = pest.commonName || "";
+      pestScientificName.textContent = pest.scientificName || "";
+      pestLooksLike.textContent      = pest.looksLike || "";
+      pestIdentification.textContent = pest.identification || "";
+      pestPrevention.textContent     = pest.prevention || "";
+      pestTreatment.textContent      = pest.treatment || "";
+
+      if (pest.image) {
+        pestImage.src = pest.image;
+        pestImage.alt = pest.commonName || pest.scientificName || "";
+        pestImage.style.display = "";
+      } else {
+        pestImage.style.display = "none";
+      }
+
+      pestBackdrop.style.display = "flex";
+    }
+
+    function filterPestCards() {
+      const q = (pestSearch.value || "").toLowerCase().trim();
+      const cards = pestGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    pestSearch.addEventListener("input", filterPestCards);
+
+    /* ========= LOADERS ========= */
+    async function loadSkuCsv() {
+      try {
+        const res = await fetch(SKU_CSV_URL);
+        if (!res.ok) throw new Error("SKU CSV not found");
+        const text = await res.text();
+        skuData = parseSkuCsv(text);
+        renderSkuList();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
       }
     }
-    out.push(cur);
-    return out;
-  }
 
-  function parseSkuCsv(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-    if (!lines.length) return [];
-    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-    const yearIdx = header.indexOf("year sent");
-    const nameIdx = header.indexOf("sku name");
-    const skuIdx  = header.indexOf("sku");
-    const sentIdx = header.indexOf("sent in");
-
-    const data = [];
-    for (let i = 1; i < lines.length; i++) {
-      const row = parseCsvLine(lines[i]);
-      const item = {
-        yearSent: (row[yearIdx] || "").trim(),
-        name:     (row[nameIdx] || "").trim(),
-        sku:      (row[skuIdx]  || "").trim(),
-        sentIn:   (row[sentIdx] || "").trim()
-      };
-      if (item.name && item.sku) data.push(item);
-    }
-    return data;
-  }
-
-  function parseOrderCsv(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-    if (!lines.length) return [];
-    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-    const w = header.indexOf("week");
-    const c = header.indexOf("category");
-    const s = header.indexOf("size");
-    const p = header.indexOf("plant name");
-
-    const out = [];
-    for (let i = 1; i < lines.length; i++) {
-      const row = parseCsvLine(lines[i]);
-      const item = {
-        week:     (row[w] || "").trim(),
-        category: (row[c] || "").trim().toUpperCase(),
-        size:     (row[s] || "").trim(),
-        plant:    (row[p] || "").trim()
-      };
-      if (item.week && item.category && (item.size || item.plant)) out.push(item);
-    }
-    return out;
-  }
-
-  function parsePlantCsv(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-    if (!lines.length) return [];
-    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-
-    const idx = {
-      id:            header.indexOf("id"),
-      commonName:    header.indexOf("common_name"),
-      scientific:    header.indexOf("scientific_name"),
-      image:         header.indexOf("image"),
-      light:         header.indexOf("light"),
-      water:         header.indexOf("water"),
-      humidity:      header.indexOf("humidity"),
-      temp:          header.indexOf("temp"),
-      soil:          header.indexOf("soil"),
-      fertilizer:    header.indexOf("fertilizer"),
-      toxicity:      header.indexOf("toxicity"),
-      tips:          header.indexOf("tips")
-    };
-
-    const data = [];
-    for (let i = 1; i < lines.length; i++) {
-      const row = parseCsvLine(lines[i]);
-      if (!row.length) continue;
-
-      const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-      if (!commonName) continue;
-
-      const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-      const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-      data.push({
-        id,
-        commonName,
-        scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
-        image:          idx.image      >= 0 ? (row[idx.image]      || "").trim() : "",
-        light:          idx.light      >= 0 ? (row[idx.light]      || "").trim() : "",
-        water:          idx.water      >= 0 ? (row[idx.water]      || "").trim() : "",
-        humidity:       idx.humidity   >= 0 ? (row[idx.humidity]   || "").trim() : "",
-        temp:           idx.temp       >= 0 ? (row[idx.temp]       || "").trim() : "",
-        soil:           idx.soil       >= 0 ? (row[idx.soil]       || "").trim() : "",
-        fertilizer:     idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
-        toxicity:       idx.toxicity   >= 0 ? (row[idx.toxicity]   || "").trim() : "",
-        tips:           idx.tips       >= 0 ? (row[idx.tips]       || "").trim() : ""
-      });
-    }
-    return data;
-  }
-
-  function parsePestCsv(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-    if (!lines.length) return [];
-    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-
-    const idx = {
-      id:             header.indexOf("id"),
-      commonName:     header.indexOf("common_name"),
-      scientificName: header.indexOf("scientific_name"),
-      image:          header.indexOf("image"),
-      looksLike:      header.indexOf("what_they_look_like"),
-      identification: header.indexOf("identification"),
-      prevention:     header.indexOf("prevention"),
-      treatment:      header.indexOf("treatment")
-    };
-
-    const pests = [];
-    for (let i = 1; i < lines.length; i++) {
-      const row = parseCsvLine(lines[i]);
-      if (!row.length) continue;
-
-      const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-      if (!commonName) continue;
-
-      const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-      const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-      pests.push({
-        id,
-        commonName,
-        scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
-        image:          idx.image          >= 0 ? (row[idx.image]          || "").trim() : "",
-        looksLike:      idx.looksLike      >= 0 ? (row[idx.looksLike]      || "").trim() : "",
-        identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
-        prevention:     idx.prevention     >= 0 ? (row[idx.prevention]     || "").trim() : "",
-        treatment:      idx.treatment      >= 0 ? (row[idx.treatment]      || "").trim() : ""
-      });
-    }
-    return pests;
-  }
-
-  const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
-
-  /* ========= SKU RENDERING ========= */
-  function renderSkuList() {
-    skuGrid.innerHTML = "";
-    const nameQ = (nameFilter.value || "").toLowerCase();
-    const skuQ  = normalizeSku(skuFilter.value || "");
-    const sentQ = (sentInFilter.value || "").toLowerCase();
-    const yearQ = yearFilter.value;
-
-    const filtered = skuData.filter(item => {
-      const itemName = (item.name   || "").toLowerCase();
-      const itemSku  = normalizeSku(item.sku || "");
-      const itemSent = (item.sentIn || "").toLowerCase();
-      const itemYear = item.yearSent || "";
-      return (!nameQ || itemName.includes(nameQ)) &&
-             (!skuQ  || itemSku.includes(skuQ)) &&
-             (!sentQ || itemSent.includes(sentQ)) &&
-             (yearQ === "all" || itemYear === yearQ);
-    });
-
-    filtered.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "sku-card";
-      card.innerHTML = `
-        <div class="sku-year-pill">${item.yearSent}</div>
-        <div class="sku-name">${item.name}</div>
-        <div class="sku-meta">
-          <div><strong>SKU:</strong> ${item.sku}</div>
-          <div><strong>Sent In:</strong> ${item.sentIn}</div>
-          <div><strong>Year Sent:</strong> ${item.yearSent}</div>
-        </div>
-      `;
-      card.addEventListener("click", () => {
-        popupName.textContent = item.name;
-        popupSku.textContent  = item.sku;
-        popupSent.textContent = item.sentIn;
-        popupYear.textContent = item.yearSent;
-        popupBackdrop.style.display = "flex";
-      });
-      skuGrid.appendChild(card);
-    });
-
-    resultCount.textContent = filtered.length;
-    emptyState.classList.toggle("hidden", filtered.length !== 0);
-  }
-
-  nameFilter.addEventListener("input", renderSkuList);
-  skuFilter.addEventListener("input", renderSkuList);
-  sentInFilter.addEventListener("input", renderSkuList);
-  yearFilter.addEventListener("change", renderSkuList);
-
-  /* ========= ORDER BREAKDOWN RENDERING ========= */
-  function applyOrderBreakdown(rows) {
-    if (!rows.length) {
-      obWeekDisplay.textContent = "TBD";
-      obGradesDisplay.textContent = "All stores";
-      Object.values(obBodies).forEach(el => el.textContent = "");
-      return;
-    }
-
-    const weeks = [...new Set(rows.map(r => r.week))];
-    const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
-    const latest = numeric.length ? Math.max(...numeric) : weeks[0];
-    const weekRows = rows.filter(r => r.week == latest);
-
-    obWeekDisplay.textContent = latest;
-    obGradesDisplay.textContent =
-      STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
-
-    const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
-
-    weekRows.forEach(r => {
-      if (groups[r.category]) {
-        const size  = r.size  || "";
-        const plant = r.plant || "";
-        let line = "";
-        if (size && plant) line = `${size} — ${plant}`;
-        else line = size || plant;
-        if (line) groups[r.category].push(line);
+    async function loadOrderCsv() {
+      try {
+        const res = await fetch(ORDER_CSV_URL);
+        if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+        const text = await res.text();
+        allOrderRows = parseOrderCsv(text);
+        applyOrderBreakdown(allOrderRows);
+      } catch (err) {
+        console.error(err);
       }
-    });
-
-    Object.entries(groups).forEach(([cat, lines]) => {
-      const el = obBodies[cat];
-      if (el) el.textContent = lines.join("\n");
-    });
-  }
-
-  /* ========= PLANT RENDERING ========= */
-  function renderPlantCards() {
-    plantCareGrid.innerHTML = "";
-    PLANTS.forEach(plant => {
-      const btn = document.createElement("button");
-      btn.className = "pc-card";
-      btn.dataset.plantId = plant.id;
-      btn.innerHTML = `
-        <div class="pc-card-title">${plant.commonName}</div>
-        <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
-      `;
-      btn.addEventListener("click", () => openCarePopup(plant.id));
-      plantCareGrid.appendChild(btn);
-    });
-  }
-
-  function openCarePopup(id) {
-    const plant = PLANTS.find(p => p.id === id);
-    if (!plant) return;
-
-    careTitle.textContent      = plant.commonName || "";
-    careLight.textContent      = plant.light || "";
-    careWater.textContent      = plant.water || "";
-    careHumidityEl.textContent = plant.humidity || "";
-    careTemp.textContent       = plant.temp || "";
-    careSoil.textContent       = plant.soil || "";
-    careFertilizer.textContent = plant.fertilizer || "";
-    careToxicity.textContent   = plant.toxicity || "";
-    careTips.textContent       = plant.tips || "";
-
-    if (plant.image) {
-      careImage.src = plant.image;
-      careImage.alt = plant.commonName || "";
-      careImage.style.display = "";
-    } else {
-      careImage.style.display = "none";
     }
 
-    careBackdrop.style.display = "flex";
-  }
+    async function loadPlantCsv() {
+      try {
+        const res = await fetch(PLANT_CSV_URL);
+        if (!res.ok) throw new Error("plants.csv not found");
+        const text = await res.text();
+        PLANTS = parsePlantCsv(text);
+        renderPlantCards();
+        filterPlantCards();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading plants.csv. Check file name and headers.");
+      }
+    }
 
-  function filterPlantCards() {
-    const q = (careSearch.value || "").toLowerCase().trim();
-    const cards = plantCareGrid.querySelectorAll(".pc-card");
-    cards.forEach(card => {
-      const txt = (card.textContent || "").toLowerCase();
-      card.style.display = !q || txt.includes(q) ? "" : "none";
+    async function loadPestCsv() {
+      try {
+        const res = await fetch(PEST_CSV_URL);
+        if (!res.ok) throw new Error("pests.csv not found");
+        const text = await res.text();
+        PESTS = parsePestCsv(text);
+        renderPestCards();
+        filterPestCards();
+      } catch (err) {
+        console.error(err);
+        alert("Error loading pests.csv. Check file name and headers.");
+      }
+    }
+
+    /* ========= INIT ========= */
+    document.addEventListener("DOMContentLoaded", () => {
+      showTopTab("catalog");
+      showInnerTab("care-library");
+      showDamageTab("cold");
+
+      loadSkuCsv();
+      loadOrderCsv();
+      loadPlantCsv();
+      loadPestCsv();
     });
-  }
-
-  careSearch.addEventListener("input", filterPlantCards);
-
-  /* ========= PEST RENDERING ========= */
-  function renderPestCards() {
-    pestGrid.innerHTML = "";
-    PESTS.forEach(pest => {
-      const card = document.createElement("button");
-      card.className = "pc-card";
-      card.dataset.pestId = pest.id;
-      card.innerHTML = `
-        <div class="pc-card-title">${pest.commonName}</div>
-        <div class="pc-card-subtitle">${pest.identification || ""}</div>
-      `;
-      card.addEventListener("click", () => openPestPopup(pest.id));
-      pestGrid.appendChild(card);
-    });
-  }
-
-  function openPestPopup(id) {
-    const pest = PESTS.find(p => p.id === id);
-    if (!pest) return;
-
-    pestTitle.textContent          = pest.commonName || "";
-    pestScientificName.textContent = pest.scientificName || "";
-    pestLooksLike.textContent      = pest.looksLike || "";
-    pestIdentification.textContent = pest.identification || "";
-    pestPrevention.textContent     = pest.prevention || "";
-    pestTreatment.textContent      = pest.treatment || "";
-
-    if (pest.image) {
-      pestImage.src = pest.image;
-      pestImage.alt = pest.commonName || pest.scientificName || "";
-      pestImage.style.display = "";
-    } else {
-      pestImage.style.display = "none";
-    }
-
-    pestBackdrop.style.display = "flex";
-  }
-
-  function filterPestCards() {
-    const q = (pestSearch.value || "").toLowerCase().trim();
-    const cards = pestGrid.querySelectorAll(".pc-card");
-    cards.forEach(card => {
-      const txt = (card.textContent || "").toLowerCase();
-      card.style.display = !q || txt.includes(q) ? "" : "none";
-    });
-  }
-
-  pestSearch.addEventListener("input", filterPestCards);
-
-  /* ========= LOADERS ========= */
-  async function loadSkuCsv() {
-    try {
-      const res = await fetch(SKU_CSV_URL);
-      if (!res.ok) throw new Error("SKU CSV not found");
-      const text = await res.text();
-      skuData = parseSkuCsv(text);
-      renderSkuList();
-    } catch (err) {
-      console.error(err);
-      alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
-    }
-  }
-
-  async function loadOrderCsv() {
-    try {
-      const res = await fetch(ORDER_CSV_URL);
-      if (!res.ok) throw new Error("OrderBreakdown.csv not found");
-      const text = await res.text();
-      const rows = parseOrderCsv(text);
-      applyOrderBreakdown(rows);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function loadPlantCsv() {
-    try {
-      const res = await fetch(PLANT_CSV_URL);
-      if (!res.ok) throw new Error("plants.csv not found");
-      const text = await res.text();
-      PLANTS = parsePlantCsv(text);
-      renderPlantCards();
-      filterPlantCards();
-    } catch (err) {
-      console.error(err);
-      alert("Error loading plants.csv. Check file name and headers.");
-    }
-  }
-
-  async function loadPestCsv() {
-    try {
-      const res = await fetch(PEST_CSV_URL);
-      if (!res.ok) throw new Error("pests.csv not found");
-      const text = await res.text();
-      PESTS = parsePestCsv(text);
-      renderPestCards();
-      filterPestCards();
-    } catch (err) {
-      console.error(err);
-      alert("Error loading pests.csv. Check file name and headers.");
-    }
-  }
-
-  /* ========= INIT ========= */
-  document.addEventListener("DOMContentLoaded", () => {
-    showTopTab("catalog");
-    showInnerTab("care-library");
-    loadSkuCsv();
-    loadOrderCsv();
-    loadPlantCsv();
-    loadPestCsv();
-  });
-</script>
-``
+  </script>
 </body>
 </html>
-
-
-
