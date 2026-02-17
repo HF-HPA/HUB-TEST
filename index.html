@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon / Icons -->
-  <link rel="icon" type="image/png" href="hpa_logo.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
-  <link rel="icon" sizes="192x192" href="hpa_logo.png" />
+  hpa_logo.png
+  hpa_logo.png
+  hpa_logo.png
 
   <style>
     :root {
@@ -513,7 +513,8 @@
     /* INNER TABS */
     .inner-tabs,
     .damage-inner-tabs,
-    .hpa-inner-tabs {
+    .hpa-inner-tabs,
+    .store-inner-tabs {
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
@@ -522,7 +523,8 @@
 
     .inner-tab,
     .damage-inner-tab,
-    .hpa-inner-tab {
+    .hpa-inner-tab,
+    .store-inner-tab {
       padding: 6px 12px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.05);
@@ -538,14 +540,16 @@
 
     .inner-tab.active,
     .damage-inner-tab.active,
-    .hpa-inner-tab.active {
+    .hpa-inner-tab.active,
+    .store-inner-tab.active {
       background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
       color: var(--text);
     }
 
     .damage-inner-content,
-    .hpa-inner-content {
+    .hpa-inner-content,
+    .store-inner-content {
       margin-top: 6px;
     }
 
@@ -890,7 +894,7 @@
       <!-- HEADER -->
       <header class="header">
         <div class="header-left">
-          <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+          hf_logo.png
           <div class="title-block">
             <h1>HF-HPA</h1>
             <p class="subtitle">Central Hub for HPA info.</p>
@@ -1358,7 +1362,7 @@
               <div class="flow-step-body">
                 <div class="flow-step-title">Walk the HPA & Cull</div>
                 <div class="flow-step-text">
-                  Walk the entire HPA, remove dead or unsellable product, and toss dead plants in the compactor.
+                  Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor.
                 </div>
               </div>
             </div>
@@ -1527,7 +1531,7 @@
             <div class="checklist-title">Transfers & Adjustments</div>
             <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
               <li>On the Consignment Report tab, scroll to see transfer from / transfer to details.</li>
-              <li>Use Store Adjustments / transfer fields to understand inventory movement between locations.</li>
+              <li>Use adjustment / transfer fields to understand inventory movement between locations.</li>
             </ul>
           </div>
 
@@ -1535,7 +1539,7 @@
             <div class="checklist-title">BI Features & Filters</div>
             <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
               <li>Use drill down / drill up on each page (by store, SKU, category, supervisor).</li>
-              <li>Try different filters: product line, SKU, ship dates, ship-to, sales person, etc.</li>
+              <li>Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.</li>
               <li>Click on any line to update charts/graphs to that selection; watch pie charts and graphs change.</li>
             </ul>
           </div>
@@ -1644,13 +1648,12 @@
         </section>
       </section>
 
-      <!-- STORE VISIT CHECKLIST TAB -->
+      <!-- STORE VISIT CHECKLIST TAB (WITH SUBTABS) -->
       <section id="tab-store-visit" class="tab-content hidden">
         <div class="pc-header">
-          <div class="pc-title">Store Visit Checklist</div>
+          <div class="pc-title">Store Visit Checklist (Indoor)</div>
           <p class="subtitle">
-            Use this checklist during visits. When finished, add notes and click
-            <strong>Download Visit Summary</strong> to save a text file.
+            Use these subtabs to work through your indoor HPA checklist during a visit.
           </p>
         </div>
 
@@ -1669,100 +1672,292 @@
           </div>
         </div>
 
-        <div class="visit-checklist">
-
-          <!-- HPA CONDITION & CULLING -->
-          <div class="checklist-section">
-            <div class="checklist-title">HPA Condition & Culling</div>
-
-            <label class="checklist-item"><input type="checkbox" />
-              Walk entire HPA area
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Remove all dead product (cull)
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Deadhead and remove yellowing leaves
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Toss dead product in compactor
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Keep damaged / distressed product organized
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Compile SKU/UPC + quantity tossed list
-            </label>
-          </div>
-
-          <!-- MERCHANDISING -->
-          <div class="checklist-section">
-            <div class="checklist-title">Merchandising</div>
-
-            <label class="checklist-item"><input type="checkbox" />
-              Merchandise by POD / table / racks
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Short-to-tall product flow maintained
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Category-with-category organization
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Face out all price stickers along borders
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              No empty spaces left on PODs or tables
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Merchandise CC racks and keep organized by category
-            </label>
-          </div>
-
-          <!-- CLEANING -->
-          <div class="checklist-section">
-            <div class="checklist-title">Cleaning</div>
-
-            <label class="checklist-item"><input type="checkbox" />
-              Sweep top and bottom of PODs
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Sweep entire HPA floor
-            </label>
-          </div>
-
-          <!-- WATERING -->
-          <div class="checklist-section">
-            <div class="checklist-title">Watering</div>
-
-            <label class="checklist-item"><input type="checkbox" />
-              Water plants (goal: twice per week)
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Remove extra water from pots if overwatered
-            </label>
-          </div>
-
-          <!-- PHOTOS & DOCUMENTATION -->
-          <div class="checklist-section">
-            <div class="checklist-title">Photos & Documentation</div>
-
-            <label class="checklist-item"><input type="checkbox" />
-              Take pictures of all PODs, tables, and racks (individually)
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Verify photos include both wide shots and close‑ups
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Send work recap to supervisor
-            </label>
-            <label class="checklist-item"><input type="checkbox" />
-              Include duties completed, tossed quantities list, staged racks count, and any inventory requests
-            </label>
-          </div>
-
+        <!-- STORE VISIT INNER TABS -->
+        <div class="store-inner-tabs">
+          <button class="store-inner-tab active" data-store="walk" type="button">Store Walk</button>
+          <button class="store-inner-tab" data-store="pods" type="button">Pod Merchandising</button>
+          <button class="store-inner-tab" data-store="cleanup" type="button">Clean Up / Water</button>
+          <button class="store-inner-tab" data-store="pictures" type="button">Pictures</button>
         </div>
 
+        <!-- STORE WALK SUBTAB -->
+        <section id="store-walk" class="store-inner-content">
+          <!-- 1. Readiness -->
+          <div class="checklist-section">
+            <div class="checklist-title">1. Readiness</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Check shopping areas to make sure pods, tables, and overflow racks are shoppable in the HPA.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Emergency spot water any product that is dry or wilted.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              If product might bounce back, water it and place it in the corner or on an empty rack (off main displays).
+            </label>
+          </div>
+
+          <!-- 2. Delivery Check -->
+          <div class="checklist-section">
+            <div class="checklist-title">2. Delivery Check</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              If a houseplant shipment is scheduled, walk inside the store and receiving to locate your delivery.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Unwrap your delivery and stage racks in the racetrack so they are shoppable.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Check all product for damage and pests.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries.
+            </label>
+          </div>
+
+          <!-- 3. HF App -->
+          <div class="checklist-section">
+            <div class="checklist-title">3. HF App</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Open your HF App and review the Houseplant Guidelines for the week before resetting pods and tables.
+            </label>
+          </div>
+        </section>
+
+        <!-- POD MERCHANDISING SUBTAB -->
+        <section id="store-pods" class="store-inner-content hidden">
+          <!-- 1. Blooming / Orchid Pod -->
+          <div class="checklist-section">
+            <div class="checklist-title">1. Blooming / Orchid Pod</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves and spent blooms on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Sweep off your pod.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the pod short to tall with fresh product from your delivery or overflow racks; keep colors together.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Move older product to the bottom of the pods (not in the highlight area).
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the highlight area based on the HPA Guidelines.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the bottom of the pod two deep.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Make sure all labels are facing out.
+            </label>
+          </div>
+
+          <!-- 2. Vigoro Pod -->
+          <div class="checklist-section">
+            <div class="checklist-title">2. Vigoro Pod</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Sweep off your pod.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the pod short to tall with fresh product from your delivery or overflow racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Move older product to the bottom of the pods (not in the highlight area).
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the highlight area based on the HPA Guidelines.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the bottom of the pod two deep.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Make sure all labels are facing out.
+            </label>
+          </div>
+
+          <!-- 3. Specialty Pod -->
+          <div class="checklist-section">
+            <div class="checklist-title">3. Specialty Pod</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Sweep off your pod.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the pod short to tall with fresh product from your delivery or overflow racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Move older product to the bottom of the pods (not in the highlight area).
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the highlight area based on the HPA Guidelines.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the bottom of the pod two deep.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Make sure all labels are facing out.
+            </label>
+          </div>
+
+          <!-- 4. Hanging Basket Pod -->
+          <div class="checklist-section">
+            <div class="checklist-title">4. Hanging Basket Pod</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock the pod with the same variety on each bar using fresh product from deliveries or overflow racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Rotate baskets on the inside of the pod weekly.
+            </label>
+          </div>
+
+          <!-- 5. Tropical Table(s) -->
+          <div class="checklist-section">
+            <div class="checklist-title">5. Tropical Table(s)</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Sweep off your table.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock your table short to tall with fresh product from your delivery or overflow racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Make sure all labels are facing out.
+            </label>
+          </div>
+
+          <!-- 6. CC Racks -->
+          <div class="checklist-section">
+            <div class="checklist-title">6. CC Racks</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Remove yellowing/dead leaves on all plants.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Restock racks short to tall with fresh product from your delivery or overflow racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Rotate product from the back of racks to the front weekly.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Condense and stage racks that will stay in the HPA.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Clean up empty racks and place them in the designated pickup location.
+            </label>
+          </div>
+        </section>
+
+        <!-- CLEAN UP / WATER SUBTAB -->
+        <section id="store-cleanup" class="store-inner-content hidden">
+          <div class="checklist-section">
+            <div class="checklist-title">Clean Up / Water</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Sweep around and under all tables and pods.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Water all product in the HPA, paying attention to dry or wilted plants.
+            </label>
+          </div>
+        </section>
+
+        <!-- PICTURES SUBTAB -->
+        <section id="store-pictures" class="store-inner-content hidden">
+          <div class="checklist-section">
+            <div class="checklist-title">Pictures</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Take pictures of your pods, tropical tables, and racks.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Ensure pictures are clear and show product, labels, and overall merchandising.
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Send HPA pictures to your manager as directed.
+            </label>
+          </div>
+        </section>
+
+        <!-- VISIT NOTES + EXPORT -->
         <div class="visit-notes-wrapper">
           <div class="form-group">
             <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
@@ -1845,7 +2040,7 @@
       </div>
 
       <div class="footer">
-        HF-HPA internal tool • v6.0
+        HF-HPA internal tool • v7.0
       </div>
 
     </div>
@@ -2143,6 +2338,32 @@
         btn.addEventListener("click", () => {
           const key = btn.dataset.damage;
           if (key) showDamageTab(key);
+        });
+      });
+
+      /* STORE VISIT INNER TABS */
+      const storeTabs = document.querySelectorAll(".store-inner-tab");
+      const storeSections = {
+        walk: document.getElementById("store-walk"),
+        pods: document.getElementById("store-pods"),
+        cleanup: document.getElementById("store-cleanup"),
+        pictures: document.getElementById("store-pictures")
+      };
+
+      function showStoreTab(key) {
+        Object.entries(storeSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        storeTabs.forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.store === key);
+        });
+      }
+
+      storeTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.store;
+          if (key) showStoreTab(key);
         });
       });
 
@@ -2593,6 +2814,7 @@
       showInnerTab("care-library");
       showHpaTab("claims");
       showDamageTab("cold");
+      showStoreTab("walk");
 
       loadSkuCsv();
       loadOrderWeeksCsv();
