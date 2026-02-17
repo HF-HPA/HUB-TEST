@@ -106,7 +106,7 @@
       padding: 8px 12px;
       font-size: 0.9rem;
       border-radius: 8px 8px 0 0;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid transparent;
       color: var(--muted);
       cursor: pointer;
@@ -115,9 +115,9 @@
     }
 
     .tab.active {
-      background: rgba(255,255,255,0.18);
+      background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
-      border-bottom-color: rgba(255,255,255,0.18);
+      border-bottom-color: rgba(255, 255, 255, 0.18);
       color: var(--text);
     }
 
@@ -131,7 +131,7 @@
 
     /* SKU FILTER AREA */
     .controls {
-      background: rgba(21,37,54,0.95);
+      background: rgba(21, 37, 54, 0.95);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-subtle);
       padding: 14px;
@@ -158,12 +158,14 @@
       padding: 10px 34px;
       border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
-      background: rgba(5,16,26,0.9);
+      background: rgba(5, 16, 26, 0.9);
       color: var(--text);
       font-size: 0.9rem;
     }
 
-    .search-input::placeholder { color: #62758a; }
+    .search-input::placeholder {
+      color: #62758a;
+    }
 
     .search-icon {
       position: absolute;
@@ -195,7 +197,7 @@
     .filter-input {
       border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
-      background: rgba(10,21,32,0.9);
+      background: rgba(10, 21, 32, 0.9);
       padding: 6px 10px;
       color: var(--text);
       font-size: 0.8rem;
@@ -210,7 +212,9 @@
       font-size: 0.8rem;
     }
 
-    .results-header strong { color: var(--text); }
+    .results-header strong {
+      color: var(--text);
+    }
 
     .sku-grid {
       display: grid;
@@ -220,11 +224,15 @@
     }
 
     @media (min-width: 600px) {
-      .sku-grid { grid-template-columns: repeat(2, 1fr); }
+      .sku-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (min-width: 1000px) {
-      .sku-grid { grid-template-columns: repeat(3, 1fr); }
+      .sku-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .sku-card {
@@ -247,7 +255,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(15,23,42,0.95);
+      background: rgba(15, 23, 42, 0.95);
       border-radius: var(--radius-pill);
       border: 1px solid #64748b;
       padding: 3px 8px;
@@ -272,7 +280,7 @@
       margin-top: 16px;
       text-align: center;
       color: var(--muted);
-      background: rgba(15,23,42,0.7);
+      background: rgba(15, 23, 42, 0.7);
       border-radius: var(--radius-lg);
       border: 1px dashed var(--border-subtle);
     }
@@ -297,13 +305,13 @@
 
     .ob-week-box,
     .ob-grades-box {
-      background: rgba(148,197,255,0.18);
-      border: 1px solid rgba(148,197,255,0.7);
+      background: rgba(148, 197, 255, 0.18);
+      border: 1px solid rgba(148, 197, 255, 0.7);
       border-radius: 10px;
       padding: 10px 16px;
       text-align: center;
       color: #e5f0ff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
     .ob-week-box {
@@ -326,15 +334,17 @@
     }
 
     @media (min-width: 640px) {
-      .ob-grid { grid-template-columns: repeat(3, 1fr); }
+      .ob-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .ob-box {
-      background: rgba(148,197,255,0.18);
-      border: 1px solid rgba(148,197,255,0.7);
+      background: rgba(148, 197, 255, 0.18);
+      border: 1px solid rgba(148, 197, 255, 0.7);
       border-radius: 10px;
       padding: 10px 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
       min-height: 90px;
     }
 
@@ -362,7 +372,7 @@
     .inner-tab {
       padding: 6px 12px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid transparent;
       color: var(--muted);
       cursor: pointer;
@@ -370,7 +380,7 @@
     }
 
     .inner-tab.active {
-      background: rgba(255,255,255,0.18);
+      background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
       color: var(--text);
     }
@@ -386,7 +396,7 @@
     .damage-inner-tab {
       padding: 6px 12px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid transparent;
       color: var(--muted);
       cursor: pointer;
@@ -394,7 +404,7 @@
     }
 
     .damage-inner-tab.active {
-      background: rgba(255,255,255,0.18);
+      background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
       color: var(--text);
     }
@@ -426,7 +436,7 @@
       padding: 8px 30px;
       border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
-      background: rgba(5,16,26,0.9);
+      background: rgba(5, 16, 26, 0.9);
       color: var(--text);
       font-size: 0.85rem;
     }
@@ -448,11 +458,15 @@
     }
 
     @media (min-width: 640px) {
-      .pc-grid { grid-template-columns: repeat(2, 1fr); }
+      .pc-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (min-width: 1000px) {
-      .pc-grid { grid-template-columns: repeat(3, 1fr); }
+      .pc-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .pc-card {
@@ -498,7 +512,7 @@
     .popup-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
       display: none;
       align-items: center;
       justify-content: center;
@@ -514,7 +528,9 @@
       max-width: 480px;
     }
 
-    .popup h2 { margin-bottom: 8px; }
+    .popup h2 {
+      margin-bottom: 8px;
+    }
 
     .popup-section-title {
       font-weight: 600;
@@ -542,53 +558,6 @@
       margin-bottom: 6px;
       font-style: italic;
     }
-
-    /* TRENDS FORM */
-    .trends-form {
-      max-width: 560px;
-      background: rgba(21,37,54,0.95);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      padding: 14px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .trends-form .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .trends-form label {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .trends-form .required {
-      color: #fb7185;
-    }
-
-    .trends-form textarea,
-    .trends-form input[type="text"],
-    .trends-form input[type="file"] {
-      border-radius: 8px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(10,21,32,0.9);
-      color: var(--text);
-      padding: 8px 10px;
-      font-size: 0.85rem;
-    }
-
-    .trends-form textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .trends-form small {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
   </style>
 </head>
 
@@ -612,7 +581,6 @@
       <button class="tab" data-tab="orders">Order Breakdown</button>
       <button class="tab" data-tab="plant-care">Plant Care</button>
       <button class="tab" data-tab="damage-claim">Damage Claim</button>
-      <button class="tab" data-tab="trends">Trends</button>
     </nav>
 
     <!-- SKU CATALOGUE TAB -->
@@ -848,54 +816,6 @@
       </section>
     </section>
 
-    <!-- TRENDS TAB (Web3Forms single-file upload) -->
-    <section id="tab-trends" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Trends</div>
-        <p class="subtitle">
-          Share store trends, displays, and social‑worthy moments with the HF team.
-        </p>
-      </div>
-
-      <form id="trendsForm" class="trends-form" enctype="multipart/form-data">
-        <!-- Web3Forms access key -->
-        <input type="hidden" name="access_key" value="c5df9e6a-b1d6-4db3-9d37-dcf35146938d" />
-        <input type="hidden" name="subject" value="HF-HPA Trend Submission" />
-
-        <div class="form-group">
-          <label>Message <span class="required">*</span></label>
-          <textarea id="trendsMessage" name="message" required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Upload ONE Photo <span class="required">*</span></label>
-          <input
-            type="file"
-            id="trendsImage"
-            name="attachment"
-            accept="image/*"
-            required
-          />
-          <small>Max 1 file, 1 MB limit (per Web3Forms free file-upload example).</small>
-        </div>
-
-        <div class="form-group">
-          <label>Your Name (optional)</label>
-          <input
-            type="text"
-            name="from_name"
-            placeholder="Name / store / role..."
-          />
-        </div>
-
-        <button type="submit" class="popup-close">
-          Send to Social@hampshirefarms.com
-        </button>
-
-        <div id="trendsStatus" class="subtitle" style="margin-top:8px;"></div>
-      </form>
-    </section>
-
     <!-- SKU POPUP -->
     <div id="popupBackdrop" class="popup-backdrop">
       <div class="popup">
@@ -968,16 +888,16 @@
 
   <script>
     /* ========= CONFIG ========= */
-    const SKU_CSV_URL   = "SKU_Name_2026.csv";
+    const SKU_CSV_URL = "SKU_Name_2026.csv";
     const ORDER_CSV_URL = "OrderBreakdown.csv";
     const PLANT_CSV_URL = "plants.csv";
-    const PEST_CSV_URL  = "pests.csv";
+    const PEST_CSV_URL = "pests.csv";
 
     const STORE_GRADES_BY_WEEK = {
-      "6":  "All stores",
-      "7":  "All Stores",
-      "8":  "A/B",
-      "9":  "SKIP",
+      "6": "All stores",
+      "7": "All Stores",
+      "8": "A/B",
+      "9": "SKIP",
       "10": "All Stores",
       "11": "All Stores",
       "12": "All Stores",
@@ -985,7 +905,7 @@
     };
 
     let PLANTS = [];
-    let PESTS  = [];
+    let PESTS = [];
     let skuData = [];
     let allOrderRows = [];
 
@@ -1017,7 +937,7 @@
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const yearIdx = header.indexOf("year sent");
       const nameIdx = header.indexOf("sku name");
-      const skuIdx  = header.indexOf("sku");
+      const skuIdx = header.indexOf("sku");
       const sentIdx = header.indexOf("sent in");
 
       const data = [];
@@ -1025,9 +945,9 @@
         const row = parseCsvLine(lines[i]);
         const item = {
           yearSent: (row[yearIdx] || "").trim(),
-          name:     (row[nameIdx] || "").trim(),
-          sku:      (row[skuIdx]  || "").trim(),
-          sentIn:   (row[sentIdx] || "").trim()
+          name: (row[nameIdx] || "").trim(),
+          sku: (row[skuIdx] || "").trim(),
+          sentIn: (row[sentIdx] || "").trim()
         };
         if (item.name && item.sku) data.push(item);
       }
@@ -1047,10 +967,10 @@
       for (let i = 1; i < lines.length; i++) {
         const row = parseCsvLine(lines[i]);
         const item = {
-          week:     (row[w] || "").trim(),
+          week: (row[w] || "").trim(),
           category: (row[c] || "").trim().toUpperCase(),
-          size:     (row[s] || "").trim(),
-          plant:    (row[p] || "").trim()
+          size: (row[s] || "").trim(),
+          plant: (row[p] || "").trim()
         };
         if (item.week && item.category && (item.size || item.plant)) out.push(item);
       }
@@ -1063,18 +983,18 @@
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
 
       const idx = {
-        id:            header.indexOf("id"),
-        commonName:    header.indexOf("common_name"),
-        scientific:    header.indexOf("scientific_name"),
-        image:         header.indexOf("image"),
-        light:         header.indexOf("light"),
-        water:         header.indexOf("water"),
-        humidity:      header.indexOf("humidity"),
-        temp:          header.indexOf("temp"),
-        soil:          header.indexOf("soil"),
-        fertilizer:    header.indexOf("fertilizer"),
-        toxicity:      header.indexOf("toxicity"),
-        tips:          header.indexOf("tips")
+        id: header.indexOf("id"),
+        commonName: header.indexOf("common_name"),
+        scientific: header.indexOf("scientific_name"),
+        image: header.indexOf("image"),
+        light: header.indexOf("light"),
+        water: header.indexOf("water"),
+        humidity: header.indexOf("humidity"),
+        temp: header.indexOf("temp"),
+        soil: header.indexOf("soil"),
+        fertilizer: header.indexOf("fertilizer"),
+        toxicity: header.indexOf("toxicity"),
+        tips: header.indexOf("tips")
       };
 
       const data = [];
@@ -1092,15 +1012,15 @@
           id,
           commonName,
           scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
-          image:          idx.image      >= 0 ? (row[idx.image]      || "").trim() : "",
-          light:          idx.light      >= 0 ? (row[idx.light]      || "").trim() : "",
-          water:          idx.water      >= 0 ? (row[idx.water]      || "").trim() : "",
-          humidity:       idx.humidity   >= 0 ? (row[idx.humidity]   || "").trim() : "",
-          temp:           idx.temp       >= 0 ? (row[idx.temp]       || "").trim() : "",
-          soil:           idx.soil       >= 0 ? (row[idx.soil]       || "").trim() : "",
-          fertilizer:     idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
-          toxicity:       idx.toxicity   >= 0 ? (row[idx.toxicity]   || "").trim() : "",
-          tips:           idx.tips       >= 0 ? (row[idx.tips]       || "").trim() : ""
+          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+          light: idx.light >= 0 ? (row[idx.light] || "").trim() : "",
+          water: idx.water >= 0 ? (row[idx.water] || "").trim() : "",
+          humidity: idx.humidity >= 0 ? (row[idx.humidity] || "").trim() : "",
+          temp: idx.temp >= 0 ? (row[idx.temp] || "").trim() : "",
+          soil: idx.soil >= 0 ? (row[idx.soil] || "").trim() : "",
+          fertilizer: idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
+          toxicity: idx.toxicity >= 0 ? (row[idx.toxicity] || "").trim() : "",
+          tips: idx.tips >= 0 ? (row[idx.tips] || "").trim() : ""
         });
       }
       return data;
@@ -1112,14 +1032,14 @@
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
 
       const idx = {
-        id:             header.indexOf("id"),
-        commonName:     header.indexOf("common_name"),
+        id: header.indexOf("id"),
+        commonName: header.indexOf("common_name"),
         scientificName: header.indexOf("scientific_name"),
-        image:          header.indexOf("image"),
-        looksLike:      header.indexOf("what_they_look_like"),
+        image: header.indexOf("image"),
+        looksLike: header.indexOf("what_they_look_like"),
         identification: header.indexOf("identification"),
-        prevention:     header.indexOf("prevention"),
-        treatment:      header.indexOf("treatment")
+        prevention: header.indexOf("prevention"),
+        treatment: header.indexOf("treatment")
       };
 
       const pests = [];
@@ -1137,11 +1057,11 @@
           id,
           commonName,
           scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
-          image:          idx.image          >= 0 ? (row[idx.image]          || "").trim() : "",
-          looksLike:      idx.looksLike      >= 0 ? (row[idx.looksLike]      || "").trim() : "",
+          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+          looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
           identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
-          prevention:     idx.prevention     >= 0 ? (row[idx.prevention]     || "").trim() : "",
-          treatment:      idx.treatment      >= 0 ? (row[idx.treatment]      || "").trim() : ""
+          prevention: idx.prevention >= 0 ? (row[idx.prevention] || "").trim() : "",
+          treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
         });
       }
       return pests;
@@ -1152,11 +1072,10 @@
       /* ========= TOP-LEVEL TABS ========= */
       const tabs = document.querySelectorAll(".tab");
       const tabSections = {
-        "catalog":      document.getElementById("tab-catalog"),
-        "orders":       document.getElementById("tab-orders"),
-        "plant-care":   document.getElementById("tab-plant-care"),
-        "damage-claim": document.getElementById("tab-damage-claim"),
-        "trends":       document.getElementById("tab-trends")
+        "catalog": document.getElementById("tab-catalog"),
+        "orders": document.getElementById("tab-orders"),
+        "plant-care": document.getElementById("tab-plant-care"),
+        "damage-claim": document.getElementById("tab-damage-claim")
       };
 
       function showTopTab(key) {
@@ -1181,7 +1100,7 @@
       const innerTabs = document.querySelectorAll(".inner-tab");
       const innerSections = {
         "care-library": document.getElementById("inner-care-library"),
-        "pest-id":      document.getElementById("inner-pest-id")
+        "pest-id": document.getElementById("inner-pest-id")
       };
 
       function showInnerTab(key) {
@@ -1205,8 +1124,8 @@
       /* ========= DAMAGE CLAIM INNER TABS ========= */
       const damageTabs = document.querySelectorAll(".damage-inner-tab");
       const damageSections = {
-        cold:  document.getElementById("damage-cold"),
-        pest:  document.getElementById("damage-pest"),
+        cold: document.getElementById("damage-cold"),
+        pest: document.getElementById("damage-pest"),
         store: document.getElementById("damage-store")
       };
 
@@ -1228,7 +1147,7 @@
       });
 
       /* ========= ORDER DOM ========= */
-      const obWeekDisplay   = document.getElementById("obWeekDisplay");
+      const obWeekDisplay = document.getElementById("obWeekDisplay");
       const obGradesDisplay = document.getElementById("obGradesDisplay");
       const obBodies = {
         FLO: document.getElementById("obFloBody"),
@@ -1240,20 +1159,20 @@
       };
 
       /* ========= SKU DOM ========= */
-      const nameFilter   = document.getElementById("nameFilter");
-      const skuFilter    = document.getElementById("skuFilter");
+      const nameFilter = document.getElementById("nameFilter");
+      const skuFilter = document.getElementById("skuFilter");
       const sentInFilter = document.getElementById("sentInFilter");
-      const yearFilter   = document.getElementById("yearFilter");
-      const skuGrid      = document.getElementById("skuGrid");
-      const resultCount  = document.getElementById("resultCount");
-      const emptyState   = document.getElementById("emptyState");
+      const yearFilter = document.getElementById("yearFilter");
+      const skuGrid = document.getElementById("skuGrid");
+      const resultCount = document.getElementById("resultCount");
+      const emptyState = document.getElementById("emptyState");
 
       const popupBackdrop = document.getElementById("popupBackdrop");
-      const popupName     = document.getElementById("popupName");
-      const popupSku      = document.getElementById("popupSku");
-      const popupSent     = document.getElementById("popupSent");
-      const popupYear     = document.getElementById("popupYear");
-      const popupClose    = document.getElementById("popupClose");
+      const popupName = document.getElementById("popupName");
+      const popupSku = document.getElementById("popupSku");
+      const popupSent = document.getElementById("popupSent");
+      const popupYear = document.getElementById("popupYear");
+      const popupClose = document.getElementById("popupClose");
 
       popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
       popupBackdrop.addEventListener("click", e => {
@@ -1261,20 +1180,20 @@
       });
 
       /* ========= PLANT CARE DOM ========= */
-      const plantCareGrid   = document.getElementById("plantCareGrid");
-      const careSearch      = document.getElementById("careSearch");
-      const careBackdrop    = document.getElementById("careBackdrop");
-      const careImage       = document.getElementById("careImage");
-      const careTitle       = document.getElementById("careTitle");
-      const careLight       = document.getElementById("careLight");
-      const careWater       = document.getElementById("careWater");
-      const careHumidityEl  = document.getElementById("careHumidity");
-      const careTemp        = document.getElementById("careTemp");
-      const careSoil        = document.getElementById("careSoil");
-      const careFertilizer  = document.getElementById("careFertilizer");
-      const careToxicity    = document.getElementById("careToxicity");
-      const careTips        = document.getElementById("careTips");
-      const careCloseBtn    = document.getElementById("careClose");
+      const plantCareGrid = document.getElementById("plantCareGrid");
+      const careSearch = document.getElementById("careSearch");
+      const careBackdrop = document.getElementById("careBackdrop");
+      const careImage = document.getElementById("careImage");
+      const careTitle = document.getElementById("careTitle");
+      const careLight = document.getElementById("careLight");
+      const careWater = document.getElementById("careWater");
+      const careHumidityEl = document.getElementById("careHumidity");
+      const careTemp = document.getElementById("careTemp");
+      const careSoil = document.getElementById("careSoil");
+      const careFertilizer = document.getElementById("careFertilizer");
+      const careToxicity = document.getElementById("careToxicity");
+      const careTips = document.getElementById("careTips");
+      const careCloseBtn = document.getElementById("careClose");
 
       careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
       careBackdrop.addEventListener("click", e => {
@@ -1282,103 +1201,40 @@
       });
 
       /* ========= PEST DOM ========= */
-      const pestGrid           = document.getElementById("pestGrid");
-      const pestSearch         = document.getElementById("pestSearch");
-      const pestBackdrop       = document.getElementById("pestBackdrop");
-      const pestImage          = document.getElementById("pestImage");
-      const pestTitle          = document.getElementById("pestTitle");
+      const pestGrid = document.getElementById("pestGrid");
+      const pestSearch = document.getElementById("pestSearch");
+      const pestBackdrop = document.getElementById("pestBackdrop");
+      const pestImage = document.getElementById("pestImage");
+      const pestTitle = document.getElementById("pestTitle");
       const pestScientificName = document.getElementById("pestScientificName");
-      const pestLooksLike      = document.getElementById("pestLooksLike");
+      const pestLooksLike = document.getElementById("pestLooksLike");
       const pestIdentification = document.getElementById("pestIdentification");
-      const pestPrevention     = document.getElementById("pestPrevention");
-      const pestTreatment      = document.getElementById("pestTreatment");
-      const pestCloseBtn       = document.getElementById("pestClose");
+      const pestPrevention = document.getElementById("pestPrevention");
+      const pestTreatment = document.getElementById("pestTreatment");
+      const pestCloseBtn = document.getElementById("pestClose");
 
       pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
       pestBackdrop.addEventListener("click", e => {
         if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
       });
 
-      /* ========= TRENDS (Web3Forms single file upload) ========= */
-      const trendsForm    = document.getElementById("trendsForm");
-      const trendsMessage = document.getElementById("trendsMessage");
-      const trendsImage   = document.getElementById("trendsImage");
-      const trendsStatus  = document.getElementById("trendsStatus");
-
-      if (trendsForm) {
-        trendsForm.addEventListener("submit", async function (e) {
-          e.preventDefault();
-          trendsStatus.textContent = "";
-
-          const msg = (trendsMessage.value || "").trim();
-          if (!msg) {
-            trendsStatus.textContent = "Please enter a message.";
-            trendsStatus.style.color = "#fb7185";
-            return;
-          }
-
-          const file = trendsImage.files[0];
-          if (!file) {
-            trendsStatus.textContent = "Please attach one image.";
-            trendsStatus.style.color = "#fb7185";
-            return;
-          }
-
-          // 1 MB size limit (per Web3Forms example)
-          const filesizeKB = file.size / 1024;
-          if (filesizeKB > 1000) {
-            alert("Please upload an image smaller than 1 MB.");
-            return;
-          }
-
-          trendsStatus.textContent = "Sending...";
-          trendsStatus.style.color = "#a5b4fc";
-
-          const formData = new FormData(trendsForm);
-
-          try {
-            const response = await fetch("https://api.web3forms.com/submit", {
-              method: "POST",
-              body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-              alert("Your trend email has been sent with your image!");
-              trendsStatus.textContent = "Sent successfully!";
-              trendsStatus.style.color = "#4ade80";
-              trendsForm.reset(); // stay on Trends tab
-            } else {
-              console.error(result);
-              trendsStatus.textContent = "Error sending. Please try again.";
-              trendsStatus.style.color = "#fb7185";
-            }
-          } catch (err) {
-            console.error(err);
-            trendsStatus.textContent = "Network error. Please try again.";
-            trendsStatus.style.color = "#fb7185";
-          }
-        });
-      }
-
       /* ========= SKU RENDERING ========= */
       function renderSkuList() {
         skuGrid.innerHTML = "";
         const nameQ = (nameFilter.value || "").toLowerCase();
-        const skuQ  = normalizeSku(skuFilter.value || "");
+        const skuQ = normalizeSku(skuFilter.value || "");
         const sentQ = (sentInFilter.value || "").toLowerCase();
         const yearQ = yearFilter.value;
 
         const filtered = skuData.filter(item => {
-          const itemName = (item.name   || "").toLowerCase();
-          const itemSku  = normalizeSku(item.sku || "");
+          const itemName = (item.name || "").toLowerCase();
+          const itemSku = normalizeSku(item.sku || "");
           const itemSent = (item.sentIn || "").toLowerCase();
           const itemYear = item.yearSent || "";
           return (!nameQ || itemName.includes(nameQ)) &&
-                 (!skuQ  || itemSku.includes(skuQ)) &&
-                 (!sentQ || itemSent.includes(sentQ)) &&
-                 (yearQ === "all" || itemYear === yearQ);
+            (!skuQ || itemSku.includes(skuQ)) &&
+            (!sentQ || itemSent.includes(sentQ)) &&
+            (yearQ === "all" || itemYear === yearQ);
         });
 
         filtered.forEach(item => {
@@ -1395,7 +1251,7 @@
           `;
           card.addEventListener("click", () => {
             popupName.textContent = item.name;
-            popupSku.textContent  = item.sku;
+            popupSku.textContent = item.sku;
             popupSent.textContent = item.sentIn;
             popupYear.textContent = item.yearSent;
             popupBackdrop.style.display = "flex";
@@ -1434,7 +1290,7 @@
 
         weekRows.forEach(r => {
           if (groups[r.category]) {
-            const size  = r.size  || "";
+            const size = r.size || "";
             const plant = r.plant || "";
             let line = "";
             if (size && plant) line = `${size} — ${plant}`;
@@ -1469,15 +1325,15 @@
         const plant = PLANTS.find(p => p.id === id);
         if (!plant) return;
 
-        careTitle.textContent      = plant.commonName || "";
-        careLight.textContent      = plant.light || "";
-        careWater.textContent      = plant.water || "";
+        careTitle.textContent = plant.commonName || "";
+        careLight.textContent = plant.light || "";
+        careWater.textContent = plant.water || "";
         careHumidityEl.textContent = plant.humidity || "";
-        careTemp.textContent       = plant.temp || "";
-        careSoil.textContent       = plant.soil || "";
+        careTemp.textContent = plant.temp || "";
+        careSoil.textContent = plant.soil || "";
         careFertilizer.textContent = plant.fertilizer || "";
-        careToxicity.textContent   = plant.toxicity || "";
-        careTips.textContent       = plant.tips || "";
+        careToxicity.textContent = plant.toxicity || "";
+        careTips.textContent = plant.tips || "";
 
         if (plant.image) {
           careImage.src = plant.image;
@@ -1521,12 +1377,12 @@
         const pest = PESTS.find(p => p.id === id);
         if (!pest) return;
 
-        pestTitle.textContent          = pest.commonName || "";
+        pestTitle.textContent = pest.commonName || "";
         pestScientificName.textContent = pest.scientificName || "";
-        pestLooksLike.textContent      = pest.looksLike || "";
+        pestLooksLike.textContent = pest.looksLike || "";
         pestIdentification.textContent = pest.identification || "";
-        pestPrevention.textContent     = pest.prevention || "";
-        pestTreatment.textContent      = pest.treatment || "";
+        pestPrevention.textContent = pest.prevention || "";
+        pestTreatment.textContent = pest.treatment || "";
 
         if (pest.image) {
           pestImage.src = pest.image;
