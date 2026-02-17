@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon / Icons -->
-<link rel="icon" type="image/png" href="hpa_logo.png" />
+  <link rel="icon" type="image/png" href="hpa_logo.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
   <link rel="icon" sizes="192x192" href="hpa_logo.png" />
-
 
   <style>
     :root {
@@ -36,7 +35,7 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.80)),
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
         url("philo.jpg") no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
@@ -511,33 +510,8 @@
       color: var(--text);
     }
 
-    /* PLANT CARE INNER TABS */
-    .inner-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .inner-tab {
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast);
-    }
-
-    .inner-tab.active {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: var(--border-subtle);
-      color: var(--text);
-    }
-
+    /* INNER TABS */
+    .inner-tabs,
     .damage-inner-tabs {
       display: flex;
       gap: 8px;
@@ -545,6 +519,7 @@
       flex-wrap: wrap;
     }
 
+    .inner-tab,
     .damage-inner-tab {
       padding: 6px 12px;
       border-radius: 8px;
@@ -556,8 +531,10 @@
         background var(--transition-fast),
         color var(--transition-fast),
         border-color var(--transition-fast);
+      font-size: 0.85rem;
     }
 
+    .inner-tab.active,
     .damage-inner-tab.active {
       background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
@@ -568,6 +545,7 @@
       margin-top: 6px;
     }
 
+    /* PLANT / PEST CARDS */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -624,6 +602,26 @@
       }
     }
 
+    .pc-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out;
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7);
+    }
+
     .pc-card-title {
       font-weight: 600;
       font-size: 0.95rem;
@@ -635,6 +633,7 @@
       color: var(--muted);
     }
 
+    /* POPUPS */
     .popup-image {
       width: 100%;
       max-height: 220px;
@@ -699,6 +698,112 @@
       font-style: italic;
     }
 
+    /* CLAIM BUILDER / FORMS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 800px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group.small {
+      max-width: 200px;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .claim-input,
+    .claim-select,
+    .claim-textarea {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 21, 32, 0.9);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      resize: vertical;
+    }
+
+    .claim-textarea {
+      min-height: 80px;
+    }
+
+    .primary-button {
+      margin-top: 12px;
+      background: linear-gradient(135deg, var(--accent), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.55);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .primary-button:hover {
+      filter: brightness(1.05);
+    }
+
+    /* STORE VISIT CHECKLIST */
+    .visit-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .checklist-section {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .checklist-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+
+    .visit-notes-wrapper {
+      margin-top: 10px;
+    }
+
     .footer {
       margin-top: 12px;
       font-size: 0.75rem;
@@ -733,6 +838,7 @@
         <button class="tab" data-tab="orders" type="button">📋 Order Breakdown</button>
         <button class="tab" data-tab="plant-care" type="button">🌿 Plant Care</button>
         <button class="tab" data-tab="damage-claim" type="button">⚠️ Damage Claim</button>
+        <button class="tab" data-tab="store-visit" type="button">✅ Store Visit Checklist</button>
       </nav>
 
       <!-- SKU CATALOGUE TAB -->
@@ -829,7 +935,8 @@
                   <div id="obUcoBody" class="ob-box-body"></div>
                 </div>
                 <div class="ob-box">
-                  <div class="v id="obFhbBody" class="ob-box-body"></div>
+                  <div class="ob-box-title">FHB</div>
+                  <div id="obFhbBody" class="ob-box-body"></div>
                 </div>
                 <div class="ob-box">
                   <div class="ob-box-title">TRP</div>
@@ -887,7 +994,7 @@
         <div class="pc-header">
           <div class="pc-title">Damage Claims</div>
           <p class="subtitle">
-            Choose a damage type to see guidance and documentation tips for claims.
+            Choose a damage type for guidance, or use Claim Builder to generate a shareable note.
           </p>
         </div>
 
@@ -895,6 +1002,7 @@
           <button class="damage-inner-tab active" data-damage="cold" type="button">Cold Damage</button>
           <button class="damage-inner-tab" data-damage="pest" type="button">Pest Damage</button>
           <button class="damage-inner-tab" data-damage="store" type="button">Store Claim</button>
+          <button class="damage-inner-tab" data-damage="builder" type="button">🧾 Claim Builder</button>
         </div>
 
         <!-- COLD DAMAGE CONTENT -->
@@ -902,13 +1010,10 @@
           <div class="pc-grid">
             <div class="pc-card">
               <div class="pc-card-title">How to Recognize Cold Damage</div>
-              <div class="pc-card-subtitle">
-                Symptoms, timing, and what to document.
-              </div>
               <p class="subtitle" style="margin-top:6px;">
                 • Leaves may appear water‑soaked, translucent, or darkened<br />
                 • New growth may be limp or collapsed<br />
-                • Damage often appears a day or two after exposure (during shipping or on racks near doors)<br />
+                • Damage often appears a day or two after exposure (during shipping or on racks near doors)
               </p>
             </div>
 
@@ -917,7 +1022,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Full table/rack views showing quantity and signage<br />
                 • Close‑ups of worst damage and a “typical” plant<br />
-                • Photo of any temperature‑related cause (open doors, broken heater, snow/ice on racks, etc.)<br />
+                • Photo of any temperature‑related cause (open doors, broken heater, snow/ice on racks, etc.)
               </p>
             </div>
 
@@ -926,7 +1031,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Date product arrived and date damage was noticed<br />
                 • Store #, department, and contact name<br />
-                • Approximate % of affected product by table or rack<br />
+                • Approximate % of affected product by table or rack
               </p>
             </div>
           </div>
@@ -940,7 +1045,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Sticky leaves, webbing, speckling, or chewing<br />
                 • Visible pests on leaf undersides, in soil, or on stems<br />
-                • Compare with the Pest Identification tab if unsure<br />
+                • Compare with the Pest Identification tab if unsure
               </p>
             </div>
 
@@ -949,7 +1054,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Clear close‑ups of insects or webbing (phone macro if possible)<br />
                 • Overhead shot of affected tables/racks<br />
-                • Any nearby conditions that may contribute (standing water, older stock, etc.)<br />
+                • Any nearby conditions that may contribute (standing water, older stock, etc.)
               </p>
             </div>
 
@@ -958,7 +1063,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Date product arrived and date pests were first seen<br />
                 • Whether product was treated at store (and with what)<br />
-                • Estimated % loss and which SKUs are impacted<br />
+                • Estimated % loss and which SKUs are impacted
               </p>
             </div>
           </div>
@@ -972,7 +1077,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Major losses tied to weather, pests, or handling<br />
                 • Product received in poor condition on arrival<br />
-                • Large price/signage errors creating markdowns<br />
+                • Large price/signage errors creating markdowns
               </p>
             </div>
 
@@ -981,7 +1086,7 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Store # and contact name<br />
                 • Date &amp; PO/Load/Invoice # (if available)<br />
-                • SKUs, quantities, and estimated retail $$ impacted<br />
+                • SKUs, quantities, and estimated retail $$ impacted
               </p>
             </div>
 
@@ -990,11 +1095,206 @@
               <p class="subtitle" style="margin-top:6px;">
                 • Isolate and clearly mark damaged product<br />
                 • Take photos before discarding anything<br />
-                • Submit claims promptly while product is still on site<br />
+                • Submit claims promptly while product is still on site
               </p>
             </div>
           </div>
         </section>
+
+        <!-- CLAIM BUILDER CONTENT -->
+        <section id="damage-builder" class="damage-inner-content hidden">
+          <div class="pc-card" style="margin-bottom:10px;">
+            <div class="pc-card-title">Build a Damage Claim</div>
+            <div class="pc-card-subtitle">
+              Fill in the details below and click <strong>Build Claim</strong>. A text file will download to your device
+              that you can attach to email or upload with photos.
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="claimStore">Store #</label>
+              <input id="claimStore" class="claim-input" placeholder="e.g. 1234" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimContact">Store Contact Name</label>
+              <input id="claimContact" class="claim-input" placeholder="Name at store" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimDate">Date Damage Noticed</label>
+              <input id="claimDate" class="claim-input" type="date" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimDamageType">Damage Type</label>
+              <select id="claimDamageType" class="claim-select">
+                <option value="Cold Damage">Cold Damage</option>
+                <option value="Pest Damage">Pest Damage</option>
+                <option value="Store Claim / Other">Store Claim / Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimPo">PO / Load / Invoice #</label>
+              <input id="claimPo" class="claim-input" placeholder="If available" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimArrivalDate">Product Arrival Date</label>
+              <input id="claimArrivalDate" class="claim-input" type="date" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimSkus">SKUs &amp; Quantities</label>
+              <textarea id="claimSkus" class="claim-textarea"
+                placeholder="List SKUs and approx. quantities (e.g. 1005-123-456 – 18 units)"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimRetailImpact">Estimated Retail $$ Impacted</label>
+              <input id="claimRetailImpact" class="claim-input" placeholder="e.g. $450 estimated retail loss" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimPercentLoss">Approx. % Loss</label>
+              <input id="claimPercentLoss" class="claim-input" placeholder="e.g. 30% of table, 2 racks full" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimLocationNotes">Location / Setup Notes</label>
+              <textarea id="claimLocationNotes" class="claim-textarea"
+                placeholder="Table #, rack near doors, overhead heaters, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimActions">Actions Taken at Store</label>
+              <textarea id="claimActions" class="claim-textarea"
+                placeholder="Isolated product, marked as damaged, treated for pests, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="claimPhotoNotes">Photo Notes</label>
+              <textarea id="claimPhotoNotes" class="claim-textarea"
+                placeholder="What was photographed (tables/racks, close-ups, temp issues, etc.)"></textarea>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label" for="claimExtra">Extra Notes</label>
+              <textarea id="claimExtra" class="claim-textarea"
+                placeholder="Anything else HF or the customer should know"></textarea>
+            </div>
+          </div>
+
+          <button id="buildClaimBtn" class="primary-button" type="button">
+            🧾 Build Claim (Download .txt)
+          </button>
+        </section>
+      </section>
+
+      <!-- STORE VISIT CHECKLIST TAB -->
+      <section id="tab-store-visit" class="tab-content hidden">
+        <div class="pc-header">
+          <div class="pc-title">Store Visit Checklist</div>
+          <p class="subtitle">
+            Use this checklist during visits. When finished, add notes and click
+            <strong>Download Visit Summary</strong> to save a text file.
+          </p>
+        </div>
+
+        <div class="visit-meta">
+          <div class="form-group small">
+            <label class="form-label" for="visitStore">Store #</label>
+            <input id="visitStore" class="claim-input" placeholder="e.g. 1234" />
+          </div>
+          <div class="form-group small">
+            <label class="form-label" for="visitDate">Visit Date</label>
+            <input id="visitDate" class="claim-input" type="date" />
+          </div>
+          <div class="form-group small">
+            <label class="form-label" for="visitRep">Rep / Visitor</label>
+            <input id="visitRep" class="claim-input" placeholder="Your name" />
+          </div>
+        </div>
+
+        <div class="visit-checklist">
+          <div class="checklist-section">
+            <div class="checklist-title">Outside Garden / Front of House</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Tables full, faced, and rotated (oldest product to front)
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Signage correct (prices, promos, vendor signs)
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Damaged/unsellable product removed or flagged
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Watering looks appropriate (no bone‑dry or drowned tables)
+            </label>
+          </div>
+
+          <div class="checklist-section">
+            <div class="checklist-title">Inside Garden / Seasonal</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              HF product in correct sets / adjacencies
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Feature tables or promos executed
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Pest/humidity issues checked (no obvious problems)
+            </label>
+          </div>
+
+          <div class="checklist-section">
+            <div class="checklist-title">Inventory &amp; Claims</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Any major damage or loss reviewed with store contact
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Needed damage claims documented (photos + notes)
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Old or slow product discussed (markdowns / moves)
+            </label>
+          </div>
+
+          <div class="checklist-section">
+            <div class="checklist-title">Follow-Up &amp; Communication</div>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Next steps agreed with store (who is doing what, by when)
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" />
+              Any topics to follow up with HF team captured
+            </label>
+          </div>
+        </div>
+
+        <div class="visit-notes-wrapper">
+          <div class="form-group">
+            <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
+            <textarea id="visitNotes" class="claim-textarea"
+              placeholder="Key issues, wins, follow-ups, and anything for HF team."></textarea>
+          </div>
+        </div>
+
+        <button id="exportVisitSummary" class="primary-button" type="button">
+          📄 Download Visit Summary (.txt)
+        </button>
       </section>
 
       <!-- SKU POPUP -->
@@ -1066,7 +1366,7 @@
       </div>
 
       <div class="footer">
-        HF-HPA internal tool • v1.0
+        HF-HPA internal tool • v2.0
       </div>
 
     </div>
@@ -1263,13 +1563,14 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      /* TABS */
+      /* TOP TABS */
       const tabs = document.querySelectorAll(".tabs .tab");
       const tabSections = {
         "catalog": document.getElementById("tab-catalog"),
         "orders": document.getElementById("tab-orders"),
         "plant-care": document.getElementById("tab-plant-care"),
-        "damage-claim": document.getElementById("tab-damage-claim")
+        "damage-claim": document.getElementById("tab-damage-claim"),
+        "store-visit": document.getElementById("tab-store-visit")
       };
 
       function showTopTab(key) {
@@ -1320,7 +1621,8 @@
       const damageSections = {
         cold: document.getElementById("damage-cold"),
         pest: document.getElementById("damage-pest"),
-        store: document.getElementById("damage-store")
+        store: document.getElementById("damage-store"),
+        builder: document.getElementById("damage-builder")
       };
 
       function showDamageTab(key) {
@@ -1380,10 +1682,12 @@
       const popupYear = document.getElementById("popupYear");
       const popupClose = document.getElementById("popupClose");
 
-      popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
-      popupBackdrop.addEventListener("click", e => {
-        if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
-      });
+      if (popupClose) {
+        popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+        popupBackdrop.addEventListener("click", e => {
+          if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+        });
+      }
 
       function renderSkuList() {
         skuGrid.innerHTML = "";
@@ -1433,7 +1737,7 @@
       sentInFilter.addEventListener("input", renderSkuList);
       yearFilter.addEventListener("change", renderSkuList);
 
-      /* ORDER BREAKDOWN DETAILED */
+      /* ORDER BREAKDOWN DETAIL */
       function applyOrderBreakdown(rows) {
         if (!rows.length) {
           obWeekDisplay.textContent = "TBD";
@@ -1486,10 +1790,12 @@
       const careTips = document.getElementById("careTips");
       const careCloseBtn = document.getElementById("careClose");
 
-      careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-      careBackdrop.addEventListener("click", e => {
-        if (e.target === careBackdrop) careBackdrop.style.display = "none";
-      });
+      if (careCloseBtn) {
+        careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+        careBackdrop.addEventListener("click", e => {
+          if (e.target === careBackdrop) careBackdrop.style.display = "none";
+        });
+      }
 
       function renderPlantCards() {
         plantCareGrid.innerHTML = "";
@@ -1556,10 +1862,12 @@
       const pestTreatment = document.getElementById("pestTreatment");
       const pestCloseBtn = document.getElementById("pestClose");
 
-      pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-      pestBackdrop.addEventListener("click", e => {
-        if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-      });
+      if (pestCloseBtn) {
+        pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+        pestBackdrop.addEventListener("click", e => {
+          if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+        });
+      }
 
       function renderPestCards() {
         pestGrid.innerHTML = "";
@@ -1609,6 +1917,151 @@
       }
 
       pestSearch.addEventListener("input", filterPestCards);
+
+      /* CLAIM BUILDER – DOWNLOAD TEXT FILE */
+      const buildClaimBtn = document.getElementById("buildClaimBtn");
+      if (buildClaimBtn) {
+        buildClaimBtn.addEventListener("click", () => {
+          const store = (document.getElementById("claimStore").value || "").trim();
+          const contact = (document.getElementById("claimContact").value || "").trim();
+          const dateNoticed = document.getElementById("claimDate").value || "";
+          const damageType = document.getElementById("claimDamageType").value || "";
+          const po = (document.getElementById("claimPo").value || "").trim();
+          const arrivalDate = document.getElementById("claimArrivalDate").value || "";
+          const skus = (document.getElementById("claimSkus").value || "").trim();
+          const retailImpact = (document.getElementById("claimRetailImpact").value || "").trim();
+          const percentLoss = (document.getElementById("claimPercentLoss").value || "").trim();
+          const locationNotes = (document.getElementById("claimLocationNotes").value || "").trim();
+          const actions = (document.getElementById("claimActions").value || "").trim();
+          const photoNotes = (document.getElementById("claimPhotoNotes").value || "").trim();
+          const extra = (document.getElementById("claimExtra").value || "").trim();
+
+          const lines = [
+            "HF-HPA DAMAGE CLAIM",
+            "====================",
+            "",
+            `Damage Type: ${damageType || "N/A"}`,
+            "",
+            `Store #: ${store || "N/A"}`,
+            `Store Contact: ${contact || "N/A"}`,
+            `Product Arrival Date: ${arrivalDate || "N/A"}`,
+            `Date Damage Noticed: ${dateNoticed || "N/A"}`,
+            "",
+            `PO / Load / Invoice #: ${po || "N/A"}`,
+            "",
+            "SKUs & Quantities:",
+            "------------------",
+            skus || "N/A",
+            "",
+            `Estimated Retail $$ Impacted: ${retailImpact || "N/A"}`,
+            `Approx. % Loss / Area: ${percentLoss || "N/A"}`,
+            "",
+            "Location / Setup Notes:",
+            "-----------------------",
+            locationNotes || "N/A",
+            "",
+            "Actions Taken at Store:",
+            "------------------------",
+            actions || "N/A",
+            "",
+            "Photo Summary:",
+            "--------------",
+            photoNotes || "N/A",
+            "",
+            "Extra Notes:",
+            "------------",
+            extra || "N/A",
+            "",
+            "Generated via HF-HPA Claim Builder"
+          ];
+
+          const content = lines.join("\n");
+          const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+
+          const safeStore = store || "Store";
+          const safeDate = dateNoticed || new Date().toISOString().slice(0, 10);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `DamageClaim_${safeStore}_${safeDate}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      /* STORE VISIT CHECKLIST – DOWNLOAD SUMMARY */
+      const exportVisitSummaryBtn = document.getElementById("exportVisitSummary");
+      if (exportVisitSummaryBtn) {
+        exportVisitSummaryBtn.addEventListener("click", () => {
+          const store = (document.getElementById("visitStore").value || "").trim();
+          const visitDate = document.getElementById("visitDate").value || new Date().toISOString().slice(0, 10);
+          const rep = (document.getElementById("visitRep").value || "").trim();
+          const notes = (document.getElementById("visitNotes").value || "").trim();
+
+          const checklistLines = [];
+          const sections = document.querySelectorAll("#tab-store-visit .checklist-section");
+          sections.forEach(section => {
+            const titleEl = section.querySelector(".checklist-title");
+            const title = titleEl ? titleEl.textContent.trim() : "";
+            if (title) {
+              checklistLines.push(title);
+              checklistLines.push("-".repeat(title.length));
+            }
+            const items = section.querySelectorAll(".checklist-item");
+            items.forEach(label => {
+              const cb = label.querySelector("input[type='checkbox']");
+              const text = (label.textContent || "").replace(/\s+/g, " ").trim();
+              const status = cb && cb.checked ? "✅" : "⬜";
+              checklistLines.push(`  ${status} ${text}`);
+            });
+            checklistLines.push("");
+          });
+
+          const lines = [
+            "STORE VISIT SUMMARY",
+            "===================",
+            "",
+            `Store #: ${store || "N/A"}`,
+            `Visit Date: ${visitDate}`,
+            `Rep / Visitor: ${rep || "N/A"}`,
+            "",
+            "Checklist",
+            "---------",
+            ...checklistLines,
+            "Notes / Follow-Ups",
+            "-------------------",
+            notes || "None",
+            "",
+            "Generated via HF-HPA Store Visit Checklist"
+          ];
+
+          const content = lines.join("\n");
+          const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+
+          const safeStore = store || "Store";
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `StoreVisit_${safeStore}_${visitDate}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      /* DATE DEFAULTS */
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const claimDateInput = document.getElementById("claimDate");
+      if (claimDateInput && !claimDateInput.value) {
+        claimDateInput.value = todayIso;
+      }
+      const visitDateInput = document.getElementById("visitDate");
+      if (visitDateInput && !visitDateInput.value) {
+        visitDateInput.value = todayIso;
+      }
 
       /* LOADERS */
       async function loadSkuCsv() {
@@ -1720,4 +2173,3 @@
   </script>
 </body>
 </html>
-
