@@ -353,7 +353,7 @@
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 4px;
-      color: #e5f0ff; /* <-- ensure it's visible (not black) */
+      color: #e5f0ff; /* make sure it's visible */
     }
 
     .sku-meta {
@@ -372,9 +372,92 @@
       border: 1px dashed var(--border-subtle);
     }
 
-    /* ORDER BREAKDOWN */
+    /* ORDER BREAKDOWN - NEW TABLE + COLLAPSE */
+    .order-table-wrapper {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      margin-top: 10px;
+    }
+
+    .order-table-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    .order-table th {
+      text-align: left;
+      padding: 10px;
+      background: rgba(255,255,255,0.08);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .order-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e8f2ff;
+    }
+
+    .order-table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .order-table tr:hover {
+      background: rgba(96,165,250,0.12);
+      transition: 0.2s;
+    }
+
+    .status-highlight {
+      background: yellow;
+      color: black;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .order-details-toggle {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--accent);
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148,163,184,0.5);
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out;
+    }
+
+    .order-details-toggle:hover {
+      background: rgba(37, 99, 235, 0.12);
+      border-color: var(--accent);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .order-details-panel {
+      margin-top: 14px;
+    }
+
+    /* Inner breakdown (reusing earlier style) */
     .order-breakdown-wrapper {
-      margin-top: 20px;
+      margin-top: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -739,49 +822,77 @@
         </div>
 
         <section id="skuGrid" class="sku-grid"></section>
-        <div id="emptyState" class="empty-state hidden">No SKUs match your filters or the file could not be loaded.</div>
+        <div id="emptyState" class="empty-state hidden">
+          No SKUs match your filters or the file could not be loaded.
+        </div>
       </section>
 
       <!-- ORDER BREAKDOWN TAB -->
       <section id="tab-orders" class="tab-content hidden">
-        <div class="order-breakdown-wrapper">
-          <div class="ob-header-stack">
-            <div class="ob-week-box">
-              Shipping Week #:
-              <span id="obWeekDisplay">TBD</span>
-            </div>
-            <div class="ob-grades-box">
-              Store Grade Shipping:
-              <span id="obGradesDisplay">All stores</span>
+        <div class="order-table-wrapper">
+          <h2 class="order-table-title">Weekly Shipping Overview</h2>
+
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Week #</th>
+                <th>Week Date</th>
+                <th>Shipping</th>
+                <th>Additional</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="orderWeeksBody">
+              <!-- Filled dynamically from OrderWeeks.csv -->
+            </tbody>
+          </table>
+
+          <button id="orderDetailsToggle" class="order-details-toggle" type="button">
+            Show Detailed Breakdown
+          </button>
+
+          <div id="orderDetailsPanel" class="order-details-panel hidden">
+            <div class="order-breakdown-wrapper">
+              <div class="ob-header-stack">
+                <div class="ob-week-box">
+                  Shipping Week #:
+                  <span id="obWeekDisplay">TBD</span>
+                </div>
+                <div class="ob-grades-box">
+                  Store Grade Shipping:
+                  <span id="obGradesDisplay">All stores</span>
+                </div>
+              </div>
+
+              <div class="ob-grid">
+                <div class="ob-box">
+                  <div class="ob-box-title">FLO</div>
+                  <div id="obFloBody" class="ob-box-body"></div>
+                </div>
+                <div class="ob-box">
+                  <div class="ob-box-title">FOL</div>
+                  <div id="obFolBody" class="ob-box-body"></div>
+                </div>
+                <div class="ob-box">
+                  <div class="ob-box-title">UCO</div>
+                  <div id="obUcoBody" class="ob-box-body"></div>
+                </div>
+                <div class="ob-box">
+                  <div class="ob-box-title">FHB</div>
+                  <div id="obFhbBody" class="ob-box-body"></div>
+                </div>
+                <div class="ob-box">
+                  <div class="ob-box-title">TRP</div>
+                  <div id="obTrpBody" class="ob-box-body"></div>
+                </div>
+                <div class="ob-box">
+                  <div class="ob-box-title">SPC</div>
+                  <div id="obSpcBody" class="ob-box-body"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="ob-grid">
-            <div class="ob-box">
-              <div class="ob-box-title">FLO</div>
-              <div id="obFloBody" class="ob-box-body"></div>
-            </div>
-            <div class="ob-box">
-              <div class="ob-box-title">FOL</div>
-              <div id="obFolBody" class="ob-box-body"></div>
-            </div>
-            <div class="ob-box">
-              <div class="ob-box-title">UCO</div>
-              <div id="obUcoBody" class="ob-box-body"></div>
-            </div>
-            <div class="ob-box">
-              <div class="ob-box-title">FHB</div>
-              <div id="obFhbBody" class="ob-box-body"></div>
-            </div>
-            <div class="ob-box">
-              <div class="ob-box-title">TRP</div>
-              <div id="obTrpBody" class="ob-box-body"></div>
-            </div>
-            <div class="ob-box">
-              <div class="ob-box-title">SPC</div>
-              <div id="obSpcBody" class="ob-box-body"></div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -1015,6 +1126,7 @@
     /* ========= CONFIG ========= */
     const SKU_CSV_URL = "SKU_Name_2026.csv";
     const ORDER_CSV_URL = "OrderBreakdown.csv";
+    const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
     const PLANT_CSV_URL = "plants.csv";
     const PEST_CSV_URL = "pests.csv";
 
@@ -1192,6 +1304,16 @@
       return pests;
     }
 
+    /* ========= ORDER WEEKS TABLE HELPERS ========= */
+    function highlightStatus(status) {
+      if (!status) return "";
+      const lower = status.toLowerCase();
+      if (lower.includes("request") || lower.includes("due")) {
+        return `<span class="status-highlight">${status}</span>`;
+      }
+      return status;
+    }
+
     /* ========= APP LOGIC ========= */
     document.addEventListener("DOMContentLoaded", () => {
       /* ========= TOP-LEVEL TABS ========= */
@@ -1271,7 +1393,7 @@
         });
       });
 
-      /* ========= ORDER DOM ========= */
+      /* ========= ORDER DOM FOR DETAILED BREAKDOWN ========= */
       const obWeekDisplay = document.getElementById("obWeekDisplay");
       const obGradesDisplay = document.getElementById("obGradesDisplay");
       const obBodies = {
@@ -1282,6 +1404,19 @@
         TRP: document.getElementById("obTrpBody"),
         SPC: document.getElementById("obSpcBody")
       };
+
+      /* ========= ORDER DETAILS COLLAPSE ========= */
+      const orderDetailsToggle = document.getElementById("orderDetailsToggle");
+      const orderDetailsPanel = document.getElementById("orderDetailsPanel");
+
+      if (orderDetailsToggle && orderDetailsPanel) {
+        orderDetailsToggle.addEventListener("click", () => {
+          const isHidden = orderDetailsPanel.classList.toggle("hidden");
+          orderDetailsToggle.textContent = isHidden
+            ? "Show Detailed Breakdown"
+            : "Hide Detailed Breakdown";
+        });
+      }
 
       /* ========= SKU DOM ========= */
       const nameFilter = document.getElementById("nameFilter");
@@ -1394,7 +1529,7 @@
       sentInFilter.addEventListener("input", renderSkuList);
       yearFilter.addEventListener("change", renderSkuList);
 
-      /* ========= ORDER BREAKDOWN RENDERING ========= */
+      /* ========= ORDER BREAKDOWN RENDERING (DETAILED) ========= */
       function applyOrderBreakdown(rows) {
         if (!rows.length) {
           obWeekDisplay.textContent = "TBD";
@@ -1563,6 +1698,49 @@
         }
       }
 
+      async function loadOrderWeeksCsv() {
+        try {
+          const res = await fetch(ORDER_WEEKS_CSV_URL);
+          if (!res.ok) throw new Error("OrderWeeks.csv not found");
+          const text = await res.text();
+          const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+          if (!lines.length) return;
+
+          const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+          const weekIdx = header.indexOf("week #");
+          const dateIdx = header.indexOf("week date");
+          const shipIdx = header.indexOf("shipping");
+          const addIdx = header.indexOf("additional");
+          const statusIdx = header.indexOf("status");
+
+          const orderBody = document.getElementById("orderWeeksBody");
+          orderBody.innerHTML = "";
+
+          for (let i = 1; i < lines.length; i++) {
+            const row = parseCsvLine(lines[i]);
+            const week = (row[weekIdx] || "").trim();
+            const date = (row[dateIdx] || "").trim();
+            const shipping = (row[shipIdx] || "").trim();
+            const additional = (row[addIdx] || "").trim();
+            const status = (row[statusIdx] || "").trim();
+
+            if (!week) continue;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${week}</td>
+              <td>${date}</td>
+              <td>${shipping}</td>
+              <td>${additional}</td>
+              <td>${highlightStatus(status)}</td>
+            `;
+            orderBody.appendChild(tr);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
       async function loadPlantCsv() {
         try {
           const res = await fetch(PLANT_CSV_URL);
@@ -1597,7 +1775,8 @@
       showDamageTab("cold");
 
       loadSkuCsv();
-      loadOrderCsv();
+      loadOrderCsv();       // detailed breakdown
+      loadOrderWeeksCsv();  // top table
       loadPlantCsv();
       loadPestCsv();
     });
