@@ -6,13 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon / Icons -->
-  <link rel="icon" type="image/png" href="hpa_logo.png" />
-  <link rel="apple-touch-icon" href="hpa_logo.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+  hpa_logo.png
+  hpa_logo.png
+  hpa_logo.png
 
   <style>
     :root {
-      /* Base */
       --bg: #020617;
       --bg-alt: #041015;
       --card-bg: rgba(15, 23, 42, 0.95);
@@ -23,8 +22,6 @@
       --radius-pill: 999px;
       --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
       --transition-fast: 0.18s ease-out;
-
-      /* Blue accent theme */
       --accent: #61dafb;
       --accent-soft: rgba(97, 218, 251, 0.15);
     }
@@ -38,8 +35,9 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(96, 165, 250, 0.25), transparent 55%),
-        radial-gradient(circle at top, #0b1720 0, #020617 52%, #02040a 100%);
+        linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.80)),
+        url("philo.jpg") no-repeat center center fixed;
+      background-size: cover;
       color: var(--text);
       min-height: 100vh;
     }
@@ -113,11 +111,9 @@
     /* TOP TABS */
     .tabs {
       display: flex;
-      flex-direction: row;
       gap: 6px;
       border-bottom: 1px solid var(--border-subtle);
       margin-top: 10px;
-      flex-wrap: nowrap;
       overflow-x: auto;
       padding-bottom: 4px;
       -webkit-overflow-scrolling: touch;
@@ -166,7 +162,6 @@
       color: var(--text);
       background: rgba(15, 23, 42, 0.95);
       border-color: var(--border-subtle);
-      border-bottom-color: rgba(15, 23, 42, 0.95);
     }
 
     .tab.active::after {
@@ -186,7 +181,7 @@
       display: none;
     }
 
-    /* SKU FILTER AREA */
+    /* SKU FILTERS */
     .controls {
       background: rgba(15, 23, 42, 0.95);
       border-radius: var(--radius-lg);
@@ -218,10 +213,6 @@
       background: rgba(5, 16, 26, 0.9);
       color: var(--text);
       font-size: 0.9rem;
-    }
-
-    .search-input::placeholder {
-      color: #62758a;
     }
 
     .search-icon {
@@ -295,9 +286,7 @@
       }
     }
 
-    /* Glassy cards (SKU + plant/pest/damage) */
-    .sku-card,
-    .pc-card {
+    .sku-card {
       position: relative;
       background: linear-gradient(
         135deg,
@@ -308,19 +297,16 @@
       border: 1px solid rgba(148, 163, 184, 0.35);
       padding: 14px;
       cursor: pointer;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      box-shadow: var(--shadow-soft);
       backdrop-filter: blur(6px);
       transition:
         transform 0.18s ease-out,
         border-color 0.18s ease-out,
         box-shadow 0.18s ease-out,
         background 0.18s ease-out;
-      text-align: left;
-      color: var(--text);
     }
 
-    .sku-card:hover,
-    .pc-card:hover {
+    .sku-card:hover {
       transform: translateY(-3px) scale(1.01);
       border-color: var(--accent);
       box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
@@ -329,12 +315,6 @@
         rgba(96, 165, 250, 0.18),
         rgba(15, 23, 42, 0.95)
       );
-    }
-
-    .sku-card {
-      display: block;
-      width: 100%;
-      border-radius: 16px;
     }
 
     .sku-year-pill {
@@ -353,7 +333,7 @@
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 4px;
-      color: #e5f0ff; /* make sure it's visible */
+      color: #e5f0ff;
     }
 
     .sku-meta {
@@ -372,13 +352,13 @@
       border: 1px dashed var(--border-subtle);
     }
 
-    /* ORDER BREAKDOWN - NEW TABLE + COLLAPSE */
+    /* ORDER BREAKDOWN - TABLE + COLLAPSE */
     .order-table-wrapper {
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid rgba(148, 163, 184, 0.25);
       border-radius: 14px;
       padding: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
       margin-top: 10px;
     }
 
@@ -399,7 +379,7 @@
     .order-table th {
       text-align: left;
       padding: 10px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.08);
       font-weight: 600;
       border-bottom: 1px solid rgba(148, 163, 184, 0.25);
     }
@@ -415,7 +395,7 @@
     }
 
     .order-table tr:hover {
-      background: rgba(96,165,250,0.12);
+      background: rgba(96, 165, 250, 0.12);
       transition: 0.2s;
     }
 
@@ -435,7 +415,7 @@
       background: transparent;
       color: var(--accent);
       border-radius: var(--radius-pill);
-      border: 1px solid rgba(148,163,184,0.5);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       padding: 6px 14px;
       font-size: 0.85rem;
       cursor: pointer;
@@ -455,7 +435,6 @@
       margin-top: 14px;
     }
 
-    /* Inner breakdown (reusing earlier style) */
     .order-breakdown-wrapper {
       margin-top: 10px;
       display: flex;
@@ -558,12 +537,6 @@
       color: var(--text);
     }
 
-    .inner-tab:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    /* DAMAGE INNER TABS */
     .damage-inner-tabs {
       display: flex;
       gap: 8px;
@@ -590,16 +563,10 @@
       color: var(--text);
     }
 
-    .damage-inner-tab:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
     .damage-inner-content {
       margin-top: 6px;
     }
 
-    /* PLANT / PEST CARDS */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -667,7 +634,6 @@
       color: var(--muted);
     }
 
-    /* POPUP IMAGES */
     .popup-image {
       width: 100%;
       max-height: 220px;
@@ -677,7 +643,6 @@
       border: 1px solid var(--border-subtle);
     }
 
-    /* POPUPS */
     .popup-backdrop {
       position: fixed;
       inset: 0;
@@ -699,10 +664,6 @@
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
-    }
-
-    .popup h2 {
-      margin-bottom: 4px;
     }
 
     .popup-section-title {
@@ -728,13 +689,6 @@
       font-size: 0.85rem;
       font-weight: 600;
       box-shadow: 0 10px 25px rgba(37, 99, 235, 0.55);
-      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, filter 0.1s ease-out;
-    }
-
-    .popup-close:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-      box-shadow: 0 14px 35px rgba(37, 99, 235, 0.7);
     }
 
     .popup-subtitle {
@@ -744,7 +698,6 @@
       font-style: italic;
     }
 
-    /* FOOTER */
     .footer {
       margin-top: 12px;
       font-size: 0.75rem;
@@ -812,7 +765,6 @@
           </div>
         </section>
 
-        <!-- Little helper tip -->
         <p class="subtitle" style="margin-top:6px; font-size:0.75rem;">
           Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo, Holiday).
         </p>
@@ -830,7 +782,7 @@
       <!-- ORDER BREAKDOWN TAB -->
       <section id="tab-orders" class="tab-content hidden">
         <div class="order-table-wrapper">
-          <h2 class="order-table-title">Weekly Shipping Overview</h2>
+          <div class="order-table-title">Weekly Shipping Overview</div>
 
           <table class="order-table">
             <thead>
@@ -842,9 +794,7 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody id="orderWeeksBody">
-              <!-- Filled dynamically from OrderWeeks.csv -->
-            </tbody>
+            <tbody id="orderWeeksBody"></tbody>
           </table>
 
           <button id="orderDetailsToggle" class="order-details-toggle" type="button">
@@ -878,8 +828,7 @@
                   <div id="obUcoBody" class="ob-box-body"></div>
                 </div>
                 <div class="ob-box">
-                  <div class="ob-box-title">FHB</div>
-                  <div id="obFhbBody" class="ob-box-body"></div>
+                  <div class="v id="obFhbBody" class="ob-box-body"></div>
                 </div>
                 <div class="ob-box">
                   <div class="ob-box-title">TRP</div>
@@ -1125,8 +1074,8 @@
   <script>
     /* ========= CONFIG ========= */
     const SKU_CSV_URL = "SKU_Name_2026.csv";
-    const ORDER_CSV_URL = "OrderBreakdown.csv";
     const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
+    const ORDER_CSV_URL = "OrderBreakdown.csv";
     const PLANT_CSV_URL = "plants.csv";
     const PEST_CSV_URL = "pests.csv";
 
@@ -1141,14 +1090,13 @@
       "13": "All Stores"
     };
 
-    let PLANTS = [];
-    let PESTS = [];
     let skuData = [];
     let allOrderRows = [];
+    let PLANTS = [];
+    let PESTS = [];
 
     const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
-    /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -1304,7 +1252,6 @@
       return pests;
     }
 
-    /* ========= ORDER WEEKS TABLE HELPERS ========= */
     function highlightStatus(status) {
       if (!status) return "";
       const lower = status.toLowerCase();
@@ -1314,10 +1261,9 @@
       return status;
     }
 
-    /* ========= APP LOGIC ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      /* ========= TOP-LEVEL TABS ========= */
-      const tabs = document.querySelectorAll(".tab");
+      /* TABS */
+      const tabs = document.querySelectorAll(".tabs .tab");
       const tabSections = {
         "catalog": document.getElementById("tab-catalog"),
         "orders": document.getElementById("tab-orders"),
@@ -1331,7 +1277,7 @@
           section.classList.toggle("hidden", k !== key);
         });
         tabs.forEach(t => t.classList.remove("active"));
-        const activeTab = document.querySelector(`.tab[data-tab="${key}"]`);
+        const activeTab = document.querySelector(`.tabs .tab[data-tab="${key}"]`);
         if (activeTab) activeTab.classList.add("active");
       }
 
@@ -1343,7 +1289,7 @@
         });
       });
 
-      /* ========= PLANT CARE INNER TABS ========= */
+      /* PLANT CARE INNER TABS */
       const innerTabs = document.querySelectorAll(".inner-tab");
       const innerSections = {
         "care-library": document.getElementById("inner-care-library"),
@@ -1368,7 +1314,7 @@
         });
       });
 
-      /* ========= DAMAGE CLAIM INNER TABS ========= */
+      /* DAMAGE CLAIM INNER TABS */
       const damageTabs = document.querySelectorAll(".damage-inner-tab");
       const damageSections = {
         cold: document.getElementById("damage-cold"),
@@ -1393,7 +1339,7 @@
         });
       });
 
-      /* ========= ORDER DOM FOR DETAILED BREAKDOWN ========= */
+      /* ORDER BREAKDOWN DOM */
       const obWeekDisplay = document.getElementById("obWeekDisplay");
       const obGradesDisplay = document.getElementById("obGradesDisplay");
       const obBodies = {
@@ -1405,7 +1351,6 @@
         SPC: document.getElementById("obSpcBody")
       };
 
-      /* ========= ORDER DETAILS COLLAPSE ========= */
       const orderDetailsToggle = document.getElementById("orderDetailsToggle");
       const orderDetailsPanel = document.getElementById("orderDetailsPanel");
 
@@ -1418,7 +1363,7 @@
         });
       }
 
-      /* ========= SKU DOM ========= */
+      /* SKU DOM */
       const nameFilter = document.getElementById("nameFilter");
       const skuFilter = document.getElementById("skuFilter");
       const sentInFilter = document.getElementById("sentInFilter");
@@ -1439,46 +1384,6 @@
         if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
       });
 
-      /* ========= PLANT CARE DOM ========= */
-      const plantCareGrid = document.getElementById("plantCareGrid");
-      const careSearch = document.getElementById("careSearch");
-      const careBackdrop = document.getElementById("careBackdrop");
-      const careImage = document.getElementById("careImage");
-      const careTitle = document.getElementById("careTitle");
-      const careLight = document.getElementById("careLight");
-      const careWater = document.getElementById("careWater");
-      const careHumidityEl = document.getElementById("careHumidity");
-      const careTemp = document.getElementById("careTemp");
-      const careSoil = document.getElementById("careSoil");
-      const careFertilizer = document.getElementById("careFertilizer");
-      const careToxicity = document.getElementById("careToxicity");
-      const careTips = document.getElementById("careTips");
-      const careCloseBtn = document.getElementById("careClose");
-
-      careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-      careBackdrop.addEventListener("click", e => {
-        if (e.target === careBackdrop) careBackdrop.style.display = "none";
-      });
-
-      /* ========= PEST DOM ========= */
-      const pestGrid = document.getElementById("pestGrid");
-      const pestSearch = document.getElementById("pestSearch");
-      const pestBackdrop = document.getElementById("pestBackdrop");
-      const pestImage = document.getElementById("pestImage");
-      const pestTitle = document.getElementById("pestTitle");
-      const pestScientificName = document.getElementById("pestScientificName");
-      const pestLooksLike = document.getElementById("pestLooksLike");
-      const pestIdentification = document.getElementById("pestIdentification");
-      const pestPrevention = document.getElementById("pestPrevention");
-      const pestTreatment = document.getElementById("pestTreatment");
-      const pestCloseBtn = document.getElementById("pestClose");
-
-      pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-      pestBackdrop.addEventListener("click", e => {
-        if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-      });
-
-      /* ========= SKU RENDERING ========= */
       function renderSkuList() {
         skuGrid.innerHTML = "";
         const nameQ = (nameFilter.value || "").toLowerCase();
@@ -1504,11 +1409,9 @@
           card.innerHTML = `
             <div class="sku-year-pill">${item.yearSent}</div>
             <div class="sku-name">${item.name}</div>
-            <div class="sku-meta">
-              <div><strong>SKU:</strong> ${item.sku}</div>
-              <div><strong>Sent In:</strong> ${item.sentIn}</div>
-              <div><strong>Year Sent:</strong> ${item.yearSent}</div>
-            </div>
+            <div class="sku-meta"><strong>SKU:</strong> ${item.sku}</div>
+            <div class="sku-meta"><strong>Sent In:</strong> ${item.sentIn}</div>
+            <div class="sku-meta"><strong>Year Sent:</strong> ${item.yearSent}</div>
           `;
           card.addEventListener("click", () => {
             popupName.textContent = item.name;
@@ -1529,7 +1432,7 @@
       sentInFilter.addEventListener("input", renderSkuList);
       yearFilter.addEventListener("change", renderSkuList);
 
-      /* ========= ORDER BREAKDOWN RENDERING (DETAILED) ========= */
+      /* ORDER BREAKDOWN DETAILED */
       function applyOrderBreakdown(rows) {
         if (!rows.length) {
           obWeekDisplay.textContent = "TBD";
@@ -1566,7 +1469,27 @@
         });
       }
 
-      /* ========= PLANT RENDERING ========= */
+      /* PLANTS UI */
+      const plantCareGrid = document.getElementById("plantCareGrid");
+      const careSearch = document.getElementById("careSearch");
+      const careBackdrop = document.getElementById("careBackdrop");
+      const careImage = document.getElementById("careImage");
+      const careTitle = document.getElementById("careTitle");
+      const careLight = document.getElementById("careLight");
+      const careWater = document.getElementById("careWater");
+      const careHumidityEl = document.getElementById("careHumidity");
+      const careTemp = document.getElementById("careTemp");
+      const careSoil = document.getElementById("careSoil");
+      const careFertilizer = document.getElementById("careFertilizer");
+      const careToxicity = document.getElementById("careToxicity");
+      const careTips = document.getElementById("careTips");
+      const careCloseBtn = document.getElementById("careClose");
+
+      careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+      careBackdrop.addEventListener("click", e => {
+        if (e.target === careBackdrop) careBackdrop.style.display = "none";
+      });
+
       function renderPlantCards() {
         plantCareGrid.innerHTML = "";
         PLANTS.forEach(plant => {
@@ -1619,7 +1542,24 @@
 
       careSearch.addEventListener("input", filterPlantCards);
 
-      /* ========= PEST RENDERING ========= */
+      /* PEST UI */
+      const pestGrid = document.getElementById("pestGrid");
+      const pestSearch = document.getElementById("pestSearch");
+      const pestBackdrop = document.getElementById("pestBackdrop");
+      const pestImage = document.getElementById("pestImage");
+      const pestTitle = document.getElementById("pestTitle");
+      const pestScientificName = document.getElementById("pestScientificName");
+      const pestLooksLike = document.getElementById("pestLooksLike");
+      const pestIdentification = document.getElementById("pestIdentification");
+      const pestPrevention = document.getElementById("pestPrevention");
+      const pestTreatment = document.getElementById("pestTreatment");
+      const pestCloseBtn = document.getElementById("pestClose");
+
+      pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+      pestBackdrop.addEventListener("click", e => {
+        if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+      });
+
       function renderPestCards() {
         pestGrid.innerHTML = "";
         PESTS.forEach(pest => {
@@ -1669,7 +1609,7 @@
 
       pestSearch.addEventListener("input", filterPestCards);
 
-      /* ========= LOADERS ========= */
+      /* LOADERS */
       async function loadSkuCsv() {
         try {
           const res = await fetch(SKU_CSV_URL);
@@ -1680,21 +1620,7 @@
         } catch (err) {
           console.error(err);
           emptyState.classList.remove("hidden");
-          emptyState.textContent = "Error loading SKU list. Check that SKU_Name_2026.csv exists.";
-        }
-      }
-
-      async function loadOrderCsv() {
-        try {
-          const res = await fetch(ORDER_CSV_URL);
-          if (!res.ok) throw new Error("OrderBreakdown.csv not found");
-          const text = await res.text();
-          allOrderRows = parseOrderCsv(text);
-          applyOrderBreakdown(allOrderRows);
-        } catch (err) {
-          console.error(err);
-          obWeekDisplay.textContent = "N/A";
-          obGradesDisplay.textContent = "N/A (couldn't load orders)";
+          emptyState.textContent = "Error loading SKU_Name_2026.csv.";
         }
       }
 
@@ -1741,6 +1667,18 @@
         }
       }
 
+      async function loadOrderCsv() {
+        try {
+          const res = await fetch(ORDER_CSV_URL);
+          if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+          const text = await res.text();
+          allOrderRows = parseOrderCsv(text);
+          applyOrderBreakdown(allOrderRows);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
       async function loadPlantCsv() {
         try {
           const res = await fetch(PLANT_CSV_URL);
@@ -1751,7 +1689,6 @@
           filterPlantCards();
         } catch (err) {
           console.error(err);
-          alert("Error loading plants.csv. Check file name and headers.");
         }
       }
 
@@ -1765,18 +1702,17 @@
           filterPestCards();
         } catch (err) {
           console.error(err);
-          alert("Error loading pests.csv. Check file name and headers.");
         }
       }
 
-      /* ========= INITIALIZE VIEW ========= */
+      /* INIT */
       showTopTab("catalog");
       showInnerTab("care-library");
       showDamageTab("cold");
 
       loadSkuCsv();
-      loadOrderCsv();       // detailed breakdown
-      loadOrderWeeksCsv();  // top table
+      loadOrderWeeksCsv();
+      loadOrderCsv();
       loadPlantCsv();
       loadPestCsv();
     });
