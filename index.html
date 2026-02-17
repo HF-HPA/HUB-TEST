@@ -12,13 +12,13 @@
 
   <style>
     :root {
-      --bg: #0b1720;
-      --bg-alt: #111f2b;
-      --card-bg: #152433;
+      --bg: #020617;
+      --bg-alt: #0b1720;
+      --card-bg: #111827;
       --accent: #61dafb;
       --accent-soft: rgba(97, 218, 251, 0.15);
-      --text: #f7fbff;
-      --muted: #a6b4c4;
+      --text: #f9fafb;
+      --muted: #9ca3af;
       --border-subtle: #233546;
       --radius-lg: 14px;
       --radius-pill: 999px;
@@ -43,6 +43,13 @@
       width: 100%;
       padding: 16px;
       display: flex;
+      justify-content: center;
+    }
+
+    .app-inner {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
       flex-direction: column;
       gap: 16px;
     }
@@ -62,25 +69,28 @@
     }
 
     .logo {
-      width: 110px;
-      height: 110px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       object-fit: cover;
+      border: 2px solid var(--accent-soft);
+      box-shadow: var(--shadow-soft);
     }
 
     .title-block {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
 
     .title-block h1 {
-      font-size: 1.55rem;
+      font-size: 1.75rem;
       font-weight: 650;
+      letter-spacing: 0.03em;
     }
 
     .subtitle {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--muted);
     }
 
@@ -103,22 +113,29 @@
     }
 
     .tab {
-      padding: 8px 12px;
+      padding: 8px 14px;
       font-size: 0.9rem;
       border-radius: 8px 8px 0 0;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid transparent;
+      border-bottom: none;
       color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
-      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
     }
 
     .tab.active {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(15, 23, 42, 0.9);
       border-color: var(--border-subtle);
-      border-bottom-color: rgba(255, 255, 255, 0.18);
+      border-bottom-color: rgba(15, 23, 42, 0.9);
       color: var(--text);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .tab-content {
@@ -131,7 +148,7 @@
 
     /* SKU FILTER AREA */
     .controls {
-      background: rgba(21, 37, 54, 0.95);
+      background: rgba(15, 23, 42, 0.95);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-subtle);
       padding: 14px;
@@ -173,6 +190,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: #62758a;
+      pointer-events: none;
     }
 
     .filters {
@@ -186,12 +204,14 @@
       display: flex;
       flex-direction: column;
       min-width: 140px;
+      gap: 3px;
     }
 
     .filter-label {
       color: var(--muted);
       font-size: 0.75rem;
       letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .filter-input {
@@ -207,7 +227,7 @@
     .results-header {
       display: flex;
       justify-content: space-between;
-      margin-top: 6px;
+      margin-top: 8px;
       color: var(--muted);
       font-size: 0.8rem;
     }
@@ -237,7 +257,7 @@
 
     .sku-card {
       position: relative;
-      background: radial-gradient(circle at top left, #203447 0, #0c1722 60%, #050b10);
+      background: radial-gradient(circle at top left, #203447 0, #0b1120 60%, #020617);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-subtle);
       padding: 14px;
@@ -249,6 +269,7 @@
     .sku-card:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.6);
     }
 
     .sku-year-pill {
@@ -385,6 +406,11 @@
       color: var(--text);
     }
 
+    .inner-tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
     /* DAMAGE INNER TABS */
     .damage-inner-tabs {
       display: flex;
@@ -407,6 +433,11 @@
       background: rgba(255, 255, 255, 0.18);
       border-color: var(--border-subtle);
       color: var(--text);
+    }
+
+    .damage-inner-tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .damage-inner-content {
@@ -448,6 +479,7 @@
       transform: translateY(-50%);
       font-size: 0.9rem;
       color: #62758a;
+      pointer-events: none;
     }
 
     .pc-grid {
@@ -517,6 +549,7 @@
       align-items: center;
       justify-content: center;
       z-index: 50;
+      padding: 16px;
     }
 
     .popup {
@@ -524,8 +557,10 @@
       padding: 20px;
       border-radius: var(--radius-lg);
       border: 1px solid var(--accent);
-      width: 90%;
+      width: 100%;
       max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .popup h2 {
@@ -550,6 +585,12 @@
       border-radius: var(--radius-pill);
       padding: 8px 14px;
       cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .popup-close:hover {
+      filter: brightness(1.08);
     }
 
     .popup-subtitle {
@@ -558,332 +599,346 @@
       margin-bottom: 6px;
       font-style: italic;
     }
+
+    /* FOOTER (optional) */
+    .footer {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: right;
+    }
   </style>
 </head>
 
 <body>
   <main class="app-shell">
+    <div class="app-inner">
 
-    <!-- HEADER -->
-    <header class="header">
-      <div class="header-left">
-        <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
-        <div class="title-block">
-          <h1>HF-HPA</h1>
-          <p class="subtitle">Central Hub for HPA info.</p>
-        </div>
-      </div>
-    </header>
-
-    <!-- TOP TABS -->
-    <nav class="tabs">
-      <button class="tab active" data-tab="catalog">SKU Catalogue</button>
-      <button class="tab" data-tab="orders">Order Breakdown</button>
-      <button class="tab" data-tab="plant-care">Plant Care</button>
-      <button class="tab" data-tab="damage-claim">Damage Claim</button>
-    </nav>
-
-    <!-- SKU CATALOGUE TAB -->
-    <section id="tab-catalog" class="tab-content">
-      <section class="controls">
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
-        </div>
-
-        <div class="filters">
-          <div class="filter-group">
-            <span class="filter-label">SKU</span>
-            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
-          </div>
-          <div class="filter-group">
-            <span class="filter-label">Sent In</span>
-            <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
-          </div>
-          <div class="filter-group">
-            <span class="filter-label">Year Sent</span>
-            <select id="yearFilter" class="filter-input">
-              <option value="all">All</option>
-              <option>2022</option>
-              <option>2023</option>
-              <option>2024</option>
-              <option>2025</option>
-              <option>2026</option>
-            </select>
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+          <div class="title-block">
+            <h1>HF-HPA</h1>
+            <p class="subtitle">Central Hub for HPA info.</p>
           </div>
         </div>
-      </section>
+      </header>
 
-      <div class="results-header">
-        <strong id="resultCount">0</strong> SKUs shown
-      </div>
+      <!-- TOP TABS -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="catalog" type="button">SKU Catalogue</button>
+        <button class="tab" data-tab="orders" type="button">Order Breakdown</button>
+        <button class="tab" data-tab="plant-care" type="button">Plant Care</button>
+        <button class="tab" data-tab="damage-claim" type="button">Damage Claim</button>
+      </nav>
 
-      <section id="skuGrid" class="sku-grid"></section>
-      <div id="emptyState" class="empty-state hidden">No SKUs match your filters.</div>
-    </section>
-
-    <!-- ORDER BREAKDOWN TAB -->
-    <section id="tab-orders" class="tab-content hidden">
-      <div class="order-breakdown-wrapper">
-        <div class="ob-header-stack">
-          <div class="ob-week-box">
-            Shipping Week #:
-            <span id="obWeekDisplay">TBD</span>
+      <!-- SKU CATALOGUE TAB -->
+      <section id="tab-catalog" class="tab-content">
+        <section class="controls">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
           </div>
-          <div class="ob-grades-box">
-            Store Grade Shipping:
-            <span id="obGradesDisplay">All stores</span>
-          </div>
-        </div>
 
-        <div class="ob-grid">
-          <div class="ob-box">
-            <div class="ob-box-title">FLO</div>
-            <div id="obFloBody" class="ob-box-body"></div>
-          </div>
-          <div class="ob-box">
-            <div class="ob-box-title">FOL</div>
-            <div id="obFolBody" class="ob-box-body"></div>
-          </div>
-          <div class="ob-box">
-            <div class="ob-box-title">UCO</div>
-            <div id="obUcoBody" class="ob-box-body"></div>
-          </div>
-          <div class="ob-box">
-            <div class="ob-box-title">FHB</div>
-            <div id="obFhbBody" class="ob-box-body"></div>
-          </div>
-          <div class="ob-box">
-            <div class="ob-box-title">TRP</div>
-            <div id="obTrpBody" class="ob-box-body"></div>
-          </div>
-          <div class="ob-box">
-            <div class="ob-box-title">SPC</div>
-            <div id="obSpcBody" class="ob-box-body"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PLANT CARE TAB -->
-    <section id="tab-plant-care" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Plant Care</div>
-      </div>
-
-      <div class="inner-tabs">
-        <button class="inner-tab" data-inner="care-library">Care Library</button>
-        <button class="inner-tab" data-inner="pest-id">Pest Identification</button>
-      </div>
-
-      <!-- CARE LIBRARY -->
-      <section id="inner-care-library" class="inner-content hidden">
-        <div class="pc-header">
-          <div class="pc-title">Care Library</div>
-          <div class="pc-search-wrapper">
-            <span class="pc-search-icon">🔎</span>
-            <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
-          </div>
-        </div>
-        <div class="pc-grid" id="plantCareGrid"></div>
-      </section>
-
-      <!-- PEST IDENTIFICATION -->
-      <section id="inner-pest-id" class="inner-content hidden">
-        <div class="pc-header">
-          <div class="pc-title">Pest Identification</div>
-          <div class="pc-search-wrapper">
-            <span class="pc-search-icon">🔎</span>
-            <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-          </div>
-        </div>
-        <div class="pc-grid" id="pestGrid"></div>
-      </section>
-    </section>
-
-    <!-- DAMAGE CLAIM TAB -->
-    <section id="tab-damage-claim" class="tab-content hidden">
-      <div class="pc-header">
-        <div class="pc-title">Damage Claims</div>
-        <p class="subtitle">
-          Choose a damage type to see guidance and documentation tips for claims.
-        </p>
-      </div>
-
-      <div class="damage-inner-tabs">
-        <button class="damage-inner-tab active" data-damage="cold">Cold Damage</button>
-        <button class="damage-inner-tab" data-damage="pest">Pest Damage</button>
-        <button class="damage-inner-tab" data-damage="store">Store Claim</button>
-      </div>
-
-      <!-- COLD DAMAGE CONTENT -->
-      <section id="damage-cold" class="damage-inner-content">
-        <div class="pc-grid">
-          <div class="pc-card">
-            <div class="pc-card-title">How to Recognize Cold Damage</div>
-            <div class="pc-card-subtitle">
-              Symptoms, timing, and what to document.
+          <div class="filters">
+            <div class="filter-group">
+              <span class="filter-label">SKU</span>
+              <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
             </div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Leaves may appear water‑soaked, translucent, or darkened<br />
-              • New growth may be limp or collapsed<br />
-              • Damage often appears a day or two after exposure (during shipping or on racks near doors)<br />
-            </p>
+            <div class="filter-group">
+              <span class="filter-label">Sent In</span>
+              <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+            </div>
+            <div class="filter-group">
+              <span class="filter-label">Year Sent</span>
+              <select id="yearFilter" class="filter-input">
+                <option value="all">All</option>
+                <option>2022</option>
+                <option>2023</option>
+                <option>2024</option>
+                <option>2025</option>
+                <option>2026</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <div class="results-header">
+          <strong id="resultCount">0</strong> SKUs shown
+        </div>
+
+        <section id="skuGrid" class="sku-grid"></section>
+        <div id="emptyState" class="empty-state hidden">No SKUs match your filters.</div>
+      </section>
+
+      <!-- ORDER BREAKDOWN TAB -->
+      <section id="tab-orders" class="tab-content hidden">
+        <div class="order-breakdown-wrapper">
+          <div class="ob-header-stack">
+            <div class="ob-week-box">
+              Shipping Week #:
+              <span id="obWeekDisplay">TBD</span>
+            </div>
+            <div class="ob-grades-box">
+              Store Grade Shipping:
+              <span id="obGradesDisplay">All stores</span>
+            </div>
           </div>
 
-          <div class="pc-card">
-            <div class="pc-card-title">What to Photograph</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Full table/rack views showing quantity and signage<br />
-              • Close‑ups of worst damage and a “typical” plant<br />
-              • Photo of any temperature‑related cause (open doors, broken heater, snow/ice on racks, etc.)<br />
-            </p>
-          </div>
-
-          <div class="pc-card">
-            <div class="pc-card-title">Notes for the Claim</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Date product arrived and date damage was noticed<br />
-              • Store #, department, and contact name<br />
-              • Approximate % of affected product by table or rack<br />
-            </p>
+          <div class="ob-grid">
+            <div class="ob-box">
+              <div class="ob-box-title">FLO</div>
+              <div id="obFloBody" class="ob-box-body"></div>
+            </div>
+            <div class="ob-box">
+              <div class="ob-box-title">FOL</div>
+              <div id="obFolBody" class="ob-box-body"></div>
+            </div>
+            <div class="ob-box">
+              <div class="ob-box-title">UCO</div>
+              <div id="obUcoBody" class="ob-box-body"></div>
+            </div>
+            <div class="ob-box">
+              <div class="ob-box-title">FHB</div>
+              <div id="obFhbBody" class="ob-box-body"></div>
+            </div>
+            <div class="ob-box">
+              <div class="ob-box-title">TRP</div>
+              <div id="obTrpBody" class="ob-box-body"></div>
+            </div>
+            <div class="ob-box">
+              <div class="ob-box-title">SPC</div>
+              <div id="obSpcBody" class="ob-box-body"></div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- PEST DAMAGE CONTENT -->
-      <section id="damage-pest" class="damage-inner-content hidden">
-        <div class="pc-grid">
-          <div class="pc-card">
-            <div class="pc-card-title">How to Recognize Pest Damage</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Sticky leaves, webbing, speckling, or chewing<br />
-              • Visible pests on leaf undersides, in soil, or on stems<br />
-              • Compare with the Pest Identification tab if unsure<br />
-            </p>
-          </div>
-
-          <div class="pc-card">
-            <div class="pc-card-title">What to Photograph</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Clear close‑ups of insects or webbing (phone macro if possible)<br />
-              • Overhead shot of affected tables/racks<br />
-              • Any nearby conditions that may contribute (standing water, older stock, etc.)<br />
-            </p>
-          </div>
-
-          <div class="pc-card">
-            <div class="pc-card-title">Notes for the Claim</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Date product arrived and date pests were first seen<br />
-              • Whether product was treated at store (and with what)<br />
-              • Estimated % loss and which SKUs are impacted<br />
-            </p>
-          </div>
+      <!-- PLANT CARE TAB -->
+      <section id="tab-plant-care" class="tab-content hidden">
+        <div class="pc-header">
+          <div class="pc-title">Plant Care</div>
         </div>
+
+        <div class="inner-tabs">
+          <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
+          <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
+        </div>
+
+        <!-- CARE LIBRARY -->
+        <section id="inner-care-library" class="inner-content hidden">
+          <div class="pc-header">
+            <div class="pc-title">Care Library</div>
+            <div class="pc-search-wrapper">
+              <span class="pc-search-icon">🔎</span>
+              <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+            </div>
+          </div>
+          <div class="pc-grid" id="plantCareGrid"></div>
+        </section>
+
+        <!-- PEST IDENTIFICATION -->
+        <section id="inner-pest-id" class="inner-content hidden">
+          <div class="pc-header">
+            <div class="pc-title">Pest Identification</div>
+            <div class="pc-search-wrapper">
+              <span class="pc-search-icon">🔎</span>
+              <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+            </div>
+          </div>
+          <div class="pc-grid" id="pestGrid"></div>
+        </section>
       </section>
 
-      <!-- STORE CLAIM CONTENT -->
-      <section id="damage-store" class="damage-inner-content hidden">
-        <div class="pc-grid">
-          <div class="pc-card">
-            <div class="pc-card-title">When to File a Store Claim</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Major losses tied to weather, pests, or handling<br />
-              • Product received in poor condition on arrival<br />
-              • Large price/signage errors creating markdowns<br />
-            </p>
-          </div>
-
-          <div class="pc-card">
-            <div class="pc-card-title">Required Information</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Store # and contact name<br />
-              • Date &amp; PO/Load/Invoice # (if available)<br />
-              • SKUs, quantities, and estimated retail $$ impacted<br />
-            </p>
-          </div>
-
-          <div class="pc-card">
-            <div class="pc-card-title">Best Practices</div>
-            <p class="subtitle" style="margin-top:6px;">
-              • Isolate and clearly mark damaged product<br />
-              • Take photos before discarding anything<br />
-              • Submit claims promptly while product is still on site<br />
-            </p>
-          </div>
+      <!-- DAMAGE CLAIM TAB -->
+      <section id="tab-damage-claim" class="tab-content hidden">
+        <div class="pc-header">
+          <div class="pc-title">Damage Claims</div>
+          <p class="subtitle">
+            Choose a damage type to see guidance and documentation tips for claims.
+          </p>
         </div>
+
+        <div class="damage-inner-tabs">
+          <button class="damage-inner-tab active" data-damage="cold" type="button">Cold Damage</button>
+          <button class="damage-inner-tab" data-damage="pest" type="button">Pest Damage</button>
+          <button class="damage-inner-tab" data-damage="store" type="button">Store Claim</button>
+        </div>
+
+        <!-- COLD DAMAGE CONTENT -->
+        <section id="damage-cold" class="damage-inner-content">
+          <div class="pc-grid">
+            <div class="pc-card">
+              <div class="pc-card-title">How to Recognize Cold Damage</div>
+              <div class="pc-card-subtitle">
+                Symptoms, timing, and what to document.
+              </div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Leaves may appear water‑soaked, translucent, or darkened<br />
+                • New growth may be limp or collapsed<br />
+                • Damage often appears a day or two after exposure (during shipping or on racks near doors)<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">What to Photograph</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Full table/rack views showing quantity and signage<br />
+                • Close‑ups of worst damage and a “typical” plant<br />
+                • Photo of any temperature‑related cause (open doors, broken heater, snow/ice on racks, etc.)<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">Notes for the Claim</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Date product arrived and date damage was noticed<br />
+                • Store #, department, and contact name<br />
+                • Approximate % of affected product by table or rack<br />
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PEST DAMAGE CONTENT -->
+        <section id="damage-pest" class="damage-inner-content hidden">
+          <div class="pc-grid">
+            <div class="pc-card">
+              <div class="pc-card-title">How to Recognize Pest Damage</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Sticky leaves, webbing, speckling, or chewing<br />
+                • Visible pests on leaf undersides, in soil, or on stems<br />
+                • Compare with the Pest Identification tab if unsure<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">What to Photograph</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Clear close‑ups of insects or webbing (phone macro if possible)<br />
+                • Overhead shot of affected tables/racks<br />
+                • Any nearby conditions that may contribute (standing water, older stock, etc.)<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">Notes for the Claim</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Date product arrived and date pests were first seen<br />
+                • Whether product was treated at store (and with what)<br />
+                • Estimated % loss and which SKUs are impacted<br />
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- STORE CLAIM CONTENT -->
+        <section id="damage-store" class="damage-inner-content hidden">
+          <div class="pc-grid">
+            <div class="pc-card">
+              <div class="pc-card-title">When to File a Store Claim</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Major losses tied to weather, pests, or handling<br />
+                • Product received in poor condition on arrival<br />
+                • Large price/signage errors creating markdowns<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">Required Information</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Store # and contact name<br />
+                • Date &amp; PO/Load/Invoice # (if available)<br />
+                • SKUs, quantities, and estimated retail $$ impacted<br />
+              </p>
+            </div>
+
+            <div class="pc-card">
+              <div class="pc-card-title">Best Practices</div>
+              <p class="subtitle" style="margin-top:6px;">
+                • Isolate and clearly mark damaged product<br />
+                • Take photos before discarding anything<br />
+                • Submit claims promptly while product is still on site<br />
+              </p>
+            </div>
+          </div>
+        </section>
       </section>
-    </section>
 
-    <!-- SKU POPUP -->
-    <div id="popupBackdrop" class="popup-backdrop">
-      <div class="popup">
-        <h2 id="popupName"></h2>
-        <p><strong>SKU:</strong> <span id="popupSku"></span></p>
-        <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
-        <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
-        <button id="popupClose" class="popup-close">Close</button>
+      <!-- SKU POPUP -->
+      <div id="popupBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <h2 id="popupName"></h2>
+          <p><strong>SKU:</strong> <span id="popupSku"></span></p>
+          <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
+          <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
+          <button id="popupClose" class="popup-close" type="button">Close</button>
+        </div>
       </div>
-    </div>
 
-    <!-- PLANT CARE POPUP -->
-    <div id="careBackdrop" class="popup-backdrop">
-      <div class="popup">
-        <img id="careImage" class="popup-image" alt="" />
-        <h2 id="careTitle"></h2>
+      <!-- PLANT CARE POPUP -->
+      <div id="careBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <img id="careImage" class="popup-image" alt="" />
+          <h2 id="careTitle"></h2>
 
-        <div class="popup-section-title">Light</div>
-        <div class="popup-text" id="careLight"></div>
+          <div class="popup-section-title">Light</div>
+          <div class="popup-text" id="careLight"></div>
 
-        <div class="popup-section-title">Water</div>
-        <div class="popup-text" id="careWater"></div>
+          <div class="popup-section-title">Water</div>
+          <div class="popup-text" id="careWater"></div>
 
-        <div class="popup-section-title">Humidity</div>
-        <div class="popup-text" id="careHumidity"></div>
+          <div class="popup-section-title">Humidity</div>
+          <div class="popup-text" id="careHumidity"></div>
 
-        <div class="popup-section-title">Temperature</div>
-        <div class="popup-text" id="careTemp"></div>
+          <div class="popup-section-title">Temperature</div>
+          <div class="popup-text" id="careTemp"></div>
 
-        <div class="popup-section-title">Soil</div>
-        <div class="popup-text" id="careSoil"></div>
+          <div class="popup-section-title">Soil</div>
+          <div class="popup-text" id="careSoil"></div>
 
-        <div class="popup-section-title">Fertilizer</div>
-        <div class="popup-text" id="careFertilizer"></div>
+          <div class="popup-section-title">Fertilizer</div>
+          <div class="popup-text" id="careFertilizer"></div>
 
-        <div class="popup-section-title">Toxicity</div>
-        <div class="popup-text" id="careToxicity"></div>
+          <div class="popup-section-title">Toxicity</div>
+          <div class="popup-text" id="careToxicity"></div>
 
-        <div class="popup-section-title">Extra Tips</div>
-        <div class="popup-text" id="careTips"></div>
+          <div class="popup-section-title">Extra Tips</div>
+          <div class="popup-text" id="careTips"></div>
 
-        <button id="careClose" class="popup-close">Close</button>
+          <button id="careClose" class="popup-close" type="button">Close</button>
+        </div>
       </div>
-    </div>
 
-    <!-- UPDATED PEST POPUP -->
-    <div id="pestBackdrop" class="popup-backdrop">
-      <div class="popup">
-        <img id="pestImage" class="popup-image" alt="" />
-        <h2 id="pestTitle"></h2>
-        <p id="pestScientificName" class="popup-subtitle"></p>
+      <!-- PEST POPUP -->
+      <div id="pestBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <img id="pestImage" class="popup-image" alt="" />
+          <h2 id="pestTitle"></h2>
+          <p id="pestScientificName" class="popup-subtitle"></p>
 
-        <div class="popup-section-title">What They Look Like</div>
-        <div class="popup-text" id="pestLooksLike"></div>
+          <div class="popup-section-title">What They Look Like</div>
+          <div class="popup-text" id="pestLooksLike"></div>
 
-        <div class="popup-section-title">Identification</div>
-        <div class="popup-text" id="pestIdentification"></div>
+          <div class="popup-section-title">Identification</div>
+          <div class="popup-text" id="pestIdentification"></div>
 
-        <div class="popup-section-title">Prevention</div>
-        <div class="popup-text" id="pestPrevention"></div>
+          <div class="popup-section-title">Prevention</div>
+          <div class="popup-text" id="pestPrevention"></div>
 
-        <div class="popup-section-title">Treatment</div>
-        <div class="popup-text" id="pestTreatment"></div>
+          <div class="popup-section-title">Treatment</div>
+          <div class="popup-text" id="pestTreatment"></div>
 
-        <button id="pestClose" class="popup-close">Close</button>
+          <button id="pestClose" class="popup-close" type="button">Close</button>
+        </div>
       </div>
-    </div>
 
+      <div class="footer">
+        HF-HPA internal tool • v1.0
+      </div>
+
+    </div>
   </main>
 
   <script>
@@ -1238,8 +1293,9 @@
         });
 
         filtered.forEach(item => {
-          const card = document.createElement("div");
+          const card = document.createElement("button");
           card.className = "sku-card";
+          card.type = "button";
           card.innerHTML = `
             <div class="sku-year-pill">${item.yearSent}</div>
             <div class="sku-name">${item.name}</div>
@@ -1311,6 +1367,7 @@
         PLANTS.forEach(plant => {
           const btn = document.createElement("button");
           btn.className = "pc-card";
+          btn.type = "button";
           btn.dataset.plantId = plant.id;
           btn.innerHTML = `
             <div class="pc-card-title">${plant.commonName}</div>
@@ -1363,6 +1420,7 @@
         PESTS.forEach(pest => {
           const card = document.createElement("button");
           card.className = "pc-card";
+          card.type = "button";
           card.dataset.pestId = pest.id;
           card.innerHTML = `
             <div class="pc-card-title">${pest.commonName}</div>
@@ -1416,7 +1474,8 @@
           renderSkuList();
         } catch (err) {
           console.error(err);
-          alert("Error loading SKU_Name_2026.csv. Make sure it exists.");
+          emptyState.classList.remove("hidden");
+          emptyState.textContent = "Error loading SKU list. Check that SKU_Name_2026.csv exists.";
         }
       }
 
@@ -1429,6 +1488,8 @@
           applyOrderBreakdown(allOrderRows);
         } catch (err) {
           console.error(err);
+          obWeekDisplay.textContent = "N/A";
+          obGradesDisplay.textContent = "N/A (couldn't load orders)";
         }
       }
 
