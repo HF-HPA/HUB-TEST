@@ -222,7 +222,7 @@
       display: none;
     }
 
-    /* SECTION INNER TABS (within Product Info / Care & ID / Store Ops) */
+    /* SECTION INNER TABS */
     .section-inner-tabs {
       display: inline-flex;
       flex-wrap: wrap;
@@ -267,7 +267,7 @@
       margin-top: 10px;
     }
 
-    /* GLASS CARD / PANEL STYLE */
+    /* GLASS PANEL */
     .glass-panel {
       background: var(--card-glass);
       border-radius: var(--radius-lg);
@@ -643,7 +643,7 @@
       color: var(--text);
     }
 
-    /* INNER TABS (Plant Care / Pest ID / Protocols / Store Visit) */
+    /* INNER TABS (Care, Protocols, Store Visit) */
     .inner-tabs,
     .damage-inner-tabs,
     .hpa-inner-tabs,
@@ -811,11 +811,12 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.75);
       display: none;
-      align-items: center;
+      align-items: flex-start;        /* show near top, not dead center */
       justify-content: center;
       z-index: 50;
-      padding: 16px;
+      padding: 24px 16px 16px;
       backdrop-filter: blur(8px);
+      overflow-y: auto;               /* scroll overlay if content tall */
     }
 
     .popup {
@@ -828,6 +829,12 @@
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (max-width: 768px) {
+      .popup {
+        margin-top: 8px;  /* avoid hugging very top on small screens */
+      }
     }
 
     .popup h2 {
@@ -1115,7 +1122,7 @@
         </div>
       </header>
 
-      <!-- TOP TABS (MAIN GROUPS) -->
+      <!-- TOP TABS -->
       <nav class="tabs">
         <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
         <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; Identification</button>
@@ -2515,7 +2522,7 @@
         });
       });
 
-      /* PRODUCT INFO INNER TABS (SKUs / Orders) */
+      /* PRODUCT INFO INNER TABS */
       const productsTabs = document.querySelectorAll(".products-inner-tab");
       const productsSections = {
         skus: document.getElementById("products-skus"),
@@ -2539,7 +2546,7 @@
         });
       });
 
-      /* OPS INNER TABS (Protocols / Visit) */
+      /* OPS INNER TABS */
       const opsTabs = document.querySelectorAll(".ops-inner-tab");
       const opsSections = {
         protocols: document.getElementById("ops-protocols"),
@@ -2563,7 +2570,7 @@
         });
       });
 
-      /* CARE & ID INNER TABS (Care Library / Pest ID) */
+      /* CARE & ID INNER TABS */
       const innerTabs = document.querySelectorAll(".inner-tab");
       const innerSections = {
         "care-library": document.getElementById("inner-care-library"),
