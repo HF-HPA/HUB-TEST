@@ -222,7 +222,7 @@
       display: none;
     }
 
-    /* SECTION INNER TABS (within Products / Care & ID / Store Ops) */
+    /* SECTION INNER TABS (within Product Info / Care & ID / Store Ops) */
     .section-inner-tabs {
       display: inline-flex;
       flex-wrap: wrap;
@@ -298,7 +298,7 @@
       color: var(--muted);
     }
 
-    /* PRODUCTS: SKU FILTERS */
+    /* PRODUCT INFO: SKU FILTERS */
     .controls {
       background: var(--card-glass);
       border-radius: var(--radius-lg);
@@ -1075,6 +1075,25 @@
     button {
       font-family: inherit;
     }
+
+    /* MOBILE FIX — Order Breakdown table responsiveness */
+    @media (max-width: 600px) {
+      .order-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .order-table {
+        min-width: 520px;
+        font-size: 0.75rem;
+      }
+
+      .order-table th,
+      .order-table td {
+        padding: 6px 8px;
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 
@@ -1098,15 +1117,15 @@
 
       <!-- TOP TABS (MAIN GROUPS) -->
       <nav class="tabs">
-        <button class="tab active" data-tab="products" type="button">📦 Products</button>
+        <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
         <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; Identification</button>
         <button class="tab" data-tab="ops" type="button">🛠 Store Operations</button>
       </nav>
 
-      <!-- PRODUCTS TAB -->
+      <!-- PRODUCT INFO TAB -->
       <section id="tab-products" class="tab-content">
         <div class="section-header">
-          <div class="section-title">Products</div>
+          <div class="section-title">Product Info</div>
           <p class="section-subtitle">
             Search SKUs, review what’s shipping, and see weekly breakdowns.
           </p>
@@ -1121,7 +1140,7 @@
           </button>
         </div>
 
-        <!-- PRODUCTS → SKUS -->
+        <!-- PRODUCT INFO → SKUS -->
         <section id="products-skus" class="section-inner-content">
           <section class="controls">
             <div class="search-wrapper">
@@ -1166,7 +1185,7 @@
           </div>
         </section>
 
-        <!-- PRODUCTS → ORDERS -->
+        <!-- PRODUCT INFO → ORDERS -->
         <section id="products-orders" class="section-inner-content hidden">
           <div class="order-table-wrapper">
             <div class="order-table-title">Weekly Shipping Overview</div>
@@ -2273,7 +2292,7 @@
       </div>
 
       <div class="footer">
-        HF-HPA internal tool • v7.0 • Consolidated: Products • Care &amp; ID • Store Operations
+        HF-HPA internal tool • v7.0 • Consolidated: Product Info • Care &amp; ID • Store Operations
       </div>
 
     </div>
@@ -2496,7 +2515,7 @@
         });
       });
 
-      /* PRODUCTS INNER TABS (SKUs / Orders) */
+      /* PRODUCT INFO INNER TABS (SKUs / Orders) */
       const productsTabs = document.querySelectorAll(".products-inner-tab");
       const productsSections = {
         skus: document.getElementById("products-skus"),
@@ -2544,7 +2563,7 @@
         });
       });
 
-      /* PLANT CARE INNER TABS (Care Library / Pest ID) */
+      /* CARE & ID INNER TABS (Care Library / Pest ID) */
       const innerTabs = document.querySelectorAll(".inner-tab");
       const innerSections = {
         "care-library": document.getElementById("inner-care-library"),
