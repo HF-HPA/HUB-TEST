@@ -10,8 +10,6 @@
 
   <!-- Apple devices (iPhone/iPad Safari) -->
   <link rel="apple-touch-icon" href="hpa_logo.png" />
-
-  <!-- For better compatibility with all Apple devices -->
   <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
 
   <style>
@@ -888,116 +886,6 @@
     button {
       font-family: inherit;
     }
-
-    /* STORE INTELLIGENCE MAP (SIM) */
-    .sim-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .sim-store {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      padding: 10px 12px;
-      text-align: left;
-      cursor: pointer;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
-      transition:
-        transform 0.18s ease-out,
-        border-color 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        background 0.18s ease-out;
-    }
-
-    .sim-store:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.75);
-      background: linear-gradient(
-        135deg,
-        rgba(96, 165, 250, 0.18),
-        rgba(15, 23, 42, 0.95)
-      );
-    }
-
-    .sim-store-number {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #e5f0ff;
-    }
-
-    .sim-store-location {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .sim-store-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      font-size: 0.78rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.45);
-    }
-
-    .sim-status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .sim-store.sim-status-good .sim-store-chip {
-      color: #bbf7d0;
-      border-color: #22c55e;
-    }
-
-    .sim-store.sim-status-warn .sim-store-chip {
-      color: #facc15;
-      border-color: #facc15;
-    }
-
-    .sim-store.sim-status-bad .sim-store-chip {
-      color: #fecaca;
-      border-color: #ef4444;
-    }
-
-    .sim-status-dot-good {
-      background: #22c55e;
-    }
-
-    .sim-status-dot-warn {
-      background: #facc15;
-    }
-
-    .sim-status-dot-bad {
-      background: #ef4444;
-    }
-
-    .sim-legend {
-      margin-top: 12px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .sim-legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .sim-legend-item .sim-status-dot {
-      border: 1px solid rgba(148, 163, 184, 0.4);
-    }
   </style>
 </head>
 
@@ -1020,7 +908,6 @@
       <nav class="tabs">
         <button class="tab active" data-tab="catalog" type="button">📦 SKU Catalogue</button>
         <button class="tab" data-tab="orders" type="button">📋 Order Breakdown</button>
-        <button class="tab" data-tab="store-intel" type="button">🗺️ Store Intelligence Map</button>
         <button class="tab" data-tab="plant-care" type="button">🌿 Plant Care</button>
         <button class="tab" data-tab="hpa-protocols" type="button">📘 HPA Protocols</button>
         <button class="tab" data-tab="store-visit" type="button">✅ Store Visit Checklist</button>
@@ -1135,30 +1022,6 @@
             </div>
           </div>
 
-        </div>
-      </section>
-
-      <!-- STORE INTELLIGENCE MAP TAB -->
-      <section id="tab-store-intel" class="tab-content hidden">
-        <div class="pc-header">
-          <div class="pc-title">Store Intelligence Map (Mock)</div>
-          <p class="subtitle">
-            Prototype view using mock data only. Later we can connect this to real store / sales data.
-          </p>
-        </div>
-
-        <div id="simGrid" class="sim-grid"></div>
-
-        <div class="sim-legend">
-          <span class="sim-legend-item">
-            <span class="sim-status-dot sim-status-dot-good"></span> Stable
-          </span>
-          <span class="sim-legend-item">
-            <span class="sim-status-dot sim-status-dot-warn"></span> Watch
-          </span>
-          <span class="sim-legend-item">
-            <span class="sim-status-dot sim-status-dot-bad"></span> Action Needed
-          </span>
         </div>
       </section>
 
@@ -1616,7 +1479,7 @@
                 <div class="flow-step-title">Pictures &amp; Negative Inventory</div>
                 <div class="flow-step-text">
                   • Take pictures of stores that received the weekly order and send to HF-HPA and supervisors
-                  (subject: HPA/Store#/Date).<br />
+                    (subject: HPA/Store#/Date).<br />
                   • Continue checking negatives and what’s selling or not.<br />
                   • Track rack counts by store and what product is on each rack once orders are complete.
                 </div>
@@ -2178,26 +2041,8 @@
         </div>
       </div>
 
-      <!-- STORE INTELLIGENCE MAP POPUP -->
-      <div id="simBackdrop" class="popup-backdrop">
-        <div class="popup">
-          <h2 id="simStoreTitle"></h2>
-
-          <div class="popup-section-title">Summary</div>
-          <div class="popup-text" id="simStoreSummary"></div>
-
-          <div class="popup-section-title">This Week</div>
-          <div class="popup-text" id="simStoreThisWeek"></div>
-
-          <div class="popup-section-title">Alerts</div>
-          <div class="popup-text" id="simStoreAlerts"></div>
-
-          <button id="simClose" class="popup-close" type="button">Close</button>
-        </div>
-      </div>
-
       <div class="footer">
-        HF-HPA internal tool • v7.0 + SIM mock
+        HF-HPA internal tool • v7.0
       </div>
 
     </div>
@@ -2221,101 +2066,6 @@
       "12": "All Stores",
       "13": "All Stores"
     };
-
-    /* MOCK STORE DATA FOR SIM */
-    const MOCK_STORES = [
-      {
-        id: "1012",
-        city: "Rockford",
-        state: "IL",
-        status: "good",          // good | warn | bad
-        lastVisitDays: 2,
-        lastVisitScore: 90,
-        lastVisitDate: "2026-02-14",
-        nextShipWeek: 7,
-        categories: ["TRP", "FLO"],
-        inventoryPressure: "Balanced",
-        openIssues: 0,
-        alerts: ["Maintain current set and monitor TRP sell-through."]
-      },
-      {
-        id: "1025",
-        city: "Aurora",
-        state: "IL",
-        status: "warn",
-        lastVisitDays: 6,
-        lastVisitScore: 78,
-        lastVisitDate: "2026-02-10",
-        nextShipWeek: 7,
-        categories: ["FLO", "UCO"],
-        inventoryPressure: "High FLO inventory",
-        openIssues: 2,
-        alerts: [
-          "Cull older flowering product.",
-          "Watch UCO sell-through before next order."
-        ]
-      },
-      {
-        id: "1031",
-        city: "Dekalb",
-        state: "IL",
-        status: "bad",
-        lastVisitDays: 12,
-        lastVisitScore: 62,
-        lastVisitDate: "2026-02-06",
-        nextShipWeek: 8,
-        categories: ["TRP", "SPC", "FHB"],
-        inventoryPressure: "Overstock on TRP racks",
-        openIssues: 3,
-        alerts: [
-          "No visit in 10+ days.",
-          "Overstock on TRP racks; consider skip/transfer.",
-          "Confirm pests/cold damage handled correctly."
-        ]
-      },
-      {
-        id: "1045",
-        city: "Bloomington",
-        state: "IL",
-        status: "good",
-        lastVisitDays: 1,
-        lastVisitScore: 88,
-        lastVisitDate: "2026-02-15",
-        nextShipWeek: 7,
-        categories: ["FOL", "TRP"],
-        inventoryPressure: "Slightly light on FOL",
-        openIssues: 1,
-        alerts: ["Safe to increase FOL inventory slightly this week."]
-      },
-      {
-        id: "1052",
-        city: "Peoria",
-        state: "IL",
-        status: "warn",
-        lastVisitDays: 4,
-        lastVisitScore: 80,
-        lastVisitDate: "2026-02-12",
-        nextShipWeek: 7,
-        categories: ["FLO", "FHB"],
-        inventoryPressure: "Heavy baskets (FHB)",
-        openIssues: 1,
-        alerts: ["Condense FHB racks and rotate older baskets forward."]
-      },
-      {
-        id: "1088",
-        city: "Joliet",
-        state: "IL",
-        status: "good",
-        lastVisitDays: 3,
-        lastVisitScore: 86,
-        lastVisitDate: "2026-02-13",
-        nextShipWeek: 7,
-        categories: ["SPC", "TRP"],
-        inventoryPressure: "Normal",
-        openIssues: 0,
-        alerts: ["Focus on maintaining clean pods and picture standards."]
-      }
-    ];
 
     let skuData = [];
     let allOrderRows = [];
@@ -2494,7 +2244,6 @@
       const tabSections = {
         "catalog": document.getElementById("tab-catalog"),
         "orders": document.getElementById("tab-orders"),
-        "store-intel": document.getElementById("tab-store-intel"),
         "plant-care": document.getElementById("tab-plant-care"),
         "hpa-protocols": document.getElementById("tab-hpa-protocols"),
         "store-visit": document.getElementById("tab-store-visit")
@@ -3062,92 +2811,6 @@
         }
       }
 
-      /* STORE INTELLIGENCE MAP (SIM) – MOCK DATA */
-      const simGrid = document.getElementById("simGrid");
-      const simBackdrop = document.getElementById("simBackdrop");
-      const simStoreTitle = document.getElementById("simStoreTitle");
-      const simStoreSummary = document.getElementById("simStoreSummary");
-      const simStoreThisWeek = document.getElementById("simStoreThisWeek");
-      const simStoreAlerts = document.getElementById("simStoreAlerts");
-      const simCloseBtn = document.getElementById("simClose");
-
-      if (simCloseBtn && simBackdrop) {
-        simCloseBtn.addEventListener("click", () => {
-          simBackdrop.style.display = "none";
-        });
-        simBackdrop.addEventListener("click", e => {
-          if (e.target === simBackdrop) simBackdrop.style.display = "none";
-        });
-      }
-
-      function getSimStatusLabel(status) {
-        switch ((status || "").toLowerCase()) {
-          case "good":
-            return "Stable";
-          case "warn":
-            return "Watch";
-          case "bad":
-            return "Action Needed";
-          default:
-            return "Unknown";
-        }
-      }
-
-      function openSimPopup(store) {
-        if (!simBackdrop) return;
-        simStoreTitle.textContent = `Store ${store.id} – ${store.city}, ${store.state}`;
-
-        const lastVisitText = store.lastVisitDate
-          ? `${store.lastVisitDate} (${store.lastVisitDays} day(s) ago)`
-          : `${store.lastVisitDays} day(s) ago`;
-
-        simStoreSummary.innerHTML = `
-          <p><strong>Status:</strong> ${getSimStatusLabel(store.status)}</p>
-          <p><strong>Last Visit:</strong> ${lastVisitText}</p>
-          <p><strong>Last Visit Score:</strong> ${store.lastVisitScore}/100</p>
-          <p><strong>Open Issues:</strong> ${store.openIssues}</p>
-        `;
-
-        simStoreThisWeek.innerHTML = `
-          <p><strong>Ship Week:</strong> ${store.nextShipWeek}</p>
-          <p><strong>Focus Categories:</strong> ${store.categories.join(", ")}</p>
-          <p><strong>Inventory Pressure:</strong> ${store.inventoryPressure}</p>
-        `;
-
-        simStoreAlerts.innerHTML = (store.alerts && store.alerts.length)
-          ? `<ul>${store.alerts.map(a => `<li>${a}</li>`).join("")}</ul>`
-          : "<p>No active alerts.</p>";
-
-        simBackdrop.style.display = "flex";
-      }
-
-      function renderSimGrid() {
-        if (!simGrid) return;
-        simGrid.innerHTML = "";
-
-        // For now we just sort by status for nicer grouping
-        const sorted = [...MOCK_STORES].sort((a, b) => {
-          const order = { good: 0, warn: 1, bad: 2 };
-          return (order[a.status] ?? 9) - (order[b.status] ?? 9);
-        });
-
-        sorted.forEach(store => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = `sim-store sim-status-${store.status}`;
-          btn.innerHTML = `
-            <div class="sim-store-number">#${store.id}</div>
-            <div class="sim-store-location">${store.city}, ${store.state}</div>
-            <div class="sim-store-chip">
-              <span class="sim-status-dot sim-status-dot-${store.status}"></span>
-              ${getSimStatusLabel(store.status)}
-            </div>
-          `;
-          btn.addEventListener("click", () => openSimPopup(store));
-          simGrid.appendChild(btn);
-        });
-      }
-
       /* INIT */
       showTopTab("catalog");
       showInnerTab("care-library");
@@ -3160,7 +2823,6 @@
       loadOrderCsv();
       loadPlantCsv();
       loadPestCsv();
-      renderSimGrid(); // initialize SIM with mock data
     });
   </script>
 </body>
