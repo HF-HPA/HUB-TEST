@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#020617" />
 
-  <!-- Favicon (desktop browsers) -->
+   <!-- Favicon (desktop browsers) -->
   <link rel="icon" type="image/png" href="hpa_logo.png" />
 
   <!-- Apple devices (iPhone/iPad Safari) -->
@@ -268,6 +268,7 @@
       margin-top: 10px;
     }
 
+    /* GLASS PANEL */
     .glass-panel {
       background: var(--card-glass);
       border-radius: var(--radius-lg);
@@ -1120,7 +1121,7 @@
       color: #e5e7eb;
     }
 
-    /* MOBILE FIX — Order Breakdown table responsiveness */
+    /* Mobile table responsiveness */
     @media (max-width: 600px) {
       .order-table-wrapper {
         overflow-x: auto;
@@ -1138,6 +1139,22 @@
         white-space: nowrap;
       }
     }
+
+    /* 🔷 Chatbase static position override */
+    #chatbase-bubble {
+      position: fixed !important;
+      top: 90px !important;    /* adjust vertical position */
+      right: 24px !important;  /* adjust horizontal position */
+      bottom: auto !important;
+      z-index: 999999 !important;
+    }
+
+    @media (max-width: 768px) {
+      #chatbase-bubble {
+        top: 80px !important;
+        right: 10px !important;
+      }
+    }
   </style>
 </head>
 
@@ -1148,7 +1165,7 @@
       <!-- HEADER -->
       <header class="header">
         <div class="header-left">
-          <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+          hf_logo.png
           <div class="title-block">
             <h1>HF-HPA</h1>
             <p class="subtitle">Central Hub for Houseplant &amp; HPA operations.</p>
@@ -1314,7 +1331,7 @@
         <div class="section-header">
           <div class="section-title">Care &amp; Identification</div>
           <p class="section-subtitle">
-            Quick reference for plant care, pest ID, and photo-based identification.
+            Quick reference for plant care and pest identification.
           </p>
         </div>
 
@@ -1330,7 +1347,8 @@
             <div class="pc-search-wrapper">
               <span class="pc-search-icon">🔎</span>
               <input id="careSearch" class="pc-search-input"
-                placeholder="Search plants or symptoms (e.g. low light, yellow leaves)..." aria-label="Search plants or care symptoms" />
+                placeholder="Search plants or symptoms (e.g. low light, yellow leaves)..."
+                aria-label="Search plants or care symptoms" />
             </div>
           </div>
 
@@ -1340,29 +1358,6 @@
           </div>
 
           <div class="pc-grid" id="plantCareGrid" aria-live="polite"></div>
-
-          <!-- AI IDENTIFY PREVIEW PANEL -->
-          <section class="glass-panel" style="margin-top:14px;">
-            <div class="pc-title">Identify by Photo (Preview)</div>
-            <p class="section-subtitle" style="margin-top:4px;">
-              Upload a clear photo of a plant or pest. This demo shows placeholder results.
-              In production, connect this to your image AI service and map results back to your plant/pest library.
-            </p>
-            <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
-              <input
-                type="file"
-                id="aiImageInput"
-                accept="image/*"
-                class="claim-input"
-                style="max-width:260px;"
-                aria-label="Upload image for identification"
-              />
-              <button id="aiAnalyzeBtn" class="primary-button" type="button">
-                🔍 Analyze Photo
-              </button>
-            </div>
-            <div id="aiResult" class="section-subtitle" style="margin-top:8px; font-size:0.8rem;"></div>
-          </section>
         </section>
 
         <!-- PEST IDENTIFICATION -->
@@ -1610,7 +1605,6 @@
               </div>
 
               <div class="flow-list">
-
                 <div class="flow-step">
                   <div class="flow-step-number">1</div>
                   <div class="flow-step-body">
@@ -1690,7 +1684,6 @@
                     </div>
                   </div>
                 </div>
-
               </div>
             </section>
           </section>
@@ -2587,7 +2580,6 @@
       return status;
     }
 
-    /** Format category list into visual pills (for Shipping / Additional columns) */
     function formatCategoryList(raw) {
       if (!raw) return "";
       const parts = raw.split(",").map(p => p.trim()).filter(Boolean);
@@ -2595,7 +2587,6 @@
       return parts.map(p => `<span class="cat-pill">${p}</span>`).join(" ");
     }
 
-    /** Simple debounce helper */
     function debounce(fn, delay = 200) {
       let timeout;
       return (...args) => {
@@ -3157,28 +3148,6 @@
         });
       }
 
-      /* AI IDENTIFICATION PREVIEW (stub only – connect to backend for real AI) */
-      const aiImageInput = document.getElementById("aiImageInput");
-      const aiAnalyzeBtn = document.getElementById("aiAnalyzeBtn");
-      const aiResult = document.getElementById("aiResult");
-
-      if (aiAnalyzeBtn && aiImageInput && aiResult) {
-        aiAnalyzeBtn.addEventListener("click", () => {
-          if (!aiImageInput.files || !aiImageInput.files[0]) {
-            aiResult.textContent = "Please choose an image first.";
-            return;
-          }
-          aiResult.textContent = "Analyzing photo (demo)...";
-
-          // DEMO ONLY: In production, send image to your AI API here.
-          setTimeout(() => {
-            aiResult.textContent =
-              "This is a demo placeholder. In production, this would call an AI image model " +
-              "and suggest likely plants or pests based on the photo, then link to the closest match in Care / Pest libraries.";
-          }, 800);
-        });
-      }
-
       /* DATE DEFAULTS */
       const todayIso = new Date().toISOString().slice(0, 10);
       const visitDateInput = document.getElementById("visitDate");
@@ -3345,7 +3314,7 @@
       const onLoad = function(){
         const script = document.createElement("script");
         script.src = "https://www.chatbase.co/embed.min.js";
-        script.id = "H9NOjSSSBNeIfqcI5_Wug";
+        script.id = "H9NOjSSSBNeIfqcI5_Wug";  /* your Chatbase ID */
         script.domain = "www.chatbase.co";
         document.body.appendChild(script);
       };
