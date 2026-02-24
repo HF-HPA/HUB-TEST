@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>HF-HPA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#020617" />
 
   <!-- Favicon (desktop browsers) -->
   <link rel="icon" type="image/png" href="hpa_logo.png" />
@@ -811,12 +812,12 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.75);
       display: none;
-      align-items: flex-start;        /* show near top, not dead center */
+      align-items: flex-start;
       justify-content: center;
       z-index: 50;
       padding: 24px 16px 16px;
       backdrop-filter: blur(8px);
-      overflow-y: auto;               /* scroll overlay if content tall */
+      overflow-y: auto;
     }
 
     .popup {
@@ -833,7 +834,7 @@
 
     @media (max-width: 768px) {
       .popup {
-        margin-top: 8px;  /* avoid hugging very top on small screens */
+        margin-top: 8px;
       }
     }
 
@@ -1083,6 +1084,52 @@
       font-family: inherit;
     }
 
+    /* LOADING STATES */
+    .loading-state {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .loading-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.3;
+        transform: scale(0.9);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 0.3;
+        transform: scale(0.9);
+      }
+    }
+
+    /* CATEGORY PILL VISUALIZATION */
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      margin: 1px 4px 1px 0;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+    }
+
     /* MOBILE FIX — Order Breakdown table responsiveness */
     @media (max-width: 600px) {
       .order-table-wrapper {
@@ -1105,25 +1152,25 @@
 </head>
 
 <body>
-  <main class="app-shell">
+  <main class="app-shell" aria-label="HF-HPA internal tool">
     <div class="app-inner">
 
       <!-- HEADER -->
       <header class="header">
         <div class="header-left">
-          <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
+          <img src="hf_logo.png" alt="HF-HPA logo" class="logo" />
           <div class="title-block">
             <h1>HF-HPA</h1>
             <p class="subtitle">Central Hub for Houseplant &amp; HPA operations.</p>
           </div>
         </div>
         <div class="header-pill">
-          Internal tool • v7.0 • Modern Dark UI
+          Internal tool • v7.1 • Modern Dark UI
         </div>
       </header>
 
       <!-- TOP TABS -->
-      <nav class="tabs">
+      <nav class="tabs" aria-label="Main navigation">
         <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
         <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; Identification</button>
         <button class="tab" data-tab="ops" type="button">🛠 Store Operations</button>
@@ -1149,24 +1196,24 @@
 
         <!-- PRODUCT INFO → SKUS -->
         <section id="products-skus" class="section-inner-content">
-          <section class="controls">
+          <section class="controls" aria-label="SKU filters">
             <div class="search-wrapper">
               <span class="search-icon">🔍</span>
-              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." aria-label="Filter by SKU name" />
             </div>
 
             <div class="filters">
               <div class="filter-group">
                 <span class="filter-label">SKU</span>
-                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
+                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" aria-label="Filter by SKU number" />
               </div>
               <div class="filter-group">
                 <span class="filter-label">Sent In</span>
-                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" aria-label="Filter by Sent In" />
               </div>
               <div class="filter-group">
                 <span class="filter-label">Year Sent</span>
-                <select id="yearFilter" class="filter-input">
+                <select id="yearFilter" class="filter-input" aria-label="Filter by year sent">
                   <option value="all">All</option>
                   <option>2022</option>
                   <option>2023</option>
@@ -1183,10 +1230,17 @@
           </p>
 
           <div class="results-header">
-            <strong id="resultCount">0</strong> SKUs shown
+            <div>
+              <strong id="resultCount">0</strong> SKUs shown
+            </div>
           </div>
 
-          <section id="skuGrid" class="sku-grid"></section>
+          <div id="skuLoading" class="loading-state">
+            <span class="loading-dot"></span>
+            Loading SKUs...
+          </div>
+
+          <section id="skuGrid" class="sku-grid" aria-live="polite"></section>
           <div id="emptyState" class="empty-state hidden">
             No SKUs match your filters or the file could not be loaded.
           </div>
@@ -1196,6 +1250,11 @@
         <section id="products-orders" class="section-inner-content hidden">
           <div class="order-table-wrapper">
             <div class="order-table-title">Weekly Shipping Overview</div>
+
+            <div id="orderWeeksLoading" class="loading-state">
+              <span class="loading-dot"></span>
+              Loading weekly shipping overview...
+            </div>
 
             <table class="order-table">
               <thead>
@@ -1265,7 +1324,7 @@
         <div class="section-header">
           <div class="section-title">Care &amp; Identification</div>
           <p class="section-subtitle">
-            Quick reference for plant care and pest identification.
+            Quick reference for plant care, pest ID, and photo-based identification (preview).
           </p>
         </div>
 
@@ -1280,10 +1339,44 @@
             <div class="pc-title">Care Library</div>
             <div class="pc-search-wrapper">
               <span class="pc-search-icon">🔎</span>
-              <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+              <input
+                id="careSearch"
+                class="pc-search-input"
+                placeholder="Search plants or symptoms (e.g. low light, yellow leaves)..."
+                aria-label="Search plants or care symptoms"
+              />
             </div>
           </div>
-          <div class="pc-grid" id="plantCareGrid"></div>
+
+          <div id="plantLoading" class="loading-state">
+            <span class="loading-dot"></span>
+            Loading plant care library...
+          </div>
+
+          <div class="pc-grid" id="plantCareGrid" aria-live="polite"></div>
+
+          <!-- AI IDENTIFY PREVIEW PANEL -->
+          <section class="glass-panel" style="margin-top:14px;">
+            <div class="pc-title">Identify by Photo (Preview)</div>
+            <p class="section-subtitle" style="margin-top:4px;">
+              Upload a clear photo of a plant or pest. This demo shows placeholder results.
+              In production, connect this to your image AI service and map results back to your plant/pest library.
+            </p>
+            <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <input
+                type="file"
+                id="aiImageInput"
+                accept="image/*"
+                class="claim-input"
+                style="max-width:260px;"
+                aria-label="Upload image for identification"
+              />
+              <button id="aiAnalyzeBtn" class="primary-button" type="button">
+                🔍 Analyze Photo
+              </button>
+            </div>
+            <div id="aiResult" class="section-subtitle" style="margin-top:8px; font-size:0.8rem;"></div>
+          </section>
         </section>
 
         <!-- PEST IDENTIFICATION -->
@@ -1292,10 +1385,21 @@
             <div class="pc-title">Pest Identification</div>
             <div class="pc-search-wrapper">
               <span class="pc-search-icon">🔎</span>
-              <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+              <input
+                id="pestSearch"
+                class="pc-search-input"
+                placeholder="Search pests or symptoms (e.g. webbing, sticky residue)..."
+                aria-label="Search pests or pest symptoms"
+              />
             </div>
           </div>
-          <div class="pc-grid" id="pestGrid"></div>
+
+          <div id="pestLoading" class="loading-state">
+            <span class="loading-dot"></span>
+            Loading pest library...
+          </div>
+
+          <div class="pc-grid" id="pestGrid" aria-live="polite"></div>
         </section>
       </section>
 
@@ -2232,7 +2336,7 @@
 
       <!-- SKU POPUP -->
       <div id="popupBackdrop" class="popup-backdrop">
-        <div class="popup">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupName">
           <h2 id="popupName"></h2>
           <p><strong>SKU:</strong> <span id="popupSku"></span></p>
           <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
@@ -2243,7 +2347,7 @@
 
       <!-- PLANT CARE POPUP -->
       <div id="careBackdrop" class="popup-backdrop">
-        <div class="popup">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="careTitle">
           <img id="careImage" class="popup-image" alt="" />
           <h2 id="careTitle"></h2>
 
@@ -2277,7 +2381,7 @@
 
       <!-- PEST POPUP -->
       <div id="pestBackdrop" class="popup-backdrop">
-        <div class="popup">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="pestTitle">
           <img id="pestImage" class="popup-image" alt="" />
           <h2 id="pestTitle"></h2>
           <p id="pestScientificName" class="popup-subtitle"></p>
@@ -2299,7 +2403,7 @@
       </div>
 
       <div class="footer">
-        HF-HPA internal tool • v7.0 • Consolidated: Product Info • Care &amp; ID • Store Operations
+        HF-HPA internal tool • v7.1 • Consolidated: Product Info • Care &amp; ID • Store Operations
       </div>
 
     </div>
@@ -2331,6 +2435,7 @@
 
     const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
+    /* Simple CSV parser that respects quotes */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -2493,6 +2598,23 @@
         return `<span class="status-highlight">${status}</span>`;
       }
       return status;
+    }
+
+    /** Format category list into visual pills (for Shipping / Additional columns) */
+    function formatCategoryList(raw) {
+      if (!raw) return "";
+      const parts = raw.split(",").map(p => p.trim()).filter(Boolean);
+      if (!parts.length) return raw;
+      return parts.map(p => `<span class="cat-pill">${p}</span>`).join(" ");
+    }
+
+    /** Simple debounce helper */
+    function debounce(fn, delay = 200) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+      };
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -2704,6 +2826,7 @@
       const skuGrid = document.getElementById("skuGrid");
       const resultCount = document.getElementById("resultCount");
       const emptyState = document.getElementById("emptyState");
+      const skuLoading = document.getElementById("skuLoading");
 
       const popupBackdrop = document.getElementById("popupBackdrop");
       const popupName = document.getElementById("popupName");
@@ -2762,10 +2885,12 @@
         emptyState.classList.toggle("hidden", filtered.length !== 0);
       }
 
-      nameFilter.addEventListener("input", renderSkuList);
-      skuFilter.addEventListener("input", renderSkuList);
-      sentInFilter.addEventListener("input", renderSkuList);
-      yearFilter.addEventListener("change", renderSkuList);
+      const debouncedRenderSkuList = debounce(renderSkuList, 180);
+
+      nameFilter.addEventListener("input", debouncedRenderSkuList);
+      skuFilter.addEventListener("input", debouncedRenderSkuList);
+      sentInFilter.addEventListener("input", debouncedRenderSkuList);
+      yearFilter.addEventListener("change", debouncedRenderSkuList);
 
       /* ORDER BREAKDOWN DETAIL */
       function applyOrderBreakdown(rows) {
@@ -2821,6 +2946,7 @@
       const careToxicity = document.getElementById("careToxicity");
       const careTips = document.getElementById("careTips");
       const careCloseBtn = document.getElementById("careClose");
+      const plantLoading = document.getElementById("plantLoading");
 
       if (careCloseBtn) {
         careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
@@ -2870,16 +2996,34 @@
         careBackdrop.style.display = "flex";
       }
 
+      /** Search by plant name + care attributes (symptom-style search) */
       function filterPlantCards() {
         const q = (careSearch.value || "").toLowerCase().trim();
         const cards = plantCareGrid.querySelectorAll(".pc-card");
         cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
+          const id = card.dataset.plantId;
+          const plant = PLANTS.find(p => p.id === id);
+          let haystack = (card.textContent || "").toLowerCase();
+          if (plant) {
+            haystack = [
+              plant.commonName,
+              plant.scientificName,
+              plant.light,
+              plant.water,
+              plant.humidity,
+              plant.temp,
+              plant.soil,
+              plant.fertilizer,
+              plant.toxicity,
+              plant.tips
+            ].join(" ").toLowerCase();
+          }
+          card.style.display = !q || haystack.includes(q) ? "" : "none";
         });
       }
 
-      careSearch.addEventListener("input", filterPlantCards);
+      const debouncedFilterPlantCards = debounce(filterPlantCards, 200);
+      careSearch.addEventListener("input", debouncedFilterPlantCards);
 
       /* PEST UI */
       const pestGrid = document.getElementById("pestGrid");
@@ -2893,6 +3037,7 @@
       const pestPrevention = document.getElementById("pestPrevention");
       const pestTreatment = document.getElementById("pestTreatment");
       const pestCloseBtn = document.getElementById("pestClose");
+      const pestLoading = document.getElementById("pestLoading");
 
       if (pestCloseBtn) {
         pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
@@ -2939,16 +3084,30 @@
         pestBackdrop.style.display = "flex";
       }
 
+      /** Search pests by name + description + symptoms */
       function filterPestCards() {
         const q = (pestSearch.value || "").toLowerCase().trim();
         const cards = pestGrid.querySelectorAll(".pc-card");
         cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
+          const id = card.dataset.pestId;
+          const pest = PESTS.find(p => p.id === id);
+          let haystack = (card.textContent || "").toLowerCase();
+          if (pest) {
+            haystack = [
+              pest.commonName,
+              pest.scientificName,
+              pest.looksLike,
+              pest.identification,
+              pest.prevention,
+              pest.treatment
+            ].join(" ").toLowerCase();
+          }
+          card.style.display = !q || haystack.includes(q) ? "" : "none";
         });
       }
 
-      pestSearch.addEventListener("input", filterPestCards);
+      const debouncedFilterPestCards = debounce(filterPestCards, 200);
+      pestSearch.addEventListener("input", debouncedFilterPestCards);
 
       /* STORE VISIT CHECKLIST – DOWNLOAD SUMMARY */
       const exportVisitSummaryBtn = document.getElementById("exportVisitSummary");
@@ -3011,6 +3170,28 @@
         });
       }
 
+      /* AI IDENTIFICATION PREVIEW (stub only – connect to backend for real AI) */
+      const aiImageInput = document.getElementById("aiImageInput");
+      const aiAnalyzeBtn = document.getElementById("aiAnalyzeBtn");
+      const aiResult = document.getElementById("aiResult");
+
+      if (aiAnalyzeBtn && aiImageInput && aiResult) {
+        aiAnalyzeBtn.addEventListener("click", () => {
+          if (!aiImageInput.files || !aiImageInput.files[0]) {
+            aiResult.textContent = "Please choose an image first.";
+            return;
+          }
+          aiResult.textContent = "Analyzing photo (demo)...";
+
+          // DEMO ONLY: In production, send image to your AI API here.
+          setTimeout(() => {
+            aiResult.textContent =
+              "This is a demo placeholder. In production, this would call an AI image model " +
+              "and suggest likely plants or pests based on the photo, then link to the closest match in Care / Pest libraries.";
+          }, 800);
+        });
+      }
+
       /* DATE DEFAULTS */
       const todayIso = new Date().toISOString().slice(0, 10);
       const visitDateInput = document.getElementById("visitDate");
@@ -3019,6 +3200,8 @@
       }
 
       /* LOADERS */
+      const orderWeeksLoading = document.getElementById("orderWeeksLoading");
+
       async function loadSkuCsv() {
         try {
           const res = await fetch(SKU_CSV_URL);
@@ -3029,7 +3212,9 @@
         } catch (err) {
           console.error(err);
           emptyState.classList.remove("hidden");
-          emptyState.textContent = "Error loading SKU_Name_2026.csv.";
+          emptyState.textContent = "Error loading SKU_Name_2026.csv. Please confirm the file is present.";
+        } finally {
+          if (skuLoading) skuLoading.classList.add("hidden");
         }
       }
 
@@ -3065,14 +3250,20 @@
             tr.innerHTML = `
               <td>${week}</td>
               <td>${date}</td>
-              <td>${shipping}</td>
-              <td>${additional}</td>
+              <td>${formatCategoryList(shipping)}</td>
+              <td>${formatCategoryList(additional)}</td>
               <td>${highlightStatus(status)}</td>
             `;
             orderBody.appendChild(tr);
           }
         } catch (err) {
           console.error(err);
+          const orderBody = document.getElementById("orderWeeksBody");
+          orderBody.innerHTML = `
+            <tr><td colspan="5">Error loading OrderWeeks.csv. Please confirm the file is present.</td></tr>
+          `;
+        } finally {
+          if (orderWeeksLoading) orderWeeksLoading.classList.add("hidden");
         }
       }
 
@@ -3098,6 +3289,9 @@
           filterPlantCards();
         } catch (err) {
           console.error(err);
+          plantCareGrid.innerHTML = "<p style='font-size:0.8rem; color:#9ca3af;'>Error loading plants.csv. Please confirm the file is present.</p>";
+        } finally {
+          if (plantLoading) plantLoading.classList.add("hidden");
         }
       }
 
@@ -3111,6 +3305,9 @@
           filterPestCards();
         } catch (err) {
           console.error(err);
+          pestGrid.innerHTML = "<p style='font-size:0.8rem; color:#9ca3af;'>Error loading pests.csv. Please confirm the file is present.</p>";
+        } finally {
+          if (pestLoading) pestLoading.classList.add("hidden");
         }
       }
 
@@ -3128,6 +3325,17 @@
       loadOrderCsv();
       loadPlantCsv();
       loadPestCsv();
+
+      /* SERVICE WORKER REGISTRATION (for future offline support) */
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .catch(err => {
+              console.warn("Service worker registration failed (offline mode not enabled):", err);
+            });
+        });
+      }
     });
   </script>
 </body>
