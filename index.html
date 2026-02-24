@@ -6,8 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#020617" />
 
-  <!-- Favicon -->
+  <!-- Favicon (desktop browsers) -->
   <link rel="icon" type="image/png" href="hpa_logo.png" />
+
+  <!-- Apple devices (iPhone/iPad Safari) -->
   <link rel="apple-touch-icon" href="hpa_logo.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
 
@@ -49,6 +51,7 @@
       min-height: 100vh;
     }
 
+    /* Enhanced background overlays */
     body::before {
       content: "";
       position: fixed;
@@ -155,7 +158,7 @@
       background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
     }
 
-    /* TOP TABS */
+    /* TOP TABS (MAIN NAV) */
     .tabs {
       display: flex;
       gap: 8px;
@@ -274,6 +277,7 @@
       padding: 14px;
     }
 
+    /* TYPOGRAPHY */
     .pc-header,
     .section-header {
       display: flex;
@@ -466,7 +470,7 @@
       border: 1px dashed var(--border-subtle);
     }
 
-    /* ORDER BREAKDOWN */
+    /* ORDER BREAKDOWN - TABLE + COLLAPSE */
     .order-table-wrapper {
       background: var(--card-glass);
       border: 1px solid var(--border-subtle);
@@ -639,6 +643,7 @@
       color: var(--text);
     }
 
+    /* INNER TABS (Care, Protocols, Store Visit) */
     .inner-tabs,
     .damage-inner-tabs,
     .hpa-inner-tabs,
@@ -693,6 +698,7 @@
       margin-top: 6px;
     }
 
+    /* PLANT / PEST CARDS */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -790,6 +796,7 @@
       color: var(--muted);
     }
 
+    /* POPUPS */
     .popup-image {
       width: 100%;
       max-height: 220px;
@@ -881,6 +888,7 @@
       font-style: italic;
     }
 
+    /* FLOW-CHART STYLE STEP LISTS */
     .flow-list {
       display: flex;
       flex-direction: column;
@@ -943,6 +951,7 @@
       color: var(--muted);
     }
 
+    /* FORM INPUTS (Store Visit) */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -1020,6 +1029,7 @@
       box-shadow: 0 16px 36px rgba(59, 130, 246, 0.9);
     }
 
+    /* STORE VISIT CHECKLIST */
     .visit-meta {
       display: flex;
       flex-wrap: wrap;
@@ -1073,6 +1083,7 @@
       font-family: inherit;
     }
 
+    /* LOADING STATES */
     .loading-state {
       margin-top: 8px;
       font-size: 0.8rem;
@@ -1096,6 +1107,7 @@
       100% { opacity: 0.3; transform: scale(0.9); }
     }
 
+    /* CATEGORY PILL VISUALIZATION */
     .cat-pill {
       display: inline-flex;
       align-items: center;
@@ -1108,198 +1120,22 @@
       color: #e5e7eb;
     }
 
+    /* MOBILE FIX — Order Breakdown table responsiveness */
     @media (max-width: 600px) {
       .order-table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
+
       .order-table {
         min-width: 520px;
         font-size: 0.75rem;
       }
+
       .order-table th,
       .order-table td {
         padding: 6px 8px;
         white-space: nowrap;
-      }
-    }
-
-    /* HF-HPA Assistant Chat Styles */
-    #aiChatBubble {
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      z-index: 60;
-      width: 46px;
-      height: 46px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top left, #22d3ee, #0ea5e9);
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.95);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #020617;
-      font-size: 22px;
-      border: 1px solid rgba(15, 23, 42, 0.8);
-      transition:
-        transform 0.15s ease-out,
-        box-shadow 0.15s ease-out,
-        filter 0.15s ease-out;
-    }
-
-    #aiChatBubble:hover {
-      transform: translateY(-1px) scale(1.02);
-      filter: brightness(1.05);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
-    }
-
-    #aiChatWindow {
-      position: fixed;
-      bottom: 76px;
-      right: 18px;
-      width: 320px;
-      max-width: 92vw;
-      height: 440px;
-      max-height: 70vh;
-      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.55);
-      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(16px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 60;
-    }
-
-    .ai-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 10px 8px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.35);
-      background: linear-gradient(
-        135deg,
-        rgba(15, 23, 42, 0.98),
-        rgba(15, 23, 42, 0.92)
-      );
-    }
-
-    .ai-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #e5f0ff;
-    }
-
-    .ai-subtitle {
-      font-size: 0.72rem;
-      color: #9ca3af;
-    }
-
-    .ai-close-btn {
-      border: none;
-      background: transparent;
-      color: #9ca3af;
-      font-size: 0.9rem;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 999px;
-      transition:
-        background 0.12s ease-out,
-        color 0.12s ease-out;
-    }
-
-    .ai-close-btn:hover {
-      background: rgba(15, 23, 42, 0.85);
-      color: #e5e7eb;
-    }
-
-    .ai-messages {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-      font-size: 0.8rem;
-      color: #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .ai-message {
-      padding: 7px 9px;
-      border-radius: 10px;
-      max-width: 90%;
-      line-height: 1.35;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-    }
-
-    .ai-message-bot {
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      align-self: flex-start;
-    }
-
-    .ai-message-user {
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.2), rgba(15, 23, 42, 0.96));
-      border: 1px solid rgba(34, 211, 238, 0.7);
-      align-self: flex-end;
-    }
-
-    .ai-example {
-      color: #38bdf8;
-    }
-
-    .ai-input-row {
-      display: flex;
-      gap: 6px;
-      padding: 8px 8px 8px;
-      border-top: 1px solid rgba(148, 163, 184, 0.35);
-      background: rgba(15, 23, 42, 0.98);
-    }
-
-    .ai-input {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 7px 10px;
-      font-size: 0.8rem;
-      background: rgba(2, 6, 23, 0.95);
-      color: #e5e7eb;
-    }
-
-    .ai-input::placeholder {
-      color: #6b7280;
-    }
-
-    .ai-send-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 7px 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      color: #020617;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
-      transition:
-        transform 0.12s ease-out,
-        box-shadow 0.12s ease-out,
-        filter 0.12s ease-out;
-    }
-
-    .ai-send-btn:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 1);
-    }
-
-    @media (max-width: 480px) {
-      #aiChatWindow {
-        width: 94vw;
-        right: 3vw;
-        bottom: 70px;
       }
     }
   </style>
@@ -1384,7 +1220,9 @@
           </p>
 
           <div class="results-header">
-            <div><strong id="resultCount">0</strong> SKUs shown</div>
+            <div>
+              <strong id="resultCount">0</strong> SKUs shown
+            </div>
           </div>
 
           <div id="skuLoading" class="loading-state">
@@ -1476,7 +1314,7 @@
         <div class="section-header">
           <div class="section-title">Care &amp; Identification</div>
           <p class="section-subtitle">
-            Quick reference for plant care, pest ID, and photo-based identification (preview).
+            Quick reference for plant care, pest ID, and photo-based identification.
           </p>
         </div>
 
@@ -1491,12 +1329,8 @@
             <div class="pc-title">Care Library</div>
             <div class="pc-search-wrapper">
               <span class="pc-search-icon">🔎</span>
-              <input
-                id="careSearch"
-                class="pc-search-input"
-                placeholder="Search plants or symptoms (e.g. low light, yellow leaves)..."
-                aria-label="Search plants or care symptoms"
-              />
+              <input id="careSearch" class="pc-search-input"
+                placeholder="Search plants or symptoms (e.g. low light, yellow leaves)..." aria-label="Search plants or care symptoms" />
             </div>
           </div>
 
@@ -1766,7 +1600,7 @@
               </div>
             </section>
 
-            <!-- PEST DAMAGE FLOW CHART -->
+            <!-- PEST DAMAGE FLOW CHART (HF ONLY) -->
             <section id="damage-pest" class="damage-inner-content hidden">
               <div class="pc-card" style="margin-bottom:8px;">
                 <div class="pc-card-title">Pest Damage Claim Flow</div>
@@ -1776,6 +1610,7 @@
               </div>
 
               <div class="flow-list">
+
                 <div class="flow-step">
                   <div class="flow-step-number">1</div>
                   <div class="flow-step-body">
@@ -1855,6 +1690,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
             </section>
           </section>
@@ -2184,6 +2020,7 @@
             </div>
           </div>
 
+          <!-- STORE VISIT INNER TABS -->
           <div class="store-inner-tabs">
             <button class="store-inner-tab active" data-store="walk" type="button">Store Walk</button>
             <button class="store-inner-tab" data-store="pods" type="button">Pod Merchandising</button>
@@ -2193,6 +2030,7 @@
 
           <!-- STORE WALK SUBTAB -->
           <section id="store-walk" class="store-inner-content">
+            <!-- 1. Readiness -->
             <div class="checklist-section">
               <div class="checklist-title">1. Readiness</div>
               <label class="checklist-item">
@@ -2213,6 +2051,7 @@
               </label>
             </div>
 
+            <!-- 2. Delivery Check -->
             <div class="checklist-section">
               <div class="checklist-title">2. Delivery Check</div>
               <label class="checklist-item">
@@ -2233,6 +2072,7 @@
               </label>
             </div>
 
+            <!-- 3. HF App -->
             <div class="checklist-section">
               <div class="checklist-title">3. HF App</div>
               <label class="checklist-item">
@@ -2244,6 +2084,7 @@
 
           <!-- POD MERCHANDISING SUBTAB -->
           <section id="store-pods" class="store-inner-content hidden">
+            <!-- 1. Blooming / Orchid Pod -->
             <div class="checklist-section">
               <div class="checklist-title">1. Blooming / Orchid Pod</div>
               <label class="checklist-item">
@@ -2280,6 +2121,7 @@
               </label>
             </div>
 
+            <!-- 2. Vigoro Pod -->
             <div class="checklist-section">
               <div class="checklist-title">2. Vigoro Pod</div>
               <label class="checklist-item">
@@ -2316,6 +2158,7 @@
               </label>
             </div>
 
+            <!-- 3. Specialty Pod -->
             <div class="checklist-section">
               <div class="checklist-title">3. Specialty Pod</div>
               <label class="checklist-item">
@@ -2352,6 +2195,7 @@
               </label>
             </div>
 
+            <!-- 4. Hanging Basket Pod -->
             <div class="checklist-section">
               <div class="checklist-title">4. Hanging Basket Pod</div>
               <label class="checklist-item">
@@ -2372,6 +2216,7 @@
               </label>
             </div>
 
+            <!-- 5. Tropical Table(s) -->
             <div class="checklist-section">
               <div class="checklist-title">5. Tropical Table(s)</div>
               <label class="checklist-item">
@@ -2396,6 +2241,7 @@
               </label>
             </div>
 
+            <!-- 6. CC Racks -->
             <div class="checklist-section">
               <div class="checklist-title">6. CC Racks</div>
               <label class="checklist-item">
@@ -2549,40 +2395,7 @@
     </div>
   </main>
 
-  <!-- HF-HPA Assistant Chat Bubble + Window -->
-  <div id="aiChatBubble" aria-label="Open HF-HPA Assistant" title="HF-HPA Assistant">
-    💬
-  </div>
-
-  <div id="aiChatWindow" class="hidden" aria-label="HF-HPA Assistant chat" role="dialog" aria-modal="false">
-    <div class="ai-header">
-      <div>
-        <div class="ai-title">HF-HPA Assistant</div>
-        <div class="ai-subtitle">Ask about SKUs, orders, protocols, care, pests…</div>
-      </div>
-      <button id="aiClose" class="ai-close-btn" type="button" aria-label="Close chat">✕</button>
-    </div>
-
-    <div id="aiMessages" class="ai-messages">
-      <div class="ai-message ai-message-bot">
-        👋 Hi! I can help with HF-HPA questions. Try:
-        <span class="ai-example">“What’s the cold damage protocol?”</span>
-        or
-        <span class="ai-example">“How do I care for a Hypoestes?”</span>
-      </div>
-    </div>
-
-    <form id="aiForm" class="ai-input-row">
-      <input
-        id="aiInput"
-        class="ai-input"
-        placeholder="Ask about SKUs, orders, pests, care..."
-        autocomplete="off"
-      />
-      <button id="aiSend" class="ai-send-btn" type="submit">Send</button>
-    </form>
-  </div>
-
+  <!-- CORE SCRIPT -->
   <script>
     /* ========= CONFIG ========= */
     const SKU_CSV_URL = "SKU_Name_2026.csv";
@@ -2609,6 +2422,7 @@
 
     const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
+    /* Simple CSV parser that respects quotes */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -2773,6 +2587,7 @@
       return status;
     }
 
+    /** Format category list into visual pills (for Shipping / Additional columns) */
     function formatCategoryList(raw) {
       if (!raw) return "";
       const parts = raw.split(",").map(p => p.trim()).filter(Boolean);
@@ -2780,6 +2595,7 @@
       return parts.map(p => `<span class="cat-pill">${p}</span>`).join(" ");
     }
 
+    /** Simple debounce helper */
     function debounce(fn, delay = 200) {
       let timeout;
       return (...args) => {
@@ -3063,6 +2879,7 @@
       sentInFilter.addEventListener("input", debouncedRenderSkuList);
       yearFilter.addEventListener("change", debouncedRenderSkuList);
 
+      /* ORDER BREAKDOWN DETAIL */
       function applyOrderBreakdown(rows) {
         if (!rows.length) {
           if (obWeekDisplay) obWeekDisplay.textContent = "TBD";
@@ -3166,6 +2983,7 @@
         careBackdrop.style.display = "flex";
       }
 
+      /** Search by plant name + care attributes (symptom-style search) */
       function filterPlantCards() {
         const q = (careSearch.value || "").toLowerCase().trim();
         const cards = plantCareGrid.querySelectorAll(".pc-card");
@@ -3253,6 +3071,7 @@
         pestBackdrop.style.display = "flex";
       }
 
+      /** Search pests by name + description + symptoms */
       function filterPestCards() {
         const q = (pestSearch.value || "").toLowerCase().trim();
         const cards = pestGrid.querySelectorAll(".pc-card");
@@ -3277,7 +3096,7 @@
       const debouncedFilterPestCards = debounce(filterPestCards, 200);
       pestSearch.addEventListener("input", debouncedFilterPestCards);
 
-      /* STORE VISIT SUMMARY EXPORT */
+      /* STORE VISIT CHECKLIST – DOWNLOAD SUMMARY */
       const exportVisitSummaryBtn = document.getElementById("exportVisitSummary");
       if (exportVisitSummaryBtn) {
         exportVisitSummaryBtn.addEventListener("click", () => {
@@ -3338,7 +3157,7 @@
         });
       }
 
-      /* AI IMAGE IDENTIFICATION PREVIEW (STUB) */
+      /* AI IDENTIFICATION PREVIEW (stub only – connect to backend for real AI) */
       const aiImageInput = document.getElementById("aiImageInput");
       const aiAnalyzeBtn = document.getElementById("aiAnalyzeBtn");
       const aiResult = document.getElementById("aiResult");
@@ -3351,6 +3170,7 @@
           }
           aiResult.textContent = "Analyzing photo (demo)...";
 
+          // DEMO ONLY: In production, send image to your AI API here.
           setTimeout(() => {
             aiResult.textContent =
               "This is a demo placeholder. In production, this would call an AI image model " +
@@ -3359,7 +3179,7 @@
         });
       }
 
-      /* DATE DEFAULT */
+      /* DATE DEFAULTS */
       const todayIso = new Date().toISOString().slice(0, 10);
       const visitDateInput = document.getElementById("visitDate");
       if (visitDateInput && !visitDateInput.value) {
@@ -3478,83 +3298,6 @@
         }
       }
 
-      /* HF-HPA Assistant Chat: Frontend Logic */
-      const aiChatBubbleEl = document.getElementById("aiChatBubble");
-      const aiChatWindowEl = document.getElementById("aiChatWindow");
-      const aiClose = document.getElementById("aiClose");
-      const aiForm = document.getElementById("aiForm");
-      const aiInput = document.getElementById("aiInput");
-      const aiMessages = document.getElementById("aiMessages");
-
-      function toggleChatWindow(forceOpen) {
-        const shouldOpen = forceOpen !== undefined
-          ? forceOpen
-          : aiChatWindowEl.classList.contains("hidden");
-        aiChatWindowEl.classList.toggle("hidden", !shouldOpen);
-        if (shouldOpen && aiInput) {
-          setTimeout(() => aiInput.focus(), 80);
-        }
-      }
-
-      function appendAiMessage(sender, text, isBot) {
-        const div = document.createElement("div");
-        div.className = "ai-message " + (isBot ? "ai-message-bot" : "ai-message-user");
-        div.textContent = text;
-        aiMessages.appendChild(div);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-      }
-
-      async function sendAiMessage(message) {
-        if (!message) return;
-        appendAiMessage("You", message, false);
-
-        const thinking = document.createElement("div");
-        thinking.className = "ai-message ai-message-bot";
-        thinking.textContent = "Thinking...";
-        aiMessages.appendChild(thinking);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-
-        try {
-          const res = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message })
-          });
-
-          const data = await res.json();
-          aiMessages.removeChild(thinking);
-
-          if (!data.success) {
-            appendAiMessage("HF-HPA Assistant", "Sorry, I ran into an error: " + (data.error || "Unknown issue."), true);
-            return;
-          }
-
-          appendAiMessage("HF-HPA Assistant", data.response, true);
-        } catch (err) {
-          aiMessages.removeChild(thinking);
-          appendAiMessage("HF-HPA Assistant", "Network error talking to AI backend.", true);
-          console.error(err);
-        }
-      }
-
-      if (aiChatBubbleEl) {
-        aiChatBubbleEl.addEventListener("click", () => toggleChatWindow());
-      }
-
-      if (aiClose) {
-        aiClose.addEventListener("click", () => toggleChatWindow(false));
-      }
-
-      if (aiForm) {
-        aiForm.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const value = (aiInput.value || "").trim();
-          if (!value) return;
-          aiInput.value = "";
-          sendAiMessage(value);
-        });
-      }
-
       /* INIT */
       showTopTab("products");
       showProductsTab("skus");
@@ -3570,7 +3313,7 @@
       loadPlantCsv();
       loadPestCsv();
 
-      /* SERVICE WORKER REGISTRATION (optional offline) */
+      /* SERVICE WORKER REGISTRATION (for future offline support) */
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
@@ -3581,6 +3324,35 @@
         });
       }
     });
+  </script>
+
+  <!-- ⭐ Chatbase AI Widget – your bot script ⭐ -->
+  <script>
+    (function(){
+      if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+        window.chatbase = (...arguments) => {
+          if(!window.chatbase.q){ window.chatbase.q = []; }
+          window.chatbase.q.push(arguments);
+        };
+        window.chatbase = new Proxy(window.chatbase, {
+          get(target, prop){
+            if(prop === "q"){ return target.q; }
+            return (...args) => target(prop, ...args);
+          }
+        });
+      }
+
+      const onLoad = function(){
+        const script = document.createElement("script");
+        script.src = "https://www.chatbase.co/embed.min.js";
+        script.id = "H9NOjSSSBNeIfqcI5_Wug";
+        script.domain = "www.chatbase.co";
+        document.body.appendChild(script);
+      };
+
+      if(document.readyState === "complete"){ onLoad(); }
+      else { window.addEventListener("load", onLoad); }
+    })();
   </script>
 </body>
 </html>
