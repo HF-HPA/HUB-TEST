@@ -2,606 +2,1958 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HF / HPA Portal</title>
+  <title>Hampshire Farms Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Favicon (desktop browsers) -->
+  <link rel="icon" type="image/png" href="hpa_logo.png" />
+
+  <!-- Apple devices (iPhone/iPad Safari) -->
+  <link rel="apple-touch-icon" href="hpa_logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+
   <style>
-    /* ====== BASIC RESET ====== */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #020617;
+      --bg-alt: #030a1a;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-glass: rgba(15, 23, 42, 0.75);
+      --text: #e5e7eb;
+      --heading: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.45);
+      --border-soft: rgba(148, 163, 184, 0.25);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
+      --transition-fast: 0.18s ease-out;
+      --accent: #22d3ee;
+      --accent-soft: rgba(34, 211, 238, 0.15);
+      --accent-strong: #06b6d4;
+      
+      /* Dashboard colors */
+      --hf-color: #10b981;
+      --hpa-color: #3b82f6;
+      --admin-color: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #020617;
-      color: #e5e7eb;
+      background:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+        url("philo.jpg") no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(6px);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Enhanced background overlays */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at center,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0.35) 100%
+      );
+      z-index: 0;
+    }
+
+    /* DASHBOARD STYLES */
+    .dashboard-container {
+      width: 100%;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      align-items: stretch;
-      padding: 16px;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
     }
-    button { font-family: inherit; cursor: pointer; }
 
-    /* ====== LAYOUT ====== */
-    .hidden { display: none !important; }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeInDown 0.6s ease-out;
+    }
 
-    .shell {
+    .dashboard-logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      border-radius: 24px;
+      border: 2px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .dashboard-title {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .dashboard-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .dashboard-card {
+      background: var(--card-glass);
+      border-radius: 24px;
+      border: 1px solid var(--border-subtle);
+      padding: 32px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease-out;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .dashboard-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, currentColor, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+      border-color: currentColor;
+    }
+
+    .dashboard-card:hover::before {
+      opacity: 1;
+    }
+
+    .dashboard-card.hf-card {
+      color: var(--hf-color);
+      background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), var(--card-glass));
+    }
+
+    .dashboard-card.hpa-card {
+      color: var(--hpa-color);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.1), var(--card-glass));
+    }
+
+    .dashboard-card.admin-card {
+      color: var(--admin-color);
+      background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.1), var(--card-glass));
+    }
+
+    .dashboard-card-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .dashboard-card-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--heading);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .dashboard-card-description {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .dashboard-card-feature {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dashboard-card-arrow {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      font-size: 1.5rem;
+      opacity: 0.5;
+      transition: all 0.3s ease-out;
+    }
+
+    .dashboard-card:hover .dashboard-card-arrow {
+      transform: translateX(4px);
+      opacity: 1;
+    }
+
+    .dashboard-footer {
+      margin-top: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* MAIN APP SHELL (hidden by default) */
+    .app-shell {
+      width: 100%;
+      padding: 16px;
+      display: none;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-shell.active {
+      display: flex;
+    }
+
+    .app-inner {
       width: 100%;
       max-width: 1200px;
-      background: #020617;
-      border-radius: 20px;
-      border: 1px solid #1f2937;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.7);
-      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      padding: 18px 18px 14px;
+      margin: 0 auto;
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.98),
+        rgba(15, 23, 42, 0.9)
+      );
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      backdrop-filter: blur(18px);
+      position: relative;
+      z-index: 1;
     }
 
-    header.app-header {
+    /* BACK NAVIGATION */
+    .back-nav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .app-title { font-size: 1.4rem; font-weight: 600; }
-    .app-sub { font-size: 0.8rem; color: #9ca3af; }
-
-    .pill {
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      color: #9ca3af;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    /* ====== GENERIC UI PIECES ====== */
-    .centered {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 32px 16px;
-      text-align: center;
-    }
-
-    .title { font-size: 1.7rem; font-weight: 700; margin-bottom: 4px; }
-    .subtitle { font-size: 0.95rem; color: #9ca3af; }
-
-    .btn {
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      padding: 10px 18px;
-      background: #0f172a;
-      color: #e5e7eb;
-      font-size: 0.9rem;
-      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    .back-button {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
-    .btn.primary {
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      border-color: #0ea5e9;
-      color: #020617;
-      font-weight: 600;
-    }
-    .btn:hover {
-      transform: translateY(-1px);
-      background: #111827;
-    }
-    .btn.primary:hover {
-      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all var(--transition-fast);
     }
 
-    .grid {
-      display: grid;
-      gap: 12px;
-    }
-    @media (min-width: 640px) {
-      .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .back-button:hover {
+      background: rgba(15, 23, 42, 0.98);
+      color: var(--heading);
+      border-color: var(--accent);
+      transform: translateX(-2px);
     }
 
-    .card {
-      background: #020617;
-      border-radius: 16px;
-      border: 1px solid #1f2937;
-      padding: 16px;
-      text-align: left;
-      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-    }
-    .card.clickable { cursor: pointer; }
-    .card.clickable:hover {
-      border-color: #22d3ee;
-      transform: translateY(-2px);
-      box-shadow: 0 14px 36px rgba(0,0,0,0.8);
-    }
-    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
-    .card-sub { font-size: 0.85rem; color: #9ca3af; }
-
-    .section-header {
-      margin-bottom: 10px;
-    }
-    .section-title { font-size: 1.1rem; font-weight: 600; }
-    .section-sub { font-size: 0.85rem; color: #9ca3af; }
-
-    /* Tabs (generic, for multiple groups) */
-    .tabs {
+    .breadcrumb {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #111827;
-      padding-bottom: 4px;
-    }
-    .tab {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: #0b1120;
-      color: #9ca3af;
+      color: var(--muted);
       font-size: 0.85rem;
     }
-    .tab.active {
-      background: #0369a1;
-      color: #f9fafb;
-      border-color: #0ea5e9;
+
+    .breadcrumb-separator {
+      opacity: 0.5;
     }
 
-    .page-toolbar {
+    .breadcrumb-current {
+      color: var(--heading);
+      font-weight: 600;
+    }
+
+    /* HEADER */
+    .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      object-fit: cover;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title-block h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--heading);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .header-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
+    }
+
+    /* TOP TABS (MAIN NAV) */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      margin-top: 6px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      position: relative;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        color var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.4);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.32), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+      box-shadow: 0 10px 32px rgba(15, 23, 42, 0.9);
+    }
+
+    .tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .tab-content {
+      margin-top: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ADMIN SECTION STYLES */
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .admin-card {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .admin-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .admin-card-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(245, 158, 11, 0.15);
+      border-radius: 10px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .admin-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .admin-card-content {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .admin-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .admin-stat-label {
+      color: var(--muted);
+    }
+
+    .admin-stat-value {
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .admin-actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .admin-button {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-md);
+      color: var(--admin-color);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all var(--transition-fast);
+    }
+
+    .admin-button:hover {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: var(--admin-color);
+      transform: translateY(-1px);
+    }
+
+    /* Keep all the existing styles below... */
+    /* SECTION INNER TABS */
+    .section-inner-tabs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .section-inner-tab {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .section-inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .section-inner-tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+    }
+
+    .section-inner-content {
+      margin-top: 10px;
+    }
+
+    /* GLASS PANEL */
+    .glass-panel {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+    }
+
+    /* TYPOGRAPHY */
+    .pc-header,
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title,
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* PRODUCT INFO: SKU FILTERS */
+    .controls {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+
+    @media (min-width: 900px) {
+      .controls {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .search-wrapper {
+      flex: 2;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .search-input::placeholder {
+      color: #64748b;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+
+    .filters {
+      flex: 3;
+      display: flex;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      gap: 3px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .filter-input {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.92);
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    /* SKU RESULTS */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .results-header strong {
+      color: var(--heading);
+    }
+
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      .sku-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1000px) {
+      .sku-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .sku-card {
+      position: relative;
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+
+    .sku-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #e5f0ff;
+    }
+
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    /* ORDER BREAKDOWN - TABLE + COLLAPSE */
+    .order-table-wrapper {
+      background: var(--card-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      margin-top: 10px;
+      backdrop-filter: blur(16px);
+    }
+
+    .order-table-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--heading);
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      color: var(--text);
+      overflow: hidden;
+      border-radius: var(--radius-md);
+    }
+
+    .order-table th {
+      text-align: left;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.96);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-soft);
+      color: #cbd5f5;
+    }
+
+    .order-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e8f2ff;
+    }
+
+    .order-table tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .order-table tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    .order-table tr:hover {
+      background: rgba(34, 211, 238, 0.12);
+      transition: 0.2s;
+    }
+
+    .status-highlight {
+      background: #facc15;
+      color: #111827;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    .order-details-toggle {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
+      color: #0f172a;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(34, 211, 238, 0.9);
+      padding: 7px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        transform 0.18s ease-out;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
+    }
+
+    .order-details-toggle:hover {
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      border-color: #38bdf8;
+      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
+      transform: translateY(-1px);
+      color: #020617;
+    }
+
+    .order-details-panel {
+      margin-top: 14px;
+    }
+
+    .order-breakdown-wrapper {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.7);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    @media (min-width: 640px) {
+      .ob-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .ob-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+      min-height: 90px;
+    }
+
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    /* INNER TABS (Care, Protocols, Store Visit) */
+    .inner-tabs,
+    .damage-inner-tabs,
+    .hpa-inner-tabs,
+    .store-inner-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .inner-tab,
+    .damage-inner-tab,
+    .hpa-inner-tab,
+    .store-inner-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+      font-size: 0.85rem;
+    }
+
+    .inner-tab:hover,
+    .damage-inner-tab:hover,
+    .hpa-inner-tab:hover,
+    .store-inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .inner-tab.active,
+    .damage-inner-tab.active,
+    .hpa-inner-tab.active,
+    .store-inner-tab.active {
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.9);
+      color: var(--heading);
+    }
+
+    .damage-inner-content,
+    .hpa-inner-content,
+    .store-inner-content,
+    .inner-content {
+      margin-top: 6px;
+    }
+
+    /* PLANT / PEST CARDS */
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .pc-search-input::placeholder {
+      color: #64748b;
+    }
+
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .pc-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1000px) {
+      .pc-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .pc-card {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+      backdrop-filter: blur(14px);
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--heading);
+    }
+
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* POPUPS */
+    .popup-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: flex-start;        
+      justify-content: center;
+      z-index: 50;
+      padding: 24px 16px 16px;
+      backdrop-filter: blur(8px);
+      overflow-y: auto;               
+    }
+
+    .popup {
+      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
+      padding: 20px 20px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (max-width: 768px) {
+      .popup {
+        margin-top: 8px;  
+      }
+    }
+
+    .popup h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+
+    .popup-section-title {
+      font-weight: 600;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--heading);
+    }
+
+    .popup-text {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-top: 2px;
+    }
+
+    .popup-close {
+      margin-top: 16px;
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.7);
+      transition:
+        transform 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        filter 0.15s ease-out;
+    }
+
+    .popup-close:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(59, 130, 246, 0.9);
+    }
+
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    /* FLOW-CHART STYLE STEP LISTS */
+    .flow-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 650px;
+      margin-top: 8px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .flow-step-number {
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .flow-step-body {
+      flex: 1;
+    }
+
+    .flow-step-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--heading);
+    }
+
+    .flow-step-role {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .flow-step-text {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    /* FORM INPUTS (Store Visit) */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 800px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group.small {
+      max-width: 200px;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .claim-input,
+    .claim-select,
+    .claim-textarea {
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.97);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      resize: vertical;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .claim-input::placeholder,
+    .claim-textarea::placeholder {
+      color: #6b7280;
+    }
+
+    .claim-textarea {
+      min-height: 80px;
+    }
+
+    .primary-button {
+      margin-top: 12px;
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.75);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        transform 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        filter 0.15s ease-out;
+    }
+
+    .primary-button:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(59, 130, 246, 0.9);
+    }
+
+    /* STORE VISIT CHECKLIST */
+    .visit-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 12px;
     }
-    .breadcrumbs {
-      font-size: 0.75rem;
-      color: #9ca3af;
+
+    .checklist-section {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
+    }
+
+    .checklist-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--heading);
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+
+    .visit-notes-wrapper {
+      margin-top: 10px;
     }
 
     .footer {
-      margin-top: 10px;
+      margin-top: 14px;
       font-size: 0.75rem;
       color: #6b7280;
       text-align: right;
     }
 
-    /* Simple content box */
-    .panel {
-      border-radius: 14px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      padding: 12px;
-      margin-bottom: 10px;
+    button {
+      font-family: inherit;
+    }
+
+    /* MOBILE FIX — Order Breakdown table responsiveness */
+    @media (max-width: 600px) {
+      .order-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .order-table {
+        min-width: 520px;
+        font-size: 0.75rem;
+      }
+
+      .order-table th,
+      .order-table td {
+        padding: 6px 8px;
+        white-space: nowrap;
+      }
     }
   </style>
 </head>
+
 <body>
-  <main class="shell">
-    <header class="app-header">
-      <div>
-        <div class="app-title">HF / HPA Portal</div>
-        <div class="app-sub">Login → Company Hub → HF / HPA / ADMIN pages</div>
-      </div>
-      <div id="headerPill" class="pill">Internal tool • v1.0</div>
-    </header>
+  <!-- MAIN DASHBOARD -->
+  <div id="dashboard" class="dashboard-container">
+    <div class="dashboard-header">
+      <img src="hf_logo.png" alt="Hampshire Farms Logo" class="dashboard-logo" />
+      <h1 class="dashboard-title">Hampshire Farms</h1>
+      <p class="dashboard-subtitle">Central Operations Dashboard</p>
+    </div>
 
-    <!-- =========================================================
-         SCREEN 1 – LOGIN (Role selection)
-         ========================================================= -->
-    <section id="screen-login" class="centered">
-      <div>
-        <div class="title">Select Your Role</div>
-        <div class="subtitle">Merchandiser, Field Supervisor, District Supervisor, or Regional MM.</div>
+    <div class="dashboard-cards">
+      <!-- HF CARD -->
+      <div class="dashboard-card hf-card" onclick="showSection('hf')">
+        <span class="dashboard-card-icon">🌱</span>
+        <h2 class="dashboard-card-title">HF Operations</h2>
+        <p class="dashboard-card-description">
+          Access Hampshire Farms field operations tools, including product information, 
+          plant care resources, and field protocols.
+        </p>
+        <div class="dashboard-card-features">
+          <span class="dashboard-card-feature">Product SKUs</span>
+          <span class="dashboard-card-feature">Order Management</span>
+          <span class="dashboard-card-feature">Field Protocols</span>
+        </div>
+        <span class="dashboard-card-arrow">→</span>
       </div>
 
-      <div class="grid cols-2" style="margin-top: 12px; max-width: 460px;">
-        <button class="card clickable" data-role="Merchandiser">
-          <div class="card-title">Merchandiser</div>
-          <div class="card-sub">Daily in-store merch, watering, resets.</div>
-        </button>
-        <button class="card clickable" data-role="Field Supervisor">
-          <div class="card-title">Field Supervisor</div>
-          <div class="card-sub">Oversees stores & execution across a territory.</div>
-        </button>
-        <button class="card clickable" data-role="District Supervisor">
-          <div class="card-title">District Supervisor</div>
-          <div class="card-sub">District oversight, inventory & performance.</div>
-        </button>
-        <button class="card clickable" data-role="Regional Merchandising Manager">
-          <div class="card-title">Regional Merchandising Manager</div>
-          <div class="card-sub">Regional strategy, claims & reporting.</div>
-        </button>
+      <!-- HPA CARD -->
+      <div class="dashboard-card hpa-card" onclick="showSection('hpa')">
+        <span class="dashboard-card-icon">🏪</span>
+        <h2 class="dashboard-card-title">HPA Management</h2>
+        <p class="dashboard-card-description">
+          Manage Houseplant Area operations including store visits, inventory tracking, 
+          and compliance standards.
+        </p>
+        <div class="dashboard-card-features">
+          <span class="dashboard-card-feature">Store Visits</span>
+          <span class="dashboard-card-feature">Inventory</span>
+          <span class="dashboard-card-feature">Standards</span>
+        </div>
+        <span class="dashboard-card-arrow">→</span>
       </div>
-    </section>
 
-    <!-- =========================================================
-         SCREEN 2 – COMPANY HUB (HF / HPA / ADMIN)
-         ========================================================= -->
-    <section id="screen-hub" class="centered hidden">
-      <div>
-        <div class="title" id="hubTitle">Welcome</div>
-        <div class="subtitle">
-          Choose which part of the business you want to work in: HF, HPA, or ADMIN.
+      <!-- ADMIN CARD -->
+      <div class="dashboard-card admin-card" onclick="showSection('admin')">
+        <span class="dashboard-card-icon">⚙️</span>
+        <h2 class="dashboard-card-title">Administration</h2>
+        <p class="dashboard-card-description">
+          Administrative tools for system management, user access control, 
+          reporting, and configuration settings.
+        </p>
+        <div class="dashboard-card-features">
+          <span class="dashboard-card-feature">User Management</span>
+          <span class="dashboard-card-feature">Reports</span>
+          <span class="dashboard-card-feature">Settings</span>
+        </div>
+        <span class="dashboard-card-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="dashboard-footer">
+      Hampshire Farms © 2026 • Version 8.0 • All Rights Reserved
+    </div>
+  </div>
+
+  <!-- HF SECTION -->
+  <main id="hf-section" class="app-shell">
+    <div class="app-inner">
+      <!-- BACK NAVIGATION -->
+      <div class="back-nav">
+        <button class="back-button" onclick="showDashboard()" type="button">
+          ← Back to Dashboard
+        </button>
+        <div class="breadcrumb">
+          <span>Dashboard</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">HF Operations</span>
         </div>
       </div>
 
-      <div class="grid cols-3" style="margin-top: 12px; width: 100%;">
-        <button class="card clickable" data-company="hf">
-          <div class="card-title">HF</div>
-          <div class="card-sub">House plants: SKUs, care, and references for the floor.</div>
-        </button>
-        <button class="card clickable" data-company="hpa">
-          <div class="card-title">HPA</div>
-          <div class="card-sub">HPA-specific product info & care for seasonal/indoor programs.</div>
-        </button>
-        <button class="card clickable" data-company="admin">
-          <div class="card-title">ADMIN</div>
-          <div class="card-sub">Store Operations, protocols, damage flows, store visit tools.</div>
-        </button>
-      </div>
-
-      <button id="backToLogin" class="btn" style="margin-top: 12px;">⬅ Back to role selection</button>
-    </section>
-
-    <!-- =========================================================
-         SCREEN 3 – APP PAGES (HF / HPA / ADMIN)
-         ========================================================= -->
-    <section id="screen-app" class="hidden">
-      <div class="page-toolbar">
-        <div>
-          <div class="breadcrumbs" id="crumbs">Role · Company</div>
-          <div class="app-title" id="pageTitle">Page Title</div>
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <img src="hf_logo.png" alt="HF Logo" class="logo" />
+          <div class="title-block">
+            <h1>HF Operations</h1>
+            <p class="subtitle">Field operations and product management.</p>
+          </div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="btnBackToHub" class="btn">⬅ Company Hub</button>
-          <button id="btnSwitchRole" class="btn">👤 Switch Role</button>
+        <div class="header-pill">
+          HF Module • v8.0
         </div>
-      </div>
+      </header>
 
-      <!-- ========== HF PAGE (NO Store Operations here) ========== -->
-      <section id="page-hf" class="app-page hidden">
+      <!-- TOP TABS -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
+        <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; ID</button>
+        <button class="tab" data-tab="protocols" type="button">📋 Field Protocols</button>
+      </nav>
+
+      <!-- PRODUCT INFO TAB -->
+      <section id="tab-products" class="tab-content">
         <div class="section-header">
-          <div class="section-title">HF – Houseplant Tools</div>
-          <div class="section-sub">Product Info + Care & Identification for HF.</div>
+          <div class="section-title">Product Information</div>
+          <p class="section-subtitle">
+            Search SKUs, review shipping schedules, and manage product data.
+          </p>
         </div>
 
-        <!-- HF Tabs: Product Info, Care & ID -->
-        <nav class="tabs">
-          <button class="tab active"
-                  data-tab-group="hf"
-                  data-tab-target="hf-product">
-            📦 Product Info
+        <div class="section-inner-tabs">
+          <button class="section-inner-tab active products-inner-tab" data-products="skus" type="button">
+            SKU Catalogue
           </button>
-          <button class="tab"
-                  data-tab-group="hf"
-                  data-tab-target="hf-care">
-            🌿 Care & Identification
+          <button class="section-inner-tab products-inner-tab" data-products="orders" type="button">
+            Order Breakdown
           </button>
-        </nav>
+        </div>
 
-        <!-- HF PRODUCT INFO PANEL -->
-        <section id="hf-product" data-tab-panel="hf">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">Product Info</div>
-              <div class="section-sub">SKU catalogue, weekly ship info, etc.</div>
+        <!-- SKU CATALOGUE CONTENT -->
+        <section id="products-skus" class="section-inner-content">
+          <section class="controls">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
             </div>
-            <!--
-              👉 Copy your existing "Product Info" tab here (from the old file),
-              e.g. controls + SKU grid + Order Breakdown table.
 
-              You can literally paste:
-                - the SKU filters
-                - SKU cards
-                - Weekly Shipping Overview
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your existing HF/HPA Product Info (SKU + Orders) content here.
-            </p>
+            <div class="filters">
+              <div class="filter-group">
+                <span class="filter-label">SKU</span>
+                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Sent In</span>
+                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Year Sent</span>
+                <select id="yearFilter" class="filter-input">
+                  <option value="all">All</option>
+                  <option>2022</option>
+                  <option>2023</option>
+                  <option>2024</option>
+                  <option>2025</option>
+                  <option>2026</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <div class="results-header">
+            <strong id="resultCount">0</strong> SKUs shown
+          </div>
+
+          <section id="skuGrid" class="sku-grid"></section>
+          <div id="emptyState" class="empty-state hidden">
+            No SKUs match your filters.
           </div>
         </section>
 
-        <!-- HF CARE & ID PANEL -->
-        <section id="hf-care" data-tab-panel="hf" class="hidden">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">Care & Identification</div>
-              <div class="section-sub">Use this for plant care and basic ID while on the floor.</div>
+        <!-- ORDER BREAKDOWN CONTENT -->
+        <section id="products-orders" class="section-inner-content hidden">
+          <div class="order-table-wrapper">
+            <div class="order-table-title">Weekly Shipping Overview</div>
+
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Week #</th>
+                  <th>Week Date</th>
+                  <th>Shipping</th>
+                  <th>Additional</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="orderWeeksBody"></tbody>
+            </table>
+
+            <button id="orderDetailsToggle" class="order-details-toggle" type="button">
+              Show Detailed Breakdown
+            </button>
+
+            <div id="orderDetailsPanel" class="order-details-panel hidden">
+              <!-- Order breakdown details here -->
             </div>
-            <!--
-              👉 Copy your existing "Care & Identification" tab here:
-                - Care Library (plants)
-                - Pest Identification
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your existing Care Library + Pest ID content here (plant cards, pest cards, popups).
-            </p>
           </div>
         </section>
       </section>
 
-      <!-- ========== HPA PAGE (NO Store Operations here) ========== -->
-      <section id="page-hpa" class="app-page hidden">
+      <!-- CARE & ID TAB -->
+      <section id="tab-care-id" class="tab-content hidden">
         <div class="section-header">
-          <div class="section-title">HPA – Program Tools</div>
-          <div class="section-sub">HPA-focused product and care tools.</div>
+          <div class="section-title">Care &amp; Identification</div>
+          <p class="section-subtitle">
+            Plant care guides and pest identification resources.
+          </p>
         </div>
 
-        <!-- HPA Tabs: Product Info, Care & ID -->
-        <nav class="tabs">
-          <button class="tab active"
-                  data-tab-group="hpa"
-                  data-tab-target="hpa-product">
-            📦 Product Info
-          </button>
-          <button class="tab"
-                  data-tab-group="hpa"
-                  data-tab-target="hpa-care">
-            🌿 Care & Identification
-          </button>
-        </nav>
+        <div class="inner-tabs">
+          <button class="inner-tab active" data-inner="care-library" type="button">Care Library</button>
+          <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
+        </div>
 
-        <section id="hpa-product" data-tab-panel="hpa">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">Product Info</div>
-              <div class="section-sub">
-                HPA-specific SKU catalogue & ship weeks (can reuse same components as HF).
-              </div>
-            </div>
-            <!--
-              👉 Optional: either reuse the same Product Info block as HF or
-                 make it HPA-specific. Paste your code from the original file.
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your HPA Product Info content here (could be identical to HF's Product Info).
-            </p>
-          </div>
+        <!-- Care & ID content sections here -->
+        <section id="inner-care-library" class="inner-content">
+          <!-- Plant care content -->
         </section>
 
-        <section id="hpa-care" data-tab-panel="hpa" class="hidden">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">Care & Identification</div>
-              <div class="section-sub">HPA plant care and pest tools.</div>
-            </div>
-            <!--
-              👉 Reuse Care Library / Pest ID here if HPA needs its own version,
-                 or simplify to just quick references.
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your HPA Care & Identification content here.
-            </p>
-          </div>
+        <section id="inner-pest-id" class="inner-content hidden">
+          <!-- Pest ID content -->
         </section>
       </section>
 
-      <!-- ========== ADMIN PAGE (Store Operations moved here) ========== -->
-      <section id="page-admin" class="app-page hidden">
+      <!-- FIELD PROTOCOLS TAB -->
+      <section id="tab-protocols" class="tab-content hidden">
         <div class="section-header">
-          <div class="section-title">ADMIN – Store Operations</div>
-          <div class="section-sub">
-            HPA protocols, damage flows, store visit checklist and picture standards.
-          </div>
+          <div class="section-title">Field Protocols</div>
+          <p class="section-subtitle">
+            Standard operating procedures for field operations.
+          </p>
         </div>
 
-        <!-- ADMIN Tabs – all Store Ops lives here now -->
-        <nav class="tabs">
-          <button class="tab active"
-                  data-tab-group="admin"
-                  data-tab-target="admin-protocols">
-            🛠 HPA Protocols
-          </button>
-          <button class="tab"
-                  data-tab-group="admin"
-                  data-tab-target="admin-visit">
-            📝 Store Visit
-          </button>
-        </nav>
-
-        <!-- ADMIN → HPA PROTOCOLS (Damage, Non-order, Inventory, BI, Pictures) -->
-        <section id="admin-protocols" data-tab-panel="admin">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">HPA Protocols</div>
-              <div class="section-sub">
-                Damage claims, non-order day protocol, weekly inventory, BI, and picture standards.
-              </div>
-            </div>
-
-            <!--
-              👉 Here you can drop the entire "STORE OPERATIONS → HPA Protocols"
-                 section from your original file:
-
-                 - Damage Claims (Cold / Pest flow lists)
-                 - Non-Order Days
-                 - Weekly Inventory
-                 - BI / Reporting
-                 - Picture Standards
-
-              You can keep the inner subtabs if you like, or simplify.
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your full HPA Protocols content (damage flows, non-order, inventory, BI, picture standards)
-              from the old "Store Operations" tab here.
-            </p>
-          </div>
-        </section>
-
-        <!-- ADMIN → STORE VISIT CHECKLIST -->
-        <section id="admin-visit" data-tab-panel="admin" class="hidden">
-          <div class="panel">
-            <div class="section-header">
-              <div class="section-title">Store Visit Checklist (Indoor)</div>
-              <div class="section-sub">
-                Use during store walks. Export summary at the end if desired.
-              </div>
-            </div>
-
-            <!--
-              👉 Paste your "Store Operations → Store Visit" section here:
-
-                 - Store metadata (store #, date, rep)
-                 - Store Walk / Pod Merchandising / Clean Up / Pictures subtabs
-                 - Visit notes + Export Visit Summary button
-
-              You can reuse all the checklist HTML and the export JS.
-            -->
-            <p style="font-size:0.85rem; color:#9ca3af;">
-              Placeholder: Paste your full Store Visit Checklist UI from the original "Store Operations" tab here.
-            </p>
-          </div>
-        </section>
+        <!-- Protocols content here -->
       </section>
-
-      <div class="footer">
-        HF/HPA Portal • Layout refactor: Login → Hub → HF / HPA / ADMIN • Store Ops moved to ADMIN
-      </div>
-    </section>
+    </div>
   </main>
 
+  <!-- HPA SECTION -->
+  <main id="hpa-section" class="app-shell">
+    <div class="app-inner">
+      <!-- BACK NAVIGATION -->
+      <div class="back-nav">
+        <button class="back-button" onclick="showDashboard()" type="button">
+          ← Back to Dashboard
+        </button>
+        <div class="breadcrumb">
+          <span>Dashboard</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">HPA Management</span>
+        </div>
+      </div>
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <img src="hpa_logo.png" alt="HPA Logo" class="logo" />
+          <div class="title-block">
+            <h1>HPA Management</h1>
+            <p class="subtitle">Houseplant Area operations and store management.</p>
+          </div>
+        </div>
+        <div class="header-pill">
+          HPA Module • v8.0
+        </div>
+      </header>
+
+      <!-- HPA TABS -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="store-ops" type="button">🏪 Store Operations</button>
+        <button class="tab" data-tab="inventory" type="button">📊 Inventory</button>
+        <button class="tab" data-tab="standards" type="button">✅ Standards</button>
+      </nav>
+
+      <!-- Store operations content here -->
+      <section id="tab-store-ops" class="tab-content">
+        <!-- Store visit checklists and operations content -->
+      </section>
+
+      <section id="tab-inventory" class="tab-content hidden">
+        <!-- Inventory management content -->
+      </section>
+
+      <section id="tab-standards" class="tab-content hidden">
+        <!-- Picture standards and compliance content -->
+      </section>
+    </div>
+  </main>
+
+  <!-- ADMIN SECTION -->
+  <main id="admin-section" class="app-shell">
+    <div class="app-inner">
+      <!-- BACK NAVIGATION -->
+      <div class="back-nav">
+        <button class="back-button" onclick="showDashboard()" type="button">
+          ← Back to Dashboard
+        </button>
+        <div class="breadcrumb">
+          <span>Dashboard</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Administration</span>
+        </div>
+      </div>
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <img src="hf_logo.png" alt="Admin Logo" class="logo" />
+          <div class="title-block">
+            <h1>Administration</h1>
+            <p class="subtitle">System management and configuration.</p>
+          </div>
+        </div>
+        <div class="header-pill">
+          Admin Module • v8.0
+        </div>
+      </header>
+
+      <!-- ADMIN TABS -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="users" type="button">👥 User Management</button>
+        <button class="tab" data-tab="reports" type="button">📊 Reports</button>
+        <button class="tab" data-tab="settings" type="button">⚙️ Settings</button>
+        <button class="tab" data-tab="audit" type="button">📋 Audit Logs</button>
+      </nav>
+
+      <!-- USER MANAGEMENT TAB -->
+      <section id="tab-users" class="tab-content">
+        <div class="section-header">
+          <div class="section-title">User Management</div>
+          <p class="section-subtitle">
+            Manage user accounts, permissions, and access levels.
+          </p>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">👥</div>
+              <div class="admin-card-title">Active Users</div>
+            </div>
+            <div class="admin-card-content">
+              <div class="admin-stat">
+                <span class="admin-stat-label">Total Users</span>
+                <span class="admin-stat-value">247</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Field Supervisors</span>
+                <span class="admin-stat-value">85</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">District Managers</span>
+                <span class="admin-stat-value">12</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Administrators</span>
+                <span class="admin-stat-value">4</span>
+              </div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">View All</button>
+              <button class="admin-button" type="button">Add User</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">🔐</div>
+              <div class="admin-card-title">Access Control</div>
+            </div>
+            <div class="admin-card-content">
+              <div class="admin-stat">
+                <span class="admin-stat-label">Active Sessions</span>
+                <span class="admin-stat-value">43</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Failed Logins (24h)</span>
+                <span class="admin-stat-value">7</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Password Resets</span>
+                <span class="admin-stat-value">3</span>
+              </div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">Security Settings</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">📋</div>
+              <div class="admin-card-title">Role Management</div>
+            </div>
+            <div class="admin-card-content">
+              <div class="admin-stat">
+                <span class="admin-stat-label">User Roles</span>
+                <span class="admin-stat-value">8</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Permission Sets</span>
+                <span class="admin-stat-value">24</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat-label">Custom Permissions</span>
+                <span class="admin-stat-value">156</span>
+              </div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">Manage Roles</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS TAB -->
+      <section id="tab-reports" class="tab-content hidden">
+        <div class="section-header">
+          <div class="section-title">Reports & Analytics</div>
+          <p class="section-subtitle">
+            Generate and view operational reports and analytics.
+          </p>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">📈</div>
+              <div class="admin-card-title">Weekly Reports</div>
+            </div>
+            <div class="admin-card-content">
+              <p>Generate weekly operational reports including inventory, sales, and field activities.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">Generate Report</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">📊</div>
+              <div class="admin-card-title">Performance Metrics</div>
+            </div>
+            <div class="admin-card-content">
+              <p>View KPIs and performance metrics across all operations.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">View Metrics</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-icon">💾</div>
+              <div class="admin-card-title">Data Export</div>
+            </div>
+            <div class="admin-card-content">
+              <p>Export data for external analysis and reporting.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-button" type="button">Export Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS TAB -->
+      <section id="tab-settings" class="tab-content hidden">
+        <div class="section-header">
+          <div class="section-title">System Settings</div>
+          <p class="section-subtitle">
+            Configure system preferences and operational parameters.
+          </p>
+        </div>
+        <!-- Settings content here -->
+      </section>
+
+      <!-- AUDIT LOGS TAB -->
+      <section id="tab-audit" class="tab-content hidden">
+        <div class="section-header">
+          <div class="section-title">Audit Logs</div>
+          <p class="section-subtitle">
+            System activity logs and user action history.
+          </p>
+        </div>
+        <!-- Audit log content here -->
+      </section>
+    </div>
+  </main>
+
+  <!-- Include all popup modals here -->
+  <!-- SKU POPUP, CARE POPUP, PEST POPUP, etc. -->
+
   <script>
-    // Simple front-end "router" for Role → Hub → Page
-    const state = {
-      role: null,
-      company: null
-    };
-
-    const screenLogin = document.getElementById("screen-login");
-    const screenHub   = document.getElementById("screen-hub");
-    const screenApp   = document.getElementById("screen-app");
-
-    const hubTitle    = document.getElementById("hubTitle");
-    const headerPill  = document.getElementById("headerPill");
-    const crumbs      = document.getElementById("crumbs");
-    const pageTitle   = document.getElementById("pageTitle");
-
-    const btnBackToHub   = document.getElementById("btnBackToHub");
-    const btnSwitchRole  = document.getElementById("btnSwitchRole");
-    const backToLogin    = document.getElementById("backToLogin");
-
-    function showScreen(name) {
-      screenLogin.classList.add("hidden");
-      screenHub.classList.add("hidden");
-      screenApp.classList.add("hidden");
-      if (name === "login")  screenLogin.classList.remove("hidden");
-      if (name === "hub")    screenHub.classList.remove("hidden");
-      if (name === "app")    screenApp.classList.remove("hidden");
+    /* NAVIGATION FUNCTIONS */
+    function showDashboard() {
+      document.getElementById('dashboard').style.display = 'flex';
+      document.getElementById('hf-section').classList.remove('active');
+      document.getElementById('hpa-section').classList.remove('active');
+      document.getElementById('admin-section').classList.remove('active');
     }
 
-    function updateHeader() {
-      const role = state.role || "Unknown role";
-      const company = state.company || "—";
-      crumbs.textContent = role + " · " + company.toUpperCase();
-      pageTitle.textContent = company.toUpperCase() + " Page";
-      headerPill.textContent = `Internal tool • ${role}`;
-    }
-
-    function onRoleSelected(role) {
-      state.role = role;
-      state.company = null;
-      hubTitle.textContent = `Welcome, ${role}`;
-      showScreen("hub");
-      headerPill.textContent = `Internal tool • ${role}`;
-    }
-
-    function onCompanySelected(company) {
-      state.company = company;
-      showScreen("app");
-      updateHeader();
-
-      // Show correct app page
-      document.querySelectorAll(".app-page").forEach(p => p.classList.add("hidden"));
-      const page = document.getElementById("page-" + company);
-      if (page) page.classList.remove("hidden");
-
-      // Reset tabs inside that page to first tab as active
-      resetTabsForCompany(company);
-    }
-
-    function resetTabsForCompany(company) {
-      const group = company; // using same key for data-tab-group
-      const firstTab = document.querySelector(`.tab[data-tab-group="${group}"]`);
-      if (!firstTab) return;
-
-      // deactivate all tabs in group
-      document.querySelectorAll(`.tab[data-tab-group="${group}"]`)
-        .forEach(t => t.classList.remove("active"));
-      firstTab.classList.add("active");
-
-      // hide all panels in group
-      const targetId = firstTab.dataset.tabTarget;
-      document.querySelectorAll(`[data-tab-panel="${group}"]`)
-        .forEach(p => p.classList.add("hidden"));
-      if (targetId) {
-        const panel = document.getElementById(targetId);
-        if (panel) panel.classList.remove("hidden");
+    function showSection(section) {
+      document.getElementById('dashboard').style.display = 'none';
+      
+      // Hide all sections
+      document.getElementById('hf-section').classList.remove('active');
+      document.getElementById('hpa-section').classList.remove('active');
+      document.getElementById('admin-section').classList.remove('active');
+      
+      // Show selected section
+      if (section === 'hf') {
+        document.getElementById('hf-section').classList.add('active');
+      } else if (section === 'hpa') {
+        document.getElementById('hpa-section').classList.add('active');
+      } else if (section === 'admin') {
+        document.getElementById('admin-section').classList.add('active');
       }
     }
 
-    // Role cards
-    document.querySelectorAll('#screen-login [data-role]').forEach(card => {
-      card.addEventListener("click", () => {
-        const role = card.dataset.role;
-        onRoleSelected(role);
-      });
+    /* Initialize dashboard view */
+    document.addEventListener("DOMContentLoaded", () => {
+      showDashboard();
+      
+      // Add all your existing JavaScript initialization code here
+      // Tab handlers, CSV loaders, etc.
     });
-
-    // Company cards
-    document.querySelectorAll('#screen-hub [data-company]').forEach(card => {
-      card.addEventListener("click", () => {
-        const company = card.dataset.company;
-        onCompanySelected(company);
-      });
-    });
-
-    // Hub/back buttons
-    backToLogin.addEventListener("click", () => {
-      state.role = null;
-      state.company = null;
-      showScreen("login");
-      headerPill.textContent = "Internal tool • v1.0";
-    });
-
-    btnBackToHub.addEventListener("click", () => {
-      state.company = null;
-      showScreen("hub");
-    });
-
-    btnSwitchRole.addEventListener("click", () => {
-      state.role = null;
-      state.company = null;
-      showScreen("login");
-      headerPill.textContent = "Internal tool • v1.0";
-    });
-
-    // Generic tab handler (works for HF, HPA, ADMIN)
-    document.addEventListener("click", (e) => {
-      const tab = e.target.closest(".tab[data-tab-group][data-tab-target]");
-      if (!tab) return;
-
-      const group = tab.dataset.tabGroup;
-      const targetId = tab.dataset.tabTarget;
-
-      // Activate clicked tab
-      document.querySelectorAll(`.tab[data-tab-group="${group}"]`)
-        .forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-
-      // Show matching panel
-      document.querySelectorAll(`[data-tab-panel="${group}"]`)
-        .forEach(p => p.classList.add("hidden"));
-
-      const panel = document.getElementById(targetId);
-      if (panel) panel.classList.remove("hidden");
-    });
-
-    // Initial screen
-    showScreen("login");
   </script>
 </body>
 </html>
