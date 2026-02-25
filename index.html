@@ -50,7 +50,6 @@
       min-height: 100vh;
     }
 
-    /* Enhanced background overlays */
     body::before {
       content: "";
       position: fixed;
@@ -157,7 +156,7 @@
       background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
     }
 
-    /* TOP TABS (MAIN NAV) */
+    /* TABS (used for dashboard + HPA sub-tabs) */
     .tabs {
       display: flex;
       gap: 8px;
@@ -222,7 +221,7 @@
       display: none;
     }
 
-    /* SECTION INNER TABS */
+    /* SECTION INNER TABS (Product / Admin inner sections) */
     .section-inner-tabs {
       display: inline-flex;
       flex-wrap: wrap;
@@ -811,12 +810,12 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.75);
       display: none;
-      align-items: flex-start;        /* show near top, not dead center */
+      align-items: flex-start;
       justify-content: center;
       z-index: 50;
       padding: 24px 16px 16px;
       backdrop-filter: blur(8px);
-      overflow-y: auto;               /* scroll overlay if content tall */
+      overflow-y: auto;
     }
 
     .popup {
@@ -833,7 +832,7 @@
 
     @media (max-width: 768px) {
       .popup {
-        margin-top: 8px;  /* avoid hugging very top on small screens */
+        margin-top: 8px;
       }
     }
 
@@ -1122,1111 +1121,1128 @@
         </div>
       </header>
 
-      <!-- TOP TABS -->
-      <nav class="tabs">
-        <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
-        <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; Identification</button>
-        <button class="tab" data-tab="ops" type="button">🛠 Store Operations</button>
+      <!-- DASHBOARD TABS (HF / HPA / ADMIN) -->
+      <nav class="tabs" id="dashboardTabs">
+        <button class="tab active" data-dashboard="hf" type="button">🏠 HF</button>
+        <button class="tab" data-dashboard="hpa" type="button">🌿 HPA</button>
+        <button class="tab" data-dashboard="admin" type="button">🛠 ADMIN</button>
       </nav>
 
-      <!-- PRODUCT INFO TAB -->
-      <section id="tab-products" class="tab-content">
-        <div class="section-header">
-          <div class="section-title">Product Info</div>
-          <p class="section-subtitle">
-            Search SKUs, review what’s shipping, and see weekly breakdowns.
+      <!-- HF DASHBOARD SECTION -->
+      <section id="dashboard-hf" class="tab-content">
+        <div class="glass-panel">
+          <div class="section-header">
+            <div class="section-title">HF Dashboard</div>
+            <p class="section-subtitle">
+              High-level overview landing area. Use the HPA and ADMIN tabs above for detailed tools.
+            </p>
+          </div>
+          <p style="font-size:0.85rem; color:var(--muted);">
+            <strong>HPA</strong> → Product Info (SKU, Orders) &amp; Care &amp; Identification.<br />
+            <strong>ADMIN</strong> → Store Operations, HPA Protocols, and Store Visit checklist.
           </p>
         </div>
+      </section>
 
-        <div class="section-inner-tabs">
-          <button class="section-inner-tab active products-inner-tab" data-products="skus" type="button">
-            SKU Catalogue
-          </button>
-          <button class="section-inner-tab products-inner-tab" data-products="orders" type="button">
-            Order Breakdown
-          </button>
-        </div>
+      <!-- HPA DASHBOARD SECTION -->
+      <section id="dashboard-hpa" class="tab-content hidden">
+        <!-- HPA-level tabs for Product Info & Care & Identification -->
+        <nav class="tabs" id="hpaTabs" style="margin-top:10px;">
+          <button class="tab active" data-hpa-tab="products" type="button">📦 Product Info</button>
+          <button class="tab" data-hpa-tab="care-id" type="button">🌿 Care &amp; Identification</button>
+        </nav>
 
-        <!-- PRODUCT INFO → SKUS -->
-        <section id="products-skus" class="section-inner-content">
-          <section class="controls">
-            <div class="search-wrapper">
-              <span class="search-icon">🔍</span>
-              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
-            </div>
-
-            <div class="filters">
-              <div class="filter-group">
-                <span class="filter-label">SKU</span>
-                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
-              </div>
-              <div class="filter-group">
-                <span class="filter-label">Sent In</span>
-                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
-              </div>
-              <div class="filter-group">
-                <span class="filter-label">Year Sent</span>
-                <select id="yearFilter" class="filter-input">
-                  <option value="all">All</option>
-                  <option>2022</option>
-                  <option>2023</option>
-                  <option>2024</option>
-                  <option>2025</option>
-                  <option>2026</option>
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <p class="section-subtitle" style="margin-top:6px; font-size:0.8rem;">
-            Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo, Holiday).
-          </p>
-
-          <div class="results-header">
-            <strong id="resultCount">0</strong> SKUs shown
+        <!-- PRODUCT INFO TAB (UNDER HPA) -->
+        <section id="tab-products" class="tab-content">
+          <div class="section-header">
+            <div class="section-title">Product Info</div>
+            <p class="section-subtitle">
+              Search SKUs, review what’s shipping, and see weekly breakdowns.
+            </p>
           </div>
 
-          <section id="skuGrid" class="sku-grid"></section>
-          <div id="emptyState" class="empty-state hidden">
-            No SKUs match your filters or the file could not be loaded.
-          </div>
-        </section>
-
-        <!-- PRODUCT INFO → ORDERS -->
-        <section id="products-orders" class="section-inner-content hidden">
-          <div class="order-table-wrapper">
-            <div class="order-table-title">Weekly Shipping Overview</div>
-
-            <table class="order-table">
-              <thead>
-                <tr>
-                  <th>Week #</th>
-                  <th>Week Date</th>
-                  <th>Shipping</th>
-                  <th>Additional</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="orderWeeksBody"></tbody>
-            </table>
-
-            <button id="orderDetailsToggle" class="order-details-toggle" type="button">
-              Show Detailed Breakdown
+          <div class="section-inner-tabs">
+            <button class="section-inner-tab active products-inner-tab" data-products="skus" type="button">
+              SKU Catalogue
             </button>
+            <button class="section-inner-tab products-inner-tab" data-products="orders" type="button">
+              Order Breakdown
+            </button>
+          </div>
 
-            <div id="orderDetailsPanel" class="order-details-panel hidden">
-              <div class="order-breakdown-wrapper">
-                <div class="ob-header-stack">
-                  <div class="ob-week-box">
-                    Shipping Week #:
-                    <span id="obWeekDisplay">TBD</span>
-                  </div>
-                  <div class="ob-grades-box">
-                    Store Grade Shipping:
-                    <span id="obGradesDisplay">All stores</span>
-                  </div>
+          <!-- PRODUCT INFO → SKUS -->
+          <section id="products-skus" class="section-inner-content">
+            <section class="controls">
+              <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+              </div>
+
+              <div class="filters">
+                <div class="filter-group">
+                  <span class="filter-label">SKU</span>
+                  <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
                 </div>
+                <div class="filter-group">
+                  <span class="filter-label">Sent In</span>
+                  <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+                </div>
+                <div class="filter-group">
+                  <span class="filter-label">Year Sent</span>
+                  <select id="yearFilter" class="filter-input">
+                    <option value="all">All</option>
+                    <option>2022</option>
+                    <option>2023</option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                  </select>
+                </div>
+              </div>
+            </section>
 
-                <div class="ob-grid">
-                  <div class="ob-box">
-                    <div class="ob-box-title">FLO</div>
-                    <div id="obFloBody" class="ob-box-body"></div>
+            <p class="section-subtitle" style="margin-top:6px; font-size:0.8rem;">
+              Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo, Holiday).
+            </p>
+
+            <div class="results-header">
+              <strong id="resultCount">0</strong> SKUs shown
+            </div>
+
+            <section id="skuGrid" class="sku-grid"></section>
+            <div id="emptyState" class="empty-state hidden">
+              No SKUs match your filters or the file could not be loaded.
+            </div>
+          </section>
+
+          <!-- PRODUCT INFO → ORDERS -->
+          <section id="products-orders" class="section-inner-content hidden">
+            <div class="order-table-wrapper">
+              <div class="order-table-title">Weekly Shipping Overview</div>
+
+              <table class="order-table">
+                <thead>
+                  <tr>
+                    <th>Week #</th>
+                    <th>Week Date</th>
+                    <th>Shipping</th>
+                    <th>Additional</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="orderWeeksBody"></tbody>
+              </table>
+
+              <button id="orderDetailsToggle" class="order-details-toggle" type="button">
+                Show Detailed Breakdown
+              </button>
+
+              <div id="orderDetailsPanel" class="order-details-panel hidden">
+                <div class="order-breakdown-wrapper">
+                  <div class="ob-header-stack">
+                    <div class="ob-week-box">
+                      Shipping Week #:
+                      <span id="obWeekDisplay">TBD</span>
+                    </div>
+                    <div class="ob-grades-box">
+                      Store Grade Shipping:
+                      <span id="obGradesDisplay">All stores</span>
+                    </div>
                   </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">FOL</div>
-                    <div id="obFolBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">UCO</div>
-                    <div id="obUcoBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">FHB</div>
-                    <div id="obFhbBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">TRP</div>
-                    <div id="obTrpBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">SPC</div>
-                    <div id="obSpcBody" class="ob-box-body"></div>
+
+                  <div class="ob-grid">
+                    <div class="ob-box">
+                      <div class="ob-box-title">FLO</div>
+                      <div id="obFloBody" class="ob-box-body"></div>
+                    </div>
+                    <div class="ob-box">
+                      <div class="ob-box-title">FOL</div>
+                      <div id="obFolBody" class="ob-box-body"></div>
+                    </div>
+                    <div class="ob-box">
+                      <div class="ob-box-title">UCO</div>
+                      <div id="obUcoBody" class="ob-box-body"></div>
+                    </div>
+                    <div class="ob-box">
+                      <div class="ob-box-title">FHB</div>
+                      <div id="obFhbBody" class="ob-box-body"></div>
+                    </div>
+                    <div class="ob-box">
+                      <div class="ob-box-title">TRP</div>
+                      <div id="obTrpBody" class="ob-box-body"></div>
+                    </div>
+                    <div class="ob-box">
+                      <div class="ob-box-title">SPC</div>
+                      <div id="obSpcBody" class="ob-box-body"></div>
+                    </div>
                   </div>
                 </div>
               </div>
+
             </div>
-
-          </div>
-        </section>
-      </section>
-
-      <!-- CARE & IDENTIFICATION TAB -->
-      <section id="tab-care-id" class="tab-content hidden">
-        <div class="section-header">
-          <div class="section-title">Care &amp; Identification</div>
-          <p class="section-subtitle">
-            Quick reference for plant care and pest identification.
-          </p>
-        </div>
-
-        <div class="inner-tabs">
-          <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
-          <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
-        </div>
-
-        <!-- CARE LIBRARY -->
-        <section id="inner-care-library" class="inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Care Library</div>
-            <div class="pc-search-wrapper">
-              <span class="pc-search-icon">🔎</span>
-              <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
-            </div>
-          </div>
-          <div class="pc-grid" id="plantCareGrid"></div>
+          </section>
         </section>
 
-        <!-- PEST IDENTIFICATION -->
-        <section id="inner-pest-id" class="inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Pest Identification</div>
-            <div class="pc-search-wrapper">
-              <span class="pc-search-icon">🔎</span>
-              <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-            </div>
-          </div>
-          <div class="pc-grid" id="pestGrid"></div>
-        </section>
-      </section>
-
-      <!-- STORE OPERATIONS TAB -->
-      <section id="tab-ops" class="tab-content hidden">
-        <div class="section-header">
-          <div class="section-title">Store Operations</div>
-          <p class="section-subtitle">
-            Damage flows, protocols, picture standards, and store visit checklist.
-          </p>
-        </div>
-
-        <div class="section-inner-tabs">
-          <button class="section-inner-tab active ops-inner-tab" data-ops="protocols" type="button">
-            HPA Protocols
-          </button>
-          <button class="section-inner-tab ops-inner-tab" data-ops="visit" type="button">
-            Store Visit
-          </button>
-        </div>
-
-        <!-- STORE OPS → HPA PROTOCOLS -->
-        <section id="ops-protocols" class="section-inner-content">
-          <div class="pc-header">
-            <div class="pc-title">HPA Protocols</div>
+        <!-- CARE & IDENTIFICATION TAB (UNDER HPA) -->
+        <section id="tab-care-id" class="tab-content hidden">
+          <div class="section-header">
+            <div class="section-title">Care &amp; Identification</div>
             <p class="section-subtitle">
-              Quick-reference workflows for claims, non-order days, inventory, BI, and picture standards.
+              Quick reference for plant care and pest identification.
             </p>
           </div>
 
-          <div class="hpa-inner-tabs">
-            <button class="hpa-inner-tab active" data-hpa="claims" type="button">Damage Claims</button>
-            <button class="hpa-inner-tab" data-hpa="nonorder" type="button">Non-Order Days</button>
-            <button class="hpa-inner-tab" data-hpa="inventory" type="button">Weekly Inventory</button>
-            <button class="hpa-inner-tab" data-hpa="bi" type="button">BI / Reporting</button>
-            <button class="hpa-inner-tab" data-hpa="pictures" type="button">Picture Standards</button>
+          <div class="inner-tabs">
+            <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
+            <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
           </div>
 
-          <!-- DAMAGE CLAIMS SUBTAB -->
-          <section id="hpa-claims" class="hpa-inner-content">
+          <!-- CARE LIBRARY -->
+          <section id="inner-care-library" class="inner-content hidden">
             <div class="pc-header">
-              <div class="pc-title">Damage Claims</div>
-              <p class="section-subtitle">
-                Follow these HF-standard flows for cold and pest-related damage.
-              </p>
+              <div class="pc-title">Care Library</div>
+              <div class="pc-search-wrapper">
+                <span class="pc-search-icon">🔎</span>
+                <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+              </div>
             </div>
-
-            <div class="damage-inner-tabs">
-              <button class="damage-inner-tab active" data-damage="cold" type="button">Cold Damage</button>
-              <button class="damage-inner-tab" data-damage="pest" type="button">Pest Damage</button>
-            </div>
-
-            <!-- COLD DAMAGE FLOW CHART -->
-            <section id="damage-cold" class="damage-inner-content">
-              <div class="pc-card" style="margin-bottom:8px;">
-                <div class="pc-card-title">Cold Damage Claim Flow</div>
-                <p class="pc-card-subtitle">
-                  Use this when product has been damaged by cold/freezing conditions.
-                </p>
-              </div>
-
-              <div class="flow-list">
-                <div class="flow-step">
-                  <div class="flow-step-number">1</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Identify Cold Damage</div>
-                    <div class="flow-step-role">FS – Field Supervisor</div>
-                    <div class="flow-step-text">
-                      Confirm symptoms of cold damage (water‑soaked or darkened tissue, limp/collapsed growth,
-                      damage showing a day or two after exposure).
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">2</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Take Photos</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Capture clear photos of full tables/racks and close‑ups of the worst and “typical” plants,
-                      plus any visible cold exposure source.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">3</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Send Photos to DM / RMM</div>
-                    <div class="flow-step-role">FS → DM / RMM</div>
-                    <div class="flow-step-text">
-                      Text or email photos with store #, department, and a quick description of what you’re seeing.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">4</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Notify Home Depot SM / ASM</div>
-                    <div class="flow-step-role">FS → Store Management</div>
-                    <div class="flow-step-text">
-                      Let the Store or Assistant Store Manager know about the cold damage, what product is affected,
-                      and that a claim process is being started.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">5</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Scan Product Under Training Mode</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Scan the affected product under training mode as directed by your process so the store is not
-                      charged incorrectly at the register.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">6</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Capture Receipt &amp; Share</div>
-                    <div class="flow-step-role">FS → DM / RMM</div>
-                    <div class="flow-step-text">
-                      Take a picture of the receipt or transaction record tied to the adjustment
-                      and send it to your DM/RMM.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">7</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Provide Copy to Store for Store Claim</div>
-                    <div class="flow-step-role">FS → Store</div>
-                    <div class="flow-step-text">
-                      Give a copy of the receipt to the store so they can file/attach it to the store claim as needed.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">8</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Record Cold Damage Internally</div>
-                    <div class="flow-step-role">FS / Office</div>
-                    <div class="flow-step-text">
-                      Record the cold-damage loss in the required internal system or tool according to current HF
-                      / customer procedures.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">9</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Share Claim Number with RMM</div>
-                    <div class="flow-step-role">FS → RMM</div>
-                    <div class="flow-step-text">
-                      Once you have the claim number from the store, send it to your Regional Merchandising Manager
-                      for the cold damage tracking sheet.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">10</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Complete Cold Damage Spreadsheet</div>
-                    <div class="flow-step-role">RMM</div>
-                    <div class="flow-step-text">
-                      RMM fills out the cold damage spreadsheet and forwards it to the appropriate contacts
-                      to submit to Depot.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">11</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Approval &amp; Payment / Credit</div>
-                    <div class="flow-step-role">Office / Depot</div>
-                    <div class="flow-step-text">
-                      Claim is submitted to Depot for approval. Once approved, payment/credit is processed
-                      according to current HF / Depot accounting procedures.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- PEST DAMAGE FLOW CHART (HF ONLY) -->
-            <section id="damage-pest" class="damage-inner-content hidden">
-              <div class="pc-card" style="margin-bottom:8px;">
-                <div class="pc-card-title">Pest Damage Claim Flow</div>
-                <p class="pc-card-subtitle">
-                  HF-only workflow for pest-related damage. No store involvement.
-                </p>
-              </div>
-
-              <div class="flow-list">
-
-                <div class="flow-step">
-                  <div class="flow-step-number">1</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Identify Pest Damage</div>
-                    <div class="flow-step-role">FS – Field Supervisor</div>
-                    <div class="flow-step-text">
-                      Confirm that damage is pest‑related: webbing, speckling, sticky residue, chewing, or visible pests.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">2</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Take Photos</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Take clear close‑ups of pests/webbing and wide shots of affected areas to show total volume affected.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">3</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Isolate Affected Product</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Pull heavily affected plants away from healthy stock and clearly mark them as HOLD / DAMAGED
-                      so they are not watered or handled normally.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">4</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Document Damage</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Record affected SKUs, approximate quantities, percentage of loss, and any treatment attempts
-                      or history (product name, date, etc.).
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">5</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Notify HF Leadership</div>
-                    <div class="flow-step-role">FS → DM → RMM</div>
-                    <div class="flow-step-text">
-                      Send photos and documentation to your District Manager and Regional Merchandising Manager
-                      for review and next steps.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">6</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Submit Pest Claim Internally</div>
-                    <div class="flow-step-role">RMM / Office</div>
-                    <div class="flow-step-text">
-                      RMM and Office team complete internal pest-damage documentation and submit to HF systems
-                      for review and credit processing according to current procedures.
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </section>
+            <div class="pc-grid" id="plantCareGrid"></div>
           </section>
 
-          <!-- NON-ORDER DAYS SUBTAB -->
-          <section id="hpa-nonorder" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Non-Order Day Protocol</div>
-              <p class="pc-card-subtitle">
-                What to focus on in the HPA when there is no order delivering that day.
-              </p>
-            </div>
-
-            <div class="flow-list">
-              <div class="flow-step">
-                <div class="flow-step-number">1</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Walk the HPA &amp; Cull</div>
-                  <div class="flow-step-text">
-                    Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">2</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Clean Plants</div>
-                  <div class="flow-step-text">
-                    Deadhead blooms and remove yellowing or damaged leaves so the floor looks fresh and healthy.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">3</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Merchandise by POD / Table / Racks</div>
-                  <div class="flow-step-text">
-                    Reset tables, PODs, and CC racks:
-                    short‑to‑tall, category‑with‑category, no empty spaces, and price labels faced and clean.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">4</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Sweep &amp; Clean</div>
-                  <div class="flow-step-text">
-                    Sweep top and bottom of PODs and the floor; remove extra material (pots, bags, trays, trash) from
-                    under tables and from the sales view.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">5</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Water &amp; Check Drainage</div>
-                  <div class="flow-step-text">
-                    Water as needed (goal: twice per week). Remove extra water from pots if overwatered.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">6</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Take Pictures &amp; Recap</div>
-                  <div class="flow-step-text">
-                    Take clear pictures of all PODs, tables, and racks (individually) and send a recap to your supervisor
-                    summarizing work completed and any inventory concerns.
-                  </div>
-                </div>
+          <!-- PEST IDENTIFICATION -->
+          <section id="inner-pest-id" class="inner-content hidden">
+            <div class="pc-header">
+              <div class="pc-title">Pest Identification</div>
+              <div class="pc-search-wrapper">
+                <span class="pc-search-icon">🔎</span>
+                <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
               </div>
             </div>
-          </section>
-
-          <!-- WEEKLY INVENTORY SUBTAB -->
-          <section id="hpa-inventory" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Weekly Inventory Process (Supervisors)</div>
-              <p class="pc-card-subtitle">
-                High-level checklist based on the weekly inventory process for HF HPA supervisors.
-              </p>
-            </div>
-
-            <div class="flow-list">
-              <div class="flow-step">
-                <div class="flow-step-number">Mon</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Order Skips &amp; BI Review</div>
-                  <div class="flow-step-text">
-                    • Send requests for stores that need to skip an order or category to your district by their deadline.<br />
-                    • Base decisions on rack counts and notes from the previous week.<br />
-                    • Review stores in BI and note categories with inventory opportunities or issues.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Tue</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">First Delivery &amp; PICAS Check</div>
-                  <div class="flow-step-text">
-                    • Be on the floor for the first weekly delivery when possible.<br />
-                    • Check product quality and ensure guidelines are followed.<br />
-                    • Compare delivery to PICAS and send discrepancies to the HPA team.<br />
-                    • Note items that are selling fast or not selling and share with the HPA team and your supervisor.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Wed–Thu</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Pictures &amp; Negative Inventory</div>
-                  <div class="flow-step-text">
-                    • Take pictures of stores that received the weekly order and send to HF-HPA and supervisors
-                      (subject: HPA/Store#/Date).<br />
-                    • Continue checking negatives and what’s selling or not.<br />
-                    • Track rack counts by store and what product is on each rack once orders are complete.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Fri–Sat</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Close Out &amp; Requests</div>
-                  <div class="flow-step-text">
-                    • Send rack counts, negative counts, and remaining pictures to your district.<br />
-                    • Send inventory requests to the HPA team (Friday or Monday morning).
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- BI / REPORTING SUBTAB -->
-          <section id="hpa-bi" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">BI Check List (Supervisors)</div>
-              <p class="pc-card-subtitle">
-                Key BI areas to review: inventory, negatives, comps, and sales performance.
-              </p>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Inventory &amp; Negatives</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use the Consignment Report tab for roll-over inventory and units on hand.</li>
-                <li>Set ship date range from 1/1/2021 to current day for accurate inventory.</li>
-                <li>Sort inventory column from smallest to largest; review negatives and unusually large numbers.</li>
-                <li>Review sell-through by store, by SKU, and by category.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Sales &amp; Comps</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use the Dashboard tab to review comp $$ and comp sell-through vs. last year.</li>
-                <li>Use the Monthly Sales tab to compare month-to-month performance.</li>
-                <li>Use Consignment Report (units) and Consignment Analysis (sales $$) as needed.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Transfers &amp; Adjustments</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>On the Consignment Report tab, scroll to see transfer from / transfer to details.</li>
-                <li>Use adjustment / transfer fields to understand inventory movement between locations.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">BI Features &amp; Filters</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use drill down / drill up on each page (by store, SKU, category, supervisor).</li>
-                <li>Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.</li>
-                <li>Click on any line to update charts/graphs to that selection; watch pie charts and graphs change.</li>
-              </ul>
-            </div>
-          </section>
-
-          <!-- PICTURE STANDARDS SUBTAB -->
-          <section id="hpa-pictures" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Picture Standards Checklist</div>
-              <p class="pc-card-subtitle">
-                Use this when deciding if photos are training-only or can be sent to Home Depot.
-              </p>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Basic Quality</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Pictures are clear and not blurry.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Retail labels are front facing and readable.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">POD / Table Layout</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Correct category is in the correct spot (if not, there is a clear reason).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Top of POD is stripped across short-to-tall; décor blocked but still short-to-tall.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Bottom of POD is 2 rows deep and organized (not completely packed solid).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                No trays used for 6" pots or larger; trays only for PW Littles / 4" foliage.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                PODs are clearly shoppable (no racks blocking access).
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Racks &amp; Displays</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Vigoro racks are filled correctly and organized.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                PW racks are filled correctly and organized.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Basket displays are organized with one variety per rod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Surplus racks are organized by category and condensed where possible.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Inventory &amp; Space</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                There is no obvious “empty space” – product is not too sparse or too tight.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Racks and tables are not overloaded; layout makes sense for current inventory level.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Cleanliness &amp; Timing</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Floor is swept, clear of clutter and garbage.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Background is clear of unnecessary items and distractions.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Pictures are taken before watering (avoids wet floor / shiny pots).
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Where Should Photos Go?</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Decide if this photo should be sent to Home Depot or kept for HF/HPA inventory review and training only.
-              </label>
-            </div>
+            <div class="pc-grid" id="pestGrid"></div>
           </section>
         </section>
+      </section>
 
-        <!-- STORE OPS → STORE VISIT -->
-        <section id="ops-visit" class="section-inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Store Visit Checklist (Indoor)</div>
+      <!-- ADMIN DASHBOARD SECTION -->
+      <section id="dashboard-admin" class="tab-content hidden">
+        <!-- STORE OPERATIONS TAB (UNDER ADMIN) -->
+        <section id="tab-ops" class="tab-content">
+          <div class="section-header">
+            <div class="section-title">Store Operations</div>
             <p class="section-subtitle">
-              Use these subtabs to work through your indoor HPA checklist during a visit.
+              Damage flows, protocols, picture standards, and store visit checklist.
             </p>
           </div>
 
-          <div class="visit-meta">
-            <div class="form-group small">
-              <label class="form-label" for="visitStore">Store #</label>
-              <input id="visitStore" class="claim-input" placeholder="e.g. 1234" />
-            </div>
-            <div class="form-group small">
-              <label class="form-label" for="visitDate">Visit Date</label>
-              <input id="visitDate" class="claim-input" type="date" />
-            </div>
-            <div class="form-group small">
-              <label class="form-label" for="visitRep">Rep / Visitor</label>
-              <input id="visitRep" class="claim-input" placeholder="Your name" />
-            </div>
+          <div class="section-inner-tabs">
+            <button class="section-inner-tab active ops-inner-tab" data-ops="protocols" type="button">
+              HPA Protocols
+            </button>
+            <button class="section-inner-tab ops-inner-tab" data-ops="visit" type="button">
+              Store Visit
+            </button>
           </div>
 
-          <!-- STORE VISIT INNER TABS -->
-          <div class="store-inner-tabs">
-            <button class="store-inner-tab active" data-store="walk" type="button">Store Walk</button>
-            <button class="store-inner-tab" data-store="pods" type="button">Pod Merchandising</button>
-            <button class="store-inner-tab" data-store="cleanup" type="button">Clean Up / Water</button>
-            <button class="store-inner-tab" data-store="pictures" type="button">Pictures</button>
-          </div>
-
-          <!-- STORE WALK SUBTAB -->
-          <section id="store-walk" class="store-inner-content">
-            <!-- 1. Readiness -->
-            <div class="checklist-section">
-              <div class="checklist-title">1. Readiness</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check shopping areas to make sure pods, tables, and overflow racks are shoppable in the HPA.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Emergency spot water any product that is dry or wilted.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                If product might bounce back, water it and place it in the corner or on an empty rack (off main displays).
-              </label>
+          <!-- STORE OPS → HPA PROTOCOLS -->
+          <section id="ops-protocols" class="section-inner-content">
+            <div class="pc-header">
+              <div class="pc-title">HPA Protocols</div>
+              <p class="section-subtitle">
+                Quick-reference workflows for claims, non-order days, inventory, BI, and picture standards.
+              </p>
             </div>
 
-            <!-- 2. Delivery Check -->
-            <div class="checklist-section">
-              <div class="checklist-title">2. Delivery Check</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                If a houseplant shipment is scheduled, walk inside the store and receiving to locate your delivery.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Unwrap your delivery and stage racks in the racetrack so they are shoppable.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check all product for damage and pests.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries.
-              </label>
+            <div class="hpa-inner-tabs">
+              <button class="hpa-inner-tab active" data-hpa="claims" type="button">Damage Claims</button>
+              <button class="hpa-inner-tab" data-hpa="nonorder" type="button">Non-Order Days</button>
+              <button class="hpa-inner-tab" data-hpa="inventory" type="button">Weekly Inventory</button>
+              <button class="hpa-inner-tab" data-hpa="bi" type="button">BI / Reporting</button>
+              <button class="hpa-inner-tab" data-hpa="pictures" type="button">Picture Standards</button>
             </div>
 
-            <!-- 3. HF App -->
-            <div class="checklist-section">
-              <div class="checklist-title">3. HF App</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Open your HF App and review the Houseplant Guidelines for the week before resetting pods and tables.
-              </label>
-            </div>
+            <!-- DAMAGE CLAIMS SUBTAB -->
+            <section id="hpa-claims" class="hpa-inner-content">
+              <div class="pc-header">
+                <div class="pc-title">Damage Claims</div>
+                <p class="section-subtitle">
+                  Follow these HF-standard flows for cold and pest-related damage.
+                </p>
+              </div>
+
+              <div class="damage-inner-tabs">
+                <button class="damage-inner-tab active" data-damage="cold" type="button">Cold Damage</button>
+                <button class="damage-inner-tab" data-damage="pest" type="button">Pest Damage</button>
+              </div>
+
+              <!-- COLD DAMAGE FLOW CHART -->
+              <section id="damage-cold" class="damage-inner-content">
+                <div class="pc-card" style="margin-bottom:8px;">
+                  <div class="pc-card-title">Cold Damage Claim Flow</div>
+                  <p class="pc-card-subtitle">
+                    Use this when product has been damaged by cold/freezing conditions.
+                  </p>
+                </div>
+
+                <div class="flow-list">
+                  <div class="flow-step">
+                    <div class="flow-step-number">1</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Identify Cold Damage</div>
+                      <div class="flow-step-role">FS – Field Supervisor</div>
+                      <div class="flow-step-text">
+                        Confirm symptoms of cold damage (water‑soaked or darkened tissue, limp/collapsed growth,
+                        damage showing a day or two after exposure).
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">2</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Take Photos</div>
+                      <div class="flow-step-role">FS</div>
+                      <div class="flow-step-text">
+                        Capture clear photos of full tables/racks and close‑ups of the worst and “typical” plants,
+                        plus any visible cold exposure source.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">3</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Send Photos to DM / RMM</div>
+                      <div class="flow-step-role">FS → DM / RMM</div>
+                      <div class="flow-step-text">
+                        Text or email photos with store #, department, and a quick description of what you’re seeing.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">4</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Notify Home Depot SM / ASM</div>
+                      <div class="flow-step-role">FS → Store Management</div>
+                      <div class="flow-step-text">
+                        Let the Store or Assistant Store Manager know about the cold damage, what product is affected,
+                        and that a claim process is being started.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">5</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Scan Product Under Training Mode</div>
+                      <div class="flow-step-role">FS</div>
+                      <div class="flow-step-text">
+                        Scan the affected product under training mode as directed by your process so the store is not
+                        charged incorrectly at the register.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">6</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Capture Receipt &amp; Share</div>
+                      <div class="flow-step-role">FS → DM / RMM</div>
+                      <div class="flow-step-text">
+                        Take a picture of the receipt or transaction record tied to the adjustment
+                        and send it to your DM/RMM.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">7</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Provide Copy to Store for Store Claim</div>
+                      <div class="flow-step-role">FS → Store</div>
+                      <div class="flow-step-text">
+                        Give a copy of the receipt to the store so they can file/attach it to the store claim as needed.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">8</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Record Cold Damage Internally</div>
+                      <div class="flow-step-role">FS / Office</div>
+                      <div class="flow-step-text">
+                        Record the cold-damage loss in the required internal system or tool according to current HF
+                        / customer procedures.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">9</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Share Claim Number with RMM</div>
+                      <div class="flow-step-role">FS → RMM</div>
+                      <div class="flow-step-text">
+                        Once you have the claim number from the store, send it to your Regional Merchandising Manager
+                        for the cold damage tracking sheet.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">10</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Complete Cold Damage Spreadsheet</div>
+                      <div class="flow-step-role">RMM</div>
+                      <div class="flow-step-text">
+                        RMM fills out the cold damage spreadsheet and forwards it to the appropriate contacts
+                        to submit to Depot.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">11</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Approval &amp; Payment / Credit</div>
+                      <div class="flow-step-role">Office / Depot</div>
+                      <div class="flow-step-text">
+                        Claim is submitted to Depot for approval. Once approved, payment/credit is processed
+                        according to current HF / Depot accounting procedures.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- PEST DAMAGE FLOW CHART (HF ONLY) -->
+              <section id="damage-pest" class="damage-inner-content hidden">
+                <div class="pc-card" style="margin-bottom:8px;">
+                  <div class="pc-card-title">Pest Damage Claim Flow</div>
+                  <p class="pc-card-subtitle">
+                    HF-only workflow for pest-related damage. No store involvement.
+                  </p>
+                </div>
+
+                <div class="flow-list">
+                  <div class="flow-step">
+                    <div class="flow-step-number">1</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Identify Pest Damage</div>
+                      <div class="flow-step-role">FS – Field Supervisor</div>
+                      <div class="flow-step-text">
+                        Confirm that damage is pest‑related: webbing, speckling, sticky residue, chewing, or visible pests.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">2</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Take Photos</div>
+                      <div class="flow-step-role">FS</div>
+                      <div class="flow-step-text">
+                        Take clear close‑ups of pests/webbing and wide shots of affected areas to show total volume affected.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">3</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Isolate Affected Product</div>
+                      <div class="flow-step-role">FS</div>
+                      <div class="flow-step-text">
+                        Pull heavily affected plants away from healthy stock and clearly mark them as HOLD / DAMAGED
+                        so they are not watered or handled normally.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">4</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Document Damage</div>
+                      <div class="flow-step-role">FS</div>
+                      <div class="flow-step-text">
+                        Record affected SKUs, approximate quantities, percentage of loss, and any treatment attempts
+                        or history (product name, date, etc.).
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">5</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Notify HF Leadership</div>
+                      <div class="flow-step-role">FS → DM → RMM</div>
+                      <div class="flow-step-text">
+                        Send photos and documentation to your District Manager and Regional Merchandising Manager
+                        for review and next steps.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flow-arrow">⬇️</div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-number">6</div>
+                    <div class="flow-step-body">
+                      <div class="flow-step-title">Submit Pest Claim Internally</div>
+                      <div class="flow-step-role">RMM / Office</div>
+                      <div class="flow-step-text">
+                        RMM and Office team complete internal pest-damage documentation and submit to HF systems
+                        for review and credit processing according to current procedures.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </section>
+
+            <!-- NON-ORDER DAYS SUBTAB -->
+            <section id="hpa-nonorder" class="hpa-inner-content hidden">
+              <div class="pc-card" style="margin-bottom:8px;">
+                <div class="pc-card-title">Non-Order Day Protocol</div>
+                <p class="pc-card-subtitle">
+                  What to focus on in the HPA when there is no order delivering that day.
+                </p>
+              </div>
+
+              <div class="flow-list">
+                <div class="flow-step">
+                  <div class="flow-step-number">1</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Walk the HPA &amp; Cull</div>
+                    <div class="flow-step-text">
+                      Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">2</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Clean Plants</div>
+                    <div class="flow-step-text">
+                      Deadhead blooms and remove yellowing or damaged leaves so the floor looks fresh and healthy.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">3</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Merchandise by POD / Table / Racks</div>
+                    <div class="flow-step-text">
+                      Reset tables, PODs, and CC racks:
+                      short‑to‑tall, category‑with‑category, no empty spaces, and price labels faced and clean.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">4</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Sweep &amp; Clean</div>
+                    <div class="flow-step-text">
+                      Sweep top and bottom of PODs and the floor; remove extra material (pots, bags, trays, trash) from
+                      under tables and from the sales view.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">5</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Water &amp; Check Drainage</div>
+                    <div class="flow-step-text">
+                      Water as needed (goal: twice per week). Remove extra water from pots if overwatered.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">6</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Take Pictures &amp; Recap</div>
+                    <div class="flow-step-text">
+                      Take clear pictures of all PODs, tables, and racks (individually) and send a recap to your supervisor
+                      summarizing work completed and any inventory concerns.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- WEEKLY INVENTORY SUBTAB -->
+            <section id="hpa-inventory" class="hpa-inner-content hidden">
+              <div class="pc-card" style="margin-bottom:8px;">
+                <div class="pc-card-title">Weekly Inventory Process (Supervisors)</div>
+                <p class="pc-card-subtitle">
+                  High-level checklist based on the weekly inventory process for HF HPA supervisors.
+                </p>
+              </div>
+
+              <div class="flow-list">
+                <div class="flow-step">
+                  <div class="flow-step-number">Mon</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Order Skips &amp; BI Review</div>
+                    <div class="flow-step-text">
+                      • Send requests for stores that need to skip an order or category to your district by their deadline.<br />
+                      • Base decisions on rack counts and notes from the previous week.<br />
+                      • Review stores in BI and note categories with inventory opportunities or issues.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">Tue</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">First Delivery &amp; PICAS Check</div>
+                    <div class="flow-step-text">
+                      • Be on the floor for the first weekly delivery when possible.<br />
+                      • Check product quality and ensure guidelines are followed.<br />
+                      • Compare delivery to PICAS and send discrepancies to the HPA team.<br />
+                      • Note items that are selling fast or not selling and share with the HPA team and your supervisor.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">Wed–Thu</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Pictures &amp; Negative Inventory</div>
+                    <div class="flow-step-text">
+                      • Take pictures of stores that received the weekly order and send to HF-HPA and supervisors
+                        (subject: HPA/Store#/Date).<br />
+                      • Continue checking negatives and what’s selling or not.<br />
+                      • Track rack counts by store and what product is on each rack once orders are complete.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-number">Fri–Sat</div>
+                  <div class="flow-step-body">
+                    <div class="flow-step-title">Close Out &amp; Requests</div>
+                    <div class="flow-step-text">
+                      • Send rack counts, negative counts, and remaining pictures to your district.<br />
+                      • Send inventory requests to the HPA team (Friday or Monday morning).
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- BI / REPORTING SUBTAB -->
+            <section id="hpa-bi" class="hpa-inner-content hidden">
+              <div class="pc-card" style="margin-bottom:8px;">
+                <div class="pc-card-title">BI Check List (Supervisors)</div>
+                <p class="pc-card-subtitle">
+                  Key BI areas to review: inventory, negatives, comps, and sales performance.
+                </p>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Inventory &amp; Negatives</div>
+                <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
+                  <li>Use the Consignment Report tab for roll-over inventory and units on hand.</li>
+                  <li>Set ship date range from 1/1/2021 to current day for accurate inventory.</li>
+                  <li>Sort inventory column from smallest to largest; review negatives and unusually large numbers.</li>
+                  <li>Review sell-through by store, by SKU, and by category.</li>
+                </ul>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Sales &amp; Comps</div>
+                <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
+                  <li>Use the Dashboard tab to review comp $$ and comp sell-through vs. last year.</li>
+                  <li>Use the Monthly Sales tab to compare month-to-month performance.</li>
+                  <li>Use Consignment Report (units) and Consignment Analysis (sales $$) as needed.</li>
+                </ul>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Transfers &amp; Adjustments</div>
+                <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
+                  <li>On the Consignment Report tab, scroll to see transfer from / transfer to details.</li>
+                  <li>Use adjustment / transfer fields to understand inventory movement between locations.</li>
+                </ul>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">BI Features &amp; Filters</div>
+                <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
+                  <li>Use drill down / drill up on each page (by store, SKU, category, supervisor).</li>
+                  <li>Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.</li>
+                  <li>Click on any line to update charts/graphs to that selection; watch pie charts and graphs change.</li>
+                </ul>
+              </div>
+            </section>
+
+            <!-- PICTURE STANDARDS SUBTAB -->
+            <section id="hpa-pictures" class="hpa-inner-content hidden">
+              <div class="pc-card" style="margin-bottom:8px;">
+                <div class="pc-card-title">Picture Standards Checklist</div>
+                <p class="pc-card-subtitle">
+                  Use this when deciding if photos are training-only or can be sent to Home Depot.
+                </p>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Basic Quality</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Pictures are clear and not blurry.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Retail labels are front facing and readable.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">POD / Table Layout</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Correct category is in the correct spot (if not, there is a clear reason).
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Top of POD is stripped across short-to-tall; décor blocked but still short-to-tall.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Bottom of POD is 2 rows deep and organized (not completely packed solid).
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  No trays used for 6" pots or larger; trays only for PW Littles / 4" foliage.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  PODs are clearly shoppable (no racks blocking access).
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Racks &amp; Displays</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Vigoro racks are filled correctly and organized.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  PW racks are filled correctly and organized.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Basket displays are organized with one variety per rod.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Surplus racks are organized by category and condensed where possible.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Inventory &amp; Space</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  There is no obvious “empty space” – product is not too sparse or too tight.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Racks and tables are not overloaded; layout makes sense for current inventory level.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Cleanliness &amp; Timing</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Floor is swept, clear of clutter and garbage.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Background is clear of unnecessary items and distractions.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Pictures are taken before watering (avoids wet floor / shiny pots).
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">Where Should Photos Go?</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Decide if this photo should be sent to Home Depot or kept for HF/HPA inventory review and training only.
+                </label>
+              </div>
+            </section>
           </section>
 
-          <!-- POD MERCHANDISING SUBTAB -->
-          <section id="store-pods" class="store-inner-content hidden">
-            <!-- 1. Blooming / Orchid Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">1. Blooming / Orchid Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves and spent blooms on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks; keep colors together.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
+          <!-- STORE OPS → STORE VISIT -->
+          <section id="ops-visit" class="section-inner-content hidden">
+            <div class="pc-header">
+              <div class="pc-title">Store Visit Checklist (Indoor)</div>
+              <p class="section-subtitle">
+                Use these subtabs to work through your indoor HPA checklist during a visit.
+              </p>
             </div>
 
-            <!-- 2. Vigoro Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">2. Vigoro Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
+            <div class="visit-meta">
+              <div class="form-group small">
+                <label class="form-label" for="visitStore">Store #</label>
+                <input id="visitStore" class="claim-input" placeholder="e.g. 1234" />
+              </div>
+              <div class="form-group small">
+                <label class="form-label" for="visitDate">Visit Date</label>
+                <input id="visitDate" class="claim-input" type="date" />
+              </div>
+              <div class="form-group small">
+                <label class="form-label" for="visitRep">Rep / Visitor</label>
+                <input id="visitRep" class="claim-input" placeholder="Your name" />
+              </div>
             </div>
 
-            <!-- 3. Specialty Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">3. Specialty Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
+            <!-- STORE VISIT INNER TABS -->
+            <div class="store-inner-tabs">
+              <button class="store-inner-tab active" data-store="walk" type="button">Store Walk</button>
+              <button class="store-inner-tab" data-store="pods" type="button">Pod Merchandising</button>
+              <button class="store-inner-tab" data-store="cleanup" type="button">Clean Up / Water</button>
+              <button class="store-inner-tab" data-store="pictures" type="button">Pictures</button>
             </div>
 
-            <!-- 4. Hanging Basket Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">4. Hanging Basket Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod with the same variety on each bar using fresh product from deliveries or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Rotate baskets on the inside of the pod weekly.
-              </label>
+            <!-- STORE WALK SUBTAB -->
+            <section id="store-walk" class="store-inner-content">
+              <div class="checklist-section">
+                <div class="checklist-title">1. Readiness</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Check shopping areas to make sure pods, tables, and overflow racks are shoppable in the HPA.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Emergency spot water any product that is dry or wilted.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  If product might bounce back, water it and place it in the corner or on an empty rack (off main displays).
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">2. Delivery Check</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  If a houseplant shipment is scheduled, walk inside the store and receiving to locate your delivery.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Unwrap your delivery and stage racks in the racetrack so they are shoppable.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Check all product for damage and pests.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">3. HF App</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Open your HF App and review the Houseplant Guidelines for the week before resetting pods and tables.
+                </label>
+              </div>
+            </section>
+
+            <!-- POD MERCHANDISING SUBTAB -->
+            <section id="store-pods" class="store-inner-content hidden">
+              <div class="checklist-section">
+                <div class="checklist-title">1. Blooming / Orchid Pod</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves and spent blooms on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Sweep off your pod.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the pod short to tall with fresh product from your delivery or overflow racks; keep colors together.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Move older product to the bottom of the pods (not in the highlight area).
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the highlight area based on the HPA Guidelines.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the bottom of the pod two deep.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Make sure all labels are facing out.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">2. Vigoro Pod</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Sweep off your pod.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the pod short to tall with fresh product from your delivery or overflow racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Move older product to the bottom of the pods (not in the highlight area).
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the highlight area based on the HPA Guidelines.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the bottom of the pod two deep.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Make sure all labels are facing out.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">3. Specialty Pod</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Sweep off your pod.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the pod short to tall with fresh product from your delivery or overflow racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Move older product to the bottom of the pods (not in the highlight area).
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the highlight area based on the HPA Guidelines.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the bottom of the pod two deep.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Make sure all labels are facing out.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">4. Hanging Basket Pod</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock the pod with the same variety on each bar using fresh product from deliveries or overflow racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Rotate baskets on the inside of the pod weekly.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">5. Tropical Table(s)</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Sweep off your table.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock your table short to tall with fresh product from your delivery or overflow racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Make sure all labels are facing out.
+                </label>
+              </div>
+
+              <div class="checklist-section">
+                <div class="checklist-title">6. CC Racks</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Remove yellowing/dead leaves on all plants.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Restock racks short to tall with fresh product from your delivery or overflow racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Rotate product from the back of racks to the front weekly.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Condense and stage racks that will stay in the HPA.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Clean up empty racks and place them in the designated pickup location.
+                </label>
+              </div>
+            </section>
+
+            <!-- CLEAN UP / WATER SUBTAB -->
+            <section id="store-cleanup" class="store-inner-content hidden">
+              <div class="checklist-section">
+                <div class="checklist-title">Clean Up / Water</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Sweep around and under all tables and pods.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Water all product in the HPA, paying attention to dry or wilted plants.
+                </label>
+              </div>
+            </section>
+
+            <!-- PICTURES SUBTAB -->
+            <section id="store-pictures" class="store-inner-content hidden">
+              <div class="checklist-section">
+                <div class="checklist-title">Pictures</div>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Take pictures of your pods, tropical tables, and racks.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Ensure pictures are clear and show product, labels, and overall merchandising.
+                </label>
+                <label class="checklist-item">
+                  <input type="checkbox" />
+                  Send HPA pictures to your manager as directed.
+                </label>
+              </div>
+            </section>
+
+            <!-- VISIT NOTES + EXPORT -->
+            <div class="visit-notes-wrapper">
+              <div class="form-group">
+                <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
+                <textarea id="visitNotes" class="claim-textarea"
+                  placeholder="Key issues, wins, follow-ups, and anything for HF team."></textarea>
+              </div>
             </div>
 
-            <!-- 5. Tropical Table(s) -->
-            <div class="checklist-section">
-              <div class="checklist-title">5. Tropical Table(s)</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your table.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock your table short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
-            </div>
-
-            <!-- 6. CC Racks -->
-            <div class="checklist-section">
-              <div class="checklist-title">6. CC Racks</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock racks short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Rotate product from the back of racks to the front weekly.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Condense and stage racks that will stay in the HPA.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Clean up empty racks and place them in the designated pickup location.
-              </label>
-            </div>
+            <button id="exportVisitSummary" class="primary-button" type="button">
+              📄 Download Visit Summary (.txt)
+            </button>
           </section>
-
-          <!-- CLEAN UP / WATER SUBTAB -->
-          <section id="store-cleanup" class="store-inner-content hidden">
-            <div class="checklist-section">
-              <div class="checklist-title">Clean Up / Water</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep around and under all tables and pods.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Water all product in the HPA, paying attention to dry or wilted plants.
-              </label>
-            </div>
-          </section>
-
-          <!-- PICTURES SUBTAB -->
-          <section id="store-pictures" class="store-inner-content hidden">
-            <div class="checklist-section">
-              <div class="checklist-title">Pictures</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Take pictures of your pods, tropical tables, and racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Ensure pictures are clear and show product, labels, and overall merchandising.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Send HPA pictures to your manager as directed.
-              </label>
-            </div>
-          </section>
-
-          <!-- VISIT NOTES + EXPORT -->
-          <div class="visit-notes-wrapper">
-            <div class="form-group">
-              <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
-              <textarea id="visitNotes" class="claim-textarea"
-                placeholder="Key issues, wins, follow-ups, and anything for HF team."></textarea>
-            </div>
-          </div>
-
-          <button id="exportVisitSummary" class="primary-button" type="button">
-            📄 Download Visit Summary (.txt)
-          </button>
         </section>
       </section>
 
@@ -2299,7 +2315,7 @@
       </div>
 
       <div class="footer">
-        HF-HPA internal tool • v7.0 • Consolidated: Product Info • Care &amp; ID • Store Operations
+        HF-HPA internal tool • v7.0 • Consolidated: Dashboard • HPA • Admin
       </div>
 
     </div>
@@ -2496,29 +2512,57 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      /* MAIN TOP TABS */
-      const tabs = document.querySelectorAll(".tabs .tab");
-      const tabSections = {
-        "products": document.getElementById("tab-products"),
-        "care-id": document.getElementById("tab-care-id"),
-        "ops": document.getElementById("tab-ops")
+      /* DASHBOARD TABS (HF / HPA / ADMIN) */
+      const dashboardTabs = document.querySelectorAll("#dashboardTabs .tab");
+      const dashboardSections = {
+        hf: document.getElementById("dashboard-hf"),
+        hpa: document.getElementById("dashboard-hpa"),
+        admin: document.getElementById("dashboard-admin")
       };
 
-      function showTopTab(key) {
-        Object.entries(tabSections).forEach(([k, section]) => {
+      function showDashboard(key) {
+        Object.entries(dashboardSections).forEach(([k, section]) => {
           if (!section) return;
           section.classList.toggle("hidden", k !== key);
         });
-        tabs.forEach(t => t.classList.remove("active"));
-        const activeTab = document.querySelector(`.tabs .tab[data-tab="${key}"]`);
-        if (activeTab) activeTab.classList.add("active");
+
+        dashboardTabs.forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.dashboard === key);
+        });
       }
 
-      tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-          const key = tab.dataset.tab;
+      dashboardTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.dashboard;
           if (!key) return;
-          showTopTab(key);
+          showDashboard(key);
+          localStorage.setItem("hf_hpa_last_dashboard", key);
+        });
+      });
+
+      /* HPA TOP-LEVEL TABS (Product Info / Care & ID) */
+      const hpaTopTabs = document.querySelectorAll("#hpaTabs .tab");
+      const hpaTopSections = {
+        "products": document.getElementById("tab-products"),
+        "care-id": document.getElementById("tab-care-id")
+      };
+
+      function showHpaTopTab(key) {
+        Object.entries(hpaTopSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+
+        hpaTopTabs.forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.hpaTab === key);
+        });
+      }
+
+      hpaTopTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.hpaTab;
+          if (!key) return;
+          showHpaTopTab(key);
         });
       });
 
@@ -2546,7 +2590,7 @@
         });
       });
 
-      /* OPS INNER TABS */
+      /* OPS INNER TABS (Protocols / Visit) */
       const opsTabs = document.querySelectorAll(".ops-inner-tab");
       const opsSections = {
         protocols: document.getElementById("ops-protocols"),
@@ -2595,7 +2639,7 @@
         });
       });
 
-      /* HPA PROTOCOLS INNER TABS */
+      /* HPA PROTOCOLS INNER TABS (claims, nonorder, etc.) */
       const hpaTabs = document.querySelectorAll(".hpa-inner-tab");
       const hpaSections = {
         claims: document.getElementById("hpa-claims"),
@@ -3115,7 +3159,9 @@
       }
 
       /* INIT */
-      showTopTab("products");
+      const savedDashboard = localStorage.getItem("hf_hpa_last_dashboard") || "hf";
+      showDashboard(savedDashboard);
+      showHpaTopTab("products");
       showProductsTab("skus");
       showInnerTab("care-library");
       showHpaTab("claims");
