@@ -4,236 +4,237 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hampshire Farms Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-/* ====== GLOBAL STYLES ====== */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f4f6f8;
-}
-header {
-  background: #2c3e50;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-}
-nav {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-nav a {
-  color: white;
-  margin: 0 10px;
-  text-decoration: none;
-  font-weight: bold;
-}
-main {
-  padding: 1rem;
-}
-section {
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-h2 {
-  margin-top: 0;
-  color: #34495e;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-th {
-  background: #ecf0f1;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-.card {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 10px;
-  background: #fafafa;
-}
-.card img {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-}
-.search-box {
-  margin: 10px 0;
-  display: flex;
-  justify-content: flex-start;
-}
-.search-box input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-@media (max-width: 600px) {
-  nav {
-    flex-direction: column;
-  }
-}
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f4f6f8; color: #333; transition: background 0.3s, color 0.3s; }
+    body.dark { background: #1e1e1e; color: #f4f4f4; }
+    header {
+        background: #2c3e50; color: #fff; padding: 15px 30px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    header h1 { font-size: 1.5rem; }
+    .user-role { font-size: 1rem; }
+    .dashboard { padding: 20px; display: none; }
+    .filters { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+    .filters button {
+        padding: 10px 20px; border: none; background: #3498db; color: #fff;
+        font-size: 1rem; border-radius: 5px; cursor: pointer; transition: background 0.3s ease;
+    }
+    .filters button:hover { background: #2980b9; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+    .card {
+        background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 20px; transition: transform 0.3s ease;
+    }
+    body.dark .card { background: #2c2c2c; }
+    .card:hover { transform: translateY(-5px); }
+    .card h3 { margin-bottom: 10px; color: #2c3e50; }
+    body.dark .card h3 { color: #f4f4f4; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 0.9rem; }
+    th { background: #ecf0f1; }
+    body.dark th { background: #444; }
+    td[contenteditable="true"] { background: #f9f9f9; }
+    body.dark td[contenteditable="true"] { background: #555; }
+    canvas { width: 100% !important; height: 250px !important; }
+    .top-controls { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
+    .top-controls button {
+        padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;
+    }
+    .dark-toggle { background: #555; color: #fff; }
+    .export-btn { background: #27ae60; color: #fff; }
+    /* Login Screen */
+    .login-container {
+        display: flex; justify-content: center; align-items: center; height: 100vh;
+        background: #ecf0f1;
+    }
+    .login-box {
+        background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 300px; text-align: center;
+    }
+    .login-box h2 { margin-bottom: 20px; }
+    .login-box input, .login-box select {
+        width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;
+    }
+    .login-box button {
+        width: 100%; padding: 10px; background: #3498db; color: #fff; border: none; border-radius: 5px;
+        cursor: pointer;
+    }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 <header>
-  <h1>Hampshire Farms Dashboard</h1>
-  <nav>
-    <a href="#weeks">Order Weeks</a>
-    <a href="#breakdown">Order Breakdown</a>
-    <a href="#plants">Plant Database</a>
-    <a href="#pests">Pest Library</a>
-  </nav>
+    <h1>Hampshire Farms Dashboard</h1>
+    <div class="user-role">Role: <span id="currentRole">None</span></div>
 </header>
-<main>
-  <!-- Order Weeks -->
-  <section id="weeks">
-    <h2>Order Weeks Schedule</h2>
-    <table id="weeks-table">
-      <thead>
-        <tr><th>Week #</th><th>Date</th><th>Shipping</th><th>Additional</th><th>Status</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
 
-  <!-- Order Breakdown -->
-  <section id="breakdown">
-    <h2>Order Breakdown</h2>
-    <table id="breakdown-table">
-      <thead>
-        <tr><th>Week</th><th>Category</th><th>Size</th><th>Plant Name</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <!-- Plant Database -->
-  <section id="plants">
-    <h2>Plant Database</h2>
-    <div class="search-box">
-      <input type="text" id="plant-search" placeholder="Search plants by name...">
+<!-- Login Screen -->
+<div class="login-container" id="loginScreen">
+    <div class="login-box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Enter Username">
+        <select id="roleSelect">
+            <option value="HPA">HPA</option>
+            <option value="HF">HF</option>
+            <option value="ADMIN">ADMIN</option>
+        </select>
+        <button onclick="login()">Login</button>
     </div>
-    <table id="plants-table">
-      <thead>
-        <tr><th>SKU</th><th>Name</th><th>Category</th><th>Size</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+</div>
 
-  <!-- Pest Library -->
-  <section id="pests">
-    <h2>Pest Library</h2>
-    <div class="search-box">
-      <input type="text" id="pest-search" placeholder="Search pests by name...">
+<!-- Dashboard -->
+<section class="dashboard" id="dashboard">
+    <div class="top-controls">
+        <button class="dark-toggle" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <button class="export-btn" onclick="exportCSV()">Export CSV</button>
     </div>
-    <div id="pest-cards" class="grid"></div>
-  </section>
-</main>
+    <div class="filters">
+        <button onclick="filterRole('HPA')">HPA</button>
+        <button onclick="filterRole('HF')">HF</button>
+        <button onclick="filterRole('ADMIN')">ADMIN</button>
+    </div>
+    <div class="cards">
+        <div class="card" id="ordersCard">
+            <h3>Order Breakdown</h3>
+            <table id="ordersTable">
+                <thead>
+                    <tr><th>Week</th><th>Category</th><th>Size</th><th>Plant Name</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="card" id="weeksCard">
+            <h3>Upcoming Weeks</h3>
+            <table id="weeksTable">
+                <thead>
+                    <tr><th>Week #</th><th>Date</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="card" id="pestsCard">
+            <h3>Pest Management</h3>
+            <table id="pestsTable">
+                <thead>
+                    <tr><th>Pest</th><th>Prevention</th><th>Treatment</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h3>Orders by Category</h3>
+            <canvas id="ordersChart"></canvas>
+        </div>
+    </div>
+</section>
 
 <script>
-// ====== CSV Loader ======
-function loadCSV(file, callback) {
-  Papa.parse(file, {
-    download: true,
-    header: true,
-    complete: results => callback(results.data)
-  });
-}
-
-// ====== Load Order Weeks ======
-loadCSV('OrderWeeks.csv', data => {
-  const tbody = document.querySelector('#weeks-table tbody');
-  data.forEach(row => {
-    if(row['Week #']) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${row['Week #']}</td><td>${row['Week date']}</td><td>${row['Shipping']}</td><td>${row['Additional']}</td><td>${row['Status']}</td>`;
-      tbody.appendChild(tr);
+// Login System
+function login() {
+    const username = document.getElementById('username').value;
+    const role = document.getElementById('roleSelect').value;
+    if(username.trim() !== '') {
+        document.getElementById('currentRole').innerText = role;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+    } else {
+        alert('Please enter a username');
     }
-  });
-});
-
-// ====== Load Order Breakdown ======
-loadCSV('OrderBreakdown.csv', data => {
-  const tbody = document.querySelector('#breakdown-table tbody');
-  data.forEach(row => {
-    if(row['Week']) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${row['Week']}</td><td>${row['Category']}</td><td>${row['Size']}</td><td>${row['Plant Name']}</td>`;
-      tbody.appendChild(tr);
-    }
-  });
-});
-
-// ====== Load Plants (SKU + Name) ======
-let allPlants = [];
-loadCSV('SKU_Name_2026.csv', data => {
-  allPlants = data.filter(row => row.SKU && row.Name);
-  renderPlants(allPlants);
-});
-
-function renderPlants(plants) {
-  const tbody = document.querySelector('#plants-table tbody');
-  tbody.innerHTML = '';
-  plants.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${row.SKU}</td><td>${row.Name}</td><td>${row.Category || ''}</td><td>${row.Size || ''}</td>`;
-    tbody.appendChild(tr);
-  });
 }
 
-document.getElementById('plant-search').addEventListener('input', e => {
-  const term = e.target.value.toLowerCase();
-  const filtered = allPlants.filter(p => p.Name.toLowerCase().includes(term));
-  renderPlants(filtered);
-});
-
-// ====== Load Pests ======
-let allPests = [];
-loadCSV('pests.csv', data => {
-  allPests = data.filter(p => p.common_name);
-  renderPests(allPests);
-});
-
-function renderPests(pests) {
-  const container = document.getElementById('pest-cards');
-  container.innerHTML = '';
-  pests.forEach(pest => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <img src="images/${pest.image}" alt="${pest.common_name}">
-      <h3>${pest.common_name}</h3>
-      <p><strong>Scientific:</strong> ${pest.scientific_name}</p>
-      <p>${pest.what_they_look_like}</p>
-    `;
-    container.appendChild(card);
-  });
+// Dark Mode Toggle
+function toggleDarkMode() {
+    document.body.classList.toggle('dark');
 }
 
-document.getElementById('pest-search').addEventListener('input', e => {
-  const term = e.target.value.toLowerCase();
-  const filtered = allPests.filter(p => p.common_name.toLowerCase().includes(term));
-  renderPests(filtered);
-});
+// Role Filter
+function filterRole(role) {
+    document.getElementById('currentRole').innerText = role;
+}
+
+// CSV Parsing Helper
+async function loadCSV(url) {
+    const response = await fetch(url);
+    const data = await response.text();
+    return data.split('\n').slice(1).map(row => row.split(','));
+}
+
+// Load Data
+async function loadDashboard() {
+    const orders = await loadCSV('OrderBreakdown.csv');
+    const weeks = await loadCSV('OrderWeeks.csv');
+    const pests = await loadCSV('pests.csv');
+
+    const ordersTable = document.querySelector('#ordersTable tbody');
+    orders.forEach(row => {
+        if(row.length >= 4) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td contenteditable="true">${row[0]}</td><td contenteditable="true">${row[1]}</td><td contenteditable="true">${row[2]}</td><td contenteditable="true">${row[3]}</td>`;
+            ordersTable.appendChild(tr);
+        }
+    });
+
+    const weeksTable = document.querySelector('#weeksTable tbody');
+    weeks.forEach(row => {
+        if(row.length >= 5) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td contenteditable="true">${row[0]}</td><td contenteditable="true">${row[1]}</td><td contenteditable="true">${row[4]}</td>`;
+            weeksTable.appendChild(tr);
+        }
+    });
+
+    const pestsTable = document.querySelector('#pestsTable tbody');
+    pests.forEach(row => {
+        if(row.length >= 8) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td contenteditable="true">${row[1]}</td><td contenteditable="true">${row[6]}</td><td contenteditable="true">${row[7]}</td>`;
+            pestsTable.appendChild(tr);
+        }
+    });
+
+    // Chart
+    const categories = {};
+    orders.forEach(row => {
+        const category = row[1];
+        if(category) categories[category] = (categories[category] || 0) + 1;
+    });
+    const ctx = document.getElementById('ordersChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(categories),
+            datasets: [{
+                label: 'Orders',
+                data: Object.values(categories),
+                backgroundColor: '#3498db'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+}
+
+// Export CSV
+function exportCSV() {
+    let csv = '';
+    document.querySelectorAll('table').forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cols = row.querySelectorAll('th, td');
+            const rowData = Array.from(cols).map(col => `"${col.innerText}"`).join(',');
+            csv += rowData + '\n';
+        });
+        csv += '\n';
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'dashboard_data.csv';
+    a.click();
+}
+
+loadDashboard();
 </script>
 </body>
 </html>
