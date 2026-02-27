@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HF Hub</title>
+  <title>Hampshire Farms Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="hf_logo.png" />
 
   <style>
-    /* ======= BASE THEME (mostly from your existing app) ======= */
+    /* ========= CORE THEME ========= */
     :root {
       --bg: #020617;
       --bg-alt: #030a1a;
@@ -39,12 +39,12 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
         url("philo.jpg") no-repeat center center fixed;
       background-size: cover;
-      backdrop-filter: blur(6px);
       color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     body::before {
@@ -52,8 +52,8 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
-        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
+        radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.18), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.16), transparent 65%);
       pointer-events: none;
       z-index: 0;
     }
@@ -62,13 +62,13 @@
       content: "";
       position: fixed;
       inset: 0;
+      background: radial-gradient(circle at center, rgba(0,0,0,0) 35%, rgba(0,0,0,0.5) 100%);
       pointer-events: none;
-      background: radial-gradient(
-        circle at center,
-        rgba(0,0,0,0) 40%,
-        rgba(0,0,0,0.35) 100%
-      );
       z-index: 0;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .app-shell {
@@ -88,82 +88,139 @@
       min-height: 70vh;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding: 20px 18px 16px;
-      margin: 0 auto;
+      padding: 22px 20px 16px;
       background: linear-gradient(
         135deg,
         rgba(15, 23, 42, 0.98),
         rgba(15, 23, 42, 0.9)
       );
       border-radius: 24px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(148, 163, 184, 0.35);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
       backdrop-filter: blur(18px);
       position: relative;
       overflow: hidden;
     }
 
-    .hidden {
-      display: none !important;
+    .footer {
+      margin-top: auto;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: right;
+      padding-top: 8px;
+      border-top: 1px solid rgba(15, 23, 42, 0.95);
     }
 
-    /* ======= SPLASH VIEW ======= */
+    /* ========= SPLASH VIEW ========= */
     .splash-root {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
+      position: relative;
     }
 
     .splash-logo-wrapper {
       position: relative;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .splash-logo {
-      width: 220px;
+      width: 240px;
       height: auto;
       display: block;
-      margin: 0 auto;
-      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
-      transition: transform 0.3s ease-out;
+      filter:
+        drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9))
+        drop-shadow(0 0 35px rgba(34, 211, 238, 0.6));
+      transition:
+        transform 0.32s ease-out,
+        filter 0.32s ease-out;
+      position: relative;
+      z-index: 2;
     }
 
     .splash-logo-wrapper:hover .splash-logo {
-      transform: translateY(-4px) scale(1.02);
+      transform: translateY(-4px) scale(1.03);
+      filter:
+        drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
+        drop-shadow(0 0 40px rgba(34, 211, 238, 0.9));
     }
 
-    .splash-glow {
+    /* Futuristic underglow: layered, pulsing neon disk */
+    .splash-logo-wrapper::before,
+    .splash-logo-wrapper::after {
+      content: "";
       position: absolute;
-      inset: 50% 0 auto 0;
-      height: 70px;
-      transform: translateY(20px);
-      background: radial-gradient(circle at center, rgba(34, 211, 238, 0.6), transparent 60%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 2.2s ease-in-out infinite;
+      inset: auto;
+      bottom: -18px;
+      width: 260px;
+      height: 80px;
+      border-radius: 50%;
+      transform-origin: center;
       pointer-events: none;
+      filter: blur(20px);
+      z-index: 1;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.5; transform: translateY(20px) scaleX(1); }
-      50% { opacity: 1; transform: translateY(20px) scaleX(1.1); }
+    .splash-logo-wrapper::before {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(56,189,248,0.65), transparent 60%),
+        radial-gradient(circle at 30% 20%, rgba(34,211,238,0.9), transparent 55%);
+      opacity: 0.8;
+      animation: pulseUnderglow 2.4s ease-in-out infinite;
     }
 
-    .splash-text {
-      margin-top: 32px;
+    .splash-logo-wrapper::after {
+      background:
+        radial-gradient(circle at 70% 20%, rgba(59,130,246,0.9), transparent 60%),
+        radial-gradient(circle at 50% 0%, rgba(8,47,73,0.9), transparent 70%);
+      opacity: 0.5;
+      animation: pulseUnderglowAlt 3.1s ease-in-out infinite;
+    }
+
+    @keyframes pulseUnderglow {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-4px) scale(1.08);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulseUnderglowAlt {
+      0%, 100% {
+        transform: translateY(0) scale(0.95);
+        opacity: 0.5;
+      }
+      50% {
+        transform: translateY(-2px) scale(1.05);
+        opacity: 0.85;
+      }
+    }
+
+    .splash-subtitle {
       text-align: center;
       font-size: 0.95rem;
       color: var(--muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
-    /* ======= LOGIN VIEW ======= */
+    .splash-helper {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    /* ========= LOGIN VIEW ========= */
     .login-root {
       flex: 1;
       display: flex;
@@ -174,11 +231,11 @@
     .login-card {
       width: 100%;
       max-width: 420px;
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.15), rgba(15, 23, 42, 0.98));
-      border-radius: 20px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
+      border-radius: 22px;
       border: 1px solid var(--border-subtle);
-      padding: 20px 18px 18px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      padding: 22px 20px 18px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.96);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -187,11 +244,11 @@
     .login-logo-small {
       width: 64px;
       height: 64px;
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
       object-fit: cover;
       margin: 0 auto 10px;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
     }
 
     .login-title {
@@ -205,7 +262,7 @@
       text-align: center;
       font-size: 0.8rem;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .form-group {
@@ -228,9 +285,9 @@
       border: 1px solid var(--border-soft);
       background: rgba(2, 6, 23, 0.97);
       color: var(--text);
-      padding: 8px 10px;
+      padding: 8px 11px;
       font-size: 0.9rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
     }
 
     .form-input::placeholder {
@@ -240,7 +297,7 @@
     .primary-button {
       margin-top: 8px;
       width: 100%;
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      background: radial-gradient(circle at top left, var(--accent-strong), #3b82f6);
       color: #020617;
       border: none;
       border-radius: var(--radius-pill);
@@ -248,7 +305,7 @@
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 600;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.75);
+      box-shadow: 0 14px 36px rgba(37, 99, 235, 0.82);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -262,18 +319,18 @@
     .primary-button:hover {
       filter: brightness(1.05);
       transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(59, 130, 246, 0.9);
+      box-shadow: 0 18px 42px rgba(59, 130, 246, 0.96);
     }
 
     .login-error {
       margin-top: 4px;
       font-size: 0.8rem;
-      color: #fca5a5;
+      color: #fecaca;
       text-align: center;
       min-height: 1.1em;
     }
 
-    /* ======= HUB VIEW (3 big boxes) ======= */
+    /* ========= HUB VIEW ========= */
     .hub-root {
       flex: 1;
       display: flex;
@@ -285,8 +342,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 6px;
     }
 
     .hub-title-block {
@@ -309,7 +367,7 @@
     .hub-user-pill {
       padding: 6px 12px;
       border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.45);
       font-size: 0.8rem;
       color: var(--muted);
       background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
@@ -319,7 +377,7 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 16px;
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
     @media (min-width: 800px) {
@@ -331,37 +389,53 @@
     .hub-card {
       position: relative;
       border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.22), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.97));
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.9);
       padding: 18px 16px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       overflow: hidden;
       transition:
         transform 0.18s ease-out,
         border-color 0.18s ease-out,
         box-shadow 0.18s ease-out;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    }
+
+    .hub-card::after {
+      content: "";
+      position: absolute;
+      inset: 40% -30% auto auto;
+      height: 120px;
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.4), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+      pointer-events: none;
     }
 
     .hub-card:hover {
       transform: translateY(-4px) scale(1.01);
       border-color: var(--accent);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.94);
+    }
+
+    .hub-card:hover::after {
+      opacity: 1;
     }
 
     .hub-card-label {
-      font-size: 0.85rem;
-      letter-spacing: 0.14em;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #bae6fd;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .hub-card-title {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: var(--heading);
     }
@@ -378,7 +452,7 @@
       color: var(--muted);
     }
 
-    /* ======= MODULE PAGES (HF / HPA / ADMIN) ======= */
+    /* ========= MODULES (HF / HPA / ADMIN) ========= */
     .module-root {
       flex: 1;
       display: flex;
@@ -386,22 +460,47 @@
       gap: 10px;
     }
 
+    .module-back-btn {
+      align-self: flex-start;
+      margin-bottom: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    .module-back-btn:hover {
+      background: rgba(15, 23, 42, 1);
+      color: var(--heading);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
     .module-header {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .module-logo {
       width: 80px;
       height: 80px;
-      border-radius: 20px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9);
       object-fit: cover;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.96);
     }
 
     .module-title {
@@ -424,15 +523,15 @@
       gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
       padding-bottom: 4px;
-      margin-top: 8px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+      margin-top: 6px;
     }
 
     .module-tab {
       padding: 7px 14px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(15, 23, 42, 0.7);
       border: 1px solid transparent;
       color: var(--muted);
       font-size: 0.85rem;
@@ -448,9 +547,9 @@
 
     .module-tab:hover {
       color: var(--heading);
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(148, 163, 184, 0.4);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
       transform: translateY(-1px);
     }
 
@@ -462,7 +561,7 @@
     }
 
     .module-content {
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .glass-panel {
@@ -476,38 +575,23 @@
       color: var(--text);
     }
 
-    .module-back-btn {
-      align-self: flex-start;
-      margin-bottom: 6px;
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.8);
-      color: var(--muted);
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast);
-    }
-
-    .module-back-btn:hover {
-      background: rgba(15, 23, 42, 1);
+    /* ========= BASIC FORM/UTILITY CLASSES FOR HPA + ADMIN ========= */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
       color: var(--heading);
-      border-color: rgba(148, 163, 184, 0.6);
+      margin-bottom: 4px;
     }
 
-    /* Simple footer */
-    .footer {
-      margin-top: 8px;
-      font-size: 0.75rem;
-      color: #6b7280;
-      text-align: right;
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
+
+    /* You can paste the rest of your existing HPA / Store Ops CSS below
+       (controls, sku-card, pc-card, checklists, flow-steps, popups, etc.)
+       to preserve the exact styling from your current tool. */
   </style>
 </head>
 
@@ -515,23 +599,27 @@
   <main class="app-shell">
     <div class="app-inner">
 
-      <!-- ========= SPLASH VIEW ========= -->
+      <!-- ========== SPLASH VIEW ========== -->
       <section id="view-splash" class="splash-root">
-        <div class="splash-logo-wrapper" id="splashLogo">
-          <img src="hf_logo.png" alt="Hampshire Farms" class="splash-logo" />
-          <div class="splash-glow"></div>
+        <div id="splashLogo" class="splash-logo-wrapper">
+          <img src="hf_logo.png" alt="Hampshire Farms Logo" class="splash-logo" />
         </div>
-        <div class="splash-text">
-          Click to enter Hampshire Farms Hub
+        <div class="splash-subtitle">
+          HAMPSHIRE FARMS HUB
+        </div>
+        <div class="splash-helper">
+          Click the logo to enter
         </div>
       </section>
 
-      <!-- ========= LOGIN VIEW ========= -->
+      <!-- ========== LOGIN VIEW ========== -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
           <img src="hf_logo.png" alt="HF Logo" class="login-logo-small" />
           <div class="login-title">HF Hub Login</div>
-          <div class="login-subtitle">Select your role and sign in to access tools.</div>
+          <div class="login-subtitle">
+            Select your role and sign in to access HF, HPA &amp; Admin tools.
+          </div>
 
           <div class="form-group">
             <label class="form-label" for="loginRole">Role</label>
@@ -561,55 +649,66 @@
         </div>
       </section>
 
-      <!-- ========= HUB VIEW ========= -->
+      <!-- ========== HUB VIEW ========== -->
       <section id="view-hub" class="hub-root hidden">
         <header class="hub-header">
           <div class="hub-title-block">
             <div class="hub-title">Hampshire Farms Hub</div>
-            <div class="hub-subtitle">Select an area to work in.</div>
+            <div class="hub-subtitle">
+              Choose a program area to continue.
+            </div>
           </div>
-          <div class="hub-user-pill" id="hubUserInfo">
+          <div id="hubUserInfo" class="hub-user-pill">
             Role: — • User: —
           </div>
         </header>
 
         <section class="hub-grid">
-          <button class="hub-card" type="button" id="hubCardHF">
+          <!-- HF CARD -->
+          <button id="hubCardHF" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Outdoor Perennials</div>
               <div class="hub-card-title">HF</div>
-              <div class="hub-card-subtitle">Guidelines & care for outdoor perennial programs.</div>
+              <div class="hub-card-subtitle">
+                Guidelines &amp; care for HF outdoor perennial programs.
+              </div>
             </div>
             <div class="hub-card-tagline">
-              🌱 Spring programs • 🌼 Color • 🌿 Long-term performance
+              🌱 Spring programs • 🌼 Color • 🌿 Performance on the floor
             </div>
           </button>
 
-          <button class="hub-card" type="button" id="hubCardHPA">
+          <!-- HPA CARD -->
+          <button id="hubCardHPA" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Houseplants</div>
               <div class="hub-card-title">HPA</div>
-              <div class="hub-card-subtitle">Guidelines, product info & care for indoor programs.</div>
+              <div class="hub-card-subtitle">
+                Guidelines, product info &amp; care for houseplant programs.
+              </div>
             </div>
             <div class="hub-card-tagline">
-              🪴 Foliage • Blooming • Specialty • Racks & PODs
+              🪴 Foliage • Blooming • Specialty • Racks &amp; PODs
             </div>
           </button>
 
-          <button class="hub-card" type="button" id="hubCardAdmin">
+          <!-- ADMIN CARD (hidden for Merchandiser via JS) -->
+          <button id="hubCardAdmin" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Back-End</div>
               <div class="hub-card-title">ADMIN</div>
-              <div class="hub-card-subtitle">Store checks, audits, training, AIR, and mapping tools.</div>
+              <div class="hub-card-subtitle">
+                Store checks, audits, training, AIR, maps &amp; district tools.
+              </div>
             </div>
             <div class="hub-card-tagline">
-              📋 Store health • 🧠 Training • 🗺️ Coverage & maps
+              📋 Store health • 🧠 Training • 🗺️ Coverage &amp; mapping
             </div>
           </button>
         </section>
       </section>
 
-      <!-- ========= HF MODULE ========= -->
+      <!-- ========== HF MODULE ========== -->
       <section id="view-hf" class="module-root hidden">
         <button class="module-back-btn" type="button" data-back="hub">
           ⬅ Back to Hub
@@ -618,42 +717,51 @@
         <header class="module-header">
           <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
           <div class="module-title">HF</div>
-          <div class="module-subtitle">Outdoor Perennials • Guidelines & Care</div>
+          <div class="module-subtitle">
+            Outdoor Perennials • Guidelines &amp; Care
+          </div>
         </header>
 
         <nav class="module-tabs">
           <button class="module-tab active" data-module="hf" data-tab="guidelines">
             Guidelines
           </button>
-          <button class="module-tab" data-module="hf" data-tab="care" >
+          <button class="module-tab" data-module="hf" data-tab="care">
             Care &amp; Identification
           </button>
-          <!-- If you ever add more HF tabs, we can gate them with data-min-role -->
         </nav>
 
         <section class="module-content">
           <div id="hf-guidelines" class="glass-panel">
-            <!-- TODO: HF guidelines content goes here -->
-            HF Guidelines content placeholder.
+            <div class="section-title">HF Guidelines</div>
+            <p class="section-subtitle">
+              Paste or build your HF (Outdoor Perennials) weekly guidelines here.
+            </p>
+            <!-- TODO: Add HF-specific guideline content, checklists, flows here -->
           </div>
 
           <div id="hf-care" class="glass-panel hidden">
-            <!-- TODO: HF care & ID content goes here -->
-            HF Care & Identification content placeholder.
+            <div class="section-title">HF Care &amp; Identification</div>
+            <p class="section-subtitle">
+              Add HF-specific plant care &amp; ID content (outdoor perennials).
+            </p>
+            <!-- TODO: If desired, create a care library similar to HPA here -->
           </div>
         </section>
       </section>
 
-      <!-- ========= HPA MODULE ========= -->
+      <!-- ========== HPA MODULE ========== -->
       <section id="view-hpa" class="module-root hidden">
         <button class="module-back-btn" type="button" data-back="hub">
           ⬅ Back to Hub
         </button>
 
         <header class="module-header">
-          <img src="hpa_logo.png" alt="HPA Logo" class="module-logo" />
+          <img src="hf_logo.png" alt="HPA Logo" class="module-logo" />
           <div class="module-title">HPA</div>
-          <div class="module-subtitle">Houseplants • Guidelines, Product Info & Care</div>
+          <div class="module-subtitle">
+            Houseplants • Guidelines, Product Info &amp; Care
+          </div>
         </header>
 
         <nav class="module-tabs">
@@ -669,56 +777,84 @@
         </nav>
 
         <section class="module-content">
+          <!-- HPA GUIDELINES -->
           <div id="hpa-guidelines" class="glass-panel">
-            <!-- TODO: HPA Guidelines content goes here -->
-            HPA Guidelines content placeholder.
+            <div class="section-title">HPA Guidelines</div>
+            <p class="section-subtitle">
+              Weekly / seasonal HPA guidelines can be summarized here (high level).
+            </p>
+            <!-- TODO: Copy your existing high-level HPA guideline content here if you want -->
           </div>
 
+          <!-- HPA PRODUCT INFO (paste your existing Product Info tool here) -->
           <div id="hpa-product" class="glass-panel hidden">
-            <!-- 🔽 THIS IS WHERE YOU CAN MOVE YOUR EXISTING PRODUCT INFO TAB CONTENT -->
-            <!-- For example, your SKU Catalogue + Order Breakdown sections -->
-            Product Info placeholder – insert your existing Product Info UI here.
+            <div class="section-title">HPA Product Info</div>
+            <p class="section-subtitle">
+              SKU catalogue, shipping weeks, and weekly breakdowns live here.
+            </p>
+
+            <!--
+              🔻 IMPORTANT 🔻
+              Paste your existing "PRODUCT INFO TAB" content from the original HPA tool here:
+              - Filters (nameFilter, skuFilter, sentInFilter, yearFilter)
+              - SKU grid (skuGrid, emptyState)
+              - Weekly shipping table (orderWeeksBody, orderDetailsToggle, orderDetailsPanel)
+              Make sure all the IDs match your existing JavaScript.
+            -->
           </div>
 
+          <!-- HPA CARE & ID (paste your existing Care & Identification tool here) -->
           <div id="hpa-care" class="glass-panel hidden">
-            <!-- 🔽 THIS IS WHERE YOU CAN MOVE YOUR EXISTING CARE & ID CONTENT -->
-            Care & Identification placeholder – insert your plant/pest library UI here.
+            <div class="section-title">HPA Care &amp; Identification</div>
+            <p class="section-subtitle">
+              Plant care library &amp; pest identification tools live here.
+            </p>
+
+            <!--
+              🔻 IMPORTANT 🔻
+              Paste your existing "CARE & IDENTIFICATION TAB" content here:
+              - Care Library (plantCareGrid, careSearch, etc.)
+              - Pest Identification (pestGrid, pestSearch, etc.)
+              - Popups for care & pests.
+            -->
           </div>
         </section>
       </section>
 
-      <!-- ========= ADMIN MODULE ========= -->
+      <!-- ========== ADMIN MODULE ========== -->
       <section id="view-admin" class="module-root hidden">
         <button class="module-back-btn" type="button" data-back="hub">
           ⬅ Back to Hub
         </button>
 
         <header class="module-header">
-          <!-- Fun Admin “logo” – you can swap this for an actual PNG later -->
+          <!-- Fun Admin Logo (you can swap to an image later if desired) -->
           <div class="module-logo" style="
             display:flex;align-items:center;justify-content:center;
             font-size:1.4rem;font-weight:700;color:#22d3ee;
-            text-shadow:0 0 18px rgba(34,211,238,0.9);">
+            text-shadow:0 0 14px rgba(34,211,238,0.9);">
             HF
           </div>
           <div class="module-title">ADMIN</div>
-          <div class="module-subtitle">Store checks, audits, training, AIR, maps & district tools.</div>
+          <div class="module-subtitle">
+            Store checks, audits, training, AIR, maps &amp; district checklists.
+          </div>
         </header>
 
         <nav class="module-tabs">
           <button class="module-tab active" data-module="admin" data-tab="store-check">
             Store Check
           </button>
-          <button class="module-tab" data-module="admin" data-tab="store-audit">
+          <button class="module-tab" data-module="admin" data-tab="store-audit" data-min-role="Supervisor">
             Store Audit
           </button>
-          <button class="module-tab" data-module="admin" data-tab="training">
+          <button class="module-tab" data-module="admin" data-tab="training" data-min-role="Supervisor">
             Training
           </button>
-          <button class="module-tab" data-module="admin" data-tab="air">
+          <button class="module-tab" data-module="admin" data-tab="air" data-min-role="Supervisor">
             AIR
           </button>
-          <button class="module-tab" data-module="admin" data-tab="store-map">
+          <button class="module-tab" data-module="admin" data-tab="store-map" data-min-role="Supervisor">
             Store Map
           </button>
           <button class="module-tab" data-module="admin" data-tab="district-checklist" data-min-role="District">
@@ -727,23 +863,71 @@
         </nav>
 
         <section class="module-content">
+          <!-- ADMIN: STORE CHECK (reuse your Store Visit checklist here) -->
           <div id="admin-store-check" class="glass-panel">
-            Store Check placeholder.
+            <div class="section-title">Store Check (Indoor HPA)</div>
+            <p class="section-subtitle">
+              Use this section for in-store HPA visits, checklists &amp; exports.
+            </p>
+
+            <!--
+              🔻 IMPORTANT 🔻
+              Paste your existing "STORE OPS → STORE VISIT" content here:
+              - visit-meta (Store #, Visit Date, Rep / Visitor)
+              - store-inner-tabs (Store Walk, Pod Merchandising, Clean Up / Water, Pictures)
+              - the subtabs (store-walk, store-pods, store-cleanup, store-pictures)
+              - visitNotes + exportVisitSummary button.
+            -->
           </div>
+
+          <!-- ADMIN: STORE AUDIT -->
           <div id="admin-store-audit" class="glass-panel hidden">
-            Store Audit placeholder.
+            <div class="section-title">Store Audit</div>
+            <p class="section-subtitle">
+              High-level audit tools, scorecards, or forms can live here.
+            </p>
+            <!-- TODO: build out Store Audit content as needed -->
           </div>
+
+          <!-- ADMIN: TRAINING (reuse your HPA Protocols here) -->
           <div id="admin-training" class="glass-panel hidden">
-            Training placeholder.
+            <div class="section-title">Training &amp; HPA Protocols</div>
+            <p class="section-subtitle">
+              Damage flows, non-order-day playbooks, inventory &amp; BI training.
+            </p>
+
+            <!--
+              🔻 IMPORTANT 🔻
+              Paste your existing "STORE OPS → HPA PROTOCOLS" content here:
+              - hpa-inner-tabs (Damage Claims, Non-Order Days, Weekly Inventory, BI, Picture Standards)
+              - all the sections: hpa-claims, hpa-nonorder, hpa-inventory, hpa-bi, hpa-pictures
+              - damage-inner-tabs & cold/pest flows.
+            -->
           </div>
+
+          <!-- ADMIN: AIR -->
           <div id="admin-air" class="glass-panel hidden">
-            AIR placeholder.
+            <div class="section-title">AIR</div>
+            <p class="section-subtitle">
+              Use this area for AIR documentation, links, or quick-reference workflows.
+            </p>
           </div>
+
+          <!-- ADMIN: STORE MAP -->
           <div id="admin-store-map" class="glass-panel hidden">
-            Store Map placeholder.
+            <div class="section-title">Store Map</div>
+            <p class="section-subtitle">
+              Store coverage maps, territory assignment, and quick links.
+            </p>
           </div>
+
+          <!-- ADMIN: DISTRICT CHECKLIST (District & RMM only) -->
           <div id="admin-district-checklist" class="glass-panel hidden">
-            District Checklist placeholder (District &amp; RMM only).
+            <div class="section-title">District Checklist</div>
+            <p class="section-subtitle">
+              District &amp; RMM-level weekly / monthly checklists and initiatives.
+            </p>
+            <!-- TODO: build out District/RMM specific actions here -->
           </div>
         </section>
       </section>
@@ -756,18 +940,14 @@
   </main>
 
   <script>
-    /* ========= CONFIG ========= */
-    // IMPORTANT: CSV-based login in a front-end app is NOT secure.
-    // Anyone can view the CSV in dev tools. This is fine for internal, low-risk tooling,
-    // but not for anything with sensitive data or real security requirements.
-    const USERS_CSV_URL = "users.csv";
+    /* ========= BASIC ROLE-BASED HUB LOGIC ========= */
 
+    const USERS_CSV_URL = "users.csv";   // role,username,password,display_name
     const ROLE_ORDER = ["Merchandiser", "Supervisor", "District", "RMM"];
 
     let USERS = [];
-    let CURRENT_USER = null; // { role, username }
+    let CURRENT_USER = null;
 
-    /* ========= HELPERS ========= */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -792,16 +972,16 @@
       if (!lines.length) return [];
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const roleIdx = header.indexOf("role");
-      const usernameIdx = header.indexOf("username");
-      const passwordIdx = header.indexOf("password");
+      const userIdx = header.indexOf("username");
+      const passIdx = header.indexOf("password");
       const displayIdx = header.indexOf("display_name");
 
       const users = [];
       for (let i = 1; i < lines.length; i++) {
         const row = parseCsvLine(lines[i]);
         const role = (row[roleIdx] || "").trim();
-        const username = (row[usernameIdx] || "").trim();
-        const password = (row[passwordIdx] || "").trim();
+        const username = (row[userIdx] || "").trim();
+        const password = (row[passIdx] || "").trim();
         const displayName = displayIdx >= 0 ? (row[displayIdx] || "").trim() : "";
         if (!role) continue;
         users.push({ role, username, password, displayName });
@@ -838,7 +1018,7 @@
       if (!CURRENT_USER) return;
       const role = CURRENT_USER.role;
 
-      // 1) Hide/show any element with data-min-role
+      // Tabs/buttons gated by data-min-role
       const gated = document.querySelectorAll("[data-min-role]");
       gated.forEach(el => {
         const minRole = el.getAttribute("data-min-role");
@@ -846,53 +1026,39 @@
         el.classList.toggle("hidden", !allowed);
       });
 
-      // 2) Merchandiser restrictions on HF/HPA tabs
-      // HF: only Guidelines + Care & ID – but we only have those two anyway.
-      // HPA: hide Product Info tab for Merchandiser
+      // Merchandiser restrictions
       if (role === "Merchandiser") {
+        const adminCard = document.getElementById("hubCardAdmin");
+        if (adminCard) adminCard.classList.add("hidden");
+
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.add("hidden");
-
-        const adminView = document.getElementById("view-admin");
-        // Optionally: hide entire ADMIN view for Merchandiser
-        // (You can comment this out if you want Merch to still see Admin)
-        if (adminView) {
-          // we only hide the card, the view is still there but unreachable
-          const cardAdmin = document.getElementById("hubCardAdmin");
-          if (cardAdmin) cardAdmin.classList.add("hidden");
-        }
       } else {
-        // Non-merchandiser: show everything, gating via data-min-role handles the rest
+        const adminCard = document.getElementById("hubCardAdmin");
+        if (adminCard) adminCard.classList.remove("hidden");
+
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.remove("hidden");
-
-        const cardAdmin = document.getElementById("hubCardAdmin");
-        if (cardAdmin) cardAdmin.classList.remove("hidden");
       }
     }
 
     function setActiveModuleTab(moduleKey, tabKey) {
-      // Deactivate all tabs for that module
       const allTabs = document.querySelectorAll(`.module-tab[data-module="${moduleKey}"]`);
       allTabs.forEach(tab => tab.classList.remove("active"));
 
-      // Hide all panels in that module
       const panels = document.querySelectorAll(`#view-${moduleKey} .glass-panel`);
-      panels.forEach(p => p.classList.add("hidden"));
+      panels.forEach(panel => panel.classList.add("hidden"));
 
-      // Activate chosen tab
       const activeTab = document.querySelector(`.module-tab[data-module="${moduleKey}"][data-tab="${tabKey}"]`);
       if (activeTab) activeTab.classList.add("active");
 
-      // Show matching panel
-      const panelId = `${moduleKey}-${tabKey}`; // e.g. "hpa-product"
+      const panelId = `${moduleKey}-${tabKey}`; // e.g. "hpa-care"
       const panel = document.getElementById(panelId);
       if (panel) panel.classList.remove("hidden");
     }
 
-    /* ========= EVENT WIRING ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      // Splash click -> Login
+      /* Splash → Login */
       const splashLogo = document.getElementById("splashLogo");
       if (splashLogo) {
         splashLogo.addEventListener("click", () => {
@@ -900,7 +1066,7 @@
         });
       }
 
-      // Login role behavior
+      /* Login */
       const loginRole = document.getElementById("loginRole");
       const loginUsername = document.getElementById("loginUsername");
       const loginPassword = document.getElementById("loginPassword");
@@ -910,7 +1076,6 @@
       function updateLoginFieldsForRole() {
         const role = loginRole.value;
         if (role === "Merchandiser") {
-          // No login info required
           loginUsername.disabled = true;
           loginPassword.disabled = true;
           loginUsername.value = "";
@@ -921,16 +1086,15 @@
         }
       }
 
-      if (loginRole) {
-        loginRole.addEventListener("change", updateLoginFieldsForRole);
-        updateLoginFieldsForRole();
-      }
+      loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
+      if (loginRole) updateLoginFieldsForRole();
 
       if (loginButton) {
         loginButton.addEventListener("click", () => {
           const role = loginRole.value;
+
           if (role === "Merchandiser") {
-            // Bypass credential check for merchandiser
+            // No credentials required
             CURRENT_USER = {
               role,
               username: "",
@@ -945,13 +1109,13 @@
 
           const username = (loginUsername.value || "").trim();
           const password = (loginPassword.value || "").trim();
+
           if (!username || !password) {
             loginError.textContent = "Please enter both username and password.";
             return;
           }
-
           if (!USERS.length) {
-            loginError.textContent = "User data not loaded yet. Please try again in a moment.";
+            loginError.textContent = "User data not loaded yet. Try again in a moment.";
             return;
           }
 
@@ -971,6 +1135,7 @@
             username: match.username,
             displayName: match.displayName
           };
+
           loginError.textContent = "";
           showView("view-hub");
           updateHubUserInfo();
@@ -978,70 +1143,54 @@
         });
       }
 
-      // Hub cards -> module views
+      /* Hub Cards → Modules */
       const hubCardHF = document.getElementById("hubCardHF");
       const hubCardHPA = document.getElementById("hubCardHPA");
       const hubCardAdmin = document.getElementById("hubCardAdmin");
 
-      if (hubCardHF) {
-        hubCardHF.addEventListener("click", () => {
-          showView("view-hf");
-        });
-      }
-      if (hubCardHPA) {
-        hubCardHPA.addEventListener("click", () => {
-          showView("view-hpa");
-        });
-      }
-      if (hubCardAdmin) {
-        hubCardAdmin.addEventListener("click", () => {
-          showView("view-admin");
-        });
-      }
+      hubCardHF && hubCardHF.addEventListener("click", () => showView("view-hf"));
+      hubCardHPA && hubCardHPA.addEventListener("click", () => showView("view-hpa"));
+      hubCardAdmin && hubCardAdmin.addEventListener("click", () => showView("view-admin"));
 
-      // Back buttons (from modules -> hub)
-      const backBtns = document.querySelectorAll(".module-back-btn");
-      backBtns.forEach(btn => {
+      /* Module Back Buttons */
+      document.querySelectorAll(".module-back-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-          const backTarget = btn.getAttribute("data-back") || "hub";
-          showView(`view-${backTarget}`);
+          const target = btn.getAttribute("data-back") || "hub";
+          showView(`view-${target}`);
         });
       });
 
-      // Module tab clicks
-      const moduleTabs = document.querySelectorAll(".module-tab");
-      moduleTabs.forEach(tab => {
+      /* Module Tabs (HF / HPA / ADMIN) */
+      document.querySelectorAll(".module-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           if (!CURRENT_USER) return;
           const moduleKey = tab.getAttribute("data-module");
           const tabKey = tab.getAttribute("data-tab");
-
           const minRole = tab.getAttribute("data-min-role");
+
           if (minRole && !canAccess(CURRENT_USER.role, minRole)) {
             return;
           }
-
           setActiveModuleTab(moduleKey, tabKey);
         });
       });
 
-      // Default visible: splash
+      /* Default view: splash */
       showView("view-splash");
 
-      // Load users CSV
+      /* Load Users CSV (for non-merch roles) */
       fetch(USERS_CSV_URL)
         .then(res => {
-          if (!res.ok) throw new Error("Users CSV not found");
+          if (!res.ok) throw new Error("users.csv not found");
           return res.text();
         })
         .then(text => {
           USERS = parseUsersCsv(text);
           console.log("Loaded users:", USERS.length);
         })
-        .catch(err => {
-          console.error("Error loading users CSV:", err);
-        });
+        .catch(err => console.error("Error loading users CSV:", err));
     });
   </script>
 </body>
 </html>
+``
