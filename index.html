@@ -1,19 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HF-HPA</title>
+  <title>HF Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Favicon (desktop browsers) -->
-  <link rel="icon" type="image/png" href="hpa_logo.png" />
-
-  <!-- Apple devices (iPhone/iPad Safari) -->
-  <link rel="apple-touch-icon" href="hpa_logo.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="hpa_logo.png" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="hf_logo.png" />
 
   <style>
+    /* ======= BASE THEME (mostly from your existing app) ======= */
     :root {
       --bg: #020617;
       --bg-alt: #030a1a;
@@ -51,7 +47,6 @@
       min-height: 100vh;
     }
 
-    /* Enhanced background overlays */
     body::before {
       content: "";
       position: fixed;
@@ -78,9 +73,11 @@
 
     .app-shell {
       width: 100%;
+      min-height: 100vh;
       padding: 16px;
       display: flex;
       justify-content: center;
+      align-items: center;
       position: relative;
       z-index: 1;
     }
@@ -88,10 +85,11 @@
     .app-inner {
       width: 100%;
       max-width: 1200px;
+      min-height: 70vh;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding: 18px 18px 14px;
+      padding: 20px 18px 16px;
       margin: 0 auto;
       background: linear-gradient(
         135deg,
@@ -103,909 +101,145 @@
       border: 1px solid rgba(148, 163, 184, 0.35);
       backdrop-filter: blur(18px);
       position: relative;
-      z-index: 1;
-    }
-
-    /* HEADER */
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo {
-      width: 72px;
-      height: 72px;
-      border-radius: 20px;
-      object-fit: cover;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
-    }
-
-    .title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .title-block h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--heading);
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .header-pill {
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      font-size: 0.75rem;
-      color: var(--muted);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
-    }
-
-    /* TOP TABS (MAIN NAV) */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
-      margin-top: 6px;
-      padding-bottom: 4px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab {
-      position: relative;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid transparent;
-      color: var(--muted);
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition:
-        color var(--transition-fast),
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .tab:hover {
-      color: var(--heading);
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(148, 163, 184, 0.4);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .tab.active {
-      color: var(--heading);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.32), rgba(15, 23, 42, 0.98));
-      border-color: rgba(34, 211, 238, 0.8);
-      box-shadow: 0 10px 32px rgba(15, 23, 42, 0.9);
-    }
-
-    .tab:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .tab-content {
-      margin-top: 14px;
+      overflow: hidden;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    /* SECTION INNER TABS */
-    .section-inner-tabs {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 6px;
-      background: rgba(15, 23, 42, 0.85);
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
-      margin-bottom: 10px;
-    }
-
-    .section-inner-tab {
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .section-inner-tab:hover {
-      color: var(--heading);
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(148, 163, 184, 0.4);
-      transform: translateY(-1px);
-    }
-
-    .section-inner-tab.active {
-      color: var(--heading);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.98));
-      border-color: rgba(34, 211, 238, 0.8);
-    }
-
-    .section-inner-content {
-      margin-top: 10px;
-    }
-
-    /* GLASS PANEL */
-    .glass-panel {
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-      padding: 14px;
-    }
-
-    /* TYPOGRAPHY */
-    .pc-header,
-    .section-header {
+    /* ======= SPLASH VIEW ======= */
+    .splash-root {
+      flex: 1;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 8px;
-    }
-
-    .pc-title,
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--heading);
-    }
-
-    .section-subtitle {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    /* PRODUCT INFO: SKU FILTERS */
-    .controls {
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-    }
-
-    @media (min-width: 900px) {
-      .controls {
-        flex-direction: row;
-        align-items: center;
-      }
-    }
-
-    .search-wrapper {
-      flex: 2;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 10px 34px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.9);
-      color: var(--text);
-      font-size: 0.9rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
-    }
-
-    .search-input::placeholder {
-      color: #64748b;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      pointer-events: none;
-      font-size: 0.9rem;
-    }
-
-    .filters {
-      flex: 3;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      min-width: 140px;
-      gap: 3px;
-    }
-
-    .filter-label {
-      color: var(--muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .filter-input {
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.92);
-      padding: 6px 10px;
-      color: var(--text);
-      font-size: 0.8rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    }
-
-    /* SKU RESULTS */
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-
-    .results-header strong {
-      color: var(--heading);
-    }
-
-    .sku-grid {
-      display: grid;
-      gap: 12px;
-      margin-top: 10px;
-      grid-template-columns: 1fr;
-    }
-
-    @media (min-width: 600px) {
-      .sku-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 1000px) {
-      .sku-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .sku-card {
-      position: relative;
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      padding: 14px;
-      cursor: pointer;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(14px);
-      transition:
-        transform 0.18s ease-out,
-        border-color 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        background 0.18s ease-out;
-    }
-
-    .sku-card:hover {
-      transform: translateY(-3px) scale(1.01);
-      border-color: var(--accent);
-      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-    }
-
-    .sku-year-pill {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(15, 23, 42, 0.98);
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      padding: 3px 8px;
-      font-size: 0.7rem;
-      color: #e2e8f0;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-    }
-
-    .sku-name {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #e5f0ff;
-    }
-
-    .sku-meta {
-      font-size: 0.8rem;
-      color: #cbd5e1;
-      line-height: 1.4;
-    }
-
-    .empty-state {
-      padding: 20px;
-      margin-top: 16px;
-      text-align: center;
-      color: var(--muted);
-      background: rgba(15, 23, 42, 0.75);
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--border-subtle);
-    }
-
-    /* ORDER BREAKDOWN - TABLE + COLLAPSE */
-    .order-table-wrapper {
-      background: var(--card-glass);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      box-shadow: var(--shadow-soft);
-      margin-top: 10px;
-      backdrop-filter: blur(16px);
-    }
-
-    .order-table-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--heading);
-    }
-
-    .order-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      color: var(--text);
-      overflow: hidden;
-      border-radius: var(--radius-md);
-    }
-
-    .order-table th {
-      text-align: left;
-      padding: 9px 10px;
-      background: rgba(15, 23, 42, 0.96);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border-soft);
-      color: #cbd5f5;
-    }
-
-    .order-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-      color: #e8f2ff;
-    }
-
-    .order-table tr:nth-child(even) {
-      background: rgba(15, 23, 42, 0.85);
-    }
-
-    .order-table tr:nth-child(odd) {
-      background: rgba(15, 23, 42, 0.75);
-    }
-
-    .order-table tr:hover {
-      background: rgba(34, 211, 238, 0.12);
-      transition: 0.2s;
-    }
-
-    .status-highlight {
-      background: #facc15;
-      color: #111827;
-      padding: 2px 5px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.75rem;
-    }
-
-    .order-details-toggle {
-      margin-top: 14px;
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
-      color: #0f172a;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(34, 211, 238, 0.9);
-      padding: 7px 16px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition:
-        background 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        border-color 0.18s ease-out,
-        transform 0.18s ease-out;
-      font-weight: 600;
-      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
-    }
-
-    .order-details-toggle:hover {
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-      border-color: #38bdf8;
-      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
-      transform: translateY(-1px);
-      color: #020617;
-    }
-
-    .order-details-panel {
-      margin-top: 14px;
-    }
-
-    .order-breakdown-wrapper {
-      margin-top: 6px;
-      display: flex;
+      justify-content: center;
+      position: relative;
       flex-direction: column;
-      align-items: center;
       gap: 16px;
     }
 
-    .ob-header-stack {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      width: 100%;
-      max-width: 700px;
-    }
-
-    .ob-week-box,
-    .ob-grades-box {
-      background: rgba(34, 211, 238, 0.12);
-      border: 1px solid rgba(34, 211, 238, 0.7);
-      border-radius: var(--radius-md);
-      padding: 10px 16px;
-      text-align: center;
-      color: #e5f0ff;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-    }
-
-    .ob-week-box {
-      max-width: 380px;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .ob-grades-box {
-      width: 100%;
-      font-size: 0.9rem;
-    }
-
-    .ob-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      width: 100%;
-      max-width: 700px;
-    }
-
-    @media (min-width: 640px) {
-      .ob-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .ob-box {
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-      min-height: 90px;
-    }
-
-    .ob-box-title {
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-align: center;
-      margin-bottom: 4px;
-      color: var(--heading);
-    }
-
-    .ob-box-body {
-      white-space: pre-line;
-      font-size: 0.78rem;
-      color: var(--text);
-    }
-
-    /* INNER TABS (Care, Protocols, Store Visit) */
-    .inner-tabs,
-    .damage-inner-tabs,
-    .hpa-inner-tabs,
-    .store-inner-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .inner-tab,
-    .damage-inner-tab,
-    .hpa-inner-tab,
-    .store-inner-tab {
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-      font-size: 0.85rem;
-    }
-
-    .inner-tab:hover,
-    .damage-inner-tab:hover,
-    .hpa-inner-tab:hover,
-    .store-inner-tab:hover {
-      color: var(--heading);
-      background: rgba(15, 23, 42, 0.98);
-      border-color: rgba(148, 163, 184, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .inner-tab.active,
-    .damage-inner-tab.active,
-    .hpa-inner-tab.active,
-    .store-inner-tab.active {
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-      border-color: rgba(34, 211, 238, 0.9);
-      color: var(--heading);
-    }
-
-    .damage-inner-content,
-    .hpa-inner-content,
-    .store-inner-content,
-    .inner-content {
-      margin-top: 6px;
-    }
-
-    /* PLANT / PEST CARDS */
-    .pc-header {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .pc-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--heading);
-    }
-
-    .pc-search-wrapper {
+    .splash-logo-wrapper {
       position: relative;
-      max-width: 360px;
+      cursor: pointer;
     }
 
-    .pc-search-input {
-      width: 100%;
-      padding: 8px 30px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.95);
-      color: var(--text);
-      font-size: 0.85rem;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    .splash-logo {
+      width: 220px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
+      transition: transform 0.3s ease-out;
     }
 
-    .pc-search-input::placeholder {
-      color: #64748b;
+    .splash-logo-wrapper:hover .splash-logo {
+      transform: translateY(-4px) scale(1.02);
     }
 
-    .pc-search-icon {
+    .splash-glow {
       position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.9rem;
-      color: #64748b;
+      inset: 50% 0 auto 0;
+      height: 70px;
+      transform: translateY(20px);
+      background: radial-gradient(circle at center, rgba(34, 211, 238, 0.6), transparent 60%);
+      filter: blur(20px);
+      opacity: 0.8;
+      animation: pulseGlow 2.2s ease-in-out infinite;
       pointer-events: none;
     }
 
-    .pc-grid {
-      margin-top: 12px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.5; transform: translateY(20px) scaleX(1); }
+      50% { opacity: 1; transform: translateY(20px) scaleX(1.1); }
     }
 
-    @media (min-width: 640px) {
-      .pc-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 1000px) {
-      .pc-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .pc-card {
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      padding: 12px;
-      box-shadow: var(--shadow-soft);
-      text-align: left;
-      cursor: pointer;
-      transition:
-        transform 0.18s ease-out,
-        border-color 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        background 0.18s ease-out;
-      backdrop-filter: blur(14px);
-    }
-
-    .pc-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-    }
-
-    .pc-card-title {
-      font-weight: 600;
+    .splash-text {
+      margin-top: 32px;
+      text-align: center;
       font-size: 0.95rem;
-      color: var(--heading);
-    }
-
-    .pc-card-subtitle {
-      margin-top: 4px;
-      font-size: 0.78rem;
       color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
-    /* POPUPS */
-    .popup-image {
-      width: 100%;
-      max-height: 220px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border-soft);
-    }
-
-    .popup-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      display: none;
-      align-items: flex-start;        /* show near top, not dead center */
-      justify-content: center;
-      z-index: 50;
-      padding: 24px 16px 16px;
-      backdrop-filter: blur(8px);
-      overflow-y: auto;               /* scroll overlay if content tall */
-    }
-
-    .popup {
-      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
-      padding: 20px 20px 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      width: 100%;
-      max-width: 460px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-    }
-
-    @media (max-width: 768px) {
-      .popup {
-        margin-top: 8px;  /* avoid hugging very top on small screens */
-      }
-    }
-
-    .popup h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--heading);
-    }
-
-    .popup-section-title {
-      font-weight: 600;
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: var(--heading);
-    }
-
-    .popup-text {
-      font-size: 0.8rem;
-      color: #e5e7eb;
-      margin-top: 2px;
-    }
-
-    .popup-close {
-      margin-top: 16px;
-      align-self: flex-end;
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-      color: #020617;
-      border: none;
-      border-radius: var(--radius-pill);
-      padding: 8px 16px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.7);
-      transition:
-        transform 0.15s ease-out,
-        box-shadow 0.15s ease-out,
-        filter 0.15s ease-out;
-    }
-
-    .popup-close:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-      box-shadow: 0 14px 34px rgba(59, 130, 246, 0.9);
-    }
-
-    .popup-subtitle {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-      font-style: italic;
-    }
-
-    /* FLOW-CHART STYLE STEP LISTS */
-    .flow-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-width: 650px;
-      margin-top: 8px;
-    }
-
-    .flow-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    }
-
-    .flow-step-number {
-      width: 26px;
-      height: 26px;
-      min-width: 26px;
-      border-radius: 50%;
-      background: var(--accent-soft);
-      border: 1px solid var(--accent);
+    /* ======= LOGIN VIEW ======= */
+    .login-root {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--heading);
     }
 
-    .flow-step-body {
-      flex: 1;
-    }
-
-    .flow-step-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 2px;
-      color: var(--heading);
-    }
-
-    .flow-step-role {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-
-    .flow-step-text {
-      font-size: 0.8rem;
-      color: #e5e7eb;
-    }
-
-    .flow-arrow {
-      text-align: center;
-      font-size: 1.1rem;
-      color: var(--muted);
-    }
-
-    /* FORM INPUTS (Store Visit) */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.15), rgba(15, 23, 42, 0.98));
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      padding: 20px 18px 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
       gap: 10px;
     }
 
-    @media (min-width: 800px) {
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .login-logo-small {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      object-fit: cover;
+      margin: 0 auto 10px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8);
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .login-subtitle {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 4px;
-    }
-
-    .form-group.small {
-      max-width: 200px;
+      margin-bottom: 8px;
     }
 
     .form-label {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
-    .claim-input,
-    .claim-select,
-    .claim-textarea {
+    .form-input,
+    .form-select {
       border-radius: 10px;
       border: 1px solid var(--border-soft);
       background: rgba(2, 6, 23, 0.97);
       color: var(--text);
       padding: 8px 10px;
-      font-size: 0.85rem;
-      resize: vertical;
+      font-size: 0.9rem;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
     }
 
-    .claim-input::placeholder,
-    .claim-textarea::placeholder {
+    .form-input::placeholder {
       color: #6b7280;
     }
 
-    .claim-textarea {
-      min-height: 80px;
-    }
-
     .primary-button {
-      margin-top: 12px;
+      margin-top: 8px;
+      width: 100%;
       background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
       color: #020617;
       border: none;
@@ -1017,6 +251,7 @@
       box-shadow: 0 12px 30px rgba(37, 99, 235, 0.75);
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       transition:
         transform 0.15s ease-out,
@@ -1030,77 +265,248 @@
       box-shadow: 0 16px 36px rgba(59, 130, 246, 0.9);
     }
 
-    /* STORE VISIT CHECKLIST */
-    .visit-meta {
+    .login-error {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #fca5a5;
+      text-align: center;
+      min-height: 1.1em;
+    }
+
+    /* ======= HUB VIEW (3 big boxes) ======= */
+    .hub-root {
+      flex: 1;
       display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
     }
 
-    .checklist-section {
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      padding: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
+    .hub-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .checklist-title {
-      font-size: 0.95rem;
+    .hub-title {
+      font-size: 1.4rem;
       font-weight: 600;
-      margin-bottom: 6px;
       color: var(--heading);
     }
 
-    .checklist-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.85rem;
-      margin-bottom: 4px;
+    .hub-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .hub-user-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 800px) {
+      .hub-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .hub-card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.22), rgba(15, 23, 42, 0.98));
+      padding: 18px 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
       cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hub-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.9);
+    }
+
+    .hub-card-label {
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bae6fd;
+      margin-bottom: 6px;
+    }
+
+    .hub-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .hub-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    .hub-card-tagline {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ======= MODULE PAGES (HF / HPA / ADMIN) ======= */
+    .module-root {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .module-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .module-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      object-fit: cover;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .module-title {
+      margin-top: 6px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--heading);
+    }
+
+    .module-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .module-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      padding-bottom: 4px;
+      margin-top: 8px;
+    }
+
+    .module-tab {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        color var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .module-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.4);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .module-tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.32), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+    }
+
+    .module-content {
+      margin-top: 12px;
+    }
+
+    .glass-panel {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+      font-size: 0.9rem;
       color: var(--text);
     }
 
-    .checklist-item input[type="checkbox"] {
-      margin-top: 3px;
-      accent-color: var(--accent);
+    .module-back-btn {
+      align-self: flex-start;
+      margin-bottom: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast);
     }
 
-    .visit-notes-wrapper {
-      margin-top: 10px;
+    .module-back-btn:hover {
+      background: rgba(15, 23, 42, 1);
+      color: var(--heading);
+      border-color: rgba(148, 163, 184, 0.6);
     }
 
+    /* Simple footer */
     .footer {
-      margin-top: 14px;
+      margin-top: 8px;
       font-size: 0.75rem;
       color: #6b7280;
       text-align: right;
-    }
-
-    button {
-      font-family: inherit;
-    }
-
-    /* MOBILE FIX — Order Breakdown table responsiveness */
-    @media (max-width: 600px) {
-      .order-table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .order-table {
-        min-width: 520px;
-        font-size: 0.75rem;
-      }
-
-      .order-table th,
-      .order-table td {
-        padding: 6px 8px;
-        white-space: nowrap;
-      }
     }
   </style>
 </head>
@@ -1109,1198 +515,241 @@
   <main class="app-shell">
     <div class="app-inner">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <img src="hf_logo.png" alt="HF-HPA Logo" class="logo" />
-          <div class="title-block">
-            <h1>HF-HPA</h1>
-            <p class="subtitle">Central Hub for Houseplant &amp; HPA operations.</p>
-          </div>
+      <!-- ========= SPLASH VIEW ========= -->
+      <section id="view-splash" class="splash-root">
+        <div class="splash-logo-wrapper" id="splashLogo">
+          <img src="hf_logo.png" alt="Hampshire Farms" class="splash-logo" />
+          <div class="splash-glow"></div>
         </div>
-        <div class="header-pill">
-          Internal tool • v7.0 • Modern Dark UI
+        <div class="splash-text">
+          Click to enter Hampshire Farms Hub
         </div>
-      </header>
-
-      <!-- TOP TABS -->
-      <nav class="tabs">
-        <button class="tab active" data-tab="products" type="button">📦 Product Info</button>
-        <button class="tab" data-tab="care-id" type="button">🌿 Care &amp; Identification</button>
-        <button class="tab" data-tab="ops" type="button">🛠 Store Operations</button>
-      </nav>
-
-      <!-- PRODUCT INFO TAB -->
-      <section id="tab-products" class="tab-content">
-        <div class="section-header">
-          <div class="section-title">Product Info</div>
-          <p class="section-subtitle">
-            Search SKUs, review what’s shipping, and see weekly breakdowns.
-          </p>
-        </div>
-
-        <div class="section-inner-tabs">
-          <button class="section-inner-tab active products-inner-tab" data-products="skus" type="button">
-            SKU Catalogue
-          </button>
-          <button class="section-inner-tab products-inner-tab" data-products="orders" type="button">
-            Order Breakdown
-          </button>
-        </div>
-
-        <!-- PRODUCT INFO → SKUS -->
-        <section id="products-skus" class="section-inner-content">
-          <section class="controls">
-            <div class="search-wrapper">
-              <span class="search-icon">🔍</span>
-              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
-            </div>
-
-            <div class="filters">
-              <div class="filter-group">
-                <span class="filter-label">SKU</span>
-                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
-              </div>
-              <div class="filter-group">
-                <span class="filter-label">Sent In</span>
-                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
-              </div>
-              <div class="filter-group">
-                <span class="filter-label">Year Sent</span>
-                <select id="yearFilter" class="filter-input">
-                  <option value="all">All</option>
-                  <option>2022</option>
-                  <option>2023</option>
-                  <option>2024</option>
-                  <option>2025</option>
-                  <option>2026</option>
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <p class="section-subtitle" style="margin-top:6px; font-size:0.8rem;">
-            Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo, Holiday).
-          </p>
-
-          <div class="results-header">
-            <strong id="resultCount">0</strong> SKUs shown
-          </div>
-
-          <section id="skuGrid" class="sku-grid"></section>
-          <div id="emptyState" class="empty-state hidden">
-            No SKUs match your filters or the file could not be loaded.
-          </div>
-        </section>
-
-        <!-- PRODUCT INFO → ORDERS -->
-        <section id="products-orders" class="section-inner-content hidden">
-          <div class="order-table-wrapper">
-            <div class="order-table-title">Weekly Shipping Overview</div>
-
-            <table class="order-table">
-              <thead>
-                <tr>
-                  <th>Week #</th>
-                  <th>Week Date</th>
-                  <th>Shipping</th>
-                  <th>Additional</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="orderWeeksBody"></tbody>
-            </table>
-
-            <button id="orderDetailsToggle" class="order-details-toggle" type="button">
-              Show Detailed Breakdown
-            </button>
-
-            <div id="orderDetailsPanel" class="order-details-panel hidden">
-              <div class="order-breakdown-wrapper">
-                <div class="ob-header-stack">
-                  <div class="ob-week-box">
-                    Shipping Week #:
-                    <span id="obWeekDisplay">TBD</span>
-                  </div>
-                  <div class="ob-grades-box">
-                    Store Grade Shipping:
-                    <span id="obGradesDisplay">All stores</span>
-                  </div>
-                </div>
-
-                <div class="ob-grid">
-                  <div class="ob-box">
-                    <div class="ob-box-title">FLO</div>
-                    <div id="obFloBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">FOL</div>
-                    <div id="obFolBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">UCO</div>
-                    <div id="obUcoBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">FHB</div>
-                    <div id="obFhbBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">TRP</div>
-                    <div id="obTrpBody" class="ob-box-body"></div>
-                  </div>
-                  <div class="ob-box">
-                    <div class="ob-box-title">SPC</div>
-                    <div id="obSpcBody" class="ob-box-body"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
       </section>
 
-      <!-- CARE & IDENTIFICATION TAB -->
-      <section id="tab-care-id" class="tab-content hidden">
-        <div class="section-header">
-          <div class="section-title">Care &amp; Identification</div>
-          <p class="section-subtitle">
-            Quick reference for plant care and pest identification.
-          </p>
-        </div>
+      <!-- ========= LOGIN VIEW ========= -->
+      <section id="view-login" class="login-root hidden">
+        <div class="login-card">
+          <img src="hf_logo.png" alt="HF Logo" class="login-logo-small" />
+          <div class="login-title">HF Hub Login</div>
+          <div class="login-subtitle">Select your role and sign in to access tools.</div>
 
-        <div class="inner-tabs">
-          <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
-          <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
-        </div>
-
-        <!-- CARE LIBRARY -->
-        <section id="inner-care-library" class="inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Care Library</div>
-            <div class="pc-search-wrapper">
-              <span class="pc-search-icon">🔎</span>
-              <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
-            </div>
+          <div class="form-group">
+            <label class="form-label" for="loginRole">Role</label>
+            <select id="loginRole" class="form-select">
+              <option value="Merchandiser">Merchandiser</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="District">District</option>
+              <option value="RMM">RMM</option>
+            </select>
           </div>
-          <div class="pc-grid" id="plantCareGrid"></div>
-        </section>
 
-        <!-- PEST IDENTIFICATION -->
-        <section id="inner-pest-id" class="inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Pest Identification</div>
-            <div class="pc-search-wrapper">
-              <span class="pc-search-icon">🔎</span>
-              <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
-            </div>
+          <div class="form-group">
+            <label class="form-label" for="loginUsername">Username</label>
+            <input id="loginUsername" class="form-input" placeholder="Your HF username" />
           </div>
-          <div class="pc-grid" id="pestGrid"></div>
-        </section>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input id="loginPassword" class="form-input" type="password" placeholder="Password" />
+          </div>
+
+          <button id="loginButton" class="primary-button" type="button">
+            Enter Hub
+          </button>
+
+          <div id="loginError" class="login-error"></div>
+        </div>
       </section>
 
-      <!-- STORE OPERATIONS TAB -->
-      <section id="tab-ops" class="tab-content hidden">
-        <div class="section-header">
-          <div class="section-title">Store Operations</div>
-          <p class="section-subtitle">
-            Damage flows, protocols, picture standards, and store visit checklist.
-          </p>
-        </div>
+      <!-- ========= HUB VIEW ========= -->
+      <section id="view-hub" class="hub-root hidden">
+        <header class="hub-header">
+          <div class="hub-title-block">
+            <div class="hub-title">Hampshire Farms Hub</div>
+            <div class="hub-subtitle">Select an area to work in.</div>
+          </div>
+          <div class="hub-user-pill" id="hubUserInfo">
+            Role: — • User: —
+          </div>
+        </header>
 
-        <div class="section-inner-tabs">
-          <button class="section-inner-tab active ops-inner-tab" data-ops="protocols" type="button">
-            HPA Protocols
+        <section class="hub-grid">
+          <button class="hub-card" type="button" id="hubCardHF">
+            <div>
+              <div class="hub-card-label">Outdoor Perennials</div>
+              <div class="hub-card-title">HF</div>
+              <div class="hub-card-subtitle">Guidelines & care for outdoor perennial programs.</div>
+            </div>
+            <div class="hub-card-tagline">
+              🌱 Spring programs • 🌼 Color • 🌿 Long-term performance
+            </div>
           </button>
-          <button class="section-inner-tab ops-inner-tab" data-ops="visit" type="button">
-            Store Visit
+
+          <button class="hub-card" type="button" id="hubCardHPA">
+            <div>
+              <div class="hub-card-label">Houseplants</div>
+              <div class="hub-card-title">HPA</div>
+              <div class="hub-card-subtitle">Guidelines, product info & care for indoor programs.</div>
+            </div>
+            <div class="hub-card-tagline">
+              🪴 Foliage • Blooming • Specialty • Racks & PODs
+            </div>
           </button>
-        </div>
 
-        <!-- STORE OPS → HPA PROTOCOLS -->
-        <section id="ops-protocols" class="section-inner-content">
-          <div class="pc-header">
-            <div class="pc-title">HPA Protocols</div>
-            <p class="section-subtitle">
-              Quick-reference workflows for claims, non-order days, inventory, BI, and picture standards.
-            </p>
-          </div>
-
-          <div class="hpa-inner-tabs">
-            <button class="hpa-inner-tab active" data-hpa="claims" type="button">Damage Claims</button>
-            <button class="hpa-inner-tab" data-hpa="nonorder" type="button">Non-Order Days</button>
-            <button class="hpa-inner-tab" data-hpa="inventory" type="button">Weekly Inventory</button>
-            <button class="hpa-inner-tab" data-hpa="bi" type="button">BI / Reporting</button>
-            <button class="hpa-inner-tab" data-hpa="pictures" type="button">Picture Standards</button>
-          </div>
-
-          <!-- DAMAGE CLAIMS SUBTAB -->
-          <section id="hpa-claims" class="hpa-inner-content">
-            <div class="pc-header">
-              <div class="pc-title">Damage Claims</div>
-              <p class="section-subtitle">
-                Follow these HF-standard flows for cold and pest-related damage.
-              </p>
+          <button class="hub-card" type="button" id="hubCardAdmin">
+            <div>
+              <div class="hub-card-label">Back-End</div>
+              <div class="hub-card-title">ADMIN</div>
+              <div class="hub-card-subtitle">Store checks, audits, training, AIR, and mapping tools.</div>
             </div>
-
-            <div class="damage-inner-tabs">
-              <button class="damage-inner-tab active" data-damage="cold" type="button">Cold Damage</button>
-              <button class="damage-inner-tab" data-damage="pest" type="button">Pest Damage</button>
+            <div class="hub-card-tagline">
+              📋 Store health • 🧠 Training • 🗺️ Coverage & maps
             </div>
-
-            <!-- COLD DAMAGE FLOW CHART -->
-            <section id="damage-cold" class="damage-inner-content">
-              <div class="pc-card" style="margin-bottom:8px;">
-                <div class="pc-card-title">Cold Damage Claim Flow</div>
-                <p class="pc-card-subtitle">
-                  Use this when product has been damaged by cold/freezing conditions.
-                </p>
-              </div>
-
-              <div class="flow-list">
-                <div class="flow-step">
-                  <div class="flow-step-number">1</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Identify Cold Damage</div>
-                    <div class="flow-step-role">FS – Field Supervisor</div>
-                    <div class="flow-step-text">
-                      Confirm symptoms of cold damage (water‑soaked or darkened tissue, limp/collapsed growth,
-                      damage showing a day or two after exposure).
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">2</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Take Photos</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Capture clear photos of full tables/racks and close‑ups of the worst and “typical” plants,
-                      plus any visible cold exposure source.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">3</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Send Photos to DM / RMM</div>
-                    <div class="flow-step-role">FS → DM / RMM</div>
-                    <div class="flow-step-text">
-                      Text or email photos with store #, department, and a quick description of what you’re seeing.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">4</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Notify Home Depot SM / ASM</div>
-                    <div class="flow-step-role">FS → Store Management</div>
-                    <div class="flow-step-text">
-                      Let the Store or Assistant Store Manager know about the cold damage, what product is affected,
-                      and that a claim process is being started.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">5</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Scan Product Under Training Mode</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Scan the affected product under training mode as directed by your process so the store is not
-                      charged incorrectly at the register.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">6</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Capture Receipt &amp; Share</div>
-                    <div class="flow-step-role">FS → DM / RMM</div>
-                    <div class="flow-step-text">
-                      Take a picture of the receipt or transaction record tied to the adjustment
-                      and send it to your DM/RMM.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">7</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Provide Copy to Store for Store Claim</div>
-                    <div class="flow-step-role">FS → Store</div>
-                    <div class="flow-step-text">
-                      Give a copy of the receipt to the store so they can file/attach it to the store claim as needed.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">8</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Record Cold Damage Internally</div>
-                    <div class="flow-step-role">FS / Office</div>
-                    <div class="flow-step-text">
-                      Record the cold-damage loss in the required internal system or tool according to current HF
-                      / customer procedures.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">9</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Share Claim Number with RMM</div>
-                    <div class="flow-step-role">FS → RMM</div>
-                    <div class="flow-step-text">
-                      Once you have the claim number from the store, send it to your Regional Merchandising Manager
-                      for the cold damage tracking sheet.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">10</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Complete Cold Damage Spreadsheet</div>
-                    <div class="flow-step-role">RMM</div>
-                    <div class="flow-step-text">
-                      RMM fills out the cold damage spreadsheet and forwards it to the appropriate contacts
-                      to submit to Depot.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">11</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Approval &amp; Payment / Credit</div>
-                    <div class="flow-step-role">Office / Depot</div>
-                    <div class="flow-step-text">
-                      Claim is submitted to Depot for approval. Once approved, payment/credit is processed
-                      according to current HF / Depot accounting procedures.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- PEST DAMAGE FLOW CHART (HF ONLY) -->
-            <section id="damage-pest" class="damage-inner-content hidden">
-              <div class="pc-card" style="margin-bottom:8px;">
-                <div class="pc-card-title">Pest Damage Claim Flow</div>
-                <p class="pc-card-subtitle">
-                  HF-only workflow for pest-related damage. No store involvement.
-                </p>
-              </div>
-
-              <div class="flow-list">
-
-                <div class="flow-step">
-                  <div class="flow-step-number">1</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Identify Pest Damage</div>
-                    <div class="flow-step-role">FS – Field Supervisor</div>
-                    <div class="flow-step-text">
-                      Confirm that damage is pest‑related: webbing, speckling, sticky residue, chewing, or visible pests.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">2</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Take Photos</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Take clear close‑ups of pests/webbing and wide shots of affected areas to show total volume affected.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">3</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Isolate Affected Product</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Pull heavily affected plants away from healthy stock and clearly mark them as HOLD / DAMAGED
-                      so they are not watered or handled normally.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">4</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Document Damage</div>
-                    <div class="flow-step-role">FS</div>
-                    <div class="flow-step-text">
-                      Record affected SKUs, approximate quantities, percentage of loss, and any treatment attempts
-                      or history (product name, date, etc.).
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">5</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Notify HF Leadership</div>
-                    <div class="flow-step-role">FS → DM → RMM</div>
-                    <div class="flow-step-text">
-                      Send photos and documentation to your District Manager and Regional Merchandising Manager
-                      for review and next steps.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-step">
-                  <div class="flow-step-number">6</div>
-                  <div class="flow-step-body">
-                    <div class="flow-step-title">Submit Pest Claim Internally</div>
-                    <div class="flow-step-role">RMM / Office</div>
-                    <div class="flow-step-text">
-                      RMM and Office team complete internal pest-damage documentation and submit to HF systems
-                      for review and credit processing according to current procedures.
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </section>
-          </section>
-
-          <!-- NON-ORDER DAYS SUBTAB -->
-          <section id="hpa-nonorder" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Non-Order Day Protocol</div>
-              <p class="pc-card-subtitle">
-                What to focus on in the HPA when there is no order delivering that day.
-              </p>
-            </div>
-
-            <div class="flow-list">
-              <div class="flow-step">
-                <div class="flow-step-number">1</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Walk the HPA &amp; Cull</div>
-                  <div class="flow-step-text">
-                    Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">2</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Clean Plants</div>
-                  <div class="flow-step-text">
-                    Deadhead blooms and remove yellowing or damaged leaves so the floor looks fresh and healthy.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">3</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Merchandise by POD / Table / Racks</div>
-                  <div class="flow-step-text">
-                    Reset tables, PODs, and CC racks:
-                    short‑to‑tall, category‑with‑category, no empty spaces, and price labels faced and clean.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">4</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Sweep &amp; Clean</div>
-                  <div class="flow-step-text">
-                    Sweep top and bottom of PODs and the floor; remove extra material (pots, bags, trays, trash) from
-                    under tables and from the sales view.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">5</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Water &amp; Check Drainage</div>
-                  <div class="flow-step-text">
-                    Water as needed (goal: twice per week). Remove extra water from pots if overwatered.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">6</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Take Pictures &amp; Recap</div>
-                  <div class="flow-step-text">
-                    Take clear pictures of all PODs, tables, and racks (individually) and send a recap to your supervisor
-                    summarizing work completed and any inventory concerns.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- WEEKLY INVENTORY SUBTAB -->
-          <section id="hpa-inventory" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Weekly Inventory Process (Supervisors)</div>
-              <p class="pc-card-subtitle">
-                High-level checklist based on the weekly inventory process for HF HPA supervisors.
-              </p>
-            </div>
-
-            <div class="flow-list">
-              <div class="flow-step">
-                <div class="flow-step-number">Mon</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Order Skips &amp; BI Review</div>
-                  <div class="flow-step-text">
-                    • Send requests for stores that need to skip an order or category to your district by their deadline.<br />
-                    • Base decisions on rack counts and notes from the previous week.<br />
-                    • Review stores in BI and note categories with inventory opportunities or issues.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Tue</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">First Delivery &amp; PICAS Check</div>
-                  <div class="flow-step-text">
-                    • Be on the floor for the first weekly delivery when possible.<br />
-                    • Check product quality and ensure guidelines are followed.<br />
-                    • Compare delivery to PICAS and send discrepancies to the HPA team.<br />
-                    • Note items that are selling fast or not selling and share with the HPA team and your supervisor.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Wed–Thu</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Pictures &amp; Negative Inventory</div>
-                  <div class="flow-step-text">
-                    • Take pictures of stores that received the weekly order and send to HF-HPA and supervisors
-                      (subject: HPA/Store#/Date).<br />
-                    • Continue checking negatives and what’s selling or not.<br />
-                    • Track rack counts by store and what product is on each rack once orders are complete.
-                  </div>
-                </div>
-              </div>
-
-              <div class="flow-arrow">⬇️</div>
-
-              <div class="flow-step">
-                <div class="flow-step-number">Fri–Sat</div>
-                <div class="flow-step-body">
-                  <div class="flow-step-title">Close Out &amp; Requests</div>
-                  <div class="flow-step-text">
-                    • Send rack counts, negative counts, and remaining pictures to your district.<br />
-                    • Send inventory requests to the HPA team (Friday or Monday morning).
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- BI / REPORTING SUBTAB -->
-          <section id="hpa-bi" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">BI Check List (Supervisors)</div>
-              <p class="pc-card-subtitle">
-                Key BI areas to review: inventory, negatives, comps, and sales performance.
-              </p>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Inventory &amp; Negatives</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use the Consignment Report tab for roll-over inventory and units on hand.</li>
-                <li>Set ship date range from 1/1/2021 to current day for accurate inventory.</li>
-                <li>Sort inventory column from smallest to largest; review negatives and unusually large numbers.</li>
-                <li>Review sell-through by store, by SKU, and by category.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Sales &amp; Comps</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use the Dashboard tab to review comp $$ and comp sell-through vs. last year.</li>
-                <li>Use the Monthly Sales tab to compare month-to-month performance.</li>
-                <li>Use Consignment Report (units) and Consignment Analysis (sales $$) as needed.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Transfers &amp; Adjustments</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>On the Consignment Report tab, scroll to see transfer from / transfer to details.</li>
-                <li>Use adjustment / transfer fields to understand inventory movement between locations.</li>
-              </ul>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">BI Features &amp; Filters</div>
-              <ul style="font-size:0.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px;">
-                <li>Use drill down / drill up on each page (by store, SKU, category, supervisor).</li>
-                <li>Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.</li>
-                <li>Click on any line to update charts/graphs to that selection; watch pie charts and graphs change.</li>
-              </ul>
-            </div>
-          </section>
-
-          <!-- PICTURE STANDARDS SUBTAB -->
-          <section id="hpa-pictures" class="hpa-inner-content hidden">
-            <div class="pc-card" style="margin-bottom:8px;">
-              <div class="pc-card-title">Picture Standards Checklist</div>
-              <p class="pc-card-subtitle">
-                Use this when deciding if photos are training-only or can be sent to Home Depot.
-              </p>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Basic Quality</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Pictures are clear and not blurry.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Retail labels are front facing and readable.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">POD / Table Layout</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Correct category is in the correct spot (if not, there is a clear reason).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Top of POD is stripped across short-to-tall; décor blocked but still short-to-tall.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Bottom of POD is 2 rows deep and organized (not completely packed solid).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                No trays used for 6" pots or larger; trays only for PW Littles / 4" foliage.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                PODs are clearly shoppable (no racks blocking access).
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Racks &amp; Displays</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Vigoro racks are filled correctly and organized.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                PW racks are filled correctly and organized.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Basket displays are organized with one variety per rod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Surplus racks are organized by category and condensed where possible.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Inventory &amp; Space</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                There is no obvious “empty space” – product is not too sparse or too tight.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Racks and tables are not overloaded; layout makes sense for current inventory level.
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Cleanliness &amp; Timing</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Floor is swept, clear of clutter and garbage.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Background is clear of unnecessary items and distractions.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Pictures are taken before watering (avoids wet floor / shiny pots).
-              </label>
-            </div>
-
-            <div class="checklist-section">
-              <div class="checklist-title">Where Should Photos Go?</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Decide if this photo should be sent to Home Depot or kept for HF/HPA inventory review and training only.
-              </label>
-            </div>
-          </section>
-        </section>
-
-        <!-- STORE OPS → STORE VISIT -->
-        <section id="ops-visit" class="section-inner-content hidden">
-          <div class="pc-header">
-            <div class="pc-title">Store Visit Checklist (Indoor)</div>
-            <p class="section-subtitle">
-              Use these subtabs to work through your indoor HPA checklist during a visit.
-            </p>
-          </div>
-
-          <div class="visit-meta">
-            <div class="form-group small">
-              <label class="form-label" for="visitStore">Store #</label>
-              <input id="visitStore" class="claim-input" placeholder="e.g. 1234" />
-            </div>
-            <div class="form-group small">
-              <label class="form-label" for="visitDate">Visit Date</label>
-              <input id="visitDate" class="claim-input" type="date" />
-            </div>
-            <div class="form-group small">
-              <label class="form-label" for="visitRep">Rep / Visitor</label>
-              <input id="visitRep" class="claim-input" placeholder="Your name" />
-            </div>
-          </div>
-
-          <!-- STORE VISIT INNER TABS -->
-          <div class="store-inner-tabs">
-            <button class="store-inner-tab active" data-store="walk" type="button">Store Walk</button>
-            <button class="store-inner-tab" data-store="pods" type="button">Pod Merchandising</button>
-            <button class="store-inner-tab" data-store="cleanup" type="button">Clean Up / Water</button>
-            <button class="store-inner-tab" data-store="pictures" type="button">Pictures</button>
-          </div>
-
-          <!-- STORE WALK SUBTAB -->
-          <section id="store-walk" class="store-inner-content">
-            <!-- 1. Readiness -->
-            <div class="checklist-section">
-              <div class="checklist-title">1. Readiness</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check shopping areas to make sure pods, tables, and overflow racks are shoppable in the HPA.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Emergency spot water any product that is dry or wilted.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                If product might bounce back, water it and place it in the corner or on an empty rack (off main displays).
-              </label>
-            </div>
-
-            <!-- 2. Delivery Check -->
-            <div class="checklist-section">
-              <div class="checklist-title">2. Delivery Check</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                If a houseplant shipment is scheduled, walk inside the store and receiving to locate your delivery.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Unwrap your delivery and stage racks in the racetrack so they are shoppable.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check all product for damage and pests.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries.
-              </label>
-            </div>
-
-            <!-- 3. HF App -->
-            <div class="checklist-section">
-              <div class="checklist-title">3. HF App</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Open your HF App and review the Houseplant Guidelines for the week before resetting pods and tables.
-              </label>
-            </div>
-          </section>
-
-          <!-- POD MERCHANDISING SUBTAB -->
-          <section id="store-pods" class="store-inner-content hidden">
-            <!-- 1. Blooming / Orchid Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">1. Blooming / Orchid Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves and spent blooms on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks; keep colors together.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
-            </div>
-
-            <!-- 2. Vigoro Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">2. Vigoro Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
-            </div>
-
-            <!-- 3. Specialty Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">3. Specialty Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your pod.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Move older product to the bottom of the pods (not in the highlight area).
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the highlight area based on the HPA Guidelines.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the bottom of the pod two deep.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
-            </div>
-
-            <!-- 4. Hanging Basket Pod -->
-            <div class="checklist-section">
-              <div class="checklist-title">4. Hanging Basket Pod</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock the pod with the same variety on each bar using fresh product from deliveries or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Rotate baskets on the inside of the pod weekly.
-              </label>
-            </div>
-
-            <!-- 5. Tropical Table(s) -->
-            <div class="checklist-section">
-              <div class="checklist-title">5. Tropical Table(s)</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep off your table.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock your table short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Make sure all labels are facing out.
-              </label>
-            </div>
-
-            <!-- 6. CC Racks -->
-            <div class="checklist-section">
-              <div class="checklist-title">6. CC Racks</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove any unsellable product and take it to the compactor or place on an empty CC rack at the back of the HPA if directed.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Remove yellowing/dead leaves on all plants.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Restock racks short to tall with fresh product from your delivery or overflow racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Rotate product from the back of racks to the front weekly.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Condense and stage racks that will stay in the HPA.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Clean up empty racks and place them in the designated pickup location.
-              </label>
-            </div>
-          </section>
-
-          <!-- CLEAN UP / WATER SUBTAB -->
-          <section id="store-cleanup" class="store-inner-content hidden">
-            <div class="checklist-section">
-              <div class="checklist-title">Clean Up / Water</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Sweep around and under all tables and pods.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Water all product in the HPA, paying attention to dry or wilted plants.
-              </label>
-            </div>
-          </section>
-
-          <!-- PICTURES SUBTAB -->
-          <section id="store-pictures" class="store-inner-content hidden">
-            <div class="checklist-section">
-              <div class="checklist-title">Pictures</div>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Take pictures of your pods, tropical tables, and racks.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Ensure pictures are clear and show product, labels, and overall merchandising.
-              </label>
-              <label class="checklist-item">
-                <input type="checkbox" />
-                Send HPA pictures to your manager as directed.
-              </label>
-            </div>
-          </section>
-
-          <!-- VISIT NOTES + EXPORT -->
-          <div class="visit-notes-wrapper">
-            <div class="form-group">
-              <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
-              <textarea id="visitNotes" class="claim-textarea"
-                placeholder="Key issues, wins, follow-ups, and anything for HF team."></textarea>
-            </div>
-          </div>
-
-          <button id="exportVisitSummary" class="primary-button" type="button">
-            📄 Download Visit Summary (.txt)
           </button>
         </section>
       </section>
 
-      <!-- SKU POPUP -->
-      <div id="popupBackdrop" class="popup-backdrop">
-        <div class="popup">
-          <h2 id="popupName"></h2>
-          <p><strong>SKU:</strong> <span id="popupSku"></span></p>
-          <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
-          <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
-          <button id="popupClose" class="popup-close" type="button">Close</button>
-        </div>
-      </div>
+      <!-- ========= HF MODULE ========= -->
+      <section id="view-hf" class="module-root hidden">
+        <button class="module-back-btn" type="button" data-back="hub">
+          ⬅ Back to Hub
+        </button>
 
-      <!-- PLANT CARE POPUP -->
-      <div id="careBackdrop" class="popup-backdrop">
-        <div class="popup">
-          <img id="careImage" class="popup-image" alt="" />
-          <h2 id="careTitle"></h2>
+        <header class="module-header">
+          <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
+          <div class="module-title">HF</div>
+          <div class="module-subtitle">Outdoor Perennials • Guidelines & Care</div>
+        </header>
 
-          <div class="popup-section-title">Light</div>
-          <div class="popup-text" id="careLight"></div>
+        <nav class="module-tabs">
+          <button class="module-tab active" data-module="hf" data-tab="guidelines">
+            Guidelines
+          </button>
+          <button class="module-tab" data-module="hf" data-tab="care" >
+            Care &amp; Identification
+          </button>
+          <!-- If you ever add more HF tabs, we can gate them with data-min-role -->
+        </nav>
 
-          <div class="popup-section-title">Water</div>
-          <div class="popup-text" id="careWater"></div>
+        <section class="module-content">
+          <div id="hf-guidelines" class="glass-panel">
+            <!-- TODO: HF guidelines content goes here -->
+            HF Guidelines content placeholder.
+          </div>
 
-          <div class="popup-section-title">Humidity</div>
-          <div class="popup-text" id="careHumidity"></div>
+          <div id="hf-care" class="glass-panel hidden">
+            <!-- TODO: HF care & ID content goes here -->
+            HF Care & Identification content placeholder.
+          </div>
+        </section>
+      </section>
 
-          <div class="popup-section-title">Temperature</div>
-          <div class="popup-text" id="careTemp"></div>
+      <!-- ========= HPA MODULE ========= -->
+      <section id="view-hpa" class="module-root hidden">
+        <button class="module-back-btn" type="button" data-back="hub">
+          ⬅ Back to Hub
+        </button>
 
-          <div class="popup-section-title">Soil</div>
-          <div class="popup-text" id="careSoil"></div>
+        <header class="module-header">
+          <img src="hpa_logo.png" alt="HPA Logo" class="module-logo" />
+          <div class="module-title">HPA</div>
+          <div class="module-subtitle">Houseplants • Guidelines, Product Info & Care</div>
+        </header>
 
-          <div class="popup-section-title">Fertilizer</div>
-          <div class="popup-text" id="careFertilizer"></div>
+        <nav class="module-tabs">
+          <button class="module-tab active" data-module="hpa" data-tab="guidelines">
+            Guidelines
+          </button>
+          <button class="module-tab" data-module="hpa" data-tab="product" data-min-role="Supervisor">
+            Product Info
+          </button>
+          <button class="module-tab" data-module="hpa" data-tab="care">
+            Care &amp; Identification
+          </button>
+        </nav>
 
-          <div class="popup-section-title">Toxicity</div>
-          <div class="popup-text" id="careToxicity"></div>
+        <section class="module-content">
+          <div id="hpa-guidelines" class="glass-panel">
+            <!-- TODO: HPA Guidelines content goes here -->
+            HPA Guidelines content placeholder.
+          </div>
 
-          <div class="popup-section-title">Extra Tips</div>
-          <div class="popup-text" id="careTips"></div>
+          <div id="hpa-product" class="glass-panel hidden">
+            <!-- 🔽 THIS IS WHERE YOU CAN MOVE YOUR EXISTING PRODUCT INFO TAB CONTENT -->
+            <!-- For example, your SKU Catalogue + Order Breakdown sections -->
+            Product Info placeholder – insert your existing Product Info UI here.
+          </div>
 
-          <button id="careClose" class="popup-close" type="button">Close</button>
-        </div>
-      </div>
+          <div id="hpa-care" class="glass-panel hidden">
+            <!-- 🔽 THIS IS WHERE YOU CAN MOVE YOUR EXISTING CARE & ID CONTENT -->
+            Care & Identification placeholder – insert your plant/pest library UI here.
+          </div>
+        </section>
+      </section>
 
-      <!-- PEST POPUP -->
-      <div id="pestBackdrop" class="popup-backdrop">
-        <div class="popup">
-          <img id="pestImage" class="popup-image" alt="" />
-          <h2 id="pestTitle"></h2>
-          <p id="pestScientificName" class="popup-subtitle"></p>
+      <!-- ========= ADMIN MODULE ========= -->
+      <section id="view-admin" class="module-root hidden">
+        <button class="module-back-btn" type="button" data-back="hub">
+          ⬅ Back to Hub
+        </button>
 
-          <div class="popup-section-title">What They Look Like</div>
-          <div class="popup-text" id="pestLooksLike"></div>
+        <header class="module-header">
+          <!-- Fun Admin “logo” – you can swap this for an actual PNG later -->
+          <div class="module-logo" style="
+            display:flex;align-items:center;justify-content:center;
+            font-size:1.4rem;font-weight:700;color:#22d3ee;
+            text-shadow:0 0 18px rgba(34,211,238,0.9);">
+            HF
+          </div>
+          <div class="module-title">ADMIN</div>
+          <div class="module-subtitle">Store checks, audits, training, AIR, maps & district tools.</div>
+        </header>
 
-          <div class="popup-section-title">Identification</div>
-          <div class="popup-text" id="pestIdentification"></div>
+        <nav class="module-tabs">
+          <button class="module-tab active" data-module="admin" data-tab="store-check">
+            Store Check
+          </button>
+          <button class="module-tab" data-module="admin" data-tab="store-audit">
+            Store Audit
+          </button>
+          <button class="module-tab" data-module="admin" data-tab="training">
+            Training
+          </button>
+          <button class="module-tab" data-module="admin" data-tab="air">
+            AIR
+          </button>
+          <button class="module-tab" data-module="admin" data-tab="store-map">
+            Store Map
+          </button>
+          <button class="module-tab" data-module="admin" data-tab="district-checklist" data-min-role="District">
+            District Checklist
+          </button>
+        </nav>
 
-          <div class="popup-section-title">Prevention</div>
-          <div class="popup-text" id="pestPrevention"></div>
-
-          <div class="popup-section-title">Treatment</div>
-          <div class="popup-text" id="pestTreatment"></div>
-
-          <button id="pestClose" class="popup-close" type="button">Close</button>
-        </div>
-      </div>
+        <section class="module-content">
+          <div id="admin-store-check" class="glass-panel">
+            Store Check placeholder.
+          </div>
+          <div id="admin-store-audit" class="glass-panel hidden">
+            Store Audit placeholder.
+          </div>
+          <div id="admin-training" class="glass-panel hidden">
+            Training placeholder.
+          </div>
+          <div id="admin-air" class="glass-panel hidden">
+            AIR placeholder.
+          </div>
+          <div id="admin-store-map" class="glass-panel hidden">
+            Store Map placeholder.
+          </div>
+          <div id="admin-district-checklist" class="glass-panel hidden">
+            District Checklist placeholder (District &amp; RMM only).
+          </div>
+        </section>
+      </section>
 
       <div class="footer">
-        HF-HPA internal tool • v7.0 • Consolidated: Product Info • Care &amp; ID • Store Operations
+        Hampshire Farms Hub • v1.0 • Role-based HF / HPA / Admin
       </div>
 
     </div>
@@ -2308,30 +757,17 @@
 
   <script>
     /* ========= CONFIG ========= */
-    const SKU_CSV_URL = "SKU_Name_2026.csv";
-    const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
-    const ORDER_CSV_URL = "OrderBreakdown.csv";
-    const PLANT_CSV_URL = "plants.csv";
-    const PEST_CSV_URL = "pests.csv";
+    // IMPORTANT: CSV-based login in a front-end app is NOT secure.
+    // Anyone can view the CSV in dev tools. This is fine for internal, low-risk tooling,
+    // but not for anything with sensitive data or real security requirements.
+    const USERS_CSV_URL = "users.csv";
 
-    const STORE_GRADES_BY_WEEK = {
-      "6": "All stores",
-      "7": "All Stores",
-      "8": "A/B",
-      "9": "SKIP",
-      "10": "All Stores",
-      "11": "All Stores",
-      "12": "All Stores",
-      "13": "All Stores"
-    };
+    const ROLE_ORDER = ["Merchandiser", "Supervisor", "District", "RMM"];
 
-    let skuData = [];
-    let allOrderRows = [];
-    let PLANTS = [];
-    let PESTS = [];
+    let USERS = [];
+    let CURRENT_USER = null; // { role, username }
 
-    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
-
+    /* ========= HELPERS ========= */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -2351,784 +787,260 @@
       return out;
     }
 
-    function parseSkuCsv(text) {
+    function parseUsersCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-      const yearIdx = header.indexOf("year sent");
-      const nameIdx = header.indexOf("sku name");
-      const skuIdx = header.indexOf("sku");
-      const sentIdx = header.indexOf("sent in");
+      const roleIdx = header.indexOf("role");
+      const usernameIdx = header.indexOf("username");
+      const passwordIdx = header.indexOf("password");
+      const displayIdx = header.indexOf("display_name");
 
-      const data = [];
+      const users = [];
       for (let i = 1; i < lines.length; i++) {
         const row = parseCsvLine(lines[i]);
-        const item = {
-          yearSent: (row[yearIdx] || "").trim(),
-          name: (row[nameIdx] || "").trim(),
-          sku: (row[skuIdx] || "").trim(),
-          sentIn: (row[sentIdx] || "").trim()
-        };
-        if (item.name && item.sku) data.push(item);
+        const role = (row[roleIdx] || "").trim();
+        const username = (row[usernameIdx] || "").trim();
+        const password = (row[passwordIdx] || "").trim();
+        const displayName = displayIdx >= 0 ? (row[displayIdx] || "").trim() : "";
+        if (!role) continue;
+        users.push({ role, username, password, displayName });
       }
-      return data;
+      return users;
     }
 
-    function parseOrderCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-      const w = header.indexOf("week");
-      const c = header.indexOf("category");
-      const s = header.indexOf("size");
-      const p = header.indexOf("plant name");
-
-      const out = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const item = {
-          week: (row[w] || "").trim(),
-          category: (row[c] || "").trim().toUpperCase(),
-          size: (row[s] || "").trim(),
-          plant: (row[p] || "").trim()
-        };
-        if (item.week && item.category && (item.size || item.plant)) out.push(item);
-      }
-      return out;
+    function roleRank(role) {
+      const idx = ROLE_ORDER.indexOf(role);
+      return idx === -1 ? -1 : idx;
     }
 
-    function parsePlantCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-
-      const idx = {
-        id: header.indexOf("id"),
-        commonName: header.indexOf("common_name"),
-        scientific: header.indexOf("scientific_name"),
-        image: header.indexOf("image"),
-        light: header.indexOf("light"),
-        water: header.indexOf("water"),
-        humidity: header.indexOf("humidity"),
-        temp: header.indexOf("temp"),
-        soil: header.indexOf("soil"),
-        fertilizer: header.indexOf("fertilizer"),
-        toxicity: header.indexOf("toxicity"),
-        tips: header.indexOf("tips")
-      };
-
-      const data = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        if (!row.length) continue;
-
-        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-        if (!commonName) continue;
-
-        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-        data.push({
-          id,
-          commonName,
-          scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
-          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
-          light: idx.light >= 0 ? (row[idx.light] || "").trim() : "",
-          water: idx.water >= 0 ? (row[idx.water] || "").trim() : "",
-          humidity: idx.humidity >= 0 ? (row[idx.humidity] || "").trim() : "",
-          temp: idx.temp >= 0 ? (row[idx.temp] || "").trim() : "",
-          soil: idx.soil >= 0 ? (row[idx.soil] || "").trim() : "",
-          fertilizer: idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
-          toxicity: idx.toxicity >= 0 ? (row[idx.toxicity] || "").trim() : "",
-          tips: idx.tips >= 0 ? (row[idx.tips] || "").trim() : ""
-        });
-      }
-      return data;
+    function canAccess(currentRole, minRole) {
+      if (!minRole) return true;
+      return roleRank(currentRole) >= roleRank(minRole);
     }
 
-    function parsePestCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-
-      const idx = {
-        id: header.indexOf("id"),
-        commonName: header.indexOf("common_name"),
-        scientificName: header.indexOf("scientific_name"),
-        image: header.indexOf("image"),
-        looksLike: header.indexOf("what_they_look_like"),
-        identification: header.indexOf("identification"),
-        prevention: header.indexOf("prevention"),
-        treatment: header.indexOf("treatment")
-      };
-
-      const pests = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        if (!row.length) continue;
-
-        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-        if (!commonName) continue;
-
-        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-        pests.push({
-          id,
-          commonName,
-          scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
-          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
-          looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
-          identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
-          prevention: idx.prevention >= 0 ? (row[idx.prevention] || "").trim() : "",
-          treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
-        });
-      }
-      return pests;
+    function showView(viewId) {
+      const views = ["view-splash", "view-login", "view-hub", "view-hf", "view-hpa", "view-admin"];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("hidden", id !== viewId);
+      });
     }
 
-    function highlightStatus(status) {
-      if (!status) return "";
-      const lower = status.toLowerCase();
-      if (lower.includes("request") || lower.includes("due")) {
-        return `<span class="status-highlight">${status}</span>`;
-      }
-      return status;
+    function updateHubUserInfo() {
+      const el = document.getElementById("hubUserInfo");
+      if (!el || !CURRENT_USER) return;
+      const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
+      el.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
     }
 
+    function applyRolePermissions() {
+      if (!CURRENT_USER) return;
+      const role = CURRENT_USER.role;
+
+      // 1) Hide/show any element with data-min-role
+      const gated = document.querySelectorAll("[data-min-role]");
+      gated.forEach(el => {
+        const minRole = el.getAttribute("data-min-role");
+        const allowed = canAccess(role, minRole);
+        el.classList.toggle("hidden", !allowed);
+      });
+
+      // 2) Merchandiser restrictions on HF/HPA tabs
+      // HF: only Guidelines + Care & ID – but we only have those two anyway.
+      // HPA: hide Product Info tab for Merchandiser
+      if (role === "Merchandiser") {
+        const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
+        if (hpaProductTab) hpaProductTab.classList.add("hidden");
+
+        const adminView = document.getElementById("view-admin");
+        // Optionally: hide entire ADMIN view for Merchandiser
+        // (You can comment this out if you want Merch to still see Admin)
+        if (adminView) {
+          // we only hide the card, the view is still there but unreachable
+          const cardAdmin = document.getElementById("hubCardAdmin");
+          if (cardAdmin) cardAdmin.classList.add("hidden");
+        }
+      } else {
+        // Non-merchandiser: show everything, gating via data-min-role handles the rest
+        const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
+        if (hpaProductTab) hpaProductTab.classList.remove("hidden");
+
+        const cardAdmin = document.getElementById("hubCardAdmin");
+        if (cardAdmin) cardAdmin.classList.remove("hidden");
+      }
+    }
+
+    function setActiveModuleTab(moduleKey, tabKey) {
+      // Deactivate all tabs for that module
+      const allTabs = document.querySelectorAll(`.module-tab[data-module="${moduleKey}"]`);
+      allTabs.forEach(tab => tab.classList.remove("active"));
+
+      // Hide all panels in that module
+      const panels = document.querySelectorAll(`#view-${moduleKey} .glass-panel`);
+      panels.forEach(p => p.classList.add("hidden"));
+
+      // Activate chosen tab
+      const activeTab = document.querySelector(`.module-tab[data-module="${moduleKey}"][data-tab="${tabKey}"]`);
+      if (activeTab) activeTab.classList.add("active");
+
+      // Show matching panel
+      const panelId = `${moduleKey}-${tabKey}`; // e.g. "hpa-product"
+      const panel = document.getElementById(panelId);
+      if (panel) panel.classList.remove("hidden");
+    }
+
+    /* ========= EVENT WIRING ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      /* MAIN TOP TABS */
-      const tabs = document.querySelectorAll(".tabs .tab");
-      const tabSections = {
-        "products": document.getElementById("tab-products"),
-        "care-id": document.getElementById("tab-care-id"),
-        "ops": document.getElementById("tab-ops")
-      };
-
-      function showTopTab(key) {
-        Object.entries(tabSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        tabs.forEach(t => t.classList.remove("active"));
-        const activeTab = document.querySelector(`.tabs .tab[data-tab="${key}"]`);
-        if (activeTab) activeTab.classList.add("active");
-      }
-
-      tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-          const key = tab.dataset.tab;
-          if (!key) return;
-          showTopTab(key);
-        });
-      });
-
-      /* PRODUCT INFO INNER TABS */
-      const productsTabs = document.querySelectorAll(".products-inner-tab");
-      const productsSections = {
-        skus: document.getElementById("products-skus"),
-        orders: document.getElementById("products-orders")
-      };
-
-      function showProductsTab(key) {
-        Object.entries(productsSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        productsTabs.forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.products === key);
+      // Splash click -> Login
+      const splashLogo = document.getElementById("splashLogo");
+      if (splashLogo) {
+        splashLogo.addEventListener("click", () => {
+          showView("view-login");
         });
       }
 
-      productsTabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.products;
-          if (key) showProductsTab(key);
-        });
-      });
+      // Login role behavior
+      const loginRole = document.getElementById("loginRole");
+      const loginUsername = document.getElementById("loginUsername");
+      const loginPassword = document.getElementById("loginPassword");
+      const loginButton = document.getElementById("loginButton");
+      const loginError = document.getElementById("loginError");
 
-      /* OPS INNER TABS */
-      const opsTabs = document.querySelectorAll(".ops-inner-tab");
-      const opsSections = {
-        protocols: document.getElementById("ops-protocols"),
-        visit: document.getElementById("ops-visit")
-      };
-
-      function showOpsTab(key) {
-        Object.entries(opsSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        opsTabs.forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.ops === key);
-        });
-      }
-
-      opsTabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.ops;
-          if (key) showOpsTab(key);
-        });
-      });
-
-      /* CARE & ID INNER TABS */
-      const innerTabs = document.querySelectorAll(".inner-tab");
-      const innerSections = {
-        "care-library": document.getElementById("inner-care-library"),
-        "pest-id": document.getElementById("inner-pest-id")
-      };
-
-      function showInnerTab(key) {
-        Object.entries(innerSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        innerTabs.forEach(t => t.classList.remove("active"));
-        const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
-        if (active) active.classList.add("active");
-      }
-
-      innerTabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-          const key = tab.dataset.inner;
-          if (!key) return;
-          showInnerTab(key);
-        });
-      });
-
-      /* HPA PROTOCOLS INNER TABS */
-      const hpaTabs = document.querySelectorAll(".hpa-inner-tab");
-      const hpaSections = {
-        claims: document.getElementById("hpa-claims"),
-        nonorder: document.getElementById("hpa-nonorder"),
-        inventory: document.getElementById("hpa-inventory"),
-        bi: document.getElementById("hpa-bi"),
-        pictures: document.getElementById("hpa-pictures")
-      };
-
-      function showHpaTab(key) {
-        Object.entries(hpaSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        hpaTabs.forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.hpa === key);
-        });
-      }
-
-      hpaTabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.hpa;
-          if (key) showHpaTab(key);
-        });
-      });
-
-      /* DAMAGE CLAIM INNER TABS */
-      const damageTabs = document.querySelectorAll(".damage-inner-tab");
-      const damageSections = {
-        cold: document.getElementById("damage-cold"),
-        pest: document.getElementById("damage-pest")
-      };
-
-      function showDamageTab(key) {
-        Object.entries(damageSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        damageTabs.forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.damage === key);
-        });
-      }
-
-      damageTabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.damage;
-          if (key) showDamageTab(key);
-        });
-      });
-
-      /* STORE VISIT INNER TABS */
-      const storeTabs = document.querySelectorAll(".store-inner-tab");
-      const storeSections = {
-        walk: document.getElementById("store-walk"),
-        pods: document.getElementById("store-pods"),
-        cleanup: document.getElementById("store-cleanup"),
-        pictures: document.getElementById("store-pictures")
-      };
-
-      function showStoreTab(key) {
-        Object.entries(storeSections).forEach(([k, section]) => {
-          if (!section) return;
-          section.classList.toggle("hidden", k !== key);
-        });
-        storeTabs.forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.store === key);
-        });
-      }
-
-      storeTabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.store;
-          if (key) showStoreTab(key);
-        });
-      });
-
-      /* ORDER BREAKDOWN DOM */
-      const obWeekDisplay = document.getElementById("obWeekDisplay");
-      const obGradesDisplay = document.getElementById("obGradesDisplay");
-      const obBodies = {
-        FLO: document.getElementById("obFloBody"),
-        FOL: document.getElementById("obFolBody"),
-        UCO: document.getElementById("obUcoBody"),
-        FHB: document.getElementById("obFhbBody"),
-        TRP: document.getElementById("obTrpBody"),
-        SPC: document.getElementById("obSpcBody")
-      };
-
-      const orderDetailsToggle = document.getElementById("orderDetailsToggle");
-      const orderDetailsPanel = document.getElementById("orderDetailsPanel");
-
-      if (orderDetailsToggle && orderDetailsPanel) {
-        orderDetailsToggle.addEventListener("click", () => {
-          const isHidden = orderDetailsPanel.classList.toggle("hidden");
-          orderDetailsToggle.textContent = isHidden
-            ? "Show Detailed Breakdown"
-            : "Hide Detailed Breakdown";
-        });
-      }
-
-      /* SKU DOM */
-      const nameFilter = document.getElementById("nameFilter");
-      const skuFilter = document.getElementById("skuFilter");
-      const sentInFilter = document.getElementById("sentInFilter");
-      const yearFilter = document.getElementById("yearFilter");
-      const skuGrid = document.getElementById("skuGrid");
-      const resultCount = document.getElementById("resultCount");
-      const emptyState = document.getElementById("emptyState");
-
-      const popupBackdrop = document.getElementById("popupBackdrop");
-      const popupName = document.getElementById("popupName");
-      const popupSku = document.getElementById("popupSku");
-      const popupSent = document.getElementById("popupSent");
-      const popupYear = document.getElementById("popupYear");
-      const popupClose = document.getElementById("popupClose");
-
-      if (popupClose) {
-        popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
-        popupBackdrop.addEventListener("click", e => {
-          if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
-        });
-      }
-
-      function renderSkuList() {
-        skuGrid.innerHTML = "";
-        const nameQ = (nameFilter.value || "").toLowerCase();
-        const skuQ = normalizeSku(skuFilter.value || "");
-        const sentQ = (sentInFilter.value || "").toLowerCase();
-        const yearQ = yearFilter.value;
-
-        const filtered = skuData.filter(item => {
-          const itemName = (item.name || "").toLowerCase();
-          const itemSku = normalizeSku(item.sku || "");
-          const itemSent = (item.sentIn || "").toLowerCase();
-          const itemYear = item.yearSent || "";
-          return (!nameQ || itemName.includes(nameQ)) &&
-            (!skuQ || itemSku.includes(skuQ)) &&
-            (!sentQ || itemSent.includes(sentQ)) &&
-            (yearQ === "all" || itemYear === yearQ);
-        });
-
-        filtered.forEach(item => {
-          const card = document.createElement("button");
-          card.className = "sku-card";
-          card.type = "button";
-          card.innerHTML = `
-            <div class="sku-year-pill">${item.yearSent}</div>
-            <div class="sku-name">${item.name}</div>
-            <div class="sku-meta"><strong>SKU:</strong> ${item.sku}</div>
-            <div class="sku-meta"><strong>Sent In:</strong> ${item.sentIn}</div>
-            <div class="sku-meta"><strong>Year Sent:</strong> ${item.yearSent}</div>
-          `;
-          card.addEventListener("click", () => {
-            popupName.textContent = item.name;
-            popupSku.textContent = item.sku;
-            popupSent.textContent = item.sentIn;
-            popupYear.textContent = item.yearSent;
-            popupBackdrop.style.display = "flex";
-          });
-          skuGrid.appendChild(card);
-        });
-
-        resultCount.textContent = filtered.length;
-        emptyState.classList.toggle("hidden", filtered.length !== 0);
-      }
-
-      nameFilter.addEventListener("input", renderSkuList);
-      skuFilter.addEventListener("input", renderSkuList);
-      sentInFilter.addEventListener("input", renderSkuList);
-      yearFilter.addEventListener("change", renderSkuList);
-
-      /* ORDER BREAKDOWN DETAIL */
-      function applyOrderBreakdown(rows) {
-        if (!rows.length) {
-          if (obWeekDisplay) obWeekDisplay.textContent = "TBD";
-          if (obGradesDisplay) obGradesDisplay.textContent = "All stores";
-          Object.values(obBodies).forEach(el => el && (el.textContent = ""));
-          return;
-        }
-
-        const weeks = [...new Set(rows.map(r => r.week))];
-        const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
-        const latest = numeric.length ? Math.max(...numeric) : weeks[0];
-        const weekRows = rows.filter(r => r.week == latest);
-
-        if (obWeekDisplay) obWeekDisplay.textContent = latest;
-        if (obGradesDisplay) {
-          obGradesDisplay.textContent =
-            STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
-        }
-
-        const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
-
-        weekRows.forEach(r => {
-          if (groups[r.category]) {
-            const size = r.size || "";
-            const plant = r.plant || "";
-            let line = "";
-            if (size && plant) line = `${size} — ${plant}`;
-            else line = size || plant;
-            if (line) groups[r.category].push(line);
-          }
-        });
-
-        Object.entries(groups).forEach(([cat, lines]) => {
-          const el = obBodies[cat];
-          if (el) el.textContent = lines.join("\n");
-        });
-      }
-
-      /* PLANTS UI */
-      const plantCareGrid = document.getElementById("plantCareGrid");
-      const careSearch = document.getElementById("careSearch");
-      const careBackdrop = document.getElementById("careBackdrop");
-      const careImage = document.getElementById("careImage");
-      const careTitle = document.getElementById("careTitle");
-      const careLight = document.getElementById("careLight");
-      const careWater = document.getElementById("careWater");
-      const careHumidityEl = document.getElementById("careHumidity");
-      const careTemp = document.getElementById("careTemp");
-      const careSoil = document.getElementById("careSoil");
-      const careFertilizer = document.getElementById("careFertilizer");
-      const careToxicity = document.getElementById("careToxicity");
-      const careTips = document.getElementById("careTips");
-      const careCloseBtn = document.getElementById("careClose");
-
-      if (careCloseBtn) {
-        careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
-        careBackdrop.addEventListener("click", e => {
-          if (e.target === careBackdrop) careBackdrop.style.display = "none";
-        });
-      }
-
-      function renderPlantCards() {
-        plantCareGrid.innerHTML = "";
-        PLANTS.forEach(plant => {
-          const btn = document.createElement("button");
-          btn.className = "pc-card";
-          btn.type = "button";
-          btn.dataset.plantId = plant.id;
-          btn.innerHTML = `
-            <div class="pc-card-title">${plant.commonName}</div>
-            <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
-          `;
-          btn.addEventListener("click", () => openCarePopup(plant.id));
-          plantCareGrid.appendChild(btn);
-        });
-      }
-
-      function openCarePopup(id) {
-        const plant = PLANTS.find(p => p.id === id);
-        if (!plant) return;
-
-        careTitle.textContent = plant.commonName || "";
-        careLight.textContent = plant.light || "";
-        careWater.textContent = plant.water || "";
-        careHumidityEl.textContent = plant.humidity || "";
-        careTemp.textContent = plant.temp || "";
-        careSoil.textContent = plant.soil || "";
-        careFertilizer.textContent = plant.fertilizer || "";
-        careToxicity.textContent = plant.toxicity || "";
-        careTips.textContent = plant.tips || "";
-
-        if (plant.image) {
-          careImage.src = plant.image;
-          careImage.alt = plant.commonName || "";
-          careImage.style.display = "";
+      function updateLoginFieldsForRole() {
+        const role = loginRole.value;
+        if (role === "Merchandiser") {
+          // No login info required
+          loginUsername.disabled = true;
+          loginPassword.disabled = true;
+          loginUsername.value = "";
+          loginPassword.value = "";
         } else {
-          careImage.style.display = "none";
-        }
-
-        careBackdrop.style.display = "flex";
-      }
-
-      function filterPlantCards() {
-        const q = (careSearch.value || "").toLowerCase().trim();
-        const cards = plantCareGrid.querySelectorAll(".pc-card");
-        cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
-        });
-      }
-
-      careSearch.addEventListener("input", filterPlantCards);
-
-      /* PEST UI */
-      const pestGrid = document.getElementById("pestGrid");
-      const pestSearch = document.getElementById("pestSearch");
-      const pestBackdrop = document.getElementById("pestBackdrop");
-      const pestImage = document.getElementById("pestImage");
-      const pestTitle = document.getElementById("pestTitle");
-      const pestScientificName = document.getElementById("pestScientificName");
-      const pestLooksLike = document.getElementById("pestLooksLike");
-      const pestIdentification = document.getElementById("pestIdentification");
-      const pestPrevention = document.getElementById("pestPrevention");
-      const pestTreatment = document.getElementById("pestTreatment");
-      const pestCloseBtn = document.getElementById("pestClose");
-
-      if (pestCloseBtn) {
-        pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
-        pestBackdrop.addEventListener("click", e => {
-          if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
-        });
-      }
-
-      function renderPestCards() {
-        pestGrid.innerHTML = "";
-        PESTS.forEach(pest => {
-          const card = document.createElement("button");
-          card.className = "pc-card";
-          card.type = "button";
-          card.dataset.pestId = pest.id;
-          card.innerHTML = `
-            <div class="pc-card-title">${pest.commonName}</div>
-            <div class="pc-card-subtitle">${pest.identification || ""}</div>
-          `;
-          card.addEventListener("click", () => openPestPopup(pest.id));
-          pestGrid.appendChild(card);
-        });
-      }
-
-      function openPestPopup(id) {
-        const pest = PESTS.find(p => p.id === id);
-        if (!pest) return;
-
-        pestTitle.textContent = pest.commonName || "";
-        pestScientificName.textContent = pest.scientificName || "";
-        pestLooksLike.textContent = pest.looksLike || "";
-        pestIdentification.textContent = pest.identification || "";
-        pestPrevention.textContent = pest.prevention || "";
-        pestTreatment.textContent = pest.treatment || "";
-
-        if (pest.image) {
-          pestImage.src = pest.image;
-          pestImage.alt = pest.commonName || pest.scientificName || "";
-          pestImage.style.display = "";
-        } else {
-          pestImage.style.display = "none";
-        }
-
-        pestBackdrop.style.display = "flex";
-      }
-
-      function filterPestCards() {
-        const q = (pestSearch.value || "").toLowerCase().trim();
-        const cards = pestGrid.querySelectorAll(".pc-card");
-        cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
-        });
-      }
-
-      pestSearch.addEventListener("input", filterPestCards);
-
-      /* STORE VISIT CHECKLIST – DOWNLOAD SUMMARY */
-      const exportVisitSummaryBtn = document.getElementById("exportVisitSummary");
-      if (exportVisitSummaryBtn) {
-        exportVisitSummaryBtn.addEventListener("click", () => {
-          const store = (document.getElementById("visitStore").value || "").trim();
-          const visitDate = document.getElementById("visitDate").value || new Date().toISOString().slice(0, 10);
-          const rep = (document.getElementById("visitRep").value || "").trim();
-          const notes = (document.getElementById("visitNotes").value || "").trim();
-
-          const checklistLines = [];
-          const sections = document.querySelectorAll("#ops-visit .checklist-section");
-          sections.forEach(section => {
-            const titleEl = section.querySelector(".checklist-title");
-            const title = titleEl ? titleEl.textContent.trim() : "";
-            if (title) {
-              checklistLines.push(title);
-              checklistLines.push("-".repeat(title.length));
-            }
-            const items = section.querySelectorAll(".checklist-item");
-            items.forEach(label => {
-              const cb = label.querySelector("input[type='checkbox']");
-              const text = (label.textContent || "").replace(/\s+/g, " ").trim();
-              const status = cb && cb.checked ? "✅" : "⬜";
-              checklistLines.push(`  ${status} ${text}`);
-            });
-            checklistLines.push("");
-          });
-
-          const lines = [
-            "STORE VISIT SUMMARY",
-            "===================",
-            "",
-            `Store #: ${store || "N/A"}`,
-            `Visit Date: ${visitDate}`,
-            `Rep / Visitor: ${rep || "N/A"}`,
-            "",
-            "Checklist",
-            "---------",
-            ...checklistLines,
-            "Notes / Follow-Ups",
-            "-------------------",
-            notes || "None",
-            "",
-            "Generated via HF-HPA Store Visit Checklist"
-          ];
-
-          const content = lines.join("\n");
-          const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-          const url = URL.createObjectURL(blob);
-
-          const safeStore = store || "Store";
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `StoreVisit_${safeStore}_${visitDate}.txt`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        });
-      }
-
-      /* DATE DEFAULTS */
-      const todayIso = new Date().toISOString().slice(0, 10);
-      const visitDateInput = document.getElementById("visitDate");
-      if (visitDateInput && !visitDateInput.value) {
-        visitDateInput.value = todayIso;
-      }
-
-      /* LOADERS */
-      async function loadSkuCsv() {
-        try {
-          const res = await fetch(SKU_CSV_URL);
-          if (!res.ok) throw new Error("SKU CSV not found");
-          const text = await res.text();
-          skuData = parseSkuCsv(text);
-          renderSkuList();
-        } catch (err) {
-          console.error(err);
-          emptyState.classList.remove("hidden");
-          emptyState.textContent = "Error loading SKU_Name_2026.csv.";
+          loginUsername.disabled = false;
+          loginPassword.disabled = false;
         }
       }
 
-      async function loadOrderWeeksCsv() {
-        try {
-          const res = await fetch(ORDER_WEEKS_CSV_URL);
-          if (!res.ok) throw new Error("OrderWeeks.csv not found");
-          const text = await res.text();
-          const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-          if (!lines.length) return;
+      if (loginRole) {
+        loginRole.addEventListener("change", updateLoginFieldsForRole);
+        updateLoginFieldsForRole();
+      }
 
-          const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-          const weekIdx = header.indexOf("week #");
-          const dateIdx = header.indexOf("week date");
-          const shipIdx = header.indexOf("shipping");
-          const addIdx = header.indexOf("additional");
-          const statusIdx = header.indexOf("status");
-
-          const orderBody = document.getElementById("orderWeeksBody");
-          orderBody.innerHTML = "";
-
-          for (let i = 1; i < lines.length; i++) {
-            const row = parseCsvLine(lines[i]);
-            const week = (row[weekIdx] || "").trim();
-            const date = (row[dateIdx] || "").trim();
-            const shipping = (row[shipIdx] || "").trim();
-            const additional = (row[addIdx] || "").trim();
-            const status = (row[statusIdx] || "").trim();
-
-            if (!week) continue;
-
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${week}</td>
-              <td>${date}</td>
-              <td>${shipping}</td>
-              <td>${additional}</td>
-              <td>${highlightStatus(status)}</td>
-            `;
-            orderBody.appendChild(tr);
+      if (loginButton) {
+        loginButton.addEventListener("click", () => {
+          const role = loginRole.value;
+          if (role === "Merchandiser") {
+            // Bypass credential check for merchandiser
+            CURRENT_USER = {
+              role,
+              username: "",
+              displayName: "Merchandiser"
+            };
+            loginError.textContent = "";
+            showView("view-hub");
+            updateHubUserInfo();
+            applyRolePermissions();
+            return;
           }
-        } catch (err) {
-          console.error(err);
-        }
+
+          const username = (loginUsername.value || "").trim();
+          const password = (loginPassword.value || "").trim();
+          if (!username || !password) {
+            loginError.textContent = "Please enter both username and password.";
+            return;
+          }
+
+          if (!USERS.length) {
+            loginError.textContent = "User data not loaded yet. Please try again in a moment.";
+            return;
+          }
+
+          const match = USERS.find(u =>
+            u.role.toLowerCase() === role.toLowerCase() &&
+            u.username.toLowerCase() === username.toLowerCase() &&
+            u.password === password
+          );
+
+          if (!match) {
+            loginError.textContent = "Invalid login. Check role, username, or password.";
+            return;
+          }
+
+          CURRENT_USER = {
+            role: match.role,
+            username: match.username,
+            displayName: match.displayName
+          };
+          loginError.textContent = "";
+          showView("view-hub");
+          updateHubUserInfo();
+          applyRolePermissions();
+        });
       }
 
-      async function loadOrderCsv() {
-        try {
-          const res = await fetch(ORDER_CSV_URL);
-          if (!res.ok) throw new Error("OrderBreakdown.csv not found");
-          const text = await res.text();
-          allOrderRows = parseOrderCsv(text);
-          applyOrderBreakdown(allOrderRows);
-        } catch (err) {
-          console.error(err);
-        }
+      // Hub cards -> module views
+      const hubCardHF = document.getElementById("hubCardHF");
+      const hubCardHPA = document.getElementById("hubCardHPA");
+      const hubCardAdmin = document.getElementById("hubCardAdmin");
+
+      if (hubCardHF) {
+        hubCardHF.addEventListener("click", () => {
+          showView("view-hf");
+        });
+      }
+      if (hubCardHPA) {
+        hubCardHPA.addEventListener("click", () => {
+          showView("view-hpa");
+        });
+      }
+      if (hubCardAdmin) {
+        hubCardAdmin.addEventListener("click", () => {
+          showView("view-admin");
+        });
       }
 
-      async function loadPlantCsv() {
-        try {
-          const res = await fetch(PLANT_CSV_URL);
-          if (!res.ok) throw new Error("plants.csv not found");
-          const text = await res.text();
-          PLANTS = parsePlantCsv(text);
-          renderPlantCards();
-          filterPlantCards();
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      // Back buttons (from modules -> hub)
+      const backBtns = document.querySelectorAll(".module-back-btn");
+      backBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const backTarget = btn.getAttribute("data-back") || "hub";
+          showView(`view-${backTarget}`);
+        });
+      });
 
-      async function loadPestCsv() {
-        try {
-          const res = await fetch(PEST_CSV_URL);
-          if (!res.ok) throw new Error("pests.csv not found");
-          const text = await res.text();
-          PESTS = parsePestCsv(text);
-          renderPestCards();
-          filterPestCards();
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      // Module tab clicks
+      const moduleTabs = document.querySelectorAll(".module-tab");
+      moduleTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          if (!CURRENT_USER) return;
+          const moduleKey = tab.getAttribute("data-module");
+          const tabKey = tab.getAttribute("data-tab");
 
-      /* INIT */
-      showTopTab("products");
-      showProductsTab("skus");
-      showInnerTab("care-library");
-      showHpaTab("claims");
-      showDamageTab("cold");
-      showStoreTab("walk");
-      showOpsTab("protocols");
+          const minRole = tab.getAttribute("data-min-role");
+          if (minRole && !canAccess(CURRENT_USER.role, minRole)) {
+            return;
+          }
 
-      loadSkuCsv();
-      loadOrderWeeksCsv();
-      loadOrderCsv();
-      loadPlantCsv();
-      loadPestCsv();
+          setActiveModuleTab(moduleKey, tabKey);
+        });
+      });
+
+      // Default visible: splash
+      showView("view-splash");
+
+      // Load users CSV
+      fetch(USERS_CSV_URL)
+        .then(res => {
+          if (!res.ok) throw new Error("Users CSV not found");
+          return res.text();
+        })
+        .then(text => {
+          USERS = parseUsersCsv(text);
+          console.log("Loaded users:", USERS.length);
+        })
+        .catch(err => {
+          console.error("Error loading users CSV:", err);
+        });
     });
   </script>
 </body>
