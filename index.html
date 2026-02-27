@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon -->
-  hf_logo.png
+  <link rel="icon" type="image/png" href="hf_logo.png" />
 
   <style>
     /* ========= CORE THEME ========= */
@@ -138,7 +138,7 @@
       justify-content: center;
     }
 
-    .splash-logo-wrapper img {
+    .splash-logo-img {
       width: 240px;
       height: auto;
       display: block;
@@ -152,7 +152,7 @@
       z-index: 2;
     }
 
-    .splash-logo-wrapper:hover img {
+    .splash-logo-wrapper:hover .splash-logo-img {
       transform: translateY(-3px) scale(1.03);
       filter:
         drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
@@ -223,7 +223,7 @@
       animation: loginEnter 0.6s ease-in-out forwards;
     }
 
-    .logo-animate img {
+    .logo-animate .splash-logo-img {
       animation: logoClick 0.6s ease-in-out forwards;
     }
 
@@ -241,7 +241,6 @@
       100% { opacity: 1; transform: translateY(0)    scale(1); }
     }
 
-    /* Logo pulse (subtle) – combined with login logo fade, it "feels" like it becomes the new one */
     @keyframes logoClick {
       0%   { transform: scale(1)    rotate(0deg); }
       40%  { transform: scale(1.04) rotate(2deg); }
@@ -282,7 +281,7 @@
       border: 1px solid rgba(148, 163, 184, 0.8);
       object-fit: cover;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
-      opacity: 0; /* start hidden; we fade it in */
+      opacity: 0; /* starts hidden; animates in */
     }
 
     .login-title {
@@ -530,6 +529,16 @@
       margin-bottom: 4px;
     }
 
+    .module-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9);
+      object-fit: cover;
+      background: rgba(15, 23, 42, 0.96);
+    }
+
     .module-title {
       margin-top: 6px;
       font-size: 1.3rem;
@@ -591,6 +600,24 @@
       margin-top: 10px;
     }
 
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
     .glass-panel {
       background: var(--card-glass);
       border-radius: var(--radius-lg);
@@ -602,7 +629,464 @@
       color: var(--text);
     }
 
-    /* ========= POPUPS & MOBILE TABLE ========= */
+    /* ========= INNER TABS (Care & ID) ========= */
+    .inner-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .inner-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+      font-size: 0.85rem;
+    }
+
+    .inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .inner-tab.active {
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.9);
+      color: var(--heading);
+    }
+
+    .inner-content {
+      margin-top: 6px;
+    }
+
+    /* ========= PRODUCT / CARE / POPUP styles ========= */
+    .controls {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+
+    @media (min-width: 900px) {
+      .controls { flex-direction: row; align-items: center; }
+    }
+
+    .search-wrapper { flex: 2; position: relative; }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .search-input::placeholder { color: #64748b; }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+
+    .filters {
+      flex: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      gap: 3px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .filter-input {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.92);
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .results-header strong { color: var(--heading); }
+
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      .sku-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .sku-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sku-card {
+      position: relative;
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+
+    .sku-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #e5f0ff;
+    }
+
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    .order-table-wrapper {
+      background: var(--card-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      margin-top: 10px;
+      backdrop-filter: blur(16px);
+    }
+
+    .order-table-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--heading);
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      color: var(--text);
+      overflow: hidden;
+      border-radius: var(--radius-md);
+    }
+
+    .order-table th {
+      text-align: left;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.96);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-soft);
+      color: #cbd5f5;
+    }
+
+    .order-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e8f2ff;
+    }
+
+    .order-table tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .order-table tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    .order-table tr:hover {
+      background: rgba(34, 211, 238, 0.12);
+      transition: 0.2s;
+    }
+
+    .status-highlight {
+      background: #facc15;
+      color: #111827;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    .order-details-toggle {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
+      color: #0f172a;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(34, 211, 238, 0.9);
+      padding: 7px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        transform 0.18s ease-out;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
+    }
+
+    .order-details-toggle:hover {
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      border-color: #38bdf8;
+      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
+      transform: translateY(-1px);
+      color: #020617;
+    }
+
+    .order-details-panel {
+      margin-top: 14px;
+    }
+
+    .order-breakdown-wrapper {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.7);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    @media (min-width: 640px) {
+      .ob-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .ob-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+      min-height: 90px;
+    }
+
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .pc-search-input::placeholder { color: #64748b; }
+
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .pc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .pc-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .pc-card {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+      backdrop-filter: blur(14px);
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--heading);
+    }
+
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
     .popup-image {
       width: 100%;
       max-height: 220px;
@@ -715,7 +1199,7 @@
       <!-- ========= SPLASH ========= -->
       <section id="view-splash" class="splash-root">
         <div id="splashLogo" class="splash-logo-wrapper">
-          hf_logo.png
+          <img src="hf_logo.png" alt="Hampshire Farms" class="splash-logo-img" />
         </div>
         <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
         <div class="splash-helper">Click the logo to enter</div>
@@ -724,7 +1208,7 @@
       <!-- ========= LOGIN ========= -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
-          hf_logo.png
+          <img id="loginLogoTop" src="hf_logo.png" alt="Hampshire Farms" class="login-logo-small" />
           <div class="login-title">HF Hub Login</div>
           <div class="login-subtitle">
             Select your role and sign in to access HF, HPA &amp; Admin tools.
@@ -816,7 +1300,7 @@
       <section id="view-hf" class="module-root hidden">
         <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
         <header class="module-header">
-          hf_logo.png
+          <img src="hf_logo.png" alt="HF" class="module-logo" />
           <div class="module-title">HF</div>
           <div class="module-subtitle">Outdoor Perennials • Guidelines &amp; Care</div>
         </header>
@@ -848,7 +1332,7 @@
         <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
 
         <header class="module-header">
-          hpa_logo.png
+          <img src="hpa_logo.png" alt="HPA" class="module-logo" />
           <div class="module-title">HPA</div>
           <div class="module-subtitle">Houseplants • Guidelines, Product Info &amp; Care</div>
         </header>
@@ -1053,7 +1537,7 @@
         <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
 
         <header class="module-header">
-          hf_logo.png
+          <img src="hf_logo.png" alt="Admin" class="module-logo" />
           <div class="module-title">ADMIN</div>
           <div class="module-subtitle">
             Store checks, audits, training, AIR, maps &amp; district checklists.
@@ -1434,6 +1918,7 @@
       if (!CURRENT_USER) return;
       const role = CURRENT_USER.role;
 
+      // Anything with data-min-role
       const gated = document.querySelectorAll("[data-min-role]");
       gated.forEach(el => {
         const minRole = el.getAttribute("data-min-role");
@@ -1441,6 +1926,7 @@
         el.classList.toggle("hidden", !allowed);
       });
 
+      // Merchandiser restrictions
       if (role === "Merchandiser") {
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.add("hidden");
@@ -1916,26 +2402,28 @@
 
     /* ========= DOM READY ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      // Splash → Login smooth animation
-      const splashLogo = document.getElementById("splashLogo");
-      if (splashLogo) {
-        splashLogo.addEventListener("click", () => {
-          const splashView = document.getElementById("view-splash");
-          const loginView = document.getElementById("view-login");
-          const loginLogoTop = document.getElementById("loginLogoTop");
-          if (!splashView || !loginView || !loginLogoTop) return;
+      // Splash → Login smooth animation that makes logo feel like it becomes login logo
+      const splashLogoWrapper = document.getElementById("splashLogo");
+      const splashView = document.getElementById("view-splash");
+      const loginView = document.getElementById("view-login");
+      const loginLogoTop = document.getElementById("loginLogoTop");
 
-          // Prepare login view & top logo
+      if (splashLogoWrapper && splashView && loginView && loginLogoTop) {
+        splashLogoWrapper.addEventListener("click", () => {
+          // Show login so it can animate in
           loginView.classList.remove("hidden");
+
+          // Animate both views and logos
           splashView.classList.add("splash-exit");
           loginView.classList.add("login-enter");
-          splashLogo.classList.add("logo-animate");
+          splashLogoWrapper.classList.add("logo-animate");
           loginLogoTop.classList.add("login-logo-fade");
 
+          // After animation finishes, finalize state
           setTimeout(() => {
             splashView.classList.remove("splash-exit");
             loginView.classList.remove("login-enter");
-            splashLogo.classList.remove("logo-animate");
+            splashLogoWrapper.classList.remove("logo-animate");
             loginLogoTop.classList.remove("login-logo-fade");
             showView("view-login");
           }, 650);
