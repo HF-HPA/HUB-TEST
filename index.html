@@ -214,33 +214,33 @@
       text-align: center;
     }
 
-    /* CLEAN Splash → Login animation */
+    /* CLEAN Splash → Login animation (smooth) */
     .splash-exit {
-      animation: splashExit 0.45s ease-out forwards;
+      animation: splashExit 0.6s ease-in-out forwards;
     }
 
     .login-enter {
-      animation: loginEnter 0.45s ease-out forwards;
+      animation: loginEnter 0.6s ease-in-out forwards;
     }
 
     .logo-animate img {
-      animation: logoClick 0.45s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+      animation: logoClick 0.6s ease-in-out forwards;
     }
 
     @keyframes splashExit {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-20px); }
+      0%   { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-16px); }
     }
 
     @keyframes loginEnter {
-      0% { opacity: 0; transform: translateY(20px) scale(0.98); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      0%   { opacity: 0; transform: translateY(16px) scale(0.99); }
+      100% { opacity: 1; transform: translateY(0)    scale(1); }
     }
 
     @keyframes logoClick {
-      0%   { transform: scale(1) rotate(0deg); }
-      40%  { transform: scale(1.08) rotate(4deg); }
-      100% { transform: scale(0.92) rotate(0deg) translateY(-10px); }
+      0%   { transform: scale(1)    rotate(0deg); }
+      40%  { transform: scale(1.04) rotate(2deg); }
+      100% { transform: scale(1)    rotate(0deg); }
     }
 
     /* ========= LOGIN ========= */
@@ -613,6 +613,7 @@
       backdrop-filter: blur(16px);
       padding: 14px;
       font-size: 0.9rem;
+      color: var(--text);
     }
 
     /* ========= INNER TABS (Care & ID) ========= */
@@ -655,7 +656,9 @@
       margin-top: 6px;
     }
 
-    /* ========= PRODUCT / CARE STYLES (same as before) ========= */
+    /* ========= PRODUCT / CARE / POPUP styles ========= */
+    /* (same as earlier answer, retained for functionality) */
+
     .controls {
       background: var(--card-glass);
       border-radius: var(--radius-lg);
@@ -669,16 +672,10 @@
     }
 
     @media (min-width: 900px) {
-      .controls {
-        flex-direction: row;
-        align-items: center;
-      }
+      .controls { flex-direction: row; align-items: center; }
     }
 
-    .search-wrapper {
-      flex: 2;
-      position: relative;
-    }
+    .search-wrapper { flex: 2; position: relative; }
 
     .search-input {
       width: 100%;
@@ -691,9 +688,7 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
     }
 
-    .search-input::placeholder {
-      color: #64748b;
-    }
+    .search-input::placeholder { color: #64748b; }
 
     .search-icon {
       position: absolute;
@@ -744,9 +739,7 @@
       font-size: 0.8rem;
     }
 
-    .results-header strong {
-      color: var(--heading);
-    }
+    .results-header strong { color: var(--heading); }
 
     .sku-grid {
       display: grid;
@@ -756,15 +749,11 @@
     }
 
     @media (min-width: 600px) {
-      .sku-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .sku-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (min-width: 1000px) {
-      .sku-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .sku-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .sku-card {
@@ -970,9 +959,7 @@
     }
 
     @media (min-width: 640px) {
-      .ob-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .ob-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .ob-box {
@@ -998,7 +985,6 @@
       color: var(--text);
     }
 
-    /* Care/pest grid */
     .pc-header {
       display: flex;
       flex-direction: column;
@@ -1028,9 +1014,7 @@
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
     }
 
-    .pc-search-input::placeholder {
-      color: #64748b;
-    }
+    .pc-search-input::placeholder { color: #64748b; }
 
     .pc-search-icon {
       position: absolute;
@@ -1050,15 +1034,11 @@
     }
 
     @media (min-width: 640px) {
-      .pc-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .pc-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (min-width: 1000px) {
-      .pc-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .pc-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .pc-card {
@@ -1096,7 +1076,6 @@
       color: var(--muted);
     }
 
-    /* Popups */
     .popup-image {
       width: 100%;
       max-height: 220px;
@@ -1182,7 +1161,6 @@
       font-style: italic;
     }
 
-    /* Mobile table fix */
     @media (max-width: 600px) {
       .order-table-wrapper {
         overflow-x: auto;
@@ -1219,7 +1197,7 @@
       <!-- ========= LOGIN ========= -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
-          <img src="hf_logo.png" alt="Hampshire Farms Logo" class="login-logo-small" />
+          <img src="hf_logo.png" alt="HF Logo" class="login-logo-small" />
           <div class="login-title">HF Hub Login</div>
           <div class="login-subtitle">
             Select your role and sign in to access HF, HPA &amp; Admin tools.
@@ -1607,7 +1585,6 @@
       </section>
 
       <!-- ========= POPUPS ========= -->
-
       <!-- SKU POPUP -->
       <div id="popupBackdrop" class="popup-backdrop">
         <div class="popup">
@@ -1686,7 +1663,6 @@
   <script>
     /* ========= CONFIG ========= */
     const USERS_CSV_URL = "users.csv";
-
     const SKU_CSV_URL = "SKU_Name_2026.csv";
     const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
     const ORDER_CSV_URL = "OrderBreakdown.csv";
@@ -1708,7 +1684,6 @@
 
     let USERS = [];
     let CURRENT_USER = null;
-
     let skuData = [];
     let allOrderRows = [];
     let PLANTS = [];
@@ -1939,7 +1914,6 @@
         el.classList.toggle("hidden", !allowed);
       });
 
-      // Merchandiser restrictions
       if (role === "Merchandiser") {
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.add("hidden");
@@ -2070,9 +2044,9 @@
           const itemSent = (item.sentIn || "").toLowerCase();
           const itemYear = item.yearSent || "";
           return (!nameQ || itemName.includes(nameQ)) &&
-            (!skuQ || itemSku.includes(skuQ)) &&
-            (!sentQ || itemSent.includes(sentQ)) &&
-            (yearQ === "all" || itemYear === yearQ);
+                 (!skuQ || itemSku.includes(skuQ)) &&
+                 (!sentQ || itemSent.includes(sentQ)) &&
+                 (yearQ === "all" || itemYear === yearQ);
         });
 
         filtered.forEach(item => {
@@ -2415,7 +2389,7 @@
 
     /* ========= DOM READY ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      // Splash → Login with clean animation
+      // Splash → Login smooth animation
       const splashLogo = document.getElementById("splashLogo");
       if (splashLogo) {
         splashLogo.addEventListener("click", () => {
@@ -2423,6 +2397,7 @@
           const loginView = document.getElementById("view-login");
           if (!splashView || !loginView) return;
 
+          // Show login so it can animate in
           loginView.classList.remove("hidden");
           splashView.classList.add("splash-exit");
           loginView.classList.add("login-enter");
@@ -2433,7 +2408,7 @@
             loginView.classList.remove("login-enter");
             splashLogo.classList.remove("logo-animate");
             showView("view-login");
-          }, 500);
+          }, 650);
         }, { once: true });
       }
 
@@ -2540,7 +2515,7 @@
         });
       });
 
-      // ADMIN: STORE AUDIT → MS Forms
+      // ADMIN: Store Audit → Office Form
       const storeAuditTab = document.querySelector('.module-tab[data-module="admin"][data-tab="store-audit"]');
       if (storeAuditTab) {
         storeAuditTab.addEventListener("click", () => {
@@ -2578,4 +2553,3 @@
   </script>
 </body>
 </html>
-``
