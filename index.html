@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="hf_logo.png" />
 
   <style>
-    /* ========= CORE THEME ========= */
+    /* ========= ORIGINAL THEME / COMPONENTS (from your HPA tool) ========= */
     :root {
       --bg: #020617;
       --bg-alt: #030a1a;
@@ -39,21 +39,22 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
         url("philo.jpg") no-repeat center center fixed;
       background-size: cover;
+      backdrop-filter: blur(6px);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
+    /* Enhanced background overlays */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.18), transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.16), transparent 65%);
+        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -62,56 +63,682 @@
       content: "";
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(0,0,0,0) 35%, rgba(0,0,0,0.5) 100%);
       pointer-events: none;
+      background: radial-gradient(
+        circle at center,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0.35) 100%
+      );
       z-index: 0;
-    }
-
-    .hidden {
-      display: none !important;
     }
 
     .app-shell {
       width: 100%;
-      min-height: 100vh;
       padding: 16px;
       display: flex;
       justify-content: center;
-      align-items: center;
       position: relative;
       z-index: 1;
+      min-height: 100vh;
+      align-items: center;
     }
 
     .app-inner {
       width: 100%;
       max-width: 1200px;
-      min-height: 70vh;
       display: flex;
       flex-direction: column;
-      padding: 22px 20px 16px;
+      gap: 16px;
+      padding: 20px 20px 14px;
+      margin: 0 auto;
       background: linear-gradient(
         135deg,
         rgba(15, 23, 42, 0.98),
         rgba(15, 23, 42, 0.9)
       );
       border-radius: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.35);
       backdrop-filter: blur(18px);
       position: relative;
       overflow: hidden;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
+    /* --- Section / cards / tables / flows / popups from original --- */
+
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .section-inner-tabs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .section-inner-tab {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .section-inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .section-inner-tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+    }
+
+    .section-inner-content {
+      margin-top: 10px;
+    }
+
+    .glass-panel {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+    }
+
+    .controls {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+
+    @media (min-width: 900px) {
+      .controls {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .search-wrapper {
+      flex: 2;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .search-input::placeholder {
+      color: #64748b;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+
+    .filters {
+      flex: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      gap: 3px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .filter-input {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.92);
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .results-header strong {
+      color: var(--heading);
+    }
+
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      .sku-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1000px) {
+      .sku-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .sku-card {
+      position: relative;
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+
+    .sku-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #e5f0ff;
+    }
+
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    .order-table-wrapper {
+      background: var(--card-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      margin-top: 10px;
+      backdrop-filter: blur(16px);
+    }
+
+    .order-table-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--heading);
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      color: var(--text);
+      overflow: hidden;
+      border-radius: var(--radius-md);
+    }
+
+    .order-table th {
+      text-align: left;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.96);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-soft);
+      color: #cbd5f5;
+    }
+
+    .order-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e8f2ff;
+    }
+
+    .order-table tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .order-table tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    .order-table tr:hover {
+      background: rgba(34, 211, 238, 0.12);
+      transition: 0.2s;
+    }
+
+    .status-highlight {
+      background: #facc15;
+      color: #111827;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    .order-details-toggle {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
+      color: #0f172a;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(34, 211, 238, 0.9);
+      padding: 7px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        transform 0.18s ease-out;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
+    }
+
+    .order-details-toggle:hover {
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      border-color: #38bdf8;
+      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
+      transform: translateY(-1px);
+      color: #020617;
+    }
+
+    .order-details-panel {
+      margin-top: 14px;
+    }
+
+    .order-breakdown-wrapper {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.7);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    @media (min-width: 640px) {
+      .ob-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .ob-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+      min-height: 90px;
+    }
+
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .pc-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .pc-search-input::placeholder {
+      color: #64748b;
+    }
+
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .pc-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1000px) {
+      .pc-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .pc-card {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+      backdrop-filter: blur(14px);
+    }
+
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--heading);
+    }
+
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .popup-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 50;
+      padding: 24px 16px 16px;
+      backdrop-filter: blur(8px);
+      overflow-y: auto;
+    }
+
+    .popup {
+      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
+      padding: 20px 20px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    .popup h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+
+    .popup-section-title {
+      font-weight: 600;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--heading);
+    }
+
+    .popup-text {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-top: 2px;
+    }
+
+    .popup-close {
+      margin-top: 16px;
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.7);
+      transition:
+        transform 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        filter 0.15s ease-out;
+    }
+
+    .popup-close:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(59, 130, 246, 0.9);
+    }
+
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    /* Mobile fixes for order table */
+    @media (max-width: 600px) {
+      .order-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .order-table {
+        min-width: 520px;
+        font-size: 0.75rem;
+      }
+
+      .order-table th,
+      .order-table td {
+        padding: 6px 8px;
+        white-space: nowrap;
+      }
+    }
+
+    button {
+      font-family: inherit;
+    }
+
     .footer {
-      margin-top: auto;
+      margin-top: 10px;
       font-size: 0.75rem;
       color: #6b7280;
       text-align: right;
-      padding-top: 8px;
       border-top: 1px solid rgba(15, 23, 42, 0.95);
+      padding-top: 6px;
     }
 
-    /* ========= SPLASH VIEW ========= */
+    /* ========= NEW: SPLASH / LOGIN / HUB / MODULES ========= */
+
     .splash-root {
       flex: 1;
       display: flex;
@@ -119,7 +746,6 @@
       justify-content: center;
       flex-direction: column;
       gap: 20px;
-      position: relative;
     }
 
     .splash-logo-wrapper {
@@ -130,7 +756,7 @@
       justify-content: center;
     }
 
-    .splash-logo {
+    .splash-logo-wrapper img {
       width: 240px;
       height: auto;
       display: block;
@@ -144,19 +770,18 @@
       z-index: 2;
     }
 
-    .splash-logo-wrapper:hover .splash-logo {
+    .splash-logo-wrapper:hover img {
       transform: translateY(-4px) scale(1.03);
       filter:
         drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
         drop-shadow(0 0 40px rgba(34, 211, 238, 0.9));
     }
 
-    /* Futuristic underglow: layered, pulsing neon disk */
+    /* Futuristic pulsing underglow */
     .splash-logo-wrapper::before,
     .splash-logo-wrapper::after {
       content: "";
       position: absolute;
-      inset: auto;
       bottom: -18px;
       width: 260px;
       height: 80px;
@@ -220,7 +845,6 @@
       text-align: center;
     }
 
-    /* ========= LOGIN VIEW ========= */
     .login-root {
       flex: 1;
       display: flex;
@@ -330,7 +954,6 @@
       min-height: 1.1em;
     }
 
-    /* ========= HUB VIEW ========= */
     .hub-root {
       flex: 1;
       display: flex;
@@ -452,7 +1075,6 @@
       color: var(--muted);
     }
 
-    /* ========= MODULES (HF / HPA / ADMIN) ========= */
     .module-root {
       flex: 1;
       display: flex;
@@ -563,35 +1185,6 @@
     .module-content {
       margin-top: 10px;
     }
-
-    .glass-panel {
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-      padding: 14px;
-      font-size: 0.9rem;
-      color: var(--text);
-    }
-
-    /* ========= BASIC FORM/UTILITY CLASSES FOR HPA + ADMIN ========= */
-    .section-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--heading);
-      margin-bottom: 4px;
-    }
-
-    .section-subtitle {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    /* You can paste the rest of your existing HPA / Store Ops CSS below
-       (controls, sku-card, pc-card, checklists, flow-steps, popups, etc.)
-       to preserve the exact styling from your current tool. */
   </style>
 </head>
 
@@ -599,20 +1192,16 @@
   <main class="app-shell">
     <div class="app-inner">
 
-      <!-- ========== SPLASH VIEW ========== -->
+      <!-- ========= SPLASH (CLICKABLE LOGO WITH PULSING UNDERGLOW) ========= -->
       <section id="view-splash" class="splash-root">
         <div id="splashLogo" class="splash-logo-wrapper">
-          <img src="hf_logo.png" alt="Hampshire Farms Logo" class="splash-logo" />
+          <img src="hf_logo.png" alt="Hampshire Farms Logo" />
         </div>
-        <div class="splash-subtitle">
-          HAMPSHIRE FARMS HUB
-        </div>
-        <div class="splash-helper">
-          Click the logo to enter
-        </div>
+        <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
+        <div class="splash-helper">Click the logo to enter</div>
       </section>
 
-      <!-- ========== LOGIN VIEW ========== -->
+      <!-- ========= LOGIN ========= -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
           <img src="hf_logo.png" alt="HF Logo" class="login-logo-small" />
@@ -649,14 +1238,12 @@
         </div>
       </section>
 
-      <!-- ========== HUB VIEW ========== -->
+      <!-- ========= HUB ========= -->
       <section id="view-hub" class="hub-root hidden">
         <header class="hub-header">
           <div class="hub-title-block">
             <div class="hub-title">Hampshire Farms Hub</div>
-            <div class="hub-subtitle">
-              Choose a program area to continue.
-            </div>
+            <div class="hub-subtitle">Choose a program area to continue.</div>
           </div>
           <div id="hubUserInfo" class="hub-user-pill">
             Role: — • User: —
@@ -664,7 +1251,6 @@
         </header>
 
         <section class="hub-grid">
-          <!-- HF CARD -->
           <button id="hubCardHF" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Outdoor Perennials</div>
@@ -674,11 +1260,10 @@
               </div>
             </div>
             <div class="hub-card-tagline">
-              🌱 Spring programs • 🌼 Color • 🌿 Performance on the floor
+              🌱 Spring programs • 🌼 Color • 🌿 Floor performance
             </div>
           </button>
 
-          <!-- HPA CARD -->
           <button id="hubCardHPA" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Houseplants</div>
@@ -692,7 +1277,6 @@
             </div>
           </button>
 
-          <!-- ADMIN CARD (hidden for Merchandiser via JS) -->
           <button id="hubCardAdmin" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Back-End</div>
@@ -708,66 +1292,49 @@
         </section>
       </section>
 
-      <!-- ========== HF MODULE ========== -->
+      <!-- ========= HF MODULE (placeholder for now) ========= -->
       <section id="view-hf" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">
-          ⬅ Back to Hub
-        </button>
-
+        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
         <header class="module-header">
           <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
           <div class="module-title">HF</div>
-          <div class="module-subtitle">
-            Outdoor Perennials • Guidelines &amp; Care
-          </div>
+          <div class="module-subtitle">Outdoor Perennials • Guidelines &amp; Care</div>
         </header>
 
         <nav class="module-tabs">
-          <button class="module-tab active" data-module="hf" data-tab="guidelines">
-            Guidelines
-          </button>
-          <button class="module-tab" data-module="hf" data-tab="care">
-            Care &amp; Identification
-          </button>
+          <button class="module-tab active" data-module="hf" data-tab="guidelines">Guidelines</button>
+          <button class="module-tab" data-module="hf" data-tab="care">Care &amp; Identification</button>
         </nav>
 
         <section class="module-content">
           <div id="hf-guidelines" class="glass-panel">
             <div class="section-title">HF Guidelines</div>
             <p class="section-subtitle">
-              Paste or build your HF (Outdoor Perennials) weekly guidelines here.
+              Add HF (Outdoor Perennials) guidelines here when ready.
             </p>
-            <!-- TODO: Add HF-specific guideline content, checklists, flows here -->
           </div>
 
           <div id="hf-care" class="glass-panel hidden">
             <div class="section-title">HF Care &amp; Identification</div>
             <p class="section-subtitle">
-              Add HF-specific plant care &amp; ID content (outdoor perennials).
+              Add HF-specific care &amp; identification content here.
             </p>
-            <!-- TODO: If desired, create a care library similar to HPA here -->
           </div>
         </section>
       </section>
 
-      <!-- ========== HPA MODULE ========== -->
+      <!-- ========= HPA MODULE (WITH YOUR PRODUCT INFO + CARE & ID MERGED) ========= -->
       <section id="view-hpa" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">
-          ⬅ Back to Hub
-        </button>
+        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
 
         <header class="module-header">
           <img src="hf_logo.png" alt="HPA Logo" class="module-logo" />
           <div class="module-title">HPA</div>
-          <div class="module-subtitle">
-            Houseplants • Guidelines, Product Info &amp; Care
-          </div>
+          <div class="module-subtitle">Houseplants • Guidelines, Product Info &amp; Care</div>
         </header>
 
         <nav class="module-tabs">
-          <button class="module-tab active" data-module="hpa" data-tab="guidelines">
-            Guidelines
-          </button>
+          <button class="module-tab active" data-module="hpa" data-tab="guidelines">Guidelines</button>
           <button class="module-tab" data-module="hpa" data-tab="product" data-min-role="Supervisor">
             Product Info
           </button>
@@ -777,58 +1344,198 @@
         </nav>
 
         <section class="module-content">
-          <!-- HPA GUIDELINES -->
+
+          <!-- HPA GUIDELINES (simple placeholder) -->
           <div id="hpa-guidelines" class="glass-panel">
             <div class="section-title">HPA Guidelines</div>
             <p class="section-subtitle">
-              Weekly / seasonal HPA guidelines can be summarized here (high level).
+              High-level weekly / seasonal HPA notes can go here if you want a quick snapshot.
             </p>
-            <!-- TODO: Copy your existing high-level HPA guideline content here if you want -->
           </div>
 
-          <!-- HPA PRODUCT INFO (paste your existing Product Info tool here) -->
+          <!-- ========== HPA PRODUCT INFO: YOUR ORIGINAL PRODUCT INFO TAB ========== -->
           <div id="hpa-product" class="glass-panel hidden">
-            <div class="section-title">HPA Product Info</div>
-            <p class="section-subtitle">
-              SKU catalogue, shipping weeks, and weekly breakdowns live here.
-            </p>
+            <!-- PRODUCT INFO TAB -->
+            <section id="tab-products" class="tab-content">
+              <div class="section-header">
+                <div class="section-title">Product Info</div>
+                <p class="section-subtitle">
+                  Search SKUs, review what’s shipping, and see weekly breakdowns.
+                </p>
+              </div>
 
-            <!--
-              🔻 IMPORTANT 🔻
-              Paste your existing "PRODUCT INFO TAB" content from the original HPA tool here:
-              - Filters (nameFilter, skuFilter, sentInFilter, yearFilter)
-              - SKU grid (skuGrid, emptyState)
-              - Weekly shipping table (orderWeeksBody, orderDetailsToggle, orderDetailsPanel)
-              Make sure all the IDs match your existing JavaScript.
-            -->
+              <div class="section-inner-tabs">
+                <button class="section-inner-tab active products-inner-tab" data-products="skus" type="button">
+                  SKU Catalogue
+                </button>
+                <button class="section-inner-tab products-inner-tab" data-products="orders" type="button">
+                  Order Breakdown
+                </button>
+              </div>
+
+              <!-- PRODUCT INFO → SKUS -->
+              <section id="products-skus" class="section-inner-content">
+                <section class="controls">
+                  <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+                  </div>
+
+                  <div class="filters">
+                    <div class="filter-group">
+                      <span class="filter-label">SKU</span>
+                      <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
+                    </div>
+                    <div class="filter-group">
+                      <span class="filter-label">Sent In</span>
+                      <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+                    </div>
+                    <div class="filter-group">
+                      <span class="filter-label">Year Sent</span>
+                      <select id="yearFilter" class="filter-input">
+                        <option value="all">All</option>
+                        <option>2022</option>
+                        <option>2023</option>
+                        <option>2024</option>
+                        <option>2025</option>
+                        <option>2026</option>
+                      </select>
+                    </div>
+                  </div>
+                </section>
+
+                <p class="section-subtitle" style="margin-top:6px; font-size:0.8rem;">
+                  Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo, Holiday).
+                </p>
+
+                <div class="results-header">
+                  <strong id="resultCount">0</strong> SKUs shown
+                </div>
+
+                <section id="skuGrid" class="sku-grid"></section>
+                <div id="emptyState" class="empty-state hidden">
+                  No SKUs match your filters or the file could not be loaded.
+                </div>
+              </section>
+
+              <!-- PRODUCT INFO → ORDERS -->
+              <section id="products-orders" class="section-inner-content hidden">
+                <div class="order-table-wrapper">
+                  <div class="order-table-title">Weekly Shipping Overview</div>
+
+                  <table class="order-table">
+                    <thead>
+                      <tr>
+                        <th>Week #</th>
+                        <th>Week Date</th>
+                        <th>Shipping</th>
+                        <th>Additional</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="orderWeeksBody"></tbody>
+                  </table>
+
+                  <button id="orderDetailsToggle" class="order-details-toggle" type="button">
+                    Show Detailed Breakdown
+                  </button>
+
+                  <div id="orderDetailsPanel" class="order-details-panel hidden">
+                    <div class="order-breakdown-wrapper">
+                      <div class="ob-header-stack">
+                        <div class="ob-week-box">
+                          Shipping Week #:
+                          <span id="obWeekDisplay">TBD</span>
+                        </div>
+                        <div class="ob-grades-box">
+                          Store Grade Shipping:
+                          <span id="obGradesDisplay">All stores</span>
+                        </div>
+                      </div>
+
+                      <div class="ob-grid">
+                        <div class="ob-box">
+                          <div class="ob-box-title">FLO</div>
+                          <div id="obFloBody" class="ob-box-body"></div>
+                        </div>
+                        <div class="ob-box">
+                          <div class="ob-box-title">FOL</div>
+                          <div id="obFolBody" class="ob-box-body"></div>
+                        </div>
+                        <div class="ob-box">
+                          <div class="ob-box-title">UCO</div>
+                          <div id="obUcoBody" class="ob-box-body"></div>
+                        </div>
+                        <div class="ob-box">
+                          <div class="ob-box-title">FHB</div>
+                          <div id="obFhbBody" class="ob-box-body"></div>
+                        </div>
+                        <div class="ob-box">
+                          <div class="ob-box-title">TRP</div>
+                          <div id="obTrpBody" class="ob-box-body"></div>
+                        </div>
+                        <div class="ob-box">
+                          <div class="ob-box-title">SPC</div>
+                          <div id="obSpcBody" class="ob-box-body"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </section>
+            </section>
           </div>
 
-          <!-- HPA CARE & ID (paste your existing Care & Identification tool here) -->
+          <!-- ========== HPA CARE & IDENTIFICATION: YOUR ORIGINAL CARE & ID TAB ========== -->
           <div id="hpa-care" class="glass-panel hidden">
-            <div class="section-title">HPA Care &amp; Identification</div>
-            <p class="section-subtitle">
-              Plant care library &amp; pest identification tools live here.
-            </p>
+            <!-- CARE & IDENTIFICATION TAB -->
+            <section id="tab-care-id" class="tab-content">
+              <div class="section-header">
+                <div class="section-title">Care &amp; Identification</div>
+                <p class="section-subtitle">
+                  Quick reference for plant care and pest identification.
+                </p>
+              </div>
 
-            <!--
-              🔻 IMPORTANT 🔻
-              Paste your existing "CARE & IDENTIFICATION TAB" content here:
-              - Care Library (plantCareGrid, careSearch, etc.)
-              - Pest Identification (pestGrid, pestSearch, etc.)
-              - Popups for care & pests.
-            -->
+              <div class="inner-tabs">
+                <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
+                <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
+              </div>
+
+              <!-- CARE LIBRARY -->
+              <section id="inner-care-library" class="inner-content hidden">
+                <div class="pc-header">
+                  <div class="pc-title">Care Library</div>
+                  <div class="pc-search-wrapper">
+                    <span class="pc-search-icon">🔎</span>
+                    <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+                  </div>
+                </div>
+                <div class="pc-grid" id="plantCareGrid"></div>
+              </section>
+
+              <!-- PEST IDENTIFICATION -->
+              <section id="inner-pest-id" class="inner-content hidden">
+                <div class="pc-header">
+                  <div class="pc-title">Pest Identification</div>
+                  <div class="pc-search-wrapper">
+                    <span class="pc-search-icon">🔎</span>
+                    <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+                  </div>
+                </div>
+                <div class="pc-grid" id="pestGrid"></div>
+              </section>
+            </section>
           </div>
         </section>
       </section>
 
-      <!-- ========== ADMIN MODULE ========== -->
+      <!-- ========= ADMIN MODULE (placeholder) ========= -->
       <section id="view-admin" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">
-          ⬅ Back to Hub
-        </button>
+        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
 
         <header class="module-header">
-          <!-- Fun Admin Logo (you can swap to an image later if desired) -->
           <div class="module-logo" style="
             display:flex;align-items:center;justify-content:center;
             font-size:1.4rem;font-weight:700;color:#22d3ee;
@@ -863,91 +1570,144 @@
         </nav>
 
         <section class="module-content">
-          <!-- ADMIN: STORE CHECK (reuse your Store Visit checklist here) -->
           <div id="admin-store-check" class="glass-panel">
-            <div class="section-title">Store Check (Indoor HPA)</div>
+            <div class="section-title">Store Check</div>
             <p class="section-subtitle">
-              Use this section for in-store HPA visits, checklists &amp; exports.
+              You can later paste your Store Visit checklist here.
             </p>
-
-            <!--
-              🔻 IMPORTANT 🔻
-              Paste your existing "STORE OPS → STORE VISIT" content here:
-              - visit-meta (Store #, Visit Date, Rep / Visitor)
-              - store-inner-tabs (Store Walk, Pod Merchandising, Clean Up / Water, Pictures)
-              - the subtabs (store-walk, store-pods, store-cleanup, store-pictures)
-              - visitNotes + exportVisitSummary button.
-            -->
           </div>
 
-          <!-- ADMIN: STORE AUDIT -->
           <div id="admin-store-audit" class="glass-panel hidden">
-            <div class="section-title">Store Audit</div>
-            <p class="section-subtitle">
-              High-level audit tools, scorecards, or forms can live here.
-            </p>
-            <!-- TODO: build out Store Audit content as needed -->
+            Store Audit placeholder.
           </div>
 
-          <!-- ADMIN: TRAINING (reuse your HPA Protocols here) -->
           <div id="admin-training" class="glass-panel hidden">
-            <div class="section-title">Training &amp; HPA Protocols</div>
-            <p class="section-subtitle">
-              Damage flows, non-order-day playbooks, inventory &amp; BI training.
-            </p>
-
-            <!--
-              🔻 IMPORTANT 🔻
-              Paste your existing "STORE OPS → HPA PROTOCOLS" content here:
-              - hpa-inner-tabs (Damage Claims, Non-Order Days, Weekly Inventory, BI, Picture Standards)
-              - all the sections: hpa-claims, hpa-nonorder, hpa-inventory, hpa-bi, hpa-pictures
-              - damage-inner-tabs & cold/pest flows.
-            -->
+            Training placeholder.
           </div>
 
-          <!-- ADMIN: AIR -->
           <div id="admin-air" class="glass-panel hidden">
-            <div class="section-title">AIR</div>
-            <p class="section-subtitle">
-              Use this area for AIR documentation, links, or quick-reference workflows.
-            </p>
+            AIR placeholder.
           </div>
 
-          <!-- ADMIN: STORE MAP -->
           <div id="admin-store-map" class="glass-panel hidden">
-            <div class="section-title">Store Map</div>
-            <p class="section-subtitle">
-              Store coverage maps, territory assignment, and quick links.
-            </p>
+            Store Map placeholder.
           </div>
 
-          <!-- ADMIN: DISTRICT CHECKLIST (District & RMM only) -->
           <div id="admin-district-checklist" class="glass-panel hidden">
-            <div class="section-title">District Checklist</div>
-            <p class="section-subtitle">
-              District &amp; RMM-level weekly / monthly checklists and initiatives.
-            </p>
-            <!-- TODO: build out District/RMM specific actions here -->
+            District Checklist placeholder.
           </div>
         </section>
       </section>
 
+      <!-- ========= POPUPS (from your original tool) ========= -->
+      <!-- SKU POPUP -->
+      <div id="popupBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <h2 id="popupName"></h2>
+          <p><strong>SKU:</strong> <span id="popupSku"></span></p>
+          <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
+          <p><strong>Year Sent:</strong> <span id="popupYear"></span></p>
+          <button id="popupClose" class="popup-close" type="button">Close</button>
+        </div>
+      </div>
+
+      <!-- PLANT CARE POPUP -->
+      <div id="careBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <img id="careImage" class="popup-image" alt="" />
+          <h2 id="careTitle"></h2>
+
+          <div class="popup-section-title">Light</div>
+          <div class="popup-text" id="careLight"></div>
+
+          <div class="popup-section-title">Water</div>
+          <div class="popup-text" id="careWater"></div>
+
+          <div class="popup-section-title">Humidity</div>
+          <div class="popup-text" id="careHumidity"></div>
+
+          <div class="popup-section-title">Temperature</div>
+          <div class="popup-text" id="careTemp"></div>
+
+          <div class="popup-section-title">Soil</div>
+          <div class="popup-text" id="careSoil"></div>
+
+          <div class="popup-section-title">Fertilizer</div>
+          <div class="popup-text" id="careFertilizer"></div>
+
+          <div class="popup-section-title">Toxicity</div>
+          <div class="popup-text" id="careToxicity"></div>
+
+          <div class="popup-section-title">Extra Tips</div>
+          <div class="popup-text" id="careTips"></div>
+
+          <button id="careClose" class="popup-close" type="button">Close</button>
+        </div>
+      </div>
+
+      <!-- PEST POPUP -->
+      <div id="pestBackdrop" class="popup-backdrop">
+        <div class="popup">
+          <img id="pestImage" class="popup-image" alt="" />
+          <h2 id="pestTitle"></h2>
+          <p id="pestScientificName" class="popup-subtitle"></p>
+
+          <div class="popup-section-title">What They Look Like</div>
+          <div class="popup-text" id="pestLooksLike"></div>
+
+          <div class="popup-section-title">Identification</div>
+          <div class="popup-text" id="pestIdentification"></div>
+
+          <div class="popup-section-title">Prevention</div>
+          <div class="popup-text" id="pestPrevention"></div>
+
+          <div class="popup-section-title">Treatment</div>
+          <div class="popup-text" id="pestTreatment"></div>
+
+          <button id="pestClose" class="popup-close" type="button">Close</button>
+        </div>
+      </div>
+
       <div class="footer">
-        Hampshire Farms Hub • v1.0 • Role-based HF / HPA / Admin
+        Hampshire Farms Hub • v1.0 • HF / HPA / Admin • CSV‑driven
       </div>
 
     </div>
   </main>
 
   <script>
-    /* ========= BASIC ROLE-BASED HUB LOGIC ========= */
+    /* ========= CONFIG ========= */
+    const USERS_CSV_URL = "users.csv";
 
-    const USERS_CSV_URL = "users.csv";   // role,username,password,display_name
+    // HPA CSVs
+    const SKU_CSV_URL = "SKU_Name_2026.csv";
+    const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
+    const ORDER_CSV_URL = "OrderBreakdown.csv";
+    const PLANT_CSV_URL = "plants.csv";
+    const PEST_CSV_URL = "pests.csv";
+
+    const STORE_GRADES_BY_WEEK = {
+      "6": "All stores",
+      "7": "All Stores",
+      "8": "A/B",
+      "9": "SKIP",
+      "10": "All Stores",
+      "11": "All Stores",
+      "12": "All Stores",
+      "13": "All Stores"
+    };
+
     const ROLE_ORDER = ["Merchandiser", "Supervisor", "District", "RMM"];
 
     let USERS = [];
     let CURRENT_USER = null;
 
+    let skuData = [];
+    let allOrderRows = [];
+    let PLANTS = [];
+    let PESTS = [];
+
+    /* ========= UTILS ========= */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -989,6 +1749,153 @@
       return users;
     }
 
+    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
+
+    function parseSkuCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+      const yearIdx = header.indexOf("year sent");
+      const nameIdx = header.indexOf("sku name");
+      const skuIdx = header.indexOf("sku");
+      const sentIdx = header.indexOf("sent in");
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          yearSent: (row[yearIdx] || "").trim(),
+          name: (row[nameIdx] || "").trim(),
+          sku: (row[skuIdx] || "").trim(),
+          sentIn: (row[sentIdx] || "").trim()
+        };
+        if (item.name && item.sku) data.push(item);
+      }
+      return data;
+    }
+
+    function parseOrderCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+      const w = header.indexOf("week");
+      const c = header.indexOf("category");
+      const s = header.indexOf("size");
+      const p = header.indexOf("plant name");
+
+      const out = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const item = {
+          week: (row[w] || "").trim(),
+          category: (row[c] || "").trim().toUpperCase(),
+          size: (row[s] || "").trim(),
+          plant: (row[p] || "").trim()
+        };
+        if (item.week && item.category && (item.size || item.plant)) out.push(item);
+      }
+      return out;
+    }
+
+    function parsePlantCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id: header.indexOf("id"),
+        commonName: header.indexOf("common_name"),
+        scientific: header.indexOf("scientific_name"),
+        image: header.indexOf("image"),
+        light: header.indexOf("light"),
+        water: header.indexOf("water"),
+        humidity: header.indexOf("humidity"),
+        temp: header.indexOf("temp"),
+        soil: header.indexOf("soil"),
+        fertilizer: header.indexOf("fertilizer"),
+        toxicity: header.indexOf("toxicity"),
+        tips: header.indexOf("tips")
+      };
+
+      const data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+        if (!commonName) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        data.push({
+          id,
+          commonName,
+          scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
+          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+          light: idx.light >= 0 ? (row[idx.light] || "").trim() : "",
+          water: idx.water >= 0 ? (row[idx.water] || "").trim() : "",
+          humidity: idx.humidity >= 0 ? (row[idx.humidity] || "").trim() : "",
+          temp: idx.temp >= 0 ? (row[idx.temp] || "").trim() : "",
+          soil: idx.soil >= 0 ? (row[idx.soil] || "").trim() : "",
+          fertilizer: idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
+          toxicity: idx.toxicity >= 0 ? (row[idx.toxicity] || "").trim() : "",
+          tips: idx.tips >= 0 ? (row[idx.tips] || "").trim() : ""
+        });
+      }
+      return data;
+    }
+
+    function parsePestCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (!lines.length) return [];
+      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+      const idx = {
+        id: header.indexOf("id"),
+        commonName: header.indexOf("common_name"),
+        scientificName: header.indexOf("scientific_name"),
+        image: header.indexOf("image"),
+        looksLike: header.indexOf("what_they_look_like"),
+        identification: header.indexOf("identification"),
+        prevention: header.indexOf("prevention"),
+        treatment: header.indexOf("treatment")
+      };
+
+      const pests = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        if (!row.length) continue;
+
+        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+        if (!commonName) continue;
+
+        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+        pests.push({
+          id,
+          commonName,
+          scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
+          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+          looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
+          identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
+          prevention: idx.prevention >= 0 ? (row[idx.prevention] || "").trim() : "",
+          treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
+        });
+      }
+      return pests;
+    }
+
+    function highlightStatus(status) {
+      if (!status) return "";
+      const lower = status.toLowerCase();
+      if (lower.includes("request") || lower.includes("due")) {
+        return `<span class="status-highlight">${status}</span>`;
+      }
+      return status;
+    }
+
     function roleRank(role) {
       const idx = ROLE_ORDER.indexOf(role);
       return idx === -1 ? -1 : idx;
@@ -1018,7 +1925,6 @@
       if (!CURRENT_USER) return;
       const role = CURRENT_USER.role;
 
-      // Tabs/buttons gated by data-min-role
       const gated = document.querySelectorAll("[data-min-role]");
       gated.forEach(el => {
         const minRole = el.getAttribute("data-min-role");
@@ -1026,19 +1932,18 @@
         el.classList.toggle("hidden", !allowed);
       });
 
-      // Merchandiser restrictions
       if (role === "Merchandiser") {
-        const adminCard = document.getElementById("hubCardAdmin");
-        if (adminCard) adminCard.classList.add("hidden");
-
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.add("hidden");
-      } else {
-        const adminCard = document.getElementById("hubCardAdmin");
-        if (adminCard) adminCard.classList.remove("hidden");
 
+        const cardAdmin = document.getElementById("hubCardAdmin");
+        if (cardAdmin) cardAdmin.classList.add("hidden");
+      } else {
         const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
         if (hpaProductTab) hpaProductTab.classList.remove("hidden");
+
+        const cardAdmin = document.getElementById("hubCardAdmin");
+        if (cardAdmin) cardAdmin.classList.remove("hidden");
       }
     }
 
@@ -1052,13 +1957,457 @@
       const activeTab = document.querySelector(`.module-tab[data-module="${moduleKey}"][data-tab="${tabKey}"]`);
       if (activeTab) activeTab.classList.add("active");
 
-      const panelId = `${moduleKey}-${tabKey}`; // e.g. "hpa-care"
+      const panelId = `${moduleKey}-${tabKey}`;
       const panel = document.getElementById(panelId);
       if (panel) panel.classList.remove("hidden");
     }
 
+    /* ========= HPA INIT (Product Info + Care & ID) ========= */
+    function initHPA() {
+      /* ORDER BREAKDOWN DOM */
+      const obWeekDisplay = document.getElementById("obWeekDisplay");
+      const obGradesDisplay = document.getElementById("obGradesDisplay");
+      const obBodies = {
+        FLO: document.getElementById("obFloBody"),
+        FOL: document.getElementById("obFolBody"),
+        UCO: document.getElementById("obUcoBody"),
+        FHB: document.getElementById("obFhbBody"),
+        TRP: document.getElementById("obTrpBody"),
+        SPC: document.getElementById("obSpcBody")
+      };
+
+      const orderDetailsToggle = document.getElementById("orderDetailsToggle");
+      const orderDetailsPanel = document.getElementById("orderDetailsPanel");
+
+      if (orderDetailsToggle && orderDetailsPanel) {
+        orderDetailsToggle.addEventListener("click", () => {
+          const isHidden = orderDetailsPanel.classList.toggle("hidden");
+          orderDetailsToggle.textContent = isHidden
+            ? "Show Detailed Breakdown"
+            : "Hide Detailed Breakdown";
+        });
+      }
+
+      function applyOrderBreakdown(rows) {
+        if (!rows.length) {
+          if (obWeekDisplay) obWeekDisplay.textContent = "TBD";
+          if (obGradesDisplay) obGradesDisplay.textContent = "All stores";
+          Object.values(obBodies).forEach(el => el && (el.textContent = ""));
+          return;
+        }
+
+        const weeks = [...new Set(rows.map(r => r.week))];
+        const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+        const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+        const weekRows = rows.filter(r => r.week == latest);
+
+        if (obWeekDisplay) obWeekDisplay.textContent = latest;
+        if (obGradesDisplay) {
+          obGradesDisplay.textContent =
+            STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+        }
+
+        const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+        weekRows.forEach(r => {
+          if (groups[r.category]) {
+            const size = r.size || "";
+            const plant = r.plant || "";
+            let line = "";
+            if (size && plant) line = `${size} — ${plant}`;
+            else line = size || plant;
+            if (line) groups[r.category].push(line);
+          }
+        });
+
+        Object.entries(groups).forEach(([cat, lines]) => {
+          const el = obBodies[cat];
+          if (el) el.textContent = lines.join("\n");
+        });
+      }
+
+      /* PRODUCT INFO SKU DOM */
+      const nameFilter = document.getElementById("nameFilter");
+      const skuFilter = document.getElementById("skuFilter");
+      const sentInFilter = document.getElementById("sentInFilter");
+      const yearFilter = document.getElementById("yearFilter");
+      const skuGrid = document.getElementById("skuGrid");
+      const resultCount = document.getElementById("resultCount");
+      const emptyState = document.getElementById("emptyState");
+
+      const popupBackdrop = document.getElementById("popupBackdrop");
+      const popupName = document.getElementById("popupName");
+      const popupSku = document.getElementById("popupSku");
+      const popupSent = document.getElementById("popupSent");
+      const popupYear = document.getElementById("popupYear");
+      const popupClose = document.getElementById("popupClose");
+
+      if (popupClose && popupBackdrop) {
+        popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+        popupBackdrop.addEventListener("click", e => {
+          if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+        });
+      }
+
+      function renderSkuList() {
+        if (!skuGrid) return;
+        skuGrid.innerHTML = "";
+        const nameQ = (nameFilter?.value || "").toLowerCase();
+        const skuQ = normalizeSku(skuFilter?.value || "");
+        const sentQ = (sentInFilter?.value || "").toLowerCase();
+        const yearQ = yearFilter?.value || "all";
+
+        const filtered = skuData.filter(item => {
+          const itemName = (item.name || "").toLowerCase();
+          const itemSku = normalizeSku(item.sku || "");
+          const itemSent = (item.sentIn || "").toLowerCase();
+          const itemYear = item.yearSent || "";
+          return (!nameQ || itemName.includes(nameQ)) &&
+            (!skuQ || itemSku.includes(skuQ)) &&
+            (!sentQ || itemSent.includes(sentQ)) &&
+            (yearQ === "all" || itemYear === yearQ);
+        });
+
+        filtered.forEach(item => {
+          const card = document.createElement("button");
+          card.className = "sku-card";
+          card.type = "button";
+          card.innerHTML = `
+            <div class="sku-year-pill">${item.yearSent}</div>
+            <div class="sku-name">${item.name}</div>
+            <div class="sku-meta"><strong>SKU:</strong> ${item.sku}</div>
+            <div class="sku-meta"><strong>Sent In:</strong> ${item.sentIn}</div>
+            <div class="sku-meta"><strong>Year Sent:</strong> ${item.yearSent}</div>
+          `;
+          card.addEventListener("click", () => {
+            if (!popupBackdrop) return;
+            popupName.textContent = item.name;
+            popupSku.textContent = item.sku;
+            popupSent.textContent = item.sentIn;
+            popupYear.textContent = item.yearSent;
+            popupBackdrop.style.display = "flex";
+          });
+          skuGrid.appendChild(card);
+        });
+
+        if (resultCount) resultCount.textContent = filtered.length;
+        if (emptyState) emptyState.classList.toggle("hidden", filtered.length !== 0);
+      }
+
+      nameFilter && nameFilter.addEventListener("input", renderSkuList);
+      skuFilter && skuFilter.addEventListener("input", renderSkuList);
+      sentInFilter && sentInFilter.addEventListener("input", renderSkuList);
+      yearFilter && yearFilter.addEventListener("change", renderSkuList);
+
+      /* CARE LIBRARY */
+      const plantCareGrid = document.getElementById("plantCareGrid");
+      const careSearch = document.getElementById("careSearch");
+      const careBackdrop = document.getElementById("careBackdrop");
+      const careImage = document.getElementById("careImage");
+      const careTitle = document.getElementById("careTitle");
+      const careLight = document.getElementById("careLight");
+      const careWater = document.getElementById("careWater");
+      const careHumidityEl = document.getElementById("careHumidity");
+      const careTemp = document.getElementById("careTemp");
+      const careSoil = document.getElementById("careSoil");
+      const careFertilizer = document.getElementById("careFertilizer");
+      const careToxicity = document.getElementById("careToxicity");
+      const careTips = document.getElementById("careTips");
+      const careCloseBtn = document.getElementById("careClose");
+
+      if (careCloseBtn && careBackdrop) {
+        careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+        careBackdrop.addEventListener("click", e => {
+          if (e.target === careBackdrop) careBackdrop.style.display = "none";
+        });
+      }
+
+      function openCarePopup(id) {
+        const plant = PLANTS.find(p => p.id === id);
+        if (!plant || !careBackdrop) return;
+
+        careTitle.textContent = plant.commonName || "";
+        careLight.textContent = plant.light || "";
+        careWater.textContent = plant.water || "";
+        careHumidityEl.textContent = plant.humidity || "";
+        careTemp.textContent = plant.temp || "";
+        careSoil.textContent = plant.soil || "";
+        careFertilizer.textContent = plant.fertilizer || "";
+        careToxicity.textContent = plant.toxicity || "";
+        careTips.textContent = plant.tips || "";
+
+        if (plant.image) {
+          careImage.src = plant.image;
+          careImage.alt = plant.commonName || "";
+          careImage.style.display = "";
+        } else {
+          careImage.style.display = "none";
+        }
+
+        careBackdrop.style.display = "flex";
+      }
+
+      function renderPlantCards() {
+        if (!plantCareGrid) return;
+        plantCareGrid.innerHTML = "";
+        PLANTS.forEach(plant => {
+          const btn = document.createElement("button");
+          btn.className = "pc-card";
+          btn.type = "button";
+          btn.dataset.plantId = plant.id;
+          btn.innerHTML = `
+            <div class="pc-card-title">${plant.commonName}</div>
+            <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+          `;
+          btn.addEventListener("click", () => openCarePopup(plant.id));
+          plantCareGrid.appendChild(btn);
+        });
+      }
+
+      function filterPlantCards() {
+        if (!plantCareGrid) return;
+        const q = (careSearch?.value || "").toLowerCase().trim();
+        const cards = plantCareGrid.querySelectorAll(".pc-card");
+        cards.forEach(card => {
+          const txt = (card.textContent || "").toLowerCase();
+          card.style.display = !q || txt.includes(q) ? "" : "none";
+        });
+      }
+
+      careSearch && careSearch.addEventListener("input", filterPlantCards);
+
+      /* PEST LIBRARY */
+      const pestGrid = document.getElementById("pestGrid");
+      const pestSearch = document.getElementById("pestSearch");
+      const pestBackdrop = document.getElementById("pestBackdrop");
+      const pestImage = document.getElementById("pestImage");
+      const pestTitle = document.getElementById("pestTitle");
+      const pestScientificName = document.getElementById("pestScientificName");
+      const pestLooksLike = document.getElementById("pestLooksLike");
+      const pestIdentification = document.getElementById("pestIdentification");
+      const pestPrevention = document.getElementById("pestPrevention");
+      const pestTreatment = document.getElementById("pestTreatment");
+      const pestCloseBtn = document.getElementById("pestClose");
+
+      if (pestCloseBtn && pestBackdrop) {
+        pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+        pestBackdrop.addEventListener("click", e => {
+          if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+        });
+      }
+
+      function openPestPopup(id) {
+        const pest = PESTS.find(p => p.id === id);
+        if (!pest || !pestBackdrop) return;
+
+        pestTitle.textContent = pest.commonName || "";
+        pestScientificName.textContent = pest.scientificName || "";
+        pestLooksLike.textContent = pest.looksLike || "";
+        pestIdentification.textContent = pest.identification || "";
+        pestPrevention.textContent = pest.prevention || "";
+        pestTreatment.textContent = pest.treatment || "";
+
+        if (pest.image) {
+          pestImage.src = pest.image;
+          pestImage.alt = pest.commonName || pest.scientificName || "";
+          pestImage.style.display = "";
+        } else {
+          pestImage.style.display = "none";
+        }
+
+        pestBackdrop.style.display = "flex";
+      }
+
+      function renderPestCards() {
+        if (!pestGrid) return;
+        pestGrid.innerHTML = "";
+        PESTS.forEach(pest => {
+          const card = document.createElement("button");
+          card.className = "pc-card";
+          card.type = "button";
+          card.dataset.pestId = pest.id;
+          card.innerHTML = `
+            <div class="pc-card-title">${pest.commonName}</div>
+            <div class="pc-card-subtitle">${pest.identification || ""}</div>
+          `;
+          card.addEventListener("click", () => openPestPopup(pest.id));
+          pestGrid.appendChild(card);
+        });
+      }
+
+      function filterPestCards() {
+        if (!pestGrid) return;
+        const q = (pestSearch?.value || "").toLowerCase().trim();
+        const cards = pestGrid.querySelectorAll(".pc-card");
+        cards.forEach(card => {
+          const txt = (card.textContent || "").toLowerCase();
+          card.style.display = !q || txt.includes(q) ? "" : "none";
+        });
+      }
+
+      pestSearch && pestSearch.addEventListener("input", filterPestCards);
+
+      /* LOADERS */
+      async function loadSkuCsv() {
+        try {
+          const res = await fetch(SKU_CSV_URL);
+          if (!res.ok) throw new Error("SKU CSV not found");
+          const text = await res.text();
+          skuData = parseSkuCsv(text);
+          renderSkuList();
+        } catch (err) {
+          console.error(err);
+          if (emptyState) {
+            emptyState.classList.remove("hidden");
+            emptyState.textContent = "Error loading SKU_Name_2026.csv.";
+          }
+        }
+      }
+
+      async function loadOrderWeeksCsv() {
+        try {
+          const res = await fetch(ORDER_WEEKS_CSV_URL);
+          if (!res.ok) throw new Error("OrderWeeks.csv not found");
+          const text = await res.text();
+          const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+          if (!lines.length) return;
+
+          const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+          const weekIdx = header.indexOf("week #");
+          const dateIdx = header.indexOf("week date");
+          const shipIdx = header.indexOf("shipping");
+          const addIdx = header.indexOf("additional");
+          const statusIdx = header.indexOf("status");
+
+          const orderBody = document.getElementById("orderWeeksBody");
+          if (!orderBody) return;
+          orderBody.innerHTML = "";
+
+          for (let i = 1; i < lines.length; i++) {
+            const row = parseCsvLine(lines[i]);
+            const week = (row[weekIdx] || "").trim();
+            const date = (row[dateIdx] || "").trim();
+            const shipping = (row[shipIdx] || "").trim();
+            const additional = (row[addIdx] || "").trim();
+            const status = (row[statusIdx] || "").trim();
+
+            if (!week) continue;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${week}</td>
+              <td>${date}</td>
+              <td>${shipping}</td>
+              <td>${additional}</td>
+              <td>${highlightStatus(status)}</td>
+            `;
+            orderBody.appendChild(tr);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadOrderCsv() {
+        try {
+          const res = await fetch(ORDER_CSV_URL);
+          if (!res.ok) throw new Error("OrderBreakdown.csv not found");
+          const text = await res.text();
+          allOrderRows = parseOrderCsv(text);
+          applyOrderBreakdown(allOrderRows);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadPlantCsv() {
+        try {
+          const res = await fetch(PLANT_CSV_URL);
+          if (!res.ok) throw new Error("plants.csv not found");
+          const text = await res.text();
+          PLANTS = parsePlantCsv(text);
+          renderPlantCards();
+          filterPlantCards();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadPestCsv() {
+        try {
+          const res = await fetch(PEST_CSV_URL);
+          if (!res.ok) throw new Error("pests.csv not found");
+          const text = await res.text();
+          PESTS = parsePestCsv(text);
+          renderPestCards();
+          filterPestCards();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Inner tabs in Product Info (SKU vs Orders)
+      const productsTabs = document.querySelectorAll(".products-inner-tab");
+      const productsSections = {
+        skus: document.getElementById("products-skus"),
+        orders: document.getElementById("products-orders")
+      };
+
+      function showProductsTab(key) {
+        Object.entries(productsSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        productsTabs.forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.products === key);
+        });
+      }
+
+      productsTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.products;
+          if (key) showProductsTab(key);
+        });
+      });
+      if (productsTabs.length) showProductsTab("skus");
+
+      // Care & ID inner tabs (Care Library vs Pest ID)
+      const innerTabs = document.querySelectorAll(".inner-tab");
+      const innerSections = {
+        "care-library": document.getElementById("inner-care-library"),
+        "pest-id": document.getElementById("inner-pest-id")
+      };
+
+      function showInnerTab(key) {
+        Object.entries(innerSections).forEach(([k, section]) => {
+          if (!section) return;
+          section.classList.toggle("hidden", k !== key);
+        });
+        innerTabs.forEach(t => t.classList.remove("active"));
+        const active = document.querySelector(`.inner-tab[data-inner="${key}"]`);
+        if (active) active.classList.add("active");
+      }
+
+      innerTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const key = tab.dataset.inner;
+          if (!key) return;
+          showInnerTab(key);
+        });
+      });
+      if (innerTabs.length) showInnerTab("care-library");
+
+      // Kick off loads
+      loadSkuCsv();
+      loadOrderWeeksCsv();
+      loadOrderCsv();
+      loadPlantCsv();
+      loadPestCsv();
+    }
+
+    /* ========= MAIN DOM READY ========= */
     document.addEventListener("DOMContentLoaded", () => {
-      /* Splash → Login */
+      // Splash -> Login
       const splashLogo = document.getElementById("splashLogo");
       if (splashLogo) {
         splashLogo.addEventListener("click", () => {
@@ -1066,7 +2415,7 @@
         });
       }
 
-      /* Login */
+      // Login
       const loginRole = document.getElementById("loginRole");
       const loginUsername = document.getElementById("loginUsername");
       const loginPassword = document.getElementById("loginPassword");
@@ -1094,7 +2443,6 @@
           const role = loginRole.value;
 
           if (role === "Merchandiser") {
-            // No credentials required
             CURRENT_USER = {
               role,
               username: "",
@@ -1109,7 +2457,6 @@
 
           const username = (loginUsername.value || "").trim();
           const password = (loginPassword.value || "").trim();
-
           if (!username || !password) {
             loginError.textContent = "Please enter both username and password.";
             return;
@@ -1135,7 +2482,6 @@
             username: match.username,
             displayName: match.displayName
           };
-
           loginError.textContent = "";
           showView("view-hub");
           updateHubUserInfo();
@@ -1143,7 +2489,7 @@
         });
       }
 
-      /* Hub Cards → Modules */
+      // Hub cards
       const hubCardHF = document.getElementById("hubCardHF");
       const hubCardHPA = document.getElementById("hubCardHPA");
       const hubCardAdmin = document.getElementById("hubCardAdmin");
@@ -1152,7 +2498,7 @@
       hubCardHPA && hubCardHPA.addEventListener("click", () => showView("view-hpa"));
       hubCardAdmin && hubCardAdmin.addEventListener("click", () => showView("view-admin"));
 
-      /* Module Back Buttons */
+      // Back buttons
       document.querySelectorAll(".module-back-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const target = btn.getAttribute("data-back") || "hub";
@@ -1160,25 +2506,22 @@
         });
       });
 
-      /* Module Tabs (HF / HPA / ADMIN) */
+      // Module tabs
       document.querySelectorAll(".module-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           if (!CURRENT_USER) return;
           const moduleKey = tab.getAttribute("data-module");
           const tabKey = tab.getAttribute("data-tab");
           const minRole = tab.getAttribute("data-min-role");
-
-          if (minRole && !canAccess(CURRENT_USER.role, minRole)) {
-            return;
-          }
+          if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
           setActiveModuleTab(moduleKey, tabKey);
         });
       });
 
-      /* Default view: splash */
+      // Default view: splash
       showView("view-splash");
 
-      /* Load Users CSV (for non-merch roles) */
+      // Load users CSV
       fetch(USERS_CSV_URL)
         .then(res => {
           if (!res.ok) throw new Error("users.csv not found");
@@ -1189,8 +2532,10 @@
           console.log("Loaded users:", USERS.length);
         })
         .catch(err => console.error("Error loading users CSV:", err));
+
+      // Init HPA logic
+      initHPA();
     });
   </script>
 </body>
 </html>
-``
