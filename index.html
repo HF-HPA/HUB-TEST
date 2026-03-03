@@ -5,8 +5,8 @@
   <title>Hampshire Farms Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Favicon (optional) -->
-  <link rel="icon" href="hf_logo.png" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="hf_logo.png" />
 
   <style>
     /* ========= CORE THEME ========= */
@@ -1537,12 +1537,12 @@
               </div>
 
               <div class="inner-tabs">
-                <button class="inner-tab" data-inner="care-library" type="button">Care Library</button>
+                <button class="inner-tab active" data-inner="care-library" type="button">Care Library</button>
                 <button class="inner-tab" data-inner="pest-id" type="button">Pest Identification</button>
               </div>
 
               <!-- CARE LIBRARY -->
-              <section id="inner-care-library" class="inner-content hidden">
+              <section id="inner-care-library" class="inner-content">
                 <div class="pc-header">
                   <div class="pc-title">Care Library</div>
                   <div class="pc-search-wrapper">
@@ -1724,7 +1724,7 @@
       </div>
 
       <div class="footer">
-        Hampshire Farms Hub • v1.1 • HF / HPA / Admin • CSV‑driven
+        Hampshire Farms Hub • v1.2 • HF / HPA / Admin • CSV‑driven
       </div>
 
     </div>
@@ -2627,7 +2627,7 @@
         });
       });
 
-      // MODULE TABS
+      // MAIN MODULE TABS (HF, HPA, Admin — except external Admin tabs)
       document.querySelectorAll(".module-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           if (!CURRENT_USER) return;
@@ -2635,9 +2635,49 @@
           const tabKey = tab.getAttribute("data-tab");
           const minRole = tab.getAttribute("data-min-role");
           if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
-          // For Admin/AIR special links, handled separately below
-          if (moduleKey === "admin" && (tabKey === "store-audit" || tabKey === "air")) return;
+
+          // External Admin tabs are handled separately
+          if (moduleKey === "admin" && (tabKey === "store-audit" || tabKey === "air")) {
+            return;
+          }
+
           setActiveModuleTab(moduleKey, tabKey);
+        });
+      });
+
+      // HPA PRODUCT INNER TABS
+      document.querySelectorAll(".products-inner-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.products; // "skus" or "orders"
+          const tabs = document.querySelectorAll(".products-inner-tab");
+          const skusSection = document.getElementById("products-skus");
+          const ordersSection = document.getElementById("products-orders");
+
+          tabs.forEach(t => t.classList.remove("active"));
+          skusSection.classList.add("hidden");
+          ordersSection.classList.add("hidden");
+
+          btn.classList.add("active");
+          if (target === "skus") skusSection.classList.remove("hidden");
+          else ordersSection.classList.remove("hidden");
+        });
+      });
+
+      // HPA CARE/PEST INNER TABS
+      document.querySelectorAll(".inner-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.inner; // "care-library" or "pest-id"
+          const tabs = document.querySelectorAll(".inner-tab");
+          const careSection = document.getElementById("inner-care-library");
+          const pestSection = document.getElementById("inner-pest-id");
+
+          tabs.forEach(t => t.classList.remove("active"));
+          careSection.classList.add("hidden");
+          pestSection.classList.add("hidden");
+
+          btn.classList.add("active");
+          if (target === "care-library") careSection.classList.remove("hidden");
+          else pestSection.classList.remove("hidden");
         });
       });
 
