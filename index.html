@@ -132,6 +132,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      outline: none;
     }
 
     .splash-logo-img {
@@ -148,7 +149,8 @@
       z-index: 2;
     }
 
-    .splash-logo-wrapper:hover .splash-logo-img {
+    .splash-logo-wrapper:hover .splash-logo-img,
+    .splash-logo-wrapper:focus-visible .splash-logo-img {
       transform: translateY(-3px) scale(1.03);
       filter:
         drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
@@ -1221,11 +1223,17 @@
 
       <!-- ========= SPLASH ========= -->
       <section id="view-splash" class="splash-root">
-        <div id="splashLogo" class="splash-logo-wrapper">
+        <div
+          id="splashLogo"
+          class="splash-logo-wrapper"
+          role="button"
+          tabindex="0"
+          aria-label="Enter Hampshire Farms Hub"
+        >
           <img src="hf_logo.png" alt="Hampshire Farms Logo" class="splash-logo-img" />
         </div>
         <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
-        <div class="splash-helper">Click the logo to enter</div>
+        <div class="splash-helper">Click the logo or press Enter to enter</div>
       </section>
 
       <!-- ========= LOGIN ========= -->
@@ -1437,6 +1445,12 @@
                   <strong id="resultCount">0</strong> SKUs shown
                 </div>
 
+                <div id="skuLoading"
+                     class="section-subtitle"
+                     style="margin-top:6px; font-size:0.8rem; display:none;">
+                  Loading SKU data…
+                </div>
+
                 <section id="skuGrid" class="sku-grid"></section>
                 <div id="emptyState" class="empty-state hidden">
                   No SKUs match your filters or the file could not be loaded.
@@ -1537,6 +1551,17 @@
                   </div>
                 </div>
                 <div class="pc-grid" id="plantCareGrid"></div>
+
+                <div id="plantsLoading"
+                     class="section-subtitle"
+                     style="margin-top:6px; font-size:0.8rem; display:none;">
+                  Loading plant care library…
+                </div>
+                <div id="plantsError"
+                     class="section-subtitle"
+                     style="margin-top:6px; font-size:0.8rem; color:#fca5a5; display:none;">
+                  Could not load plant care data. Please refresh or contact your supervisor.
+                </div>
               </section>
 
               <!-- PEST IDENTIFICATION -->
@@ -1549,6 +1574,17 @@
                   </div>
                 </div>
                 <div class="pc-grid" id="pestGrid"></div>
+
+                <div id="pestsLoading"
+                     class="section-subtitle"
+                     style="margin-top:6px; font-size:0.8rem; display:none;">
+                  Loading pest library…
+                </div>
+                <div id="pestsError"
+                     class="section-subtitle"
+                     style="margin-top:6px; font-size:0.8rem; color:#fca5a5; display:none;">
+                  Could not load pest data. Please refresh or contact your supervisor.
+                </div>
               </section>
             </section>
           </div>
@@ -1620,8 +1656,8 @@
 
       <!-- ========= POPUPS ========= -->
       <!-- SKU POPUP -->
-      <div id="popupBackdrop" class="popup-backdrop">
-        <div class="popup">
+      <div id="popupBackdrop" class="popup-backdrop" aria-hidden="true">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupName">
           <h2 id="popupName"></h2>
           <p><strong>SKU:</strong> <span id="popupSku"></span></p>
           <p><strong>Sent In:</strong> <span id="popupSent"></span></p>
@@ -1631,8 +1667,8 @@
       </div>
 
       <!-- PLANT CARE POPUP -->
-      <div id="careBackdrop" class="popup-backdrop">
-        <div class="popup">
+      <div id="careBackdrop" class="popup-backdrop" aria-hidden="true">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="careTitle">
           <img id="careImage" class="popup-image" alt="" />
           <h2 id="careTitle"></h2>
 
@@ -1665,8 +1701,8 @@
       </div>
 
       <!-- PEST POPUP -->
-      <div id="pestBackdrop" class="popup-backdrop">
-        <div class="popup">
+      <div id="pestBackdrop" class="popup-backdrop" aria-hidden="true">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="pestTitle">
           <img id="pestImage" class="popup-image" alt="" />
           <h2 id="pestTitle"></h2>
           <p id="pestScientificName" class="popup-subtitle"></p>
@@ -1688,7 +1724,7 @@
       </div>
 
       <div class="footer">
-        Hampshire Farms Hub • v1.0 • HF / HPA / Admin • CSV‑driven
+        Hampshire Farms Hub • v1.1 • HF / HPA / Admin • CSV‑driven
       </div>
 
     </div>
@@ -1722,6 +1758,73 @@
     let allOrderRows = [];
     let PLANTS = [];
     let PESTS = [];
+
+    // Shared UI helpers
+    let lastFocusedElement = null;
+
+    function setElementVisible(el, visible, displayType = "block") {
+      if (!el) return;
+      el.style.display = visible ? displayType : "none";
+    }
+
+    function openDialog(backdropEl, firstFocusEl) {
+      if (!backdropEl) return;
+
+      lastFocusedElement = document.activeElement;
+      backdropEl.style.display = "flex";
+      backdropEl.setAttribute("aria-hidden", "false");
+
+      if (firstFocusEl && typeof firstFocusEl.focus === "function") {
+        firstFocusEl.focus();
+      }
+
+      const focusableSelectors =
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const focusable = backdropEl.querySelectorAll(focusableSelectors);
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      function handleKeyDown(e) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeDialog(backdropEl);
+          return;
+        }
+        if (e.key === "Tab") {
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      }
+
+      backdropEl._dialogKeyHandler = handleKeyDown;
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    function closeDialog(backdropEl) {
+      if (!backdropEl) return;
+      backdropEl.style.display = "none";
+      backdropEl.setAttribute("aria-hidden", "true");
+
+      if (backdropEl._dialogKeyHandler) {
+        document.removeEventListener("keydown", backdropEl._dialogKeyHandler);
+        delete backdropEl._dialogKeyHandler;
+      }
+
+      if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+        lastFocusedElement.focus();
+      }
+    }
 
     /* ========= HELPERS ========= */
     function parseCsvLine(line) {
@@ -2050,6 +2153,7 @@
       const skuGrid = document.getElementById("skuGrid");
       const resultCount = document.getElementById("resultCount");
       const emptyState = document.getElementById("emptyState");
+      const skuLoading = document.getElementById("skuLoading");
 
       const popupBackdrop = document.getElementById("popupBackdrop");
       const popupName = document.getElementById("popupName");
@@ -2059,9 +2163,9 @@
       const popupClose = document.getElementById("popupClose");
 
       if (popupClose && popupBackdrop) {
-        popupClose.addEventListener("click", () => popupBackdrop.style.display = "none");
+        popupClose.addEventListener("click", () => closeDialog(popupBackdrop));
         popupBackdrop.addEventListener("click", e => {
-          if (e.target === popupBackdrop) popupBackdrop.style.display = "none";
+          if (e.target === popupBackdrop) closeDialog(popupBackdrop);
         });
       }
 
@@ -2101,7 +2205,7 @@
             popupSku.textContent = item.sku;
             popupSent.textContent = item.sentIn;
             popupYear.textContent = item.yearSent;
-            popupBackdrop.style.display = "flex";
+            openDialog(popupBackdrop, popupClose);
           });
           skuGrid.appendChild(card);
         });
@@ -2130,11 +2234,13 @@
       const careToxicity = document.getElementById("careToxicity");
       const careTips = document.getElementById("careTips");
       const careCloseBtn = document.getElementById("careClose");
+      const plantsLoading = document.getElementById("plantsLoading");
+      const plantsError = document.getElementById("plantsError");
 
       if (careCloseBtn && careBackdrop) {
-        careCloseBtn.addEventListener("click", () => careBackdrop.style.display = "none");
+        careCloseBtn.addEventListener("click", () => closeDialog(careBackdrop));
         careBackdrop.addEventListener("click", e => {
-          if (e.target === careBackdrop) careBackdrop.style.display = "none";
+          if (e.target === careBackdrop) closeDialog(careBackdrop);
         });
       }
 
@@ -2160,7 +2266,7 @@
           careImage.style.display = "none";
         }
 
-        careBackdrop.style.display = "flex";
+        openDialog(careBackdrop, careCloseBtn);
       }
 
       function renderPlantCards() {
@@ -2204,11 +2310,13 @@
       const pestPrevention = document.getElementById("pestPrevention");
       const pestTreatment = document.getElementById("pestTreatment");
       const pestCloseBtn = document.getElementById("pestClose");
+      const pestsLoading = document.getElementById("pestsLoading");
+      const pestsError = document.getElementById("pestsError");
 
       if (pestCloseBtn && pestBackdrop) {
-        pestCloseBtn.addEventListener("click", () => pestBackdrop.style.display = "none");
+        pestCloseBtn.addEventListener("click", () => closeDialog(pestBackdrop));
         pestBackdrop.addEventListener("click", e => {
-          if (e.target === pestBackdrop) pestBackdrop.style.display = "none";
+          if (e.target === pestBackdrop) closeDialog(pestBackdrop);
         });
       }
 
@@ -2231,7 +2339,7 @@
           pestImage.style.display = "none";
         }
 
-        pestBackdrop.style.display = "flex";
+        openDialog(pestBackdrop, pestCloseBtn);
       }
 
       function renderPestCards() {
@@ -2261,14 +2369,24 @@
         });
       }
 
+      pestSearch && pestSearch.addEventListener("input", filterPestCards);
+
       // LOAD CSV DATA
       try {
+        if (skuLoading) setElementVisible(skuLoading, true);
         const resSku = await fetch(SKU_CSV_URL);
         if (!resSku.ok) throw new Error("SKU CSV not found");
         const skuText = await resSku.text();
         skuData = parseSkuCsv(skuText);
       } catch (err) {
         console.error(err);
+        if (emptyState) {
+          emptyState.textContent =
+            "SKU data could not be loaded. Please refresh or contact admin.";
+          emptyState.classList.remove("hidden");
+        }
+      } finally {
+        if (skuLoading) setElementVisible(skuLoading, false);
       }
 
       try {
@@ -2324,23 +2442,29 @@
       }
 
       try {
+        if (plantsLoading) setElementVisible(plantsLoading, true);
         const resPlants = await fetch(PLANT_CSV_URL);
-        if (resPlants.ok) {
-          const text = await resPlants.text();
-          PLANTS = parsePlantCsv(text);
-        }
+        if (!resPlants.ok) throw new Error("plants.csv not found");
+        const text = await resPlants.text();
+        PLANTS = parsePlantCsv(text);
       } catch (err) {
         console.error(err);
+        if (plantsError) setElementVisible(plantsError, true);
+      } finally {
+        if (plantsLoading) setElementVisible(plantsLoading, false);
       }
 
       try {
+        if (pestsLoading) setElementVisible(pestsLoading, true);
         const resPests = await fetch(PEST_CSV_URL);
-        if (resPests.ok) {
-          const text = await resPests.text();
-          PESTS = parsePestCsv(text);
-        }
+        if (!resPests.ok) throw new Error("pests.csv not found");
+        const text = await resPests.text();
+        PESTS = parsePestCsv(text);
       } catch (err) {
         console.error(err);
+        if (pestsError) setElementVisible(pestsError, true);
+      } finally {
+        if (pestsLoading) setElementVisible(pestsLoading, false);
       }
 
       // INITIAL RENDERS
@@ -2358,29 +2482,40 @@
       const loginView = document.getElementById("view-login");
       const splashLogoWrapper = document.getElementById("splashLogo");
 
-      if (splashLogoWrapper && splashView && loginView) {
-        splashLogoWrapper.addEventListener("click", () => {
-          splashLogoWrapper.classList.add("logo-tap");
-          splashView.classList.add("splash-fade-out");
-
-          setTimeout(() => {
-            splashView.classList.add("hidden");
-            splashView.classList.remove("splash-fade-out");
-
-            // Prepare & fade in login
-            loginView.classList.remove("hidden");
-            loginView.classList.add("login-fade-in");
-            loginView.style.opacity = "1"; // keep visible after animation
-          }, 700);
-        }, { once: true });
-      }
-
-      // LOGIN
       const loginRole = document.getElementById("loginRole");
       const loginUsername = document.getElementById("loginUsername");
       const loginPassword = document.getElementById("loginPassword");
       const loginButton = document.getElementById("loginButton");
       const loginError = document.getElementById("loginError");
+
+      const enterHubFromSplash = () => {
+        splashLogoWrapper.classList.add("logo-tap");
+        splashView.classList.add("splash-fade-out");
+
+        setTimeout(() => {
+          splashView.classList.add("hidden");
+          splashView.classList.remove("splash-fade-out");
+
+          loginView.classList.remove("hidden");
+          loginView.classList.add("login-fade-in");
+          loginView.style.opacity = "1";
+          if (loginRole) loginRole.focus();
+        }, 700);
+      };
+
+      if (splashLogoWrapper && splashView && loginView) {
+        splashLogoWrapper.addEventListener("click", enterHubFromSplash, { once: true });
+        splashLogoWrapper.addEventListener(
+          "keydown",
+          (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              enterHubFromSplash();
+            }
+          },
+          { once: true }
+        );
+      }
 
       function updateLoginFieldsForRole() {
         const role = loginRole.value;
@@ -2393,6 +2528,20 @@
           loginUsername.disabled = false;
           loginPassword.disabled = false;
         }
+      }
+
+      // Restore last role / username if stored
+      try {
+        const savedRole = localStorage.getItem("hfHubLastRole");
+        const savedUsername = localStorage.getItem("hfHubLastUsername");
+        if (savedRole && loginRole) {
+          loginRole.value = savedRole;
+        }
+        if (savedUsername && loginUsername) {
+          loginUsername.value = savedUsername;
+        }
+      } catch (e) {
+        console.warn("Could not access localStorage", e);
       }
 
       loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
@@ -2408,6 +2557,10 @@
               username: "",
               displayName: "Merchandiser"
             };
+            try {
+              localStorage.setItem("hfHubLastRole", role);
+              localStorage.removeItem("hfHubLastUsername");
+            } catch (e) {}
             loginError.textContent = "";
             showView("view-hub");
             updateHubUserInfo();
@@ -2442,6 +2595,10 @@
             username: match.username,
             displayName: match.displayName
           };
+          try {
+            localStorage.setItem("hfHubLastRole", match.role);
+            localStorage.setItem("hfHubLastUsername", match.username);
+          } catch (e) {}
           loginError.textContent = "";
           showView("view-hub");
           updateHubUserInfo();
@@ -2455,7 +2612,11 @@
       const hubCardAdmin = document.getElementById("hubCardAdmin");
 
       hubCardHF && hubCardHF.addEventListener("click", () => showView("view-hf"));
-      hubCardHPA && hubCardHPA.addEventListener("click", () => showView("view-hpa"));
+      hubCardHPA && hubCardHPA.addEventListener("click", () => {
+        showView("view-hpa");
+        const nameFilter = document.getElementById("nameFilter");
+        if (nameFilter) nameFilter.focus();
+      });
       hubCardAdmin && hubCardAdmin.addEventListener("click", () => showView("view-admin"));
 
       // BACK BUTTONS
@@ -2474,6 +2635,8 @@
           const tabKey = tab.getAttribute("data-tab");
           const minRole = tab.getAttribute("data-min-role");
           if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
+          // For Admin/AIR special links, handled separately below
+          if (moduleKey === "admin" && (tabKey === "store-audit" || tabKey === "air")) return;
           setActiveModuleTab(moduleKey, tabKey);
         });
       });
@@ -2482,6 +2645,7 @@
       const storeAuditTab = document.querySelector('.module-tab[data-module="admin"][data-tab="store-audit"]');
       if (storeAuditTab) {
         storeAuditTab.addEventListener("click", () => {
+          if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
           window.location.href =
             "https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl";
         });
@@ -2491,6 +2655,7 @@
       const airTab = document.querySelector('.module-tab[data-module="admin"][data-tab="air"]');
       if (airTab) {
         airTab.addEventListener("click", () => {
+          if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
           window.location.href = "https://air.inc/";
         });
       }
