@@ -407,7 +407,7 @@
 
     @media (min-width: 800px) {
       .hub-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 
@@ -427,7 +427,8 @@
       transition:
         transform 0.18s ease-out,
         border-color 0.18s ease-out,
-        box-shadow 0.18s ease-out;
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
     }
 
     .hub-card::after {
@@ -1399,10 +1400,367 @@
       text-transform: uppercase;
       color: rgba(148, 163, 184, 0.9);
     }
+
+    /* ========= LEARNING CENTER THEME ========= */
+
+    /* Chalkboard background for the Learning Center view */
+    #view-learning {
+      position: relative;
+      padding: 10px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          #1b2b34,
+          #1b2b34 2px,
+          #18252d 2px,
+          #18252d 4px
+        );
+      animation: chalkBoardGlow 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes chalkBoardGlow {
+      0% { box-shadow: 0 0 0 rgba(254, 240, 138, 0.0); }
+      50% { box-shadow: 0 0 28px rgba(254, 240, 138, 0.3); }
+      100% { box-shadow: 0 0 12px rgba(254, 240, 138, 0.1); }
+    }
+
+    /* Override glass panels inside learning to feel more “schoolish” */
+    #view-learning .glass-panel {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(254, 240, 138, 0.7);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.85);
+    }
+
+    /* Chalk-style heading text */
+    .chalk-write {
+      font-family: "Courier New", monospace;
+      color: #f8fafc;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid #f8fafc;
+      animation: chalkWrite 2.8s steps(35) forwards;
+    }
+
+    @keyframes chalkWrite {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+
+    /* Light “chalk dust” indicator */
+    .chalk-dust {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: rgba(248, 250, 252, 0.5);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: dustFade 3.4s ease-out forwards;
+    }
+
+    @keyframes dustFade {
+      0% { opacity: 0; transform: translateY(0); }
+      60% { opacity: 0.4; transform: translateY(-2px); }
+      100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    /* Learning Center card on main hub (chalkboard tile with wood frame) */
+    .learning-center-card {
+      position: relative;
+      background: #1b2b34;
+      border-radius: 16px;
+      padding: 18px 16px;
+      color: #f8fafc;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+      cursor: pointer;
+      overflow: hidden;
+      border: 3px solid #8b5a2b;
+      transition:
+        transform 0.2s ease-out,
+        box-shadow 0.2s ease-out,
+        border-color 0.2s ease-out;
+    }
+
+    .learning-center-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+      border-color: #facc15;
+    }
+
+    .learning-center-card:hover .chalk-write {
+      animation: chalkSqueak 0.35s ease-in-out;
+    }
+
+    @keyframes chalkSqueak {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(1deg); }
+      60% { transform: rotate(-1deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Chalk icons for learning tiles */
+    .chalk-icon {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 3px rgba(255,255,255,0.45));
+      margin-right: 6px;
+    }
+
+    /* Learning grid for training tiles */
+    .learning-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    /* Tracks & progress */
+    .track-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 12px 12px 10px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.8);
+    }
+
+    .track-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .track-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fef3c7;
+    }
+
+    .track-badge {
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(254, 240, 138, 0.8);
+      color: #fef3c7;
+    }
+
+    .track-desc {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    .track-progress-bar {
+      margin-top: 8px;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+    }
+
+    .track-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #facc15, #38bdf8);
+      transition: width 0.3s ease-out;
+    }
+
+    .track-progress-text {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #e5e7eb;
+    }
+
+    /* Quizzes */
+    .quiz-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .quiz-card {
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(96, 165, 250, 0.7);
+      padding: 10px 12px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.8);
+    }
+
+    .quiz-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .quiz-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #bfdbfe;
+    }
+
+    .quiz-chip {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.9);
+      color: #dbeafe;
+    }
+
+    .quiz-progress-badge {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #bbf7d0;
+    }
+
+    .quiz-start-btn {
+      margin-top: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 165, 250, 0.8);
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      color: #020617;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.7);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    .quiz-start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(59, 130, 246, 0.9);
+    }
+
+    /* Active quiz container */
+    #quizContainer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .quiz-question {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .quiz-q-text {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      margin-bottom: 6px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .quiz-option-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .quiz-submit-btn {
+      margin-top: 12px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, 0.8);
+      background: linear-gradient(135deg, #22c55e, #65a30d);
+      color: #020617;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(22, 163, 74, 0.9);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    .quiz-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(22, 163, 74, 0.96);
+    }
+
+    .quiz-result {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .quiz-result.pass {
+      color: #bbf7d0;
+    }
+
+    .quiz-result.fail {
+      color: #fecaca;
+    }
+
+    /* Learning Center top tabs */
+    .learning-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+      margin-top: 8px;
+    }
+
+    .learning-tab {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid transparent;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        color 0.18s ease-out,
+        background 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        transform 0.18s ease-out;
+    }
+
+    .learning-tab:hover {
+      color: #f9fafb;
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .learning-tab.active {
+      color: #fef3c7;
+      background: radial-gradient(
+        circle at top left,
+        rgba(254, 240, 138, 0.35),
+        rgba(15, 23, 42, 0.98)
+      );
+      border-color: rgba(254, 240, 138, 0.9);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
+    }
   </style>
 </head>
 <body>
-  <main class="app-shell">
+ <main class="app-shell">
     <div class="app-inner">
 
       <!-- ========= SPLASH ========= -->
@@ -1457,7 +1815,7 @@
         </div>
       </section>
 
-      <!-- ========= HUB ========= -->
+      <!-- ========= HUB (MAIN DASHBOARD) ========= -->
       <section id="view-hub" class="hub-root hidden">
         <header class="hub-header">
           <div class="hub-title-block">
@@ -1468,6 +1826,14 @@
             Role: — • User: —
           </div>
         </header>
+
+        <!-- Weather Widget -->
+        <div id="weatherWidget" class="glass-panel" style="margin-bottom: 8px;">
+          <div style="font-size:1.05rem; font-weight:600; color:#f9fafb;">Weather</div>
+          <div id="weatherContent" style="margin-top:4px; font-size:0.9rem; color:#e5e7eb;">
+            Loading weather…
+          </div>
+        </div>
 
         <section class="hub-grid">
           <button id="hubCardHF" class="hub-card" type="button">
@@ -1506,6 +1872,15 @@
             </div>
             <div class="hub-card-tagline">
               📋 Store health • 🧠 Training • 🗺️ Coverage &amp; mapping
+            </div>
+          </button>
+
+          <!-- Learning Center Card -->
+          <button id="hubCardLearning" class="learning-center-card" type="button">
+            <div class="chalk-write">📘 Learning Center</div>
+            <div class="chalk-dust">•••</div>
+            <div style="margin-top:8px; color:#fde047; font-size:0.85rem;">
+              Fun training, videos, guides &amp; quizzes.
             </div>
           </button>
         </section>
@@ -1779,7 +2154,7 @@
         </section>
       </section>
 
-      <!-- ========= ADMIN MODULE ========= -->
+      <!-- ========= ADMIN MODULE (updated: no Store Check / Training tabs) ========= -->
       <section id="view-admin" class="module-root hidden">
         <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
 
@@ -1787,19 +2162,13 @@
           <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
           <div class="module-title">ADMIN</div>
           <div class="module-subtitle">
-            Store checks, audits, training, AIR, maps &amp; district checklists.
+            Audits, AIR, maps &amp; district checklists.
           </div>
         </header>
 
         <nav class="module-tabs">
-          <button class="module-tab active" data-module="admin" data-tab="store-check">
-            Store Check
-          </button>
-          <button class="module-tab" data-module="admin" data-tab="store-audit" data-min-role="Supervisor">
+          <button class="module-tab active" data-module="admin" data-tab="store-audit" data-min-role="Supervisor">
             Store Audit
-          </button>
-          <button class="module-tab" data-module="admin" data-tab="training" data-min-role="Supervisor">
-            Training
           </button>
           <button class="module-tab" data-module="admin" data-tab="air" data-min-role="Supervisor">
             AIR
@@ -1813,19 +2182,14 @@
         </nav>
 
         <section class="module-content">
-          <div id="admin-store-check" class="glass-panel">
-            <div class="section-title">Store Check</div>
+          <div id="admin-store-audit" class="glass-panel">
+            <div class="section-title">Store Audit</div>
             <p class="section-subtitle">
-              You can paste your Store Visit checklist here later.
+              This tab opens our Store Audit form in Microsoft Forms for detailed audits.
             </p>
-          </div>
-
-          <div id="admin-store-audit" class="glass-panel hidden">
-            Store Audit placeholder.
-          </div>
-
-          <div id="admin-training" class="glass-panel hidden">
-            Training placeholder.
+            <p class="section-subtitle" style="margin-top:6px;">
+              When you click the Store Audit tab above, you will be redirected to the live form.
+            </p>
           </div>
 
           <div id="admin-air" class="glass-panel hidden">
@@ -1838,6 +2202,129 @@
 
           <div id="admin-district-checklist" class="glass-panel hidden">
             District Checklist placeholder.
+          </div>
+        </section>
+      </section>
+
+      <!-- ========= LEARNING CENTER MODULE ========= -->
+      <section id="view-learning" class="module-root hidden">
+        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
+
+        <header class="module-header">
+          <div class="chalk-write">📘 Learning Center</div>
+          <div class="module-subtitle" style="color:#fde047; max-width:480px;">
+            Training made fun • Learn everything you need for HF &amp; HPA success.
+          </div>
+          <div class="chalk-dust">HF • HPA • Pests • Care</div>
+        </header>
+
+        <nav class="learning-tabs">
+          <button class="learning-tab active" data-learning-tab="overview" type="button">
+            📝 Overview
+          </button>
+          <button class="learning-tab" data-learning-tab="tracks" type="button">
+            🎓 Learning Tracks
+          </button>
+          <button class="learning-tab" data-learning-tab="quizzes" type="button">
+            🧠 Quizzes
+          </button>
+          <button class="learning-tab" data-learning-tab="resources" type="button">
+            📚 Resources
+          </button>
+        </nav>
+
+        <section class="module-content">
+
+          <!-- OVERVIEW -->
+          <div id="learning-overview" class="glass-panel">
+            <div class="section-title">Welcome to the Learning Center</div>
+            <p class="section-subtitle">
+              Use this space to train new hires, refresh skills, and stay sharp on HF &amp; HPA programs.
+            </p>
+
+            <div class="learning-grid">
+              <div class="track-card">
+                <div class="track-title-row">
+                  <div class="track-title">New Merchandiser 101</div>
+                  <div class="track-badge">Start Here</div>
+                </div>
+                <div class="track-desc">
+                  Learn the basics: watering, zoning, facing, and how HF &amp; HPA programs work.
+                </div>
+              </div>
+
+              <div class="track-card">
+                <div class="track-title-row">
+                  <div class="track-title">HPA Essentials</div>
+                  <div class="track-badge">Houseplants</div>
+                </div>
+                <div class="track-desc">
+                  Foliage vs. blooming, care basics, and how to use the HPA tools in this hub.
+                </div>
+              </div>
+
+              <div class="track-card">
+                <div class="track-title-row">
+                  <div class="track-title">Pest &amp; Problem Solving</div>
+                  <div class="track-badge">Advanced</div>
+                </div>
+                <div class="track-desc">
+                  Identify common pests and floor problems quickly, and know the correct next step.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRACKS -->
+          <div id="learning-tracks" class="glass-panel hidden">
+            <div class="section-title">Learning Tracks</div>
+            <p class="section-subtitle">
+              Follow a learning track to complete the right modules for your role.
+              Your progress saves on this device.
+            </p>
+            <div id="trackGrid" class="learning-grid"></div>
+          </div>
+
+          <!-- QUIZZES -->
+          <div id="learning-quizzes" class="glass-panel hidden">
+            <div class="section-title">Quizzes</div>
+            <p class="section-subtitle">
+              Test your knowledge and see how ready you are for the floor.
+            </p>
+
+            <div id="quizList" class="quiz-list"></div>
+            <div id="quizContainer" class="hidden"></div>
+          </div>
+
+          <!-- RESOURCES -->
+          <div id="learning-resources" class="glass-panel hidden">
+            <div class="section-title">Resources &amp; Documents</div>
+            <p class="section-subtitle">
+              Add your PDFs, videos, and visual guides here (links, SharePoint, Google Drive, etc.).
+            </p>
+
+            <div class="learning-grid" id="learningResourcesGrid">
+              <!-- Example resource tiles; replace href with your real URLs -->
+              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
+                <span class="chalk-icon">💧</span>
+                Watering Guide (PDF)
+              </a>
+
+              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
+                <span class="chalk-icon">🪴</span>
+                HPA Care Visual Playbook
+              </a>
+
+              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
+                <span class="chalk-icon">🐛</span>
+                Pest ID Cheat Sheet
+              </a>
+
+              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
+                <span class="chalk-icon">🎥</span>
+                Training Videos Playlist
+              </a>
+            </div>
           </div>
         </section>
       </section>
@@ -1912,1212 +2399,1648 @@
       </div>
 
       <div class="footer">
-        Hampshire Farms Hub • v1.2 • HF / HPA / Admin • CSV‑driven
+        Hampshire Farms Hub • v1.3 • HF / HPA / Admin / Learning Center • CSV‑driven
       </div>
 
     </div>
-  </main>
-  <script>
-    /* ========= CONFIG ========= */
-    const USERS_CSV_URL = "users.csv";
-    const SKU_CSV_URL = "SKU_Name_2026.csv";
-    const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
-    const ORDER_CSV_URL = "OrderBreakdown.csv";
-    const PLANT_CSV_URL = "plants.csv";
-    const PEST_CSV_URL = "pests.csv";
-    const HF_GUIDELINES_CSV_URL = "hf_guidelines.csv";
-    const HPA_GUIDELINES_CSV_URL = "hpa_guidelines.csv";
+  </main> 
+<!-- ========= SEGMENT 3: SCRIPTS ========= -->
+<script>
+  /* ========= CONFIG ========= */
+  const USERS_CSV_URL = "users.csv";
+  const SKU_CSV_URL = "SKU_Name_2026.csv";
+  const ORDER_WEEKS_CSV_URL = "OrderWeeks.csv";
+  const ORDER_CSV_URL = "OrderBreakdown.csv";
+  const PLANT_CSV_URL = "plants.csv";
+  const PEST_CSV_URL = "pests.csv";
+  const HF_GUIDELINES_CSV_URL = "hf_guidelines.csv";
+  const HPA_GUIDELINES_CSV_URL = "hpa_guidelines.csv";
 
-    const STORE_GRADES_BY_WEEK = {
-      "6": "All stores",
-      "7": "All Stores",
-      "8": "A/B",
-      "9": "SKIP",
-      "10": "All Stores",
-      "11": "All Stores",
-      "12": "All Stores",
-      "13": "All Stores"
-    };
+  const STORE_GRADES_BY_WEEK = {
+    "6": "All stores",
+    "7": "All Stores",
+    "8": "A/B",
+    "9": "SKIP",
+    "10": "All Stores",
+    "11": "All Stores",
+    "12": "All Stores",
+    "13": "All Stores"
+  };
 
-    const ROLE_ORDER = ["Merchandiser", "Supervisor", "District", "RMM"];
+  const ROLE_ORDER = ["Merchandiser", "Supervisor", "District", "RMM"];
 
-    let USERS = [];
-    let CURRENT_USER = null;
-    let skuData = [];
-    let allOrderRows = [];
-    let PLANTS = [];
-    let PESTS = [];
+  let USERS = [];
+  let CURRENT_USER = null;
+  let skuData = [];
+  let allOrderRows = [];
+  let PLANTS = [];
+  let PESTS = [];
 
-    // Shared UI helpers
-    let lastFocusedElement = null;
+  // Shared UI helpers
+  let lastFocusedElement = null;
 
-    function setElementVisible(el, visible, displayType = "block") {
-      if (!el) return;
-      el.style.display = visible ? displayType : "none";
+  function setElementVisible(el, visible, displayType = "block") {
+    if (!el) return;
+    el.style.display = visible ? displayType : "none";
+  }
+
+  function openDialog(backdropEl, firstFocusEl) {
+    if (!backdropEl) return;
+
+    lastFocusedElement = document.activeElement;
+    backdropEl.style.display = "flex";
+    backdropEl.setAttribute("aria-hidden", "false");
+
+    if (firstFocusEl && typeof firstFocusEl.focus === "function") {
+      firstFocusEl.focus();
     }
 
-    function openDialog(backdropEl, firstFocusEl) {
-      if (!backdropEl) return;
+    const focusableSelectors =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusable = backdropEl.querySelectorAll(focusableSelectors);
+    if (!focusable.length) return;
 
-      lastFocusedElement = document.activeElement;
-      backdropEl.style.display = "flex";
-      backdropEl.setAttribute("aria-hidden", "false");
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
 
-      if (firstFocusEl && typeof firstFocusEl.focus === "function") {
-        firstFocusEl.focus();
+    function handleKeyDown(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDialog(backdropEl);
+        return;
       }
-
-      const focusableSelectors =
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-      const focusable = backdropEl.querySelectorAll(focusableSelectors);
-      if (!focusable.length) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      function handleKeyDown(e) {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          closeDialog(backdropEl);
-          return;
-        }
-        if (e.key === "Tab") {
-          if (e.shiftKey) {
-            if (document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            }
-          } else {
-            if (document.activeElement === last) {
-              e.preventDefault();
-              first.focus();
-            }
+      if (e.key === "Tab") {
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
           }
         }
       }
-
-      backdropEl._dialogKeyHandler = handleKeyDown;
-      document.addEventListener("keydown", handleKeyDown);
     }
 
-    function closeDialog(backdropEl) {
-      if (!backdropEl) return;
-      backdropEl.style.display = "none";
-      backdropEl.setAttribute("aria-hidden", "true");
+    backdropEl._dialogKeyHandler = handleKeyDown;
+    document.addEventListener("keydown", handleKeyDown);
+  }
 
-      if (backdropEl._dialogKeyHandler) {
-        document.removeEventListener("keydown", backdropEl._dialogKeyHandler);
-        delete backdropEl._dialogKeyHandler;
-      }
+  function closeDialog(backdropEl) {
+    if (!backdropEl) return;
+    backdropEl.style.display = "none";
+    backdropEl.setAttribute("aria-hidden", "true");
 
-      if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-        lastFocusedElement.focus();
-      }
+    if (backdropEl._dialogKeyHandler) {
+      document.removeEventListener("keydown", backdropEl._dialogKeyHandler);
+      delete backdropEl._dialogKeyHandler;
     }
 
-    /* ========= HELPERS ========= */
-    function parseCsvLine(line) {
-      const out = [];
-      let cur = "";
-      let quote = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          if (quote && line[i + 1] === '"') { cur += '"'; i++; }
-          else { quote = !quote; }
-        } else if (ch === "," && !quote) {
-          out.push(cur); cur = "";
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus();
+    }
+  }
+
+  /* ========= CSV HELPERS ========= */
+  function parseCsvLine(line) {
+    const out = [];
+    let cur = "";
+    let quote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (quote && line[i + 1] === '"') {
+          cur += '"';
+          i++;
         } else {
-          cur += ch;
+          quote = !quote;
         }
+      } else if (ch === "," && !quote) {
+        out.push(cur);
+        cur = "";
+      } else {
+        cur += ch;
       }
-      out.push(cur);
-      return out;
     }
+    out.push(cur);
+    return out;
+  }
 
-    function parseUsersCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-      const roleIdx = header.indexOf("role");
-      const userIdx = header.indexOf("username");
-      const passIdx = header.indexOf("password");
-      const displayIdx = header.indexOf("display_name");
+  function parseUsersCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+    const roleIdx = header.indexOf("role");
+    const userIdx = header.indexOf("username");
+    const passIdx = header.indexOf("password");
+    const displayIdx = header.indexOf("display_name");
 
-      const users = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const role = (row[roleIdx] || "").trim();
-        const username = (row[userIdx] || "").trim();
-        const password = (row[passIdx] || "").trim();
-        const displayName = displayIdx >= 0 ? (row[displayIdx] || "").trim() : "";
-        if (!role) continue;
-        users.push({ role, username, password, displayName });
-      }
-      return users;
+    const users = [];
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      const role = (row[roleIdx] || "").trim();
+      const username = (row[userIdx] || "").trim();
+      const password = (row[passIdx] || "").trim();
+      const displayName = displayIdx >= 0 ? (row[displayIdx] || "").trim() : "";
+      if (!role) continue;
+      users.push({ role, username, password, displayName });
     }
+    return users;
+  }
 
-    const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
+  const normalizeSku = s => (s || "").toLowerCase().replace(/[^0-9a-z]/g, "");
 
-    function parseSkuCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-      const yearIdx = header.indexOf("year sent");
-      const nameIdx = header.indexOf("sku name");
-      const skuIdx = header.indexOf("sku");
-      const sentIdx = header.indexOf("sent in");
+  function parseSkuCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+    const yearIdx = header.indexOf("year sent");
+    const nameIdx = header.indexOf("sku name");
+    const skuIdx = header.indexOf("sku");
+    const sentIdx = header.indexOf("sent in");
 
-      const data = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const item = {
-          yearSent: (row[yearIdx] || "").trim(),
-          name: (row[nameIdx] || "").trim(),
-          sku: (row[skuIdx] || "").trim(),
-          sentIn: (row[sentIdx] || "").trim()
-        };
-        if (item.name && item.sku) data.push(item);
-      }
-      return data;
-    }
-
-    function parseOrderCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-      const w = header.indexOf("week");
-      const c = header.indexOf("category");
-      const s = header.indexOf("size");
-      const p = header.indexOf("plant name");
-
-      const out = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const item = {
-          week: (row[w] || "").trim(),
-          category: (row[c] || "").trim().toUpperCase(),
-          size: (row[s] || "").trim(),
-          plant: (row[p] || "").trim()
-        };
-        if (item.week && item.category && (item.size || item.plant)) out.push(item);
-      }
-      return out;
-    }
-
-    function parsePlantCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-
-      const idx = {
-        id: header.indexOf("id"),
-        commonName: header.indexOf("common_name"),
-        scientific: header.indexOf("scientific_name"),
-        image: header.indexOf("image"),
-        light: header.indexOf("light"),
-        water: header.indexOf("water"),
-        humidity: header.indexOf("humidity"),
-        temp: header.indexOf("temp"),
-        soil: header.indexOf("soil"),
-        fertilizer: header.indexOf("fertilizer"),
-        toxicity: header.indexOf("toxicity"),
-        tips: header.indexOf("tips")
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      const item = {
+        yearSent: (row[yearIdx] || "").trim(),
+        name: (row[nameIdx] || "").trim(),
+        sku: (row[skuIdx] || "").trim(),
+        sentIn: (row[sentIdx] || "").trim()
       };
-
-      const data = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        if (!row.length) continue;
-
-        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-        if (!commonName) continue;
-
-        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-        data.push({
-          id,
-          commonName,
-          scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
-          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
-          light: idx.light >= 0 ? (row[idx.light] || "").trim() : "",
-          water: idx.water >= 0 ? (row[idx.water] || "").trim() : "",
-          humidity: idx.humidity >= 0 ? (row[idx.humidity] || "").trim() : "",
-          temp: idx.temp >= 0 ? (row[idx.temp] || "").trim() : "",
-          soil: idx.soil >= 0 ? (row[idx.soil] || "").trim() : "",
-          fertilizer: idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
-          toxicity: idx.toxicity >= 0 ? (row[idx.toxicity] || "").trim() : "",
-          tips: idx.tips >= 0 ? (row[idx.tips] || "").trim() : ""
-        });
-      }
-      return data;
+      if (item.name && item.sku) data.push(item);
     }
+    return data;
+  }
 
-    function parsePestCsv(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (!lines.length) return [];
-      const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+  function parseOrderCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+    const w = header.indexOf("week");
+    const c = header.indexOf("category");
+    const s = header.indexOf("size");
+    const p = header.indexOf("plant name");
 
-      const idx = {
-        id: header.indexOf("id"),
-        commonName: header.indexOf("common_name"),
-        scientificName: header.indexOf("scientific_name"),
-        image: header.indexOf("image"),
-        looksLike: header.indexOf("what_they_look_like"),
-        identification: header.indexOf("identification"),
-        prevention: header.indexOf("prevention"),
-        treatment: header.indexOf("treatment")
+    const out = [];
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      const item = {
+        week: (row[w] || "").trim(),
+        category: (row[c] || "").trim().toUpperCase(),
+        size: (row[s] || "").trim(),
+        plant: (row[p] || "").trim()
       };
+      if (item.week && item.category && (item.size || item.plant)) out.push(item);
+    }
+    return out;
+  }
 
-      const pests = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        if (!row.length) continue;
+  function parsePlantCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
 
-        const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
-        if (!commonName) continue;
+    const idx = {
+      id: header.indexOf("id"),
+      commonName: header.indexOf("common_name"),
+      scientific: header.indexOf("scientific_name"),
+      image: header.indexOf("image"),
+      light: header.indexOf("light"),
+      water: header.indexOf("water"),
+      humidity: header.indexOf("humidity"),
+      temp: header.indexOf("temp"),
+      soil: header.indexOf("soil"),
+      fertilizer: header.indexOf("fertilizer"),
+      toxicity: header.indexOf("toxicity"),
+      tips: header.indexOf("tips")
+    };
 
-        const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
-        const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      if (!row.length) continue;
 
-        pests.push({
-          id,
-          commonName,
-          scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
-          image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
-          looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
-          identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
-          prevention: idx.prevention >= 0 ? (row[idx.prevention] || "").trim() : "",
-          treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
-        });
-      }
-      return pests;
+      const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+      if (!commonName) continue;
+
+      const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+      const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+      data.push({
+        id,
+        commonName,
+        scientificName: idx.scientific >= 0 ? (row[idx.scientific] || "").trim() : "",
+        image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+        light: idx.light >= 0 ? (row[idx.light] || "").trim() : "",
+        water: idx.water >= 0 ? (row[idx.water] || "").trim() : "",
+        humidity: idx.humidity >= 0 ? (row[idx.humidity] || "").trim() : "",
+        temp: idx.temp >= 0 ? (row[idx.temp] || "").trim() : "",
+        soil: idx.soil >= 0 ? (row[idx.soil] || "").trim() : "",
+        fertilizer: idx.fertilizer >= 0 ? (row[idx.fertilizer] || "").trim() : "",
+        toxicity: idx.toxicity >= 0 ? (row[idx.toxicity] || "").trim() : "",
+        tips: idx.tips >= 0 ? (row[idx.tips] || "").trim() : ""
+      });
+    }
+    return data;
+  }
+
+  function parsePestCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+
+    const idx = {
+      id: header.indexOf("id"),
+      commonName: header.indexOf("common_name"),
+      scientificName: header.indexOf("scientific_name"),
+      image: header.indexOf("image"),
+      looksLike: header.indexOf("what_they_look_like"),
+      identification: header.indexOf("identification"),
+      prevention: header.indexOf("prevention"),
+      treatment: header.indexOf("treatment")
+    };
+
+    const pests = [];
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      if (!row.length) continue;
+
+      const commonName = idx.commonName >= 0 ? (row[idx.commonName] || "").trim() : "";
+      if (!commonName) continue;
+
+      const idCell = idx.id >= 0 ? (row[idx.id] || "").trim() : "";
+      const id = idCell || commonName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+      pests.push({
+        id,
+        commonName,
+        scientificName: idx.scientificName >= 0 ? (row[idx.scientificName] || "").trim() : "",
+        image: idx.image >= 0 ? (row[idx.image] || "").trim() : "",
+        looksLike: idx.looksLike >= 0 ? (row[idx.looksLike] || "").trim() : "",
+        identification: idx.identification >= 0 ? (row[idx.identification] || "").trim() : "",
+        prevention: idx.prevention >= 0 ? (row[idx.prevention] || "").trim() : "",
+        treatment: idx.treatment >= 0 ? (row[idx.treatment] || "").trim() : ""
+      });
+    }
+    return pests;
+  }
+
+  function parseGuidelinesCsv(text) {
+    const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+    if (!lines.length) return [];
+
+    const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase().trim());
+    const sectionIdx = header.indexOf("section");
+    const textIdx = header.indexOf("text");
+    const orderIdx = header.indexOf("order");
+
+    const rows = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCsvLine(lines[i]);
+      const section = sectionIdx >= 0 ? (row[sectionIdx] || "").trim() : "";
+      const text = textIdx >= 0 ? (row[textIdx] || "").trim() : "";
+      const orderRaw = orderIdx >= 0 ? (row[orderIdx] || "").trim() : "";
+      const order = Number(orderRaw) || 0;
+
+      if (!section || !text) continue;
+      rows.push({ section, text, order });
     }
 
-    function parseGuidelinesCsv(text) {
-      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
-      if (!lines.length) return [];
+    return rows;
+  }
 
-      const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase().trim());
-      const sectionIdx = header.indexOf("section");
-      const textIdx = header.indexOf("text");
-      const orderIdx = header.indexOf("order");
+  function getGuidelineIcon(sectionName = "") {
+    const s = sectionName.toLowerCase();
 
-      const rows = [];
+    if (s.includes("shipping")) return "🚚";
+    if (s.includes("outdoor")) return "🌿";
+    if (s.includes("garden")) return "🪴";
+    if (s.includes("table")) return "🧱";
+    if (s.includes("trees") || s.includes("palms") || s.includes("palmania")) return "🌴";
+    if (s.includes("ads") || s.includes("special buy") || s.includes("sale")) return "🏷️";
+    if (s.includes("signage")) return "🪧";
+    if (s.includes("v-day") || s.includes("valentine")) return "💘";
+    if (s.includes("plant company")) return "🏭";
+    if (s.includes("plainview") || s.includes("altman")) return "📸";
 
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCsvLine(lines[i]);
-        const section = sectionIdx >= 0 ? (row[sectionIdx] || "").trim() : "";
-        const text = textIdx >= 0 ? (row[textIdx] || "").trim() : "";
-        const orderRaw = orderIdx >= 0 ? (row[orderIdx] || "").trim() : "";
-        const order = Number(orderRaw) || 0;
+    return "📌";
+  }
 
-        if (!section || !text) continue;
-        rows.push({ section, text, order });
-      }
+  function renderGuidelines(containerId, rows, idPrefix) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-      return rows;
+    container.innerHTML = "";
+
+    if (!rows || !rows.length) {
+      const empty = document.createElement("p");
+      empty.className = "section-subtitle";
+      empty.textContent = "No guidelines found. Please contact your supervisor or admin.";
+      container.appendChild(empty);
+      return;
     }
 
-    function getGuidelineIcon(sectionName = "") {
-      const s = sectionName.toLowerCase();
+    const bySection = new Map();
+    rows.forEach((r) => {
+      const section = r.section || "General";
+      if (!bySection.has(section)) bySection.set(section, []);
+      bySection.get(section).push(r);
+    });
 
-      if (s.includes("shipping")) return "🚚";
-      if (s.includes("outdoor")) return "🌿";
-      if (s.includes("garden")) return "🪴";
-      if (s.includes("table")) return "🧱";
-      if (s.includes("trees") || s.includes("palms") || s.includes("palmania")) return "🌴";
-      if (s.includes("ads") || s.includes("special buy") || s.includes("sale")) return "🏷️";
-      if (s.includes("signage")) return "🪧";
-      if (s.includes("v-day") || s.includes("valentine")) return "💘";
-      if (s.includes("plant company")) return "🏭";
-      if (s.includes("plainview") || s.includes("altman")) return "📸";
+    const sections = Array.from(bySection.keys()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
 
-      return "📌";
+    const wrapper = document.createElement("div");
+    wrapper.className = "guidelines-wrapper";
+
+    const nav = document.createElement("div");
+    nav.className = "guidelines-section-nav";
+
+    const grid = document.createElement("div");
+    grid.className = "guidelines-sections-grid";
+
+    sections.forEach((sectionName, idx) => {
+      const sectionItems = bySection.get(sectionName) || [];
+      sectionItems.sort((a, b) => a.order - b.order);
+
+      const safeId =
+        idPrefix +
+        "-section-" +
+        sectionName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+      // Nav pill
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "guidelines-section-pill";
+      if (idx === 0) pill.classList.add("active");
+
+      const iconSpan = document.createElement("span");
+      iconSpan.textContent = getGuidelineIcon(sectionName);
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = sectionName;
+
+      pill.appendChild(iconSpan);
+      pill.appendChild(textSpan);
+
+      pill.addEventListener("click", () => {
+        nav.querySelectorAll(".guidelines-section-pill").forEach((p) =>
+          p.classList.remove("active")
+        );
+        pill.classList.add("active");
+
+        const target = document.getElementById(safeId);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+
+      nav.appendChild(pill);
+
+      // Card
+      const card = document.createElement("section");
+      card.className = "guideline-card";
+      card.id = safeId;
+
+      const header = document.createElement("div");
+      header.className = "guideline-card-header";
+
+      const icon = document.createElement("div");
+      icon.className = "guideline-card-icon";
+      icon.textContent = getGuidelineIcon(sectionName);
+
+      const title = document.createElement("div");
+      title.className = "guideline-card-title";
+      title.textContent = sectionName;
+
+      header.appendChild(icon);
+      header.appendChild(title);
+
+      const tag = document.createElement("div");
+      tag.className = "guideline-card-tag";
+      tag.textContent = "GUIDELINE";
+
+      const list = document.createElement("ul");
+      list.className = "guideline-list";
+
+      let bulletNumber = 1;
+      sectionItems.forEach((item) => {
+        const text = (item.text || "").trim();
+        if (!text) return;
+
+        if (text.toLowerCase() === sectionName.toLowerCase()) return;
+
+        const li = document.createElement("li");
+        li.className = "guideline-item";
+
+        const bullet = document.createElement("div");
+        bullet.className = "guideline-item-bullet";
+        bullet.textContent = bulletNumber++;
+
+        const txt = document.createElement("div");
+        txt.className = "guideline-item-text";
+        txt.textContent = text;
+
+        li.appendChild(bullet);
+        li.appendChild(txt);
+        list.appendChild(li);
+      });
+
+      card.appendChild(header);
+      card.appendChild(tag);
+      card.appendChild(list);
+      grid.appendChild(card);
+    });
+
+    wrapper.appendChild(nav);
+    wrapper.appendChild(grid);
+    container.appendChild(wrapper);
+  }
+
+  function highlightStatus(status) {
+    if (!status) return "";
+    const lower = status.toLowerCase();
+    if (lower.includes("request") || lower.includes("due")) {
+      return `<span class="status-highlight">${status}</span>`;
     }
+    return status;
+  }
 
-    function renderGuidelines(containerId, rows, idPrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
+  function roleRank(role) {
+    const idx = ROLE_ORDER.indexOf(role);
+    return idx === -1 ? -1 : idx;
+  }
 
-      container.innerHTML = "";
+  function canAccess(currentRole, minRole) {
+    if (!minRole) return true;
+    return roleRank(currentRole) >= roleRank(minRole);
+  }
 
-      if (!rows || !rows.length) {
-        const empty = document.createElement("p");
-        empty.className = "section-subtitle";
-        empty.textContent = "No guidelines found. Please contact your supervisor or admin.";
-        container.appendChild(empty);
+  function showView(viewId) {
+    const views = ["view-splash", "view-login", "view-hub", "view-hf", "view-hpa", "view-admin", "view-learning"];
+    views.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle("hidden", id !== viewId);
+    });
+
+    const view = document.getElementById(viewId);
+    if (!view) return;
+
+    // Move keyboard focus to a main element in the new view
+    const focusTarget =
+      view.querySelector(".module-title") ||
+      view.querySelector(".hub-title") ||
+      view.querySelector("h1, h2, [role='heading']");
+    if (focusTarget && typeof focusTarget.focus === "function") {
+      focusTarget.setAttribute("tabindex", "-1");
+      focusTarget.focus();
+    }
+  }
+
+  function updateHubUserInfo() {
+    const el = document.getElementById("hubUserInfo");
+    if (!el || !CURRENT_USER) return;
+    const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
+    el.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
+  }
+
+  function applyRolePermissions() {
+    if (!CURRENT_USER) return;
+    const role = CURRENT_USER.role;
+
+    const gated = document.querySelectorAll("[data-min-role]");
+    gated.forEach(el => {
+      const minRole = el.getAttribute("data-min-role");
+      const allowed = canAccess(role, minRole);
+      el.classList.toggle("hidden", !allowed);
+    });
+
+    // Extra rules for Merchandiser
+    if (role === "Merchandiser") {
+      const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
+      if (hpaProductTab) hpaProductTab.classList.add("hidden");
+
+      const cardAdmin = document.getElementById("hubCardAdmin");
+      if (cardAdmin) cardAdmin.classList.add("hidden");
+    } else {
+      const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
+      if (hpaProductTab) hpaProductTab.classList.remove("hidden");
+
+      const cardAdmin = document.getElementById("hubCardAdmin");
+      if (cardAdmin) cardAdmin.classList.remove("hidden");
+    }
+  }
+
+  function setActiveModuleTab(moduleKey, tabKey) {
+    const allTabs = document.querySelectorAll(`.module-tab[data-module="${moduleKey}"]`);
+    allTabs.forEach(tab => {
+      const isActive = tab.getAttribute("data-tab") === tabKey;
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      tab.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
+
+    const panels = document.querySelectorAll(`#view-${moduleKey} .glass-panel`);
+    panels.forEach(panel => panel.classList.add("hidden"));
+
+    const panelId = `${moduleKey}-${tabKey}`;
+    const panel = document.getElementById(panelId);
+    if (panel) panel.classList.remove("hidden");
+  }
+
+  /* ========= WEATHER WIDGET ========= */
+  async function loadWeather() {
+    const widget = document.getElementById("weatherContent");
+    if (!widget) return;
+
+    try {
+      if (!("geolocation" in navigator)) {
+        widget.textContent = "Weather unavailable: location not supported.";
         return;
       }
 
-      const bySection = new Map();
-      rows.forEach((r) => {
-        const section = r.section || "General";
-        if (!bySection.has(section)) bySection.set(section, []);
-        bySection.get(section).push(r);
-      });
-
-      const sections = Array.from(bySection.keys()).sort((a, b) =>
-        a.localeCompare(b, undefined, { sensitivity: "base" })
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject)
       );
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "guidelines-wrapper";
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
 
-      const nav = document.createElement("div");
-      nav.className = "guidelines-section-nav";
+      const api = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
 
-      const grid = document.createElement("div");
-      grid.className = "guidelines-sections-grid";
+      const res = await fetch(api);
+      if (!res.ok) throw new Error("Weather API error");
+      const data = await res.json();
 
-      sections.forEach((sectionName, idx) => {
-        const sectionItems = bySection.get(sectionName) || [];
-        sectionItems.sort((a, b) => a.order - b.order);
-
-        const safeId =
-          idPrefix +
-          "-section-" +
-          sectionName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-
-        // Nav pill
-        const pill = document.createElement("button");
-        pill.type = "button";
-        pill.className = "guidelines-section-pill";
-        if (idx === 0) pill.classList.add("active");
-
-        const iconSpan = document.createElement("span");
-        iconSpan.textContent = getGuidelineIcon(sectionName);
-
-        const textSpan = document.createElement("span");
-        textSpan.textContent = sectionName;
-
-        pill.appendChild(iconSpan);
-        pill.appendChild(textSpan);
-
-        pill.addEventListener("click", () => {
-          nav.querySelectorAll(".guidelines-section-pill").forEach((p) =>
-            p.classList.remove("active")
-          );
-          pill.classList.add("active");
-
-          const target = document.getElementById(safeId);
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        });
-
-        nav.appendChild(pill);
-
-        // Card
-        const card = document.createElement("section");
-        card.className = "guideline-card";
-        card.id = safeId;
-
-        const header = document.createElement("div");
-        header.className = "guideline-card-header";
-
-        const icon = document.createElement("div");
-        icon.className = "guideline-card-icon";
-        icon.textContent = getGuidelineIcon(sectionName);
-
-        const title = document.createElement("div");
-        title.className = "guideline-card-title";
-        title.textContent = sectionName;
-
-        header.appendChild(icon);
-        header.appendChild(title);
-
-        const tag = document.createElement("div");
-        tag.className = "guideline-card-tag";
-        tag.textContent = "GUIDELINE";
-
-        const list = document.createElement("ul");
-        list.className = "guideline-list";
-
-        let bulletNumber = 1;
-        sectionItems.forEach((item) => {
-          const text = (item.text || "").trim();
-          if (!text) return;
-
-          if (text.toLowerCase() === sectionName.toLowerCase()) return;
-
-          const li = document.createElement("li");
-          li.className = "guideline-item";
-
-          const bullet = document.createElement("div");
-          bullet.className = "guideline-item-bullet";
-          bullet.textContent = bulletNumber++;
-
-          const txt = document.createElement("div");
-          txt.className = "guideline-item-text";
-          txt.textContent = text;
-
-          li.appendChild(bullet);
-          li.appendChild(txt);
-          list.appendChild(li);
-        });
-
-        card.appendChild(header);
-        card.appendChild(tag);
-        card.appendChild(list);
-        grid.appendChild(card);
-      });
-
-      wrapper.appendChild(nav);
-      wrapper.appendChild(grid);
-      container.appendChild(wrapper);
-    }
-
-    function highlightStatus(status) {
-      if (!status) return "";
-      const lower = status.toLowerCase();
-      if (lower.includes("request") || lower.includes("due")) {
-        return `<span class="status-highlight">${status}</span>`;
+      const w = data.current_weather;
+      if (!w) {
+        widget.textContent = "Weather data unavailable.";
+        return;
       }
-      return status;
-    }
 
-    function roleRank(role) {
-      const idx = ROLE_ORDER.indexOf(role);
-      return idx === -1 ? -1 : idx;
+      const temp = Math.round(w.temperature);
+      const wind = Math.round(w.windspeed);
+      widget.innerHTML = `
+        <strong>${temp}°F</strong> • Wind ${wind} mph
+      `;
+    } catch (err) {
+      console.warn("Weather error:", err);
+      const fallback = document.getElementById("weatherContent");
+      if (fallback) fallback.textContent = "Unable to load weather (permissions or network).";
     }
+  }
 
-    function canAccess(currentRole, minRole) {
-      if (!minRole) return true;
-      return roleRank(currentRole) >= roleRank(minRole);
-    }
+  /* ========= HPA INIT ========= */
+  async function initHPA() {
+    // ORDER BREAKDOWN
+    const obWeekDisplay = document.getElementById("obWeekDisplay");
+    const obGradesDisplay = document.getElementById("obGradesDisplay");
+    const obBodies = {
+      FLO: document.getElementById("obFloBody"),
+      FOL: document.getElementById("obFolBody"),
+      UCO: document.getElementById("obUcoBody"),
+      FHB: document.getElementById("obFhbBody"),
+      TRP: document.getElementById("obTrpBody"),
+      SPC: document.getElementById("obSpcBody")
+    };
 
-    function showView(viewId) {
-      const views = ["view-splash", "view-login", "view-hub", "view-hf", "view-hpa", "view-admin"];
-      views.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle("hidden", id !== viewId);
+    const orderDetailsToggle = document.getElementById("orderDetailsToggle");
+    const orderDetailsPanel = document.getElementById("orderDetailsPanel");
+
+    if (orderDetailsToggle && orderDetailsPanel) {
+      orderDetailsToggle.addEventListener("click", () => {
+        const isHidden = orderDetailsPanel.classList.toggle("hidden");
+        orderDetailsToggle.textContent = isHidden
+          ? "Show Detailed Breakdown"
+          : "Hide Detailed Breakdown";
       });
     }
 
-    function updateHubUserInfo() {
-      const el = document.getElementById("hubUserInfo");
-      if (!el || !CURRENT_USER) return;
-      const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
-      el.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
-    }
+    function applyOrderBreakdown(rows) {
+      if (!rows.length) {
+        if (obWeekDisplay) obWeekDisplay.textContent = "TBD";
+        if (obGradesDisplay) obGradesDisplay.textContent = "All stores";
+        Object.values(obBodies).forEach(el => el && (el.textContent = ""));
+        return;
+      }
 
-    function applyRolePermissions() {
-      if (!CURRENT_USER) return;
-      const role = CURRENT_USER.role;
+      const weeks = [...new Set(rows.map(r => r.week))];
+      const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
+      const latest = numeric.length ? Math.max(...numeric) : weeks[0];
+      const weekRows = rows.filter(r => r.week == latest);
 
-      const gated = document.querySelectorAll("[data-min-role]");
-      gated.forEach(el => {
-        const minRole = el.getAttribute("data-min-role");
-        const allowed = canAccess(role, minRole);
-        el.classList.toggle("hidden", !allowed);
+      if (obWeekDisplay) obWeekDisplay.textContent = latest;
+      if (obGradesDisplay) {
+        obGradesDisplay.textContent =
+          STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+      }
+
+      const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+
+      weekRows.forEach(r => {
+        if (groups[r.category]) {
+          const size = r.size || "";
+          const plant = r.plant || "";
+          let line = "";
+          if (size && plant) line = `${size} — ${plant}`;
+          else line = size || plant;
+          if (line) groups[r.category].push(line);
+        }
       });
 
-      if (role === "Merchandiser") {
-        const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
-        if (hpaProductTab) hpaProductTab.classList.add("hidden");
-
-        const cardAdmin = document.getElementById("hubCardAdmin");
-        if (cardAdmin) cardAdmin.classList.add("hidden");
-      } else {
-        const hpaProductTab = document.querySelector('.module-tab[data-module="hpa"][data-tab="product"]');
-        if (hpaProductTab) hpaProductTab.classList.remove("hidden");
-
-        const cardAdmin = document.getElementById("hubCardAdmin");
-        if (cardAdmin) cardAdmin.classList.remove("hidden");
-      }
+      Object.entries(groups).forEach(([cat, lines]) => {
+        const el = obBodies[cat];
+        if (el) el.textContent = lines.join("\n");
+      });
     }
 
-    function setActiveModuleTab(moduleKey, tabKey) {
-      const allTabs = document.querySelectorAll(`.module-tab[data-module="${moduleKey}"]`);
-      allTabs.forEach(tab => tab.classList.remove("active"));
+    // SKU DOM
+    const nameFilter = document.getElementById("nameFilter");
+    const skuFilter = document.getElementById("skuFilter");
+    const sentInFilter = document.getElementById("sentInFilter");
+    const yearFilter = document.getElementById("yearFilter");
+    const skuGrid = document.getElementById("skuGrid");
+    const resultCount = document.getElementById("resultCount");
+    const emptyState = document.getElementById("emptyState");
+    const skuLoading = document.getElementById("skuLoading");
 
-      const panels = document.querySelectorAll(`#view-${moduleKey} .glass-panel`);
-      panels.forEach(panel => panel.classList.add("hidden"));
+    const popupBackdrop = document.getElementById("popupBackdrop");
+    const popupName = document.getElementById("popupName");
+    const popupSku = document.getElementById("popupSku");
+    const popupSent = document.getElementById("popupSent");
+    const popupYear = document.getElementById("popupYear");
+    const popupClose = document.getElementById("popupClose");
 
-      const activeTab = document.querySelector(`.module-tab[data-module="${moduleKey}"][data-tab="${tabKey}"]`);
-      if (activeTab) activeTab.classList.add("active");
-
-      const panelId = `${moduleKey}-${tabKey}`;
-      const panel = document.getElementById(panelId);
-      if (panel) panel.classList.remove("hidden");
+    if (popupClose && popupBackdrop) {
+      popupClose.addEventListener("click", () => closeDialog(popupBackdrop));
+      popupBackdrop.addEventListener("click", e => {
+        if (e.target === popupBackdrop) closeDialog(popupBackdrop);
+      });
     }
 
-    /* ========= HPA INIT ========= */
-    async function initHPA() {
-      // ORDER BREAKDOWN
-      const obWeekDisplay = document.getElementById("obWeekDisplay");
-      const obGradesDisplay = document.getElementById("obGradesDisplay");
-      const obBodies = {
-        FLO: document.getElementById("obFloBody"),
-        FOL: document.getElementById("obFolBody"),
-        UCO: document.getElementById("obUcoBody"),
-        FHB: document.getElementById("obFhbBody"),
-        TRP: document.getElementById("obTrpBody"),
-        SPC: document.getElementById("obSpcBody")
-      };
+    function renderSkuList() {
+      if (!skuGrid) return;
+      skuGrid.innerHTML = "";
+      const nameQ = (nameFilter?.value || "").toLowerCase();
+      const skuQ = normalizeSku(skuFilter?.value || "");
+      const sentQ = (sentInFilter?.value || "").toLowerCase();
+      const yearQ = yearFilter?.value || "all";
 
-      const orderDetailsToggle = document.getElementById("orderDetailsToggle");
-      const orderDetailsPanel = document.getElementById("orderDetailsPanel");
+      const filtered = skuData.filter(item => {
+        const itemName = (item.name || "").toLowerCase();
+        const itemSku = normalizeSku(item.sku || "");
+        const itemSent = (item.sentIn || "").toLowerCase();
+        const itemYear = item.yearSent || "";
+        return (!nameQ || itemName.includes(nameQ)) &&
+               (!skuQ || itemSku.includes(skuQ)) &&
+               (!sentQ || itemSent.includes(sentQ)) &&
+               (yearQ === "all" || itemYear === yearQ);
+      });
 
-      if (orderDetailsToggle && orderDetailsPanel) {
-        orderDetailsToggle.addEventListener("click", () => {
-          const isHidden = orderDetailsPanel.classList.toggle("hidden");
-          orderDetailsToggle.textContent = isHidden
-            ? "Show Detailed Breakdown"
-            : "Hide Detailed Breakdown";
+      filtered.forEach(item => {
+        const card = document.createElement("button");
+        card.className = "sku-card";
+        card.type = "button";
+        card.innerHTML = `
+          <div class="sku-year-pill">${item.yearSent}</div>
+          <div class="sku-name">${item.name}</div>
+          <div class="sku-meta"><strong>SKU:</strong> ${item.sku}</div>
+          <div class="sku-meta"><strong>Sent In:</strong> ${item.sentIn}</div>
+          <div class="sku-meta"><strong>Year Sent:</strong> ${item.yearSent}</div>
+        `;
+        card.addEventListener("click", () => {
+          if (!popupBackdrop) return;
+          popupName.textContent = item.name;
+          popupSku.textContent = item.sku;
+          popupSent.textContent = item.sentIn;
+          popupYear.textContent = item.yearSent;
+          openDialog(popupBackdrop, popupClose);
         });
-      }
+        skuGrid.appendChild(card);
+      });
 
-      function applyOrderBreakdown(rows) {
-        if (!rows.length) {
-          if (obWeekDisplay) obWeekDisplay.textContent = "TBD";
-          if (obGradesDisplay) obGradesDisplay.textContent = "All stores";
-          Object.values(obBodies).forEach(el => el && (el.textContent = ""));
-          return;
-        }
-
-        const weeks = [...new Set(rows.map(r => r.week))];
-        const numeric = weeks.map(Number).filter(n => !Number.isNaN(n));
-        const latest = numeric.length ? Math.max(...numeric) : weeks[0];
-        const weekRows = rows.filter(r => r.week == latest);
-
-        if (obWeekDisplay) obWeekDisplay.textContent = latest;
-        if (obGradesDisplay) {
-          obGradesDisplay.textContent =
-            STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
-        }
-
-        const groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
-
-        weekRows.forEach(r => {
-          if (groups[r.category]) {
-            const size = r.size || "";
-            const plant = r.plant || "";
-            let line = "";
-            if (size && plant) line = `${size} — ${plant}`;
-            else line = size || plant;
-            if (line) groups[r.category].push(line);
-          }
-        });
-
-        Object.entries(groups).forEach(([cat, lines]) => {
-          const el = obBodies[cat];
-          if (el) el.textContent = lines.join("\n");
-        });
-      }
-
-      // SKU DOM
-      const nameFilter = document.getElementById("nameFilter");
-      const skuFilter = document.getElementById("skuFilter");
-      const sentInFilter = document.getElementById("sentInFilter");
-      const yearFilter = document.getElementById("yearFilter");
-      const skuGrid = document.getElementById("skuGrid");
-      const resultCount = document.getElementById("resultCount");
-      const emptyState = document.getElementById("emptyState");
-      const skuLoading = document.getElementById("skuLoading");
-
-      const popupBackdrop = document.getElementById("popupBackdrop");
-      const popupName = document.getElementById("popupName");
-      const popupSku = document.getElementById("popupSku");
-      const popupSent = document.getElementById("popupSent");
-      const popupYear = document.getElementById("popupYear");
-      const popupClose = document.getElementById("popupClose");
-
-      if (popupClose && popupBackdrop) {
-        popupClose.addEventListener("click", () => closeDialog(popupBackdrop));
-        popupBackdrop.addEventListener("click", e => {
-          if (e.target === popupBackdrop) closeDialog(popupBackdrop);
-        });
-      }
-
-      function renderSkuList() {
-        if (!skuGrid) return;
-        skuGrid.innerHTML = "";
-        const nameQ = (nameFilter?.value || "").toLowerCase();
-        const skuQ = normalizeSku(skuFilter?.value || "");
-        const sentQ = (sentInFilter?.value || "").toLowerCase();
-        const yearQ = yearFilter?.value || "all";
-
-        const filtered = skuData.filter(item => {
-          const itemName = (item.name || "").toLowerCase();
-          const itemSku = normalizeSku(item.sku || "");
-          const itemSent = (item.sentIn || "").toLowerCase();
-          const itemYear = item.yearSent || "";
-          return (!nameQ || itemName.includes(nameQ)) &&
-                 (!skuQ || itemSku.includes(skuQ)) &&
-                 (!sentQ || itemSent.includes(sentQ)) &&
-                 (yearQ === "all" || itemYear === yearQ);
-        });
-
-        filtered.forEach(item => {
-          const card = document.createElement("button");
-          card.className = "sku-card";
-          card.type = "button";
-          card.innerHTML = `
-            <div class="sku-year-pill">${item.yearSent}</div>
-            <div class="sku-name">${item.name}</div>
-            <div class="sku-meta"><strong>SKU:</strong> ${item.sku}</div>
-            <div class="sku-meta"><strong>Sent In:</strong> ${item.sentIn}</div>
-            <div class="sku-meta"><strong>Year Sent:</strong> ${item.yearSent}</div>
-          `;
-          card.addEventListener("click", () => {
-            if (!popupBackdrop) return;
-            popupName.textContent = item.name;
-            popupSku.textContent = item.sku;
-            popupSent.textContent = item.sentIn;
-            popupYear.textContent = item.yearSent;
-            openDialog(popupBackdrop, popupClose);
-          });
-          skuGrid.appendChild(card);
-        });
-
-        if (resultCount) resultCount.textContent = filtered.length;
-        if (emptyState) emptyState.classList.toggle("hidden", filtered.length !== 0);
-      }
-
-      nameFilter && nameFilter.addEventListener("input", renderSkuList);
-      skuFilter && skuFilter.addEventListener("input", renderSkuList);
-      sentInFilter && sentInFilter.addEventListener("input", renderSkuList);
-      yearFilter && yearFilter.addEventListener("change", renderSkuList);
-
-      // CARE & ID
-      const plantCareGrid = document.getElementById("plantCareGrid");
-      const careSearch = document.getElementById("careSearch");
-      const careBackdrop = document.getElementById("careBackdrop");
-      const careImage = document.getElementById("careImage");
-      const careTitle = document.getElementById("careTitle");
-      const careLight = document.getElementById("careLight");
-      const careWater = document.getElementById("careWater");
-      const careHumidityEl = document.getElementById("careHumidity");
-      const careTemp = document.getElementById("careTemp");
-      const careSoil = document.getElementById("careSoil");
-      const careFertilizer = document.getElementById("careFertilizer");
-      const careToxicity = document.getElementById("careToxicity");
-      const careTips = document.getElementById("careTips");
-      const careCloseBtn = document.getElementById("careClose");
-      const plantsLoading = document.getElementById("plantsLoading");
-      const plantsError = document.getElementById("plantsError");
-
-      if (careCloseBtn && careBackdrop) {
-        careCloseBtn.addEventListener("click", () => closeDialog(careBackdrop));
-        careBackdrop.addEventListener("click", e => {
-          if (e.target === careBackdrop) closeDialog(careBackdrop);
-        });
-      }
-
-      function openCarePopup(id) {
-        const plant = PLANTS.find(p => p.id === id);
-        if (!plant || !careBackdrop) return;
-
-        careTitle.textContent = plant.commonName || "";
-        careLight.textContent = plant.light || "";
-        careWater.textContent = plant.water || "";
-        careHumidityEl.textContent = plant.humidity || "";
-        careTemp.textContent = plant.temp || "";
-        careSoil.textContent = plant.soil || "";
-        careFertilizer.textContent = plant.fertilizer || "";
-        careToxicity.textContent = plant.toxicity || "";
-        careTips.textContent = plant.tips || "";
-
-        if (plant.image) {
-          careImage.src = plant.image;
-          careImage.alt = plant.commonName || "";
-          careImage.style.display = "";
-        } else {
-          careImage.style.display = "none";
-        }
-
-        openDialog(careBackdrop, careCloseBtn);
-      }
-
-      function renderPlantCards() {
-        if (!plantCareGrid) return;
-        plantCareGrid.innerHTML = "";
-        PLANTS.forEach(plant => {
-          const btn = document.createElement("button");
-          btn.className = "pc-card";
-          btn.type = "button";
-          btn.dataset.plantId = plant.id;
-          btn.innerHTML = `
-            <div class="pc-card-title">${plant.commonName}</div>
-            <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
-          `;
-          btn.addEventListener("click", () => openCarePopup(plant.id));
-          plantCareGrid.appendChild(btn);
-        });
-      }
-
-      function filterPlantCards() {
-        if (!plantCareGrid) return;
-        const q = (careSearch?.value || "").toLowerCase().trim();
-        const cards = plantCareGrid.querySelectorAll(".pc-card");
-        cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
-        });
-      }
-
-      careSearch && careSearch.addEventListener("input", filterPlantCards);
-
-      // PESTS
-      const pestGrid = document.getElementById("pestGrid");
-      const pestSearch = document.getElementById("pestSearch");
-      const pestBackdrop = document.getElementById("pestBackdrop");
-      const pestImage = document.getElementById("pestImage");
-      const pestTitle = document.getElementById("pestTitle");
-      const pestScientificName = document.getElementById("pestScientificName");
-      const pestLooksLike = document.getElementById("pestLooksLike");
-      const pestIdentification = document.getElementById("pestIdentification");
-      const pestPrevention = document.getElementById("pestPrevention");
-      const pestTreatment = document.getElementById("pestTreatment");
-      const pestCloseBtn = document.getElementById("pestClose");
-      const pestsLoading = document.getElementById("pestsLoading");
-      const pestsError = document.getElementById("pestsError");
-
-      if (pestCloseBtn && pestBackdrop) {
-        pestCloseBtn.addEventListener("click", () => closeDialog(pestBackdrop));
-        pestBackdrop.addEventListener("click", e => {
-          if (e.target === pestBackdrop) closeDialog(pestBackdrop);
-        });
-      }
-
-      function openPestPopup(id) {
-        const pest = PESTS.find(p => p.id === id);
-        if (!pest || !pestBackdrop) return;
-
-        pestTitle.textContent = pest.commonName || "";
-        pestScientificName.textContent = pest.scientificName || "";
-        pestLooksLike.textContent = pest.looksLike || "";
-        pestIdentification.textContent = pest.identification || "";
-        pestPrevention.textContent = pest.prevention || "";
-        pestTreatment.textContent = pest.treatment || "";
-
-        if (pest.image) {
-          pestImage.src = pest.image;
-          pestImage.alt = pest.commonName || pest.scientificName || "";
-          pestImage.style.display = "";
-        } else {
-          pestImage.style.display = "none";
-        }
-
-        openDialog(pestBackdrop, pestCloseBtn);
-      }
-
-      function renderPestCards() {
-        if (!pestGrid) return;
-        pestGrid.innerHTML = "";
-        PESTS.forEach(pest => {
-          const card = document.createElement("button");
-          card.className = "pc-card";
-          card.type = "button";
-          card.dataset.pestId = pest.id;
-          card.innerHTML = `
-            <div class="pc-card-title">${pest.commonName}</div>
-            <div class="pc-card-subtitle">${pest.identification || ""}</div>
-          `;
-          card.addEventListener("click", () => openPestPopup(pest.id));
-          pestGrid.appendChild(card);
-        });
-      }
-
-      function filterPestCards() {
-        if (!pestGrid) return;
-        const q = (pestSearch?.value || "").toLowerCase().trim();
-        const cards = pestGrid.querySelectorAll(".pc-card");
-        cards.forEach(card => {
-          const txt = (card.textContent || "").toLowerCase();
-          card.style.display = !q || txt.includes(q) ? "" : "none";
-        });
-      }
-
-      pestSearch && pestSearch.addEventListener("input", filterPestCards);
-
-      // LOAD CSV DATA
-      try {
-        if (skuLoading) setElementVisible(skuLoading, true);
-        const resSku = await fetch(SKU_CSV_URL);
-        if (!resSku.ok) throw new Error("SKU CSV not found");
-        const skuText = await resSku.text();
-        skuData = parseSkuCsv(skuText);
-      } catch (err) {
-        console.error(err);
-        if (emptyState) {
-          emptyState.textContent =
-            "SKU data could not be loaded. Please refresh or contact admin.";
+      if (resultCount) resultCount.textContent = filtered.length;
+      if (emptyState) {
+        if (filtered.length === 0) {
           emptyState.classList.remove("hidden");
+          if (!skuData.length) {
+            emptyState.innerHTML = `
+              <strong>We couldn’t load SKU data.</strong><br/>
+              - Try refreshing the page.<br/>
+              - If this keeps happening, let your Supervisor or RMM know.
+            `;
+          }
+        } else {
+          emptyState.classList.add("hidden");
         }
-      } finally {
-        if (skuLoading) setElementVisible(skuLoading, false);
+      }
+    }
+
+    const debounce = (fn, delay = 150) => {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), delay);
+      };
+    };
+    const renderSkuListDebounced = debounce(renderSkuList, 150);
+
+    nameFilter && nameFilter.addEventListener("input", renderSkuListDebounced);
+    skuFilter && skuFilter.addEventListener("input", renderSkuListDebounced);
+    sentInFilter && sentInFilter.addEventListener("input", renderSkuListDebounced);
+    yearFilter && yearFilter.addEventListener("change", renderSkuListDebounced);
+
+    // CARE & ID
+    const plantCareGrid = document.getElementById("plantCareGrid");
+    const careSearch = document.getElementById("careSearch");
+    const careBackdrop = document.getElementById("careBackdrop");
+    const careImage = document.getElementById("careImage");
+    const careTitle = document.getElementById("careTitle");
+    const careLight = document.getElementById("careLight");
+    const careWater = document.getElementById("careWater");
+    const careHumidityEl = document.getElementById("careHumidity");
+    const careTemp = document.getElementById("careTemp");
+    const careSoil = document.getElementById("careSoil");
+    const careFertilizer = document.getElementById("careFertilizer");
+    const careToxicity = document.getElementById("careToxicity");
+    const careTips = document.getElementById("careTips");
+    const careCloseBtn = document.getElementById("careClose");
+    const plantsLoading = document.getElementById("plantsLoading");
+    const plantsError = document.getElementById("plantsError");
+
+    if (careCloseBtn && careBackdrop) {
+      careCloseBtn.addEventListener("click", () => closeDialog(careBackdrop));
+      careBackdrop.addEventListener("click", e => {
+        if (e.target === careBackdrop) closeDialog(careBackdrop);
+      });
+    }
+
+    function openCarePopup(id) {
+      const plant = PLANTS.find(p => p.id === id);
+      if (!plant || !careBackdrop) return;
+
+      careTitle.textContent = plant.commonName || "";
+      careLight.textContent = plant.light || "";
+      careWater.textContent = plant.water || "";
+      careHumidityEl.textContent = plant.humidity || "";
+      careTemp.textContent = plant.temp || "";
+      careSoil.textContent = plant.soil || "";
+      careFertilizer.textContent = plant.fertilizer || "";
+      careToxicity.textContent = plant.toxicity || "";
+      careTips.textContent = plant.tips || "";
+
+      if (plant.image) {
+        careImage.src = plant.image;
+        careImage.alt = plant.commonName || "";
+        careImage.style.display = "";
+      } else {
+        careImage.style.display = "none";
       }
 
-      try {
-        const resWeeks = await fetch(ORDER_WEEKS_CSV_URL);
-        if (resWeeks.ok) {
-          const text = await resWeeks.text();
-          const lines = text.split(/\r?\n/).filter(l => l.trim());
-          if (lines.length) {
-            const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-            const weekIdx = header.indexOf("week #");
-            const dateIdx = header.indexOf("week date");
-            const shipIdx = header.indexOf("shipping");
-            const addIdx = header.indexOf("additional");
-            const statusIdx = header.indexOf("status");
+      openDialog(careBackdrop, careCloseBtn);
+    }
 
-            const orderBody = document.getElementById("orderWeeksBody");
-            if (orderBody) {
-              orderBody.innerHTML = "";
-              for (let i = 1; i < lines.length; i++) {
-                const row = parseCsvLine(lines[i]);
-                const week = (row[weekIdx] || "").trim();
-                const date = (row[dateIdx] || "").trim();
-                const shipping = (row[shipIdx] || "").trim();
-                const additional = (row[addIdx] || "").trim();
-                const status = (row[statusIdx] || "").trim();
-                if (!week) continue;
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                  <td>${week}</td>
-                  <td>${date}</td>
-                  <td>${shipping}</td>
-                  <td>${additional}</td>
-                  <td>${highlightStatus(status)}</td>
-                `;
-                orderBody.appendChild(tr);
-              }
+    function renderPlantCards() {
+      if (!plantCareGrid) return;
+      plantCareGrid.innerHTML = "";
+      PLANTS.forEach(plant => {
+        const btn = document.createElement("button");
+        btn.className = "pc-card";
+        btn.type = "button";
+        btn.dataset.plantId = plant.id;
+        btn.innerHTML = `
+          <div class="pc-card-title">${plant.commonName}</div>
+          <div class="pc-card-subtitle">${plant.scientificName || ""}</div>
+        `;
+        btn.addEventListener("click", () => openCarePopup(plant.id));
+        plantCareGrid.appendChild(btn);
+      });
+    }
+
+    function filterPlantCards() {
+      if (!plantCareGrid) return;
+      const q = (careSearch?.value || "").toLowerCase().trim();
+      const cards = plantCareGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    careSearch && careSearch.addEventListener("input", filterPlantCards);
+
+    // PESTS
+    const pestGrid = document.getElementById("pestGrid");
+    const pestSearch = document.getElementById("pestSearch");
+    const pestBackdrop = document.getElementById("pestBackdrop");
+    const pestImage = document.getElementById("pestImage");
+    const pestTitle = document.getElementById("pestTitle");
+    const pestScientificName = document.getElementById("pestScientificName");
+    const pestLooksLike = document.getElementById("pestLooksLike");
+    const pestIdentification = document.getElementById("pestIdentification");
+    const pestPrevention = document.getElementById("pestPrevention");
+    const pestTreatment = document.getElementById("pestTreatment");
+    const pestCloseBtn = document.getElementById("pestClose");
+    const pestsLoading = document.getElementById("pestsLoading");
+    const pestsError = document.getElementById("pestsError");
+
+    if (pestCloseBtn && pestBackdrop) {
+      pestCloseBtn.addEventListener("click", () => closeDialog(pestBackdrop));
+      pestBackdrop.addEventListener("click", e => {
+        if (e.target === pestBackdrop) closeDialog(pestBackdrop);
+      });
+    }
+
+    function openPestPopup(id) {
+      const pest = PESTS.find(p => p.id === id);
+      if (!pest || !pestBackdrop) return;
+
+      pestTitle.textContent = pest.commonName || "";
+      pestScientificName.textContent = pest.scientificName || "";
+      pestLooksLike.textContent = pest.looksLike || "";
+      pestIdentification.textContent = pest.identification || "";
+      pestPrevention.textContent = pest.prevention || "";
+      pestTreatment.textContent = pest.treatment || "";
+
+      if (pest.image) {
+        pestImage.src = pest.image;
+        pestImage.alt = pest.commonName || pest.scientificName || "";
+        pestImage.style.display = "";
+      } else {
+        pestImage.style.display = "none";
+      }
+
+      openDialog(pestBackdrop, pestCloseBtn);
+    }
+
+    function renderPestCards() {
+      if (!pestGrid) return;
+      pestGrid.innerHTML = "";
+      PESTS.forEach(pest => {
+        const card = document.createElement("button");
+        card.className = "pc-card";
+        card.type = "button";
+        card.dataset.pestId = pest.id;
+        card.innerHTML = `
+          <div class="pc-card-title">${pest.commonName}</div>
+          <div class="pc-card-subtitle">${pest.identification || ""}</div>
+        `;
+        card.addEventListener("click", () => openPestPopup(pest.id));
+        pestGrid.appendChild(card);
+      });
+    }
+
+    function filterPestCards() {
+      if (!pestGrid) return;
+      const q = (pestSearch?.value || "").toLowerCase().trim();
+      const cards = pestGrid.querySelectorAll(".pc-card");
+      cards.forEach(card => {
+        const txt = (card.textContent || "").toLowerCase();
+        card.style.display = !q || txt.includes(q) ? "" : "none";
+      });
+    }
+
+    pestSearch && pestSearch.addEventListener("input", filterPestCards);
+
+    // LOAD CSV DATA
+    try {
+      if (skuLoading) setElementVisible(skuLoading, true);
+      const resSku = await fetch(SKU_CSV_URL);
+      if (!resSku.ok) throw new Error("SKU CSV not found");
+      const skuText = await resSku.text();
+      skuData = parseSkuCsv(skuText);
+    } catch (err) {
+      console.error(err);
+      if (emptyState) {
+        emptyState.textContent =
+          "SKU data could not be loaded. Please refresh or contact admin.";
+        emptyState.classList.remove("hidden");
+      }
+    } finally {
+      if (skuLoading) setElementVisible(skuLoading, false);
+    }
+
+    try {
+      const resWeeks = await fetch(ORDER_WEEKS_CSV_URL);
+      if (resWeeks.ok) {
+        const text = await resWeeks.text();
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length) {
+          const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+          const weekIdx = header.indexOf("week #");
+          const dateIdx = header.indexOf("week date");
+          const shipIdx = header.indexOf("shipping");
+          const addIdx = header.indexOf("additional");
+          const statusIdx = header.indexOf("status");
+
+          const orderBody = document.getElementById("orderWeeksBody");
+          if (orderBody) {
+            orderBody.innerHTML = "";
+            for (let i = 1; i < lines.length; i++) {
+              const row = parseCsvLine(lines[i]);
+              const week = (row[weekIdx] || "").trim();
+              const date = (row[dateIdx] || "").trim();
+              const shipping = (row[shipIdx] || "").trim();
+              const additional = (row[addIdx] || "").trim();
+              const status = (row[statusIdx] || "").trim();
+              if (!week) continue;
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>${week}</td>
+                <td>${date}</td>
+                <td>${shipping}</td>
+                <td>${additional}</td>
+                <td>${highlightStatus(status)}</td>
+              `;
+              orderBody.appendChild(tr);
             }
           }
         }
-      } catch (err) {
-        console.error(err);
       }
-
-      try {
-        const resOrders = await fetch(ORDER_CSV_URL);
-        if (resOrders.ok) {
-          const text = await resOrders.text();
-          allOrderRows = parseOrderCsv(text);
-          applyOrderBreakdown(allOrderRows);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-
-      try {
-        if (plantsLoading) setElementVisible(plantsLoading, true);
-        const resPlants = await fetch(PLANT_CSV_URL);
-        if (!resPlants.ok) throw new Error("plants.csv not found");
-        const text = await resPlants.text();
-        PLANTS = parsePlantCsv(text);
-      } catch (err) {
-        console.error(err);
-        if (plantsError) setElementVisible(plantsError, true);
-      } finally {
-        if (plantsLoading) setElementVisible(plantsLoading, false);
-      }
-
-      try {
-        if (pestsLoading) setElementVisible(pestsLoading, true);
-        const resPests = await fetch(PEST_CSV_URL);
-        if (!resPests.ok) throw new Error("pests.csv not found");
-        const text = await resPests.text();
-        PESTS = parsePestCsv(text);
-      } catch (err) {
-        console.error(err);
-        if (pestsError) setElementVisible(pestsError, true);
-      } finally {
-        if (pestsLoading) setElementVisible(pestsLoading, false);
-      }
-
-      // INITIAL RENDERS
-      renderSkuList();
-      renderPlantCards();
-      filterPlantCards();
-      renderPestCards();
-      filterPestCards();
+    } catch (err) {
+      console.error(err);
     }
 
-    async function initGuidelines() {
-      try {
-        // HF Guidelines
-        const hfRes = await fetch(HF_GUIDELINES_CSV_URL);
-        if (hfRes.ok) {
-          const hfText = await hfRes.text();
-          const hfRows = parseGuidelinesCsv(hfText);
-          renderGuidelines("hfGuidelinesContent", hfRows, "hf");
-        } else {
-          console.warn("hf_guidelines.csv not found");
-          renderGuidelines("hfGuidelinesContent", [], "hf");
-        }
-      } catch (err) {
-        console.error("Error loading HF guidelines:", err);
+    try {
+      const resOrders = await fetch(ORDER_CSV_URL);
+      if (resOrders.ok) {
+        const text = await resOrders.text();
+        allOrderRows = parseOrderCsv(text);
+        applyOrderBreakdown(allOrderRows);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    try {
+      if (plantsLoading) setElementVisible(plantsLoading, true);
+      const resPlants = await fetch(PLANT_CSV_URL);
+      if (!resPlants.ok) throw new Error("plants.csv not found");
+      const text = await resPlants.text();
+      PLANTS = parsePlantCsv(text);
+    } catch (err) {
+      console.error(err);
+      if (plantsError) setElementVisible(plantsError, true);
+    } finally {
+      if (plantsLoading) setElementVisible(plantsLoading, false);
+    }
+
+    try {
+      if (pestsLoading) setElementVisible(pestsLoading, true);
+      const resPests = await fetch(PEST_CSV_URL);
+      if (!resPests.ok) throw new Error("pests.csv not found");
+      const text = await resPests.text();
+      PESTS = parsePestCsv(text);
+    } catch (err) {
+      console.error(err);
+      if (pestsError) setElementVisible(pestsError, true);
+    } finally {
+      if (pestsLoading) setElementVisible(pestsLoading, false);
+    }
+
+    // INITIAL RENDERS
+    renderSkuList();
+    renderPlantCards();
+    filterPlantCards();
+    renderPestCards();
+    filterPestCards();
+  }
+
+  async function initGuidelines() {
+    try {
+      // HF Guidelines
+      const hfRes = await fetch(HF_GUIDELINES_CSV_URL);
+      if (hfRes.ok) {
+        const hfText = await hfRes.text();
+        const hfRows = parseGuidelinesCsv(hfText);
+        renderGuidelines("hfGuidelinesContent", hfRows, "hf");
+      } else {
+        console.warn("hf_guidelines.csv not found");
         renderGuidelines("hfGuidelinesContent", [], "hf");
       }
+    } catch (err) {
+      console.error("Error loading HF guidelines:", err);
+      renderGuidelines("hfGuidelinesContent", [], "hf");
+    }
 
-      try {
-        // HPA Guidelines
-        const hpaRes = await fetch(HPA_GUIDELINES_CSV_URL);
-        if (hpaRes.ok) {
-          const hpaText = await hpaRes.text();
-          const hpaRows = parseGuidelinesCsv(hpaText);
-          renderGuidelines("hpaGuidelinesContent", hpaRows, "hpa");
-        } else {
-          console.warn("hpa_guidelines.csv not found");
-          renderGuidelines("hpaGuidelinesContent", [], "hpa");
-        }
-      } catch (err) {
-        console.error("Error loading HPA guidelines:", err);
+    try {
+      // HPA Guidelines
+      const hpaRes = await fetch(HPA_GUIDELINES_CSV_URL);
+      if (hpaRes.ok) {
+        const hpaText = await hpaRes.text();
+        const hpaRows = parseGuidelinesCsv(hpaText);
+        renderGuidelines("hpaGuidelinesContent", hpaRows, "hpa");
+      } else {
+        console.warn("hpa_guidelines.csv not found");
         renderGuidelines("hpaGuidelinesContent", [], "hpa");
+      }
+    } catch (err) {
+      console.error("Error loading HPA guidelines:", err);
+      renderGuidelines("hpaGuidelinesContent", [], "hpa");
+    }
+  }
+
+  /* ========= LEARNING CENTER DATA ========= */
+
+  const LEARNING_TRACKS = [
+    {
+      id: "track-new-merch",
+      name: "New Merchandiser 101",
+      badge: "Start Here",
+      description: "Perfect for brand new merchandisers: core HF & HPA expectations.",
+      quizIds: ["quiz-watering", "quiz-hpa-basics"]
+    },
+    {
+      id: "track-hpa-essentials",
+      name: "HPA Essentials",
+      badge: "Houseplants",
+      description: "Deep dive into HPA care, categories, and floor quality.",
+      quizIds: ["quiz-hpa-basics", "quiz-pests"]
+    },
+    {
+      id: "track-problem-solving",
+      name: "Pest & Problem Solving",
+      badge: "Advanced",
+      description: "Focus on pest ID and floor troubleshooting.",
+      quizIds: ["quiz-pests"]
+    }
+  ];
+
+  const QUIZZES = [
+    {
+      id: "quiz-watering",
+      title: "Watering 101",
+      trackLabel: "New Merch",
+      passingScore: 70,
+      questions: [
+        {
+          id: "q1",
+          text: "On a hot, sunny, windy day, which areas usually need the most attention first?",
+          options: [
+            { value: "a", text: "Indoor houseplants only", correct: false },
+            { value: "b", text: "Full sun outdoor tables & hanging baskets", correct: true },
+            { value: "c", text: "Shade racks only", correct: false },
+            { value: "d", text: "Nothing, wait another day", correct: false }
+          ]
+        },
+        {
+          id: "q2",
+          text: "What’s a good rule of thumb when checking if a pot needs water?",
+          options: [
+            { value: "a", text: "Only water if the leaves are drooping", correct: false },
+            { value: "b", text: "Lift the pot & feel weight / check moisture with your finger", correct: true },
+            { value: "c", text: "Water everything every day no matter what", correct: false },
+            { value: "d", text: "Only water when the top looks dry from far away", correct: false }
+          ]
+        }
+      ]
+    },
+    {
+      id: "quiz-hpa-basics",
+      title: "HPA Care Basics",
+      trackLabel: "HPA",
+      passingScore: 70,
+      questions: [
+        {
+          id: "q1",
+          text: "Which houseplants generally prefer bright, indirect light?",
+          options: [
+            { value: "a", text: "Many foliage plants like pothos & philodendron", correct: true },
+            { value: "b", text: "Cacti only", correct: false },
+            { value: "c", text: "All plants prefer full direct sun", correct: false },
+            { value: "d", text: "No plants like indirect light", correct: false }
+          ]
+        },
+        {
+          id: "q2",
+          text: "What should you avoid when watering HPA foliage?",
+          options: [
+            { value: "a", text: "Checking if the soil is dry first", correct: false },
+            { value: "b", text: "Letting pots sit in deep standing water on saucers", correct: true },
+            { value: "c", text: "Watering in the morning", correct: false },
+            { value: "d", text: "Watering plants that are lightly dry", correct: false }
+          ]
+        }
+      ]
+    },
+    {
+      id: "quiz-pests",
+      title: "Pest Identification Basics",
+      trackLabel: "Pests",
+      passingScore: 70,
+      questions: [
+        {
+          id: "q1",
+          text: "Tiny moving dots, webbing on foliage, and stippling often point to which pest?",
+          options: [
+            { value: "a", text: "Aphids", correct: false },
+            { value: "b", text: "Mealybugs", correct: false },
+            { value: "c", text: "Spider mites", correct: true },
+            { value: "d", text: "Fungus gnats", correct: false }
+          ]
+        },
+        {
+          id: "q2",
+          text: "What’s the first step when you find a heavy pest issue?",
+          options: [
+            { value: "a", text: "Ignore it & hope it gets better", correct: false },
+            { value: "b", text: "Remove the worst plants and alert your supervisor / follow company process", correct: true },
+            { value: "c", text: "Spray random chemicals without direction", correct: false },
+            { value: "d", text: "Move all plants into the sun", correct: false }
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* ========= LEARNING PROGRESS (LOCAL) ========= */
+
+  let LEARNING_PROGRESS = {
+    completedQuizzes: {} // quizId -> { score, total, passed, timestamp }
+  };
+
+  function loadLearningProgress() {
+    try {
+      const raw = localStorage.getItem("hfHubLearningProgress");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        LEARNING_PROGRESS = parsed;
+      }
+    } catch (e) {
+      console.warn("Could not load learning progress", e);
+    }
+  }
+
+  function saveLearningProgress() {
+    try {
+      localStorage.setItem("hfHubLearningProgress", JSON.stringify(LEARNING_PROGRESS));
+    } catch (e) {
+      console.warn("Could not save learning progress", e);
+    }
+  }
+
+  /* ========= LEARNING CENTER RENDERING ========= */
+
+  function renderLearningTracks() {
+    const grid = document.getElementById("trackGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    LEARNING_TRACKS.forEach(track => {
+      const total = track.quizIds.length;
+      let completed = 0;
+      track.quizIds.forEach(qid => {
+        const prog = LEARNING_PROGRESS.completedQuizzes[qid];
+        if (prog && prog.passed) completed++;
+      });
+      const percent = total ? Math.round((completed / total) * 100) : 0;
+
+      const card = document.createElement("div");
+      card.className = "track-card";
+      card.innerHTML = `
+        <div class="track-title-row">
+          <div class="track-title">${track.name}</div>
+          <div class="track-badge">${track.badge}</div>
+        </div>
+        <div class="track-desc">${track.description}</div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" style="width:${percent}%;"></div>
+        </div>
+        <div class="track-progress-text">
+          ${completed}/${total} quizzes passed • ${percent}% complete
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderQuizList() {
+    const container = document.getElementById("quizList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    QUIZZES.forEach(quiz => {
+      const prog = LEARNING_PROGRESS.completedQuizzes[quiz.id];
+      const statusText = prog
+        ? prog.passed
+          ? `✅ Passed: ${prog.score}/${prog.total}`
+          : `⚠️ Try Again: ${prog.score}/${prog.total}`
+        : "Not attempted yet";
+
+      const card = document.createElement("div");
+      card.className = "quiz-card";
+      card.innerHTML = `
+        <div class="quiz-title-row">
+          <div class="quiz-title">${quiz.title}</div>
+          <div class="quiz-chip">${quiz.trackLabel}</div>
+        </div>
+        <div class="quiz-progress-badge">${statusText}</div>
+        <button class="quiz-start-btn" type="button" data-quiz-id="${quiz.id}">
+          Start Quiz
+        </button>
+      `;
+      container.appendChild(card);
+    });
+
+    container.querySelectorAll(".quiz-start-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const quizId = btn.getAttribute("data-quiz-id");
+        startQuiz(quizId);
+      });
+    });
+  }
+
+  function startQuiz(quizId) {
+    const quiz = QUIZZES.find(q => q.id === quizId);
+    const container = document.getElementById("quizContainer");
+    if (!quiz || !container) return;
+
+    container.classList.remove("hidden");
+    container.innerHTML = "";
+
+    const title = document.createElement("div");
+    title.style.fontSize = "1.05rem";
+    title.style.fontWeight = "600";
+    title.style.color = "#fef3c7";
+    title.style.marginBottom = "6px";
+    title.textContent = quiz.title;
+
+    const info = document.createElement("div");
+    info.className = "section-subtitle";
+    info.style.fontSize = "0.8rem";
+    info.textContent = `Passing score: ${quiz.passingScore}%`;
+
+    container.appendChild(title);
+    container.appendChild(info);
+
+    quiz.questions.forEach((q, idx) => {
+      const qBox = document.createElement("div");
+      qBox.className = "quiz-question";
+
+      const qText = document.createElement("div");
+      qText.className = "quiz-q-text";
+      qText.textContent = `${idx + 1}. ${q.text}`;
+      qBox.appendChild(qText);
+
+      const optionsBox = document.createElement("div");
+      optionsBox.className = "quiz-options";
+
+      q.options.forEach(opt => {
+        const label = document.createElement("label");
+        label.className = "quiz-option-label";
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `quiz-${quiz.id}-${q.id}`;
+        input.value = opt.value;
+        label.appendChild(input);
+        const span = document.createElement("span");
+        span.textContent = opt.text;
+        label.appendChild(span);
+        optionsBox.appendChild(label);
+      });
+
+      qBox.appendChild(optionsBox);
+      container.appendChild(qBox);
+    });
+
+    const submitBtn = document.createElement("button");
+    submitBtn.type = "button";
+    submitBtn.className = "quiz-submit-btn";
+    submitBtn.textContent = "Submit Answers";
+    submitBtn.addEventListener("click", () => submitQuiz(quiz.id));
+    container.appendChild(submitBtn);
+
+    const resultDiv = document.createElement("div");
+    resultDiv.id = "quizResult";
+    resultDiv.className = "quiz-result";
+    container.appendChild(resultDiv);
+  }
+
+  function submitQuiz(quizId) {
+    const quiz = QUIZZES.find(q => q.id === quizId);
+    const container = document.getElementById("quizContainer");
+    const resultDiv = document.getElementById("quizResult");
+    if (!quiz || !container || !resultDiv) return;
+
+    let total = quiz.questions.length;
+    let correctCount = 0;
+
+    quiz.questions.forEach(q => {
+      const selected = container.querySelector(
+        `input[name="quiz-${quiz.id}-${q.id}"]:checked`
+      );
+      const answer = selected ? selected.value : null;
+      const correctOption = q.options.find(o => o.correct);
+      if (answer && correctOption && answer === correctOption.value) {
+        correctCount++;
+      }
+    });
+
+    const scorePercent = Math.round((correctCount / total) * 100);
+    const passed = scorePercent >= quiz.passingScore;
+
+    LEARNING_PROGRESS.completedQuizzes[quizId] = {
+      score: correctCount,
+      total,
+      passed,
+      timestamp: Date.now()
+    };
+    saveLearningProgress();
+    renderQuizList();
+    renderLearningTracks();
+
+    resultDiv.classList.remove("pass", "fail");
+    resultDiv.classList.add(passed ? "pass" : "fail");
+    resultDiv.textContent = passed
+      ? `Great job! You passed with ${scorePercent}% (${correctCount}/${total}).`
+      : `You scored ${scorePercent}% (${correctCount}/${total}). Review and try again!`;
+  }
+
+  /* ========= DOM READY ========= */
+  document.addEventListener("DOMContentLoaded", () => {
+    // Splash fade → Login fade
+    const splashView = document.getElementById("view-splash");
+    const loginView = document.getElementById("view-login");
+    const splashLogoWrapper = document.getElementById("splashLogo");
+
+    const loginRole = document.getElementById("loginRole");
+    const loginUsername = document.getElementById("loginUsername");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+
+    const enterHubFromSplash = () => {
+      splashLogoWrapper.classList.add("logo-tap");
+      splashView.classList.add("splash-fade-out");
+
+      setTimeout(() => {
+        splashView.classList.add("hidden");
+        splashView.classList.remove("splash-fade-out");
+
+        loginView.classList.remove("hidden");
+        loginView.classList.add("login-fade-in");
+        loginView.style.opacity = "1";
+        if (loginRole) loginRole.focus();
+      }, 700);
+    };
+
+    if (splashLogoWrapper && splashView && loginView) {
+      splashLogoWrapper.addEventListener("click", enterHubFromSplash, { once: true });
+      splashLogoWrapper.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            enterHubFromSplash();
+          }
+        },
+        { once: true }
+      );
+    }
+
+    function updateLoginFieldsForRole() {
+      const role = loginRole.value;
+      if (role === "Merchandiser") {
+        loginUsername.disabled = true;
+        loginPassword.disabled = true;
+        loginUsername.value = "";
+        loginPassword.value = "";
+      } else {
+        loginUsername.disabled = false;
+        loginPassword.disabled = false;
       }
     }
 
-    /* ========= DOM READY ========= */
-    document.addEventListener("DOMContentLoaded", () => {
-      // Splash fade → Login fade
-      const splashView = document.getElementById("view-splash");
-      const loginView = document.getElementById("view-login");
-      const splashLogoWrapper = document.getElementById("splashLogo");
-
-      const loginRole = document.getElementById("loginRole");
-      const loginUsername = document.getElementById("loginUsername");
-      const loginPassword = document.getElementById("loginPassword");
-      const loginButton = document.getElementById("loginButton");
-      const loginError = document.getElementById("loginError");
-
-      const enterHubFromSplash = () => {
-        splashLogoWrapper.classList.add("logo-tap");
-        splashView.classList.add("splash-fade-out");
-
-        setTimeout(() => {
-          splashView.classList.add("hidden");
-          splashView.classList.remove("splash-fade-out");
-
-          loginView.classList.remove("hidden");
-          loginView.classList.add("login-fade-in");
-          loginView.style.opacity = "1";
-          if (loginRole) loginRole.focus();
-        }, 700);
-      };
-
-      if (splashLogoWrapper && splashView && loginView) {
-        splashLogoWrapper.addEventListener("click", enterHubFromSplash, { once: true });
-        splashLogoWrapper.addEventListener(
-          "keydown",
-          (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              enterHubFromSplash();
-            }
-          },
-          { once: true }
-        );
+    // Restore last role / username if stored
+    try {
+      const savedRole = localStorage.getItem("hfHubLastRole");
+      const savedUsername = localStorage.getItem("hfHubLastUsername");
+      if (savedRole && loginRole) {
+        loginRole.value = savedRole;
       }
+      if (savedUsername && loginUsername) {
+        loginUsername.value = savedUsername;
+      }
+    } catch (e) {
+      console.warn("Could not access localStorage", e);
+    }
 
-      function updateLoginFieldsForRole() {
+    loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
+    if (loginRole) updateLoginFieldsForRole();
+
+    if (loginButton) {
+      loginButton.addEventListener("click", () => {
         const role = loginRole.value;
+
         if (role === "Merchandiser") {
-          loginUsername.disabled = true;
-          loginPassword.disabled = true;
-          loginUsername.value = "";
-          loginPassword.value = "";
-        } else {
-          loginUsername.disabled = false;
-          loginPassword.disabled = false;
-        }
-      }
-
-      // Restore last role / username if stored
-      try {
-        const savedRole = localStorage.getItem("hfHubLastRole");
-        const savedUsername = localStorage.getItem("hfHubLastUsername");
-        if (savedRole && loginRole) {
-          loginRole.value = savedRole;
-        }
-        if (savedUsername && loginUsername) {
-          loginUsername.value = savedUsername;
-        }
-      } catch (e) {
-        console.warn("Could not access localStorage", e);
-      }
-
-      loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
-      if (loginRole) updateLoginFieldsForRole();
-
-      if (loginButton) {
-        loginButton.addEventListener("click", () => {
-          const role = loginRole.value;
-
-          if (role === "Merchandiser") {
-            CURRENT_USER = {
-              role,
-              username: "",
-              displayName: "Merchandiser"
-            };
-            try {
-              localStorage.setItem("hfHubLastRole", role);
-              localStorage.removeItem("hfHubLastUsername");
-            } catch (e) {}
-            loginError.textContent = "";
-            showView("view-hub");
-            updateHubUserInfo();
-            applyRolePermissions();
-            return;
-          }
-
-          const username = (loginUsername.value || "").trim();
-          const password = (loginPassword.value || "").trim();
-          if (!username || !password) {
-            loginError.textContent = "Please enter both username and password.";
-            return;
-          }
-          if (!USERS.length) {
-            loginError.textContent = "User data not loaded yet. Try again in a moment.";
-            return;
-          }
-
-          const match = USERS.find(u =>
-            u.role.toLowerCase() === role.toLowerCase() &&
-            u.username.toLowerCase() === username.toLowerCase() &&
-            u.password === password
-          );
-
-          if (!match) {
-            loginError.textContent = "Invalid login. Check role, username, or password.";
-            return;
-          }
-
           CURRENT_USER = {
-            role: match.role,
-            username: match.username,
-            displayName: match.displayName
+            role,
+            username: "",
+            displayName: "Merchandiser"
           };
           try {
-            localStorage.setItem("hfHubLastRole", match.role);
-            localStorage.setItem("hfHubLastUsername", match.username);
+            localStorage.setItem("hfHubLastRole", role);
+            localStorage.removeItem("hfHubLastUsername");
           } catch (e) {}
           loginError.textContent = "";
           showView("view-hub");
           updateHubUserInfo();
           applyRolePermissions();
-        });
-      }
+          return;
+        }
 
-      // HUB NAV
-      const hubCardHF = document.getElementById("hubCardHF");
-      const hubCardHPA = document.getElementById("hubCardHPA");
-      const hubCardAdmin = document.getElementById("hubCardAdmin");
+        const username = (loginUsername.value || "").trim();
+        const password = (loginPassword.value || "").trim();
+        if (!username || !password) {
+          loginError.textContent = "Please enter both username and password.";
+          return;
+        }
+        if (!USERS.length) {
+          loginError.textContent = "User data not loaded yet. Try again in a moment.";
+          return;
+        }
 
-      hubCardHF && hubCardHF.addEventListener("click", () => showView("view-hf"));
-      hubCardHPA && hubCardHPA.addEventListener("click", () => {
-        showView("view-hpa");
-        const nameFilter = document.getElementById("nameFilter");
-        if (nameFilter) nameFilter.focus();
+        const match = USERS.find(u =>
+          u.role.toLowerCase() === role.toLowerCase() &&
+          u.username.toLowerCase() === username.toLowerCase() &&
+          u.password === password
+        );
+
+        if (!match) {
+          loginError.textContent = "Invalid login. Check role, username, or password.";
+          return;
+        }
+
+        CURRENT_USER = {
+          role: match.role,
+          username: match.username,
+          displayName: match.displayName
+        };
+        try {
+          localStorage.setItem("hfHubLastRole", match.role);
+          localStorage.setItem("hfHubLastUsername", match.username);
+        } catch (e) {}
+        loginError.textContent = "";
+        showView("view-hub");
+        updateHubUserInfo();
+        applyRolePermissions();
       });
-      hubCardAdmin && hubCardAdmin.addEventListener("click", () => showView("view-admin"));
+    }
 
-      // BACK BUTTONS
-      document.querySelectorAll(".module-back-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const target = btn.getAttribute("data-back") || "hub";
-          showView(`view-${target}`);
-        });
-      });
+    // HUB NAV
+    const hubCardHF = document.getElementById("hubCardHF");
+    const hubCardHPA = document.getElementById("hubCardHPA");
+    const hubCardAdmin = document.getElementById("hubCardAdmin");
+    const hubCardLearning = document.getElementById("hubCardLearning");
 
-      // MAIN MODULE TABS (HF, HPA, Admin — except external Admin tabs)
-      document.querySelectorAll(".module-tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-          if (!CURRENT_USER) return;
-          const moduleKey = tab.getAttribute("data-module");
-          const tabKey = tab.getAttribute("data-tab");
-          const minRole = tab.getAttribute("data-min-role");
-          if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
-
-          // External Admin tabs are handled separately
-          if (moduleKey === "admin" && (tabKey === "store-audit" || tabKey === "air")) {
-            return;
-          }
-
-          setActiveModuleTab(moduleKey, tabKey);
-        });
-      });
-
-      // HPA PRODUCT INNER TABS
-      document.querySelectorAll(".products-inner-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const target = btn.dataset.products; // "skus" or "orders"
-          const tabs = document.querySelectorAll(".products-inner-tab");
-          const skusSection = document.getElementById("products-skus");
-          const ordersSection = document.getElementById("products-orders");
-
-          tabs.forEach(t => t.classList.remove("active"));
-          skusSection.classList.add("hidden");
-          ordersSection.classList.add("hidden");
-
-          btn.classList.add("active");
-          if (target === "skus") skusSection.classList.remove("hidden");
-          else ordersSection.classList.remove("hidden");
-        });
-      });
-
-      // HPA CARE/PEST INNER TABS
-      document.querySelectorAll(".inner-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const target = btn.dataset.inner; // "care-library" or "pest-id"
-          const tabs = document.querySelectorAll(".inner-tab");
-          const careSection = document.getElementById("inner-care-library");
-          const pestSection = document.getElementById("inner-pest-id");
-
-          tabs.forEach(t => t.classList.remove("active"));
-          careSection.classList.add("hidden");
-          pestSection.classList.add("hidden");
-
-          btn.classList.add("active");
-          if (target === "care-library") careSection.classList.remove("hidden");
-          else pestSection.classList.remove("hidden");
-        });
-      });
-
-      // ADMIN: Store Audit → MS Forms
-      const storeAuditTab = document.querySelector('.module-tab[data-module="admin"][data-tab="store-audit"]');
-      if (storeAuditTab) {
-        storeAuditTab.addEventListener("click", () => {
-          if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
-          window.location.href =
-            "https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl";
-        });
-      }
-
-      // ADMIN: AIR → air.inc
-      const airTab = document.querySelector('.module-tab[data-module="admin"][data-tab="air"]');
-      if (airTab) {
-        airTab.addEventListener("click", () => {
-          if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
-          window.location.href = "https://air.inc/";
-        });
-      }
-
-      // Initial view
-      showView("view-splash");
-
-      // Load users
-      fetch(USERS_CSV_URL)
-        .then(res => {
-          if (!res.ok) throw new Error("users.csv not found");
-          return res.text();
-        })
-        .then(text => {
-          USERS = parseUsersCsv(text);
-          console.log("Loaded users:", USERS.length);
-        })
-        .catch(err => console.error("Error loading users CSV:", err));
-
-      // Init HPA (load CSVs, wire up UI)
-      initHPA();
-
-      // Load guidelines (HF & HPA) from CSV
-      initGuidelines();
+    hubCardHF && hubCardHF.addEventListener("click", () => showView("view-hf"));
+    hubCardHPA && hubCardHPA.addEventListener("click", () => {
+      showView("view-hpa");
+      const nameFilter = document.getElementById("nameFilter");
+      if (nameFilter) nameFilter.focus();
     });
-  </script>
+    hubCardAdmin && hubCardAdmin.addEventListener("click", () => showView("view-admin"));
+    hubCardLearning && hubCardLearning.addEventListener("click", () => {
+      showView("view-learning");
+    });
+
+    // BACK BUTTONS
+    document.querySelectorAll(".module-back-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-back") || "hub";
+        showView(`view-${target}`);
+      });
+    });
+
+    // MAIN MODULE TABS (HF, HPA, Admin — except external Admin tabs)
+    document.querySelectorAll(".module-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        if (!CURRENT_USER) return;
+        const moduleKey = tab.getAttribute("data-module");
+        const tabKey = tab.getAttribute("data-tab");
+        const minRole = tab.getAttribute("data-min-role");
+        if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
+
+        // External Admin tabs handled separately
+        if (moduleKey === "admin" && (tabKey === "store-audit" || tabKey === "air")) {
+          return;
+        }
+
+        setActiveModuleTab(moduleKey, tabKey);
+      });
+    });
+
+    // HPA PRODUCT INNER TABS
+    document.querySelectorAll(".products-inner-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.products; // "skus" or "orders"
+        const tabs = document.querySelectorAll(".products-inner-tab");
+        const skusSection = document.getElementById("products-skus");
+        const ordersSection = document.getElementById("products-orders");
+
+        tabs.forEach(t => t.classList.remove("active"));
+        skusSection.classList.add("hidden");
+        ordersSection.classList.add("hidden");
+
+        btn.classList.add("active");
+        if (target === "skus") skusSection.classList.remove("hidden");
+        else ordersSection.classList.remove("hidden");
+      });
+    });
+
+    // HPA CARE/PEST INNER TABS
+    document.querySelectorAll(".inner-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.inner; // "care-library" or "pest-id"
+        const tabs = document.querySelectorAll(".inner-tab");
+        const careSection = document.getElementById("inner-care-library");
+        const pestSection = document.getElementById("inner-pest-id");
+
+        tabs.forEach(t => t.classList.remove("active"));
+        careSection.classList.add("hidden");
+        pestSection.classList.add("hidden");
+
+        btn.classList.add("active");
+        if (target === "care-library") careSection.classList.remove("hidden");
+        else pestSection.classList.remove("hidden");
+      });
+    });
+
+    // ADMIN: Store Audit → MS Forms
+    const storeAuditTab = document.querySelector('.module-tab[data-module="admin"][data-tab="store-audit"]');
+    if (storeAuditTab) {
+      storeAuditTab.addEventListener("click", () => {
+        if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
+        window.location.href =
+          "https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl";
+      });
+    }
+
+    // ADMIN: AIR → air.inc
+    const airTab = document.querySelector('.module-tab[data-module="admin"][data-tab="air"]');
+    if (airTab) {
+      airTab.addEventListener("click", () => {
+        if (!CURRENT_USER || !canAccess(CURRENT_USER.role, "Supervisor")) return;
+        window.location.href = "https://air.inc/";
+      });
+    }
+
+    // Learning Center tabs
+    document.querySelectorAll(".learning-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.getAttribute("data-learning-tab");
+        if (!target) return;
+
+        document.querySelectorAll(".learning-tab").forEach(t => {
+          t.classList.remove("active");
+        });
+        tab.classList.add("active");
+
+        const panels = ["overview", "tracks", "quizzes", "resources"];
+        panels.forEach(key => {
+          const panel = document.getElementById(`learning-${key}`);
+          if (panel) {
+            panel.classList.toggle("hidden", key !== target);
+          }
+        });
+      });
+    });
+
+    // Initial view
+    showView("view-splash");
+
+    // Load users
+    fetch(USERS_CSV_URL)
+      .then(res => {
+        if (!res.ok) throw new Error("users.csv not found");
+        return res.text();
+      })
+      .then(text => {
+        USERS = parseUsersCsv(text);
+        console.log("Loaded users:", USERS.length);
+      })
+      .catch(err => console.error("Error loading users CSV:", err));
+
+    // Init HPA (load CSVs, wire up UI)
+    initHPA();
+
+    // Load guidelines (HF & HPA) from CSV
+    initGuidelines();
+
+    // Learning center progress + UI
+    loadLearningProgress();
+    renderLearningTracks();
+    renderQuizList();
+
+    // Weather widget at hub
+    loadWeather();
+  });
+</script>
 </body>
 </html>
