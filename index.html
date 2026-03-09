@@ -1214,9 +1214,193 @@
         white-space: nowrap;
       }
     }
+
+    /* ========= GUIDELINES BEAUTIFIED ========= */
+    .guidelines-wrapper {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .guidelines-section-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+    }
+
+    .guidelines-section-pill {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 5px 11px;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+    }
+
+    .guidelines-section-pill span {
+      font-size: 0.85rem;
+    }
+
+    .guidelines-section-pill:hover {
+      color: var(--heading);
+      border-color: rgba(148, 163, 184, 0.65);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+      transform: translateY(-1px);
+    }
+
+    .guidelines-section-pill.active {
+      background: radial-gradient(
+        circle at top left,
+        rgba(34, 211, 238, 0.35),
+        rgba(15, 23, 42, 0.98)
+      );
+      border-color: rgba(34, 211, 238, 0.9);
+      color: var(--heading);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
+    }
+
+    .guidelines-sections-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 900px) {
+      .guidelines-sections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .guideline-card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.92);
+      padding: 14px 14px 12px;
+      overflow: hidden;
+      transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+
+    .guideline-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40% -60px auto;
+      height: 160px;
+      background: radial-gradient(circle at bottom, rgba(56, 189, 248, 0.4), transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .guideline-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.96);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.28), rgba(15, 23, 42, 0.98));
+    }
+
+    .guideline-card:hover::after {
+      opacity: 1;
+    }
+
+    .guideline-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .guideline-card-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.6), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      box-shadow: 0 10px 25px rgba(8, 47, 73, 0.9);
+      font-size: 0.95rem;
+    }
+
+    .guideline-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--heading);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .guideline-list {
+      list-style: none;
+      margin: 6px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .guideline-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px;
+      align-items: flex-start;
+      font-size: 0.83rem;
+      color: #e5e7eb;
+    }
+
+    .guideline-item-bullet {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: #e5f0ff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .guideline-item-text {
+      line-height: 1.4;
+    }
+
+    .guideline-card-tag {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.9);
+    }
   </style>
 </head>
-
 <body>
   <main class="app-shell">
     <div class="app-inner">
@@ -1345,8 +1529,10 @@
           <div id="hf-guidelines" class="glass-panel">
             <div class="section-title">HF Guidelines</div>
             <p class="section-subtitle">
-              Add HF (Outdoor Perennials) guidelines here when ready.
+              High-level guidelines for HF Outdoor Perennials. Content is loaded from
+              <code>hf_guidelines.csv</code>.
             </p>
+            <div id="hfGuidelinesContent"></div>
           </div>
 
           <div id="hf-care" class="glass-panel hidden">
@@ -1383,8 +1569,10 @@
           <div id="hpa-guidelines" class="glass-panel">
             <div class="section-title">HPA Guidelines</div>
             <p class="section-subtitle">
-              High-level weekly / seasonal HPA notes can go here if you want a quick snapshot.
+              High-level guidelines for HPA Houseplants. Content is loaded from
+              <code>hpa_guidelines.csv</code>.
             </p>
+            <div id="hpaGuidelinesContent"></div>
           </div>
 
           <!-- HPA PRODUCT INFO -->
@@ -1729,7 +1917,6 @@
 
     </div>
   </main>
-
   <script>
     /* ========= CONFIG ========= */
     const USERS_CSV_URL = "users.csv";
@@ -1738,6 +1925,8 @@
     const ORDER_CSV_URL = "OrderBreakdown.csv";
     const PLANT_CSV_URL = "plants.csv";
     const PEST_CSV_URL = "pests.csv";
+    const HF_GUIDELINES_CSV_URL = "hf_guidelines.csv";
+    const HPA_GUIDELINES_CSV_URL = "hpa_guidelines.csv";
 
     const STORE_GRADES_BY_WEEK = {
       "6": "All stores",
@@ -2004,6 +2193,180 @@
         });
       }
       return pests;
+    }
+
+    function parseGuidelinesCsv(text) {
+      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+      if (!lines.length) return [];
+
+      const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase().trim());
+      const sectionIdx = header.indexOf("section");
+      const textIdx = header.indexOf("text");
+      const orderIdx = header.indexOf("order");
+
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCsvLine(lines[i]);
+        const section = sectionIdx >= 0 ? (row[sectionIdx] || "").trim() : "";
+        const text = textIdx >= 0 ? (row[textIdx] || "").trim() : "";
+        const orderRaw = orderIdx >= 0 ? (row[orderIdx] || "").trim() : "";
+        const order = Number(orderRaw) || 0;
+
+        if (!section || !text) continue;
+        rows.push({ section, text, order });
+      }
+
+      return rows;
+    }
+
+    function getGuidelineIcon(sectionName = "") {
+      const s = sectionName.toLowerCase();
+
+      if (s.includes("shipping")) return "🚚";
+      if (s.includes("outdoor")) return "🌿";
+      if (s.includes("garden")) return "🪴";
+      if (s.includes("table")) return "🧱";
+      if (s.includes("trees") || s.includes("palms") || s.includes("palmania")) return "🌴";
+      if (s.includes("ads") || s.includes("special buy") || s.includes("sale")) return "🏷️";
+      if (s.includes("signage")) return "🪧";
+      if (s.includes("v-day") || s.includes("valentine")) return "💘";
+      if (s.includes("plant company")) return "🏭";
+      if (s.includes("plainview") || s.includes("altman")) return "📸";
+
+      return "📌";
+    }
+
+    function renderGuidelines(containerId, rows, idPrefix) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      if (!rows || !rows.length) {
+        const empty = document.createElement("p");
+        empty.className = "section-subtitle";
+        empty.textContent = "No guidelines found. Please contact your supervisor or admin.";
+        container.appendChild(empty);
+        return;
+      }
+
+      const bySection = new Map();
+      rows.forEach((r) => {
+        const section = r.section || "General";
+        if (!bySection.has(section)) bySection.set(section, []);
+        bySection.get(section).push(r);
+      });
+
+      const sections = Array.from(bySection.keys()).sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" })
+      );
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "guidelines-wrapper";
+
+      const nav = document.createElement("div");
+      nav.className = "guidelines-section-nav";
+
+      const grid = document.createElement("div");
+      grid.className = "guidelines-sections-grid";
+
+      sections.forEach((sectionName, idx) => {
+        const sectionItems = bySection.get(sectionName) || [];
+        sectionItems.sort((a, b) => a.order - b.order);
+
+        const safeId =
+          idPrefix +
+          "-section-" +
+          sectionName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+        // Nav pill
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "guidelines-section-pill";
+        if (idx === 0) pill.classList.add("active");
+
+        const iconSpan = document.createElement("span");
+        iconSpan.textContent = getGuidelineIcon(sectionName);
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = sectionName;
+
+        pill.appendChild(iconSpan);
+        pill.appendChild(textSpan);
+
+        pill.addEventListener("click", () => {
+          nav.querySelectorAll(".guidelines-section-pill").forEach((p) =>
+            p.classList.remove("active")
+          );
+          pill.classList.add("active");
+
+          const target = document.getElementById(safeId);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+
+        nav.appendChild(pill);
+
+        // Card
+        const card = document.createElement("section");
+        card.className = "guideline-card";
+        card.id = safeId;
+
+        const header = document.createElement("div");
+        header.className = "guideline-card-header";
+
+        const icon = document.createElement("div");
+        icon.className = "guideline-card-icon";
+        icon.textContent = getGuidelineIcon(sectionName);
+
+        const title = document.createElement("div");
+        title.className = "guideline-card-title";
+        title.textContent = sectionName;
+
+        header.appendChild(icon);
+        header.appendChild(title);
+
+        const tag = document.createElement("div");
+        tag.className = "guideline-card-tag";
+        tag.textContent = "GUIDELINE";
+
+        const list = document.createElement("ul");
+        list.className = "guideline-list";
+
+        let bulletNumber = 1;
+        sectionItems.forEach((item) => {
+          const text = (item.text || "").trim();
+          if (!text) return;
+
+          if (text.toLowerCase() === sectionName.toLowerCase()) return;
+
+          const li = document.createElement("li");
+          li.className = "guideline-item";
+
+          const bullet = document.createElement("div");
+          bullet.className = "guideline-item-bullet";
+          bullet.textContent = bulletNumber++;
+
+          const txt = document.createElement("div");
+          txt.className = "guideline-item-text";
+          txt.textContent = text;
+
+          li.appendChild(bullet);
+          li.appendChild(txt);
+          list.appendChild(li);
+        });
+
+        card.appendChild(header);
+        card.appendChild(tag);
+        card.appendChild(list);
+        grid.appendChild(card);
+      });
+
+      wrapper.appendChild(nav);
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
     }
 
     function highlightStatus(status) {
@@ -2475,6 +2838,40 @@
       filterPestCards();
     }
 
+    async function initGuidelines() {
+      try {
+        // HF Guidelines
+        const hfRes = await fetch(HF_GUIDELINES_CSV_URL);
+        if (hfRes.ok) {
+          const hfText = await hfRes.text();
+          const hfRows = parseGuidelinesCsv(hfText);
+          renderGuidelines("hfGuidelinesContent", hfRows, "hf");
+        } else {
+          console.warn("hf_guidelines.csv not found");
+          renderGuidelines("hfGuidelinesContent", [], "hf");
+        }
+      } catch (err) {
+        console.error("Error loading HF guidelines:", err);
+        renderGuidelines("hfGuidelinesContent", [], "hf");
+      }
+
+      try {
+        // HPA Guidelines
+        const hpaRes = await fetch(HPA_GUIDELINES_CSV_URL);
+        if (hpaRes.ok) {
+          const hpaText = await hpaRes.text();
+          const hpaRows = parseGuidelinesCsv(hpaText);
+          renderGuidelines("hpaGuidelinesContent", hpaRows, "hpa");
+        } else {
+          console.warn("hpa_guidelines.csv not found");
+          renderGuidelines("hpaGuidelinesContent", [], "hpa");
+        }
+      } catch (err) {
+        console.error("Error loading HPA guidelines:", err);
+        renderGuidelines("hpaGuidelinesContent", [], "hpa");
+      }
+    }
+
     /* ========= DOM READY ========= */
     document.addEventListener("DOMContentLoaded", () => {
       // Splash fade → Login fade
@@ -2717,6 +3114,9 @@
 
       // Init HPA (load CSVs, wire up UI)
       initHPA();
+
+      // Load guidelines (HF & HPA) from CSV
+      initGuidelines();
     });
   </script>
 </body>
