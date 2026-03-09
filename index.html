@@ -7,1779 +7,2030 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="hf_logo.png" />
   <style>
-  /* ========= CORE THEME ========= */
-  :root {
-    --bg: #020617;
-    --bg-alt: #030a1a;
-    --card-bg: rgba(15, 23, 42, 0.85);
-    --card-glass: rgba(15, 23, 42, 0.75);
-    --text: #e5e7eb;
-    --heading: #f9fafb;
-    --muted: #9ca3af;
-    --border-subtle: rgba(148, 163, 184, 0.45);
-    --border-soft: rgba(148, 163, 184, 0.25);
-    --radius-lg: 14px;
-    --radius-md: 10px;
-    --radius-pill: 999px;
-    --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
-    --transition-fast: 0.18s ease-out;
-    --accent: #22d3ee;
-    --accent-soft: rgba(34, 211, 238, 0.15);
-    --accent-strong: #06b6d4;
-  }
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
-      url("philo.jpg") no-repeat center center fixed;
-    background-size: cover;
-    backdrop-filter: blur(6px);
-    color: var(--text);
-    min-height: 100vh;
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
-      radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      circle at center,
-      rgba(0,0,0,0) 40%,
-      rgba(0,0,0,0.35) 100%
-    );
-    z-index: 0;
-  }
-  .app-shell {
-    width: 100%;
-    padding: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-  }
-  .app-inner {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px 20px 14px;
-    margin: 0 auto;
-    background: linear-gradient(
-      135deg,
-      rgba(15, 23, 42, 0.98),
-      rgba(15, 23, 42, 0.9)
-    );
-    border-radius: 24px;
-    box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    backdrop-filter: blur(18px);
-    position: relative;
-    overflow: hidden;
-  }
-  .hidden { display: none !important; }
-  button { font-family: inherit; }
-  .footer {
-    margin-top: 10px;
-    font-size: 0.75rem;
-    color: #6b7280;
-    text-align: right;
-    border-top: 1px solid rgba(15, 23, 42, 0.95);
-    padding-top: 6px;
-  }
-  /* ========= SPLASH + LOGO UNDERGLOW ========= */
-  .splash-root {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .splash-logo-wrapper {
-    position: relative;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    outline: none;
-  }
-  .splash-logo-img {
-    width: 240px;
-    height: auto;
-    display: block;
-    filter:
-      drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9))
-      drop-shadow(0 0 35px rgba(34, 211, 238, 0.6));
-    transition:
-      transform 0.32s ease-out,
-      filter 0.32s ease-out;
-    position: relative;
-    z-index: 2;
-  }
-  .splash-logo-wrapper:hover .splash-logo-img,
-  .splash-logo-wrapper:focus-visible .splash-logo-img {
-    transform: translateY(-3px) scale(1.03);
-    filter:
-      drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
-      drop-shadow(0 0 40px rgba(34, 211, 238, 0.9));
-  }
-  .splash-logo-wrapper::before,
-  .splash-logo-wrapper::after {
-    content: "";
-    position: absolute;
-    bottom: -18px;
-    width: 260px;
-    height: 80px;
-    border-radius: 50%;
-    transform-origin: center;
-    pointer-events: none;
-    filter: blur(20px);
-    z-index: 1;
-  }
-  .splash-logo-wrapper::before {
-    background:
-      radial-gradient(circle at 50% 0%, rgba(56,189,248,0.65), transparent 60%),
-      radial-gradient(circle at 30% 20%, rgba(34,211,238,0.9), transparent 55%);
-    opacity: 0.8;
-    animation: pulseUnderglow 2.4s ease-in-out infinite;
-  }
-  .splash-logo-wrapper::after {
-    background:
-      radial-gradient(circle at 70% 20%, rgba(59,130,246,0.9), transparent 60%),
-      radial-gradient(circle at 50% 0%, rgba(8,47,73,0.9), transparent 70%);
-    opacity: 0.5;
-    animation: pulseUnderglowAlt 3.1s ease-in-out infinite;
-  }
-  @keyframes pulseUnderglow {
-    0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
-    50% { transform: translateY(-4px) scale(1.08); opacity: 1; }
-  }
-  @keyframes pulseUnderglowAlt {
-    0%, 100% { transform: translateY(0) scale(0.95); opacity: 0.5; }
-    50% { transform: translateY(-2px) scale(1.05); opacity: 0.85; }
-  }
-  .splash-subtitle {
-    text-align: center;
-    font-size: 0.95rem;
-    color: var(--muted);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .splash-helper {
-    margin-top: 4px;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    text-align: center;
-  }
-  /* Fade transitions */
-  .splash-fade-out {
-    animation: splashFadeOut 0.7s ease-out forwards;
-  }
-  .login-fade-in {
-    animation: loginFadeIn 0.7s ease-in forwards;
-  }
-  @keyframes splashFadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-  }
-  @keyframes loginFadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  .logo-tap .splash-logo-img {
-    animation: logoPulse 0.4s ease-out;
-  }
-  @keyframes logoPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  /* ========= LOGIN ========= */
-  .login-root {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0; /* start transparent; will fade in once */
-  }
-  .login-card {
-    width: 100%;
-    max-width: 420px;
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
-    border-radius: 22px;
-    border: 1px solid var(--border-subtle);
-    padding: 22px 20px 18px;
-    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.96);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  .login-logo-small {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.8);
-    object-fit: cover;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
-  }
-  .login-title {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--heading);
-    margin-top: 6px;
-  }
-  .login-subtitle {
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 8px;
-    width: 100%;
-  }
-  .form-label {
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .form-input,
-  .form-select {
-    border-radius: 10px;
-    border: 1px solid var(--border-soft);
-    background: rgba(2, 6, 23, 0.97);
-    color: var(--text);
-    padding: 8px 11px;
-    font-size: 0.9rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
-    width: 100%;
-  }
-  .form-input::placeholder {
-    color: #6b7280;
-  }
-  .primary-button {
-    margin-top: 8px;
-    width: 100%;
-    background: radial-gradient(circle at top left, var(--accent-strong), #3b82f6);
-    color: #020617;
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 10px 18px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 14px 36px rgba(37, 99, 235, 0.82);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition:
-      transform 0.15s ease-out,
-      box-shadow 0.15s ease-out,
-      filter 0.15s ease-out;
-  }
-  .primary-button:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-    box-shadow: 0 18px 42px rgba(59, 130, 246, 0.96);
-  }
-  .login-error {
-    margin-top: 4px;
-    font-size: 0.8rem;
-    color: #fecaca;
-    text-align: center;
-    min-height: 1.1em;
-  }
-  /* ========= HUB ========= */
-  .hub-root {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .hub-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-  }
-  .hub-title-block {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .hub-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--heading);
-  }
-  .hub-subtitle {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-  .hub-user-pill {
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    border: 1px solid rgba(148, 163, 184, 0.45);
-    font-size: 0.8rem;
-    color: var(--muted);
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
-  }
-  .hub-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-top: 4px;
-  }
-  @media (min-width: 800px) {
-    .hub-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* ========= CORE THEME ========= */
+    :root {
+      --bg: #020617;
+      --bg-alt: #030a1a;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-glass: rgba(15, 23, 42, 0.75);
+      --text: #e5e7eb;
+      --heading: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.45);
+      --border-soft: rgba(148, 163, 184, 0.25);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
+      --transition-fast: 0.18s ease-out;
+      --accent: #22d3ee;
+      --accent-soft: rgba(34, 211, 238, 0.15);
+      --accent-strong: #06b6d4;
     }
-  }
-  .hub-card {
-    position: relative;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.55);
-    background:
-      radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.97));
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.9);
-    padding: 18px 16px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    transition:
-      transform 0.18s ease-out,
-      border-color 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      background 0.18s ease-out;
-  }
-  .hub-card::after {
-    content: "";
-    position: absolute;
-    inset: 40% -30% auto auto;
-    height: 120px;
-    background: radial-gradient(circle at top, rgba(56, 189, 248, 0.4), transparent 65%);
-    opacity: 0;
-    transition: opacity 0.2s ease-out;
-    pointer-events: none;
-  }
-  .hub-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: var(--accent);
-    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.94);
-  }
-  .hub-card:hover::after {
-    opacity: 1;
-  }
-  .hub-card-label {
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #bae6fd;
-    margin-bottom: 4px;
-  }
-  .hub-card-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--heading);
-  }
-  .hub-card-subtitle {
-    margin-top: 4px;
-    font-size: 0.9rem;
-    color: #e5e7eb;
-  }
-  .hub-card-tagline {
-    margin-top: 10px;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-  /* ========= MODULES ========= */
-  .module-root {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .module-back-btn {
-    align-self: flex-start;
-    margin-bottom: 6px;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-soft);
-    background: rgba(15, 23, 42, 0.85);
-    color: var(--muted);
-    font-size: 0.8rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      border-color var(--transition-fast);
-  }
-  .module-back-btn:hover {
-    background: rgba(15, 23, 42, 1);
-    color: var(--heading);
-    border-color: rgba(148, 163, 184, 0.7);
-  }
-  .module-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-  .module-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 22px;
-    border: 1px solid rgba(148, 163, 184, 0.7);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9);
-    object-fit: cover;
-    background: rgba(15, 23, 42, 0.96);
-  }
-  .module-title {
-    margin-top: 6px;
-    font-size: 1.3rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--heading);
-  }
-  .module-subtitle {
-    font-size: 0.85rem;
-    color: var(--muted);
-    text-align: center;
-  }
-  .module-tabs {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding-bottom: 4px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.95);
-    margin-top: 6px;
-  }
-  .module-tab {
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid transparent;
-    color: var(--muted);
-    font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      color var(--transition-fast),
-      background var(--transition-fast),
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast),
-      transform var(--transition-fast);
-  }
-  .module-tab:hover {
-    color: var(--heading);
-    background: rgba(15, 23, 42, 0.98);
-    border-color: rgba(148, 163, 184, 0.5);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-    transform: translateY(-1px);
-  }
-  .module-tab.active {
-    color: var(--heading);
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.32), rgba(15, 23, 42, 0.98));
-    border-color: rgba(34, 211, 238, 0.8);
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
-  }
-  .module-content { margin-top: 10px; }
-  .section-header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  .section-title {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--heading);
-  }
-  .section-subtitle {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  .glass-panel {
-    background: var(--card-glass);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(16px);
-    padding: 14px;
-    font-size: 0.9rem;
-    color: var(--text);
-  }
-  /* ========= HPA INNER TABS ========= */
-  .section-inner-tabs {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 6px;
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 999px;
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
-    margin-bottom: 10px;
-  }
-  .section-inner-tab {
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast);
-  }
-  .section-inner-tab:hover {
-    color: var(--heading);
-    background: rgba(15, 23, 42, 0.9);
-    border-color: rgba(148, 163, 184, 0.4);
-    transform: translateY(-1px);
-  }
-  .section-inner-tab.active {
-    color: var(--heading);
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.98));
-    border-color: rgba(34, 211, 238, 0.8);
-  }
-  .section-inner-content { margin-top: 10px; }
-  .inner-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .inner-tab {
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast);
-  }
-  .inner-tab:hover {
-    color: var(--heading);
-    background: rgba(15, 23, 42, 0.98);
-    border-color: rgba(148, 163, 184, 0.5);
-    transform: translateY(-1px);
-  }
-  .inner-tab.active {
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-    border-color: rgba(34, 211, 238, 0.9);
-    color: var(--heading);
-  }
-  .inner-content { margin-top: 6px; }
-  /* ========= PRODUCT / CARE / POPUP styles ========= */
-  .controls {
-    background: var(--card-glass);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-subtle);
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(16px);
-  }
-  @media (min-width: 900px) {
-    .controls { flex-direction: row; align-items: center; }
-  }
-  .search-wrapper { flex: 2; position: relative; }
-  .search-input {
-    width: 100%;
-    padding: 10px 34px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-soft);
-    background: rgba(2, 6, 23, 0.9);
-    color: var(--text);
-    font-size: 0.9rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
-  }
-  .search-input::placeholder { color: #64748b; }
-  .search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #64748b;
-    pointer-events: none;
-    font-size: 0.9rem;
-  }
-  .filters {
-    flex: 3;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 140px;
-    gap: 3px;
-  }
-  .filter-label {
-    color: var(--muted);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .filter-input {
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-soft);
-    background: rgba(2, 6, 23, 0.92);
-    padding: 6px 10px;
-    color: var(--text);
-    font-size: 0.8rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-  .results-header {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 8px;
-    color: var(--muted);
-    font-size: 0.8rem;
-  }
-  .results-header strong { color: var(--heading); }
-  .sku-grid {
-    display: grid;
-    gap: 12px;
-    margin-top: 10px;
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 600px) {
-    .sku-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 1000px) {
-    .sku-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  .sku-card {
-    position: relative;
-    background: var(--card-glass);
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    padding: 14px;
-    cursor: pointer;
-    box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(14px);
-    transition:
-      transform 0.18s ease-out,
-      border-color 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      background 0.18s ease-out;
-  }
-  .sku-card:hover {
-    transform: translateY(-3px) scale(1.01);
-    border-color: var(--accent);
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-  }
-  .sku-year-pill {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(15, 23, 42, 0.98);
-    border-radius: var(--radius-pill);
-    border: 1px solid rgba(148, 163, 184, 0.8);
-    padding: 3px 8px;
-    font-size: 0.7rem;
-    color: #e2e8f0;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-  }
-  .sku-name {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #e5f0ff;
-  }
-  .sku-meta {
-    font-size: 0.8rem;
-    color: #cbd5e1;
-    line-height: 1.4;
-  }
-  .empty-state {
-    padding: 20px;
-    margin-top: 16px;
-    text-align: center;
-    color: var(--muted);
-    background: rgba(15, 23, 42, 0.75);
-    border-radius: var(--radius-lg);
-    border: 1px dashed var(--border-subtle);
-  }
-  .order-table-wrapper {
-    background: var(--card-glass);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 18px;
-    box-shadow: var(--shadow-soft);
-    margin-top: 10px;
-    backdrop-filter: blur(16px);
-  }
-  .order-table-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--heading);
-  }
-  .order-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    color: var(--text);
-    overflow: hidden;
-    border-radius: var(--radius-md);
-  }
-  .order-table th {
-    text-align: left;
-    padding: 9px 10px;
-    background: rgba(15, 23, 42, 0.96);
-    font-weight: 600;
-    border-bottom: 1px solid var(--border-soft);
-    color: #cbd5f5;
-  }
-  .order-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-    color: #e8f2ff;
-  }
-  .order-table tr:nth-child(even) {
-    background: rgba(15, 23, 42, 0.85);
-  }
-  .order-table tr:nth-child(odd) {
-    background: rgba(15, 23, 42, 0.75);
-  }
-  .order-table tr:hover {
-    background: rgba(34, 211, 238, 0.12);
-    transition: 0.2s;
-  }
-  .status-highlight {
-    background: #facc15;
-    color: #111827;
-    padding: 2px 5px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.75rem;
-  }
-  .order-details-toggle {
-    margin-top: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
-    color: #0f172a;
-    border-radius: var(--radius-pill);
-    border: 1px solid rgba(34, 211, 238, 0.9);
-    padding: 7px 16px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition:
-      background 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      border-color 0.18s ease-out,
-      transform 0.18s ease-out;
-    font-weight: 600;
-    box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
-  }
-  .order-details-toggle:hover {
-    background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-    border-color: #38bdf8;
-    box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
-    transform: translateY(-1px);
-    color: #020617;
-  }
-  .order-details-panel { margin-top: 14px; }
-  .order-breakdown-wrapper {
-    margin-top: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-  .ob-header-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    max-width: 700px;
-  }
-  .ob-week-box,
-  .ob-grades-box {
-    background: rgba(34, 211, 238, 0.12);
-    border: 1px solid rgba(34, 211, 238, 0.7);
-    border-radius: var(--radius-md);
-    padding: 10px 16px;
-    text-align: center;
-    color: #e5f0ff;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-  }
-  .ob-week-box {
-    max-width: 380px;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .ob-grades-box {
-    width: 100%;
-    font-size: 0.9rem;
-  }
-  .ob-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    width: 100%;
-    max-width: 700px;
-  }
-  @media (min-width: 640px) {
-    .ob-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  .ob-box {
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.6);
-    border-radius: var(--radius-md);
-    padding: 10px 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-    min-height: 90px;
-  }
-  .ob-box-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-align: center;
-    margin-bottom: 4px;
-    color: var(--heading);
-  }
-  .ob-box-body {
-    white-space: pre-line;
-    font-size: 0.78rem;
-    color: var(--text);
-  }
-  .pc-header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-  .pc-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--heading);
-  }
-  .pc-search-wrapper {
-    position: relative;
-    max-width: 360px;
-  }
-  .pc-search-input {
-    width: 100%;
-    padding: 8px 30px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-soft);
-    background: rgba(2, 6, 23, 0.95);
-    color: var(--text);
-    font-size: 0.85rem;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-  }
-  .pc-search-input::placeholder { color: #64748b; }
-  .pc-search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.9rem;
-    color: #64748b;
-    pointer-events: none;
-  }
-  .pc-grid {
-    margin-top: 12px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  @media (min-width: 640px) {
-    .pc-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 1000px) {
-    .pc-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  .pc-card {
-    background: var(--card-glass);
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    padding: 12px;
-    box-shadow: var(--shadow-soft);
-    text-align: left;
-    cursor: pointer;
-    transition:
-      transform 0.18s ease-out,
-      border-color 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      background 0.18s ease-out;
-    backdrop-filter: blur(14px);
-  }
-  .pc-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
-  }
-  .pc-card-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--heading);
-  }
-  .pc-card-subtitle {
-    margin-top: 4px;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-  .popup-image {
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border-soft);
-  }
-  .popup-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    display: none;
-    align-items: flex-start;
-    justify-content: center;
-    z-index: 50;
-    padding: 24px 16px 16px;
-    backdrop-filter: blur(8px);
-    overflow-y: auto;
-  }
-  .popup {
-    background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
-    padding: 20px 20px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(148, 163, 184, 0.6);
-    width: 100%;
-    max-width: 460px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-  }
-  .popup h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--heading);
-  }
-  .popup-section-title {
-    font-weight: 600;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    color: var(--heading);
-  }
-  .popup-text {
-    font-size: 0.8rem;
-    color: #e5e7eb;
-    margin-top: 2px;
-  }
-  .popup-close {
-    margin-top: 16px;
-    align-self: flex-end;
-    background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-    color: #020617;
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 8px 16px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 600;
-    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.7);
-    transition:
-      transform 0.15s ease-out,
-      box-shadow 0.15s ease-out,
-      filter 0.15s ease-out;
-  }
-  .popup-close:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-    box-shadow: 0 14px 34px rgba(59, 130, 246, 0.9);
-  }
-  .popup-subtitle {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 6px;
-    font-style: italic;
-  }
-  @media (max-width: 600px) {
-    .order-table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .order-table {
-      min-width: 520px;
-      font-size: 0.75rem;
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+        url("philo.jpg") no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(6px);
+      color: var(--text);
+      min-height: 100vh;
     }
-    .order-table th,
-    .order-table td {
-      padding: 6px 8px;
-      white-space: nowrap;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
-  }
-  /* ========= GUIDELINES BEAUTIFIED ========= */
-  .guidelines-wrapper {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .guidelines-section-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 6px 8px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
-  }
-  .guidelines-section-pill {
-    border-radius: 999px;
-    border: 1px solid transparent;
-    padding: 5px 11px;
-    font-size: 0.78rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    color: var(--muted);
-    background: rgba(15, 23, 42, 0.9);
-    transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast),
-      box-shadow var(--transition-fast);
-  }
-  .guidelines-section-pill span {
-    font-size: 0.85rem;
-  }
-  .guidelines-section-pill:hover {
-    color: var(--heading);
-    border-color: rgba(148, 163, 184, 0.65);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
-    transform: translateY(-1px);
-  }
-  .guidelines-section-pill.active {
-    background: radial-gradient(
-      circle at top left,
-      rgba(34, 211, 238, 0.35),
-      rgba(15, 23, 42, 0.98)
-    );
-    border-color: rgba(34, 211, 238, 0.9);
-    color: var(--heading);
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
-  }
-  .guidelines-sections-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  @media (min-width: 900px) {
-    .guidelines-sections-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  .guideline-card {
-    position: relative;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.65);
-    background:
-      radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.92);
-    padding: 14px 14px 12px;
-    overflow: hidden;
-    transition:
-      transform 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      border-color 0.18s ease-out,
-      background 0.18s ease-out;
-  }
-  .guideline-card::after {
-    content: "";
-    position: absolute;
-    inset: auto -40% -60px auto;
-    height: 160px;
-    background: radial-gradient(circle at bottom, rgba(56, 189, 248, 0.4), transparent 70%);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-out;
-  }
-  .guideline-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: var(--accent);
-    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.96);
-    background:
-      radial-gradient(circle at top left, rgba(34, 211, 238, 0.28), rgba(15, 23, 42, 0.98));
-  }
-  .guideline-card:hover::after {
-    opacity: 1;
-  }
-  .guideline-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .guideline-card-icon {
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.6), rgba(15, 23, 42, 0.95));
-    border: 1px solid rgba(56, 189, 248, 0.7);
-    box-shadow: 0 10px 25px rgba(8, 47, 73, 0.9);
-    font-size: 0.95rem;
-  }
-  .guideline-card-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--heading);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .guideline-list {
-    list-style: none;
-    margin: 6px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .guideline-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 6px;
-    align-items: flex-start;
-    font-size: 0.83rem;
-    color: #e5e7eb;
-  }
-  .guideline-item-bullet {
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.8);
-    color: #e5f0ff;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-  }
-  .guideline-item-text {
-    line-height: 1.4;
-  }
-  .guideline-card-tag {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(148, 163, 184, 0.9);
-  }
-  /* ========= LEARNING CENTER THEME ========= */
-  #view-learning {
-    position: relative;
-    padding: 10px;
-    border-radius: 18px;
-    background:
-      radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
-      radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
-      repeating-linear-gradient(
-        0deg,
-        #1b2b34,
-        #1b2b34 2px,
-        #18252d 2px,
-        #18252d 4px
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at center,
+        rgba(0, 0, 0, 0) 40%,
+        rgba(0, 0, 0, 0.35) 100%
       );
-    animation: chalkBoardGlow 8s ease-in-out infinite alternate;
-  }
-  @keyframes chalkBoardGlow {
-    0% { box-shadow: 0 0 0 rgba(254, 240, 138, 0.0); }
-    50% { box-shadow: 0 0 28px rgba(254, 240, 138, 0.3); }
-    100% { box-shadow: 0 0 12px rgba(254, 240, 138, 0.1); }
-  }
-  #view-learning .glass-panel {
-    background: rgba(15, 23, 42, 0.9);
-    border-radius: 18px;
-    border: 1px solid rgba(254, 240, 138, 0.7);
-    box-shadow: 0 14px 34px rgba(0,0,0,0.85);
-  }
-  .chalk-write {
-    font-family: "Courier New", monospace;
-    color: #f8fafc;
-    font-size: 1.6rem;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-    overflow: hidden;
-    border-right: 3px solid #f8fafc;
-    animation: chalkWrite 2.8s steps(35) forwards;
-  }
-  @keyframes chalkWrite {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-  .chalk-dust {
-    margin-top: 4px;
-    font-size: 0.8rem;
-    color: rgba(248, 250, 252, 0.5);
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: dustFade 3.4s ease-out forwards;
-  }
-  @keyframes dustFade {
-    0% { opacity: 0; transform: translateY(0); }
-    60% { opacity: 0.4; transform: translateY(-2px); }
-    100% { opacity: 0; transform: translateY(-4px); }
-  }
-  .learning-center-card {
-    position: relative;
-    background: #1b2b34;
-    border-radius: 16px;
-    padding: 18px 16px;
-    color: #f8fafc;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-    cursor: pointer;
-    overflow: hidden;
-    border: 3px solid #8b5a2b;
-    transition:
-      transform 0.2s ease-out,
-      box-shadow 0.2s ease-out,
-      border-color 0.2s ease-out;
-  }
-  .learning-center-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.8);
-    border-color: #facc15;
-  }
-  .learning-center-card:hover .chalk-write {
-    animation: chalkSqueak 0.35s ease-in-out;
-  }
-  @keyframes chalkSqueak {
-    0% { transform: rotate(0deg); }
-    20% { transform: rotate(1deg); }
-    60% { transform: rotate(-1deg); }
-    100% { transform: rotate(0deg); }
-  }
-  .chalk-icon {
-    font-size: 1.8rem;
-    filter: drop-shadow(0 0 3px rgba(255,255,255,0.45));
-    margin-right: 6px;
-  }
-  .learning-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
-    margin-top: 12px;
-  }
-  .track-card {
-    background: rgba(15, 23, 42, 0.95);
-    border-radius: 14px;
-    border: 1px solid rgba(148,163,184,0.7);
-    padding: 12px 12px 10px;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.8);
-  }
-  .track-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .track-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #fef3c7;
-  }
-  .track-badge {
-    font-size: 0.73rem;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(254, 240, 138, 0.8);
-    color: #fef3c7;
-  }
-  .track-desc {
-    margin-top: 4px;
-    font-size: 0.8rem;
-    color: #e5e7eb;
-  }
-  .track-progress-bar {
-    margin-top: 8px;
-    width: 100%;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(31, 41, 55, 0.9);
-    overflow: hidden;
-  }
-  .track-progress-fill {
-    height: 100%;
-    width: 0%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #facc15, #38bdf8);
-    transition: width 0.3s ease-out;
-  }
-  .track-progress-text {
-    margin-top: 4px;
-    font-size: 0.78rem;
-    color: #e5e7eb;
-  }
-  .quiz-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-    margin-top: 10px;
-  }
-  .quiz-card {
-    background: rgba(17, 24, 39, 0.95);
-    border-radius: 14px;
-    border: 1px solid rgba(96, 165, 250, 0.7);
-    padding: 10px 12px;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.8);
-  }
-  .quiz-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  .quiz-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #bfdbfe;
-  }
-  .quiz-chip {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: rgba(37, 99, 235, 0.15);
-    border: 1px solid rgba(59, 130, 246, 0.9);
-    color: #dbeafe;
-  }
-  .quiz-progress-badge {
-    margin-top: 4px;
-    font-size: 0.78rem;
-    color: #bbf7d0;
-  }
-  .quiz-start-btn {
-    margin-top: 8px;
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    border-radius: 999px;
-    border: 1px solid rgba(96, 165, 250, 0.8);
-    background: linear-gradient(135deg, #38bdf8, #3b82f6);
-    color: #020617;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.7);
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-  }
-  .quiz-start-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 28px rgba(59, 130, 246, 0.9);
-  }
-  #quizContainer {
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(148, 163, 184, 0.4);
-  }
-  .quiz-question {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.6);
-  }
-  .quiz-q-text {
-    font-size: 0.9rem;
-    color: #e5e7eb;
-    margin-bottom: 6px;
-  }
-  .quiz-options {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .quiz-option-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    color: #e5e7eb;
-    cursor: pointer;
-  }
-  .quiz-submit-btn {
-    margin-top: 12px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    border-radius: 999px;
-    border: 1px solid rgba(74, 222, 128, 0.8);
-    background: linear-gradient(135deg, #22c55e, #65a30d);
-    color: #020617;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 10px 26px rgba(22, 163, 74, 0.9);
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-  }
-  .quiz-submit-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.96);
-  }
-  .quiz-result {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  .quiz-result.pass {
-    color: #bbf7d0;
-  }
-  .quiz-result.fail {
-    color: #fecaca;
-  }
-  .learning-tabs {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding-bottom: 4px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.95);
-    margin-top: 8px;
-  }
-  .learning-tab {
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid transparent;
-    color: #e5e7eb;
-    font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      color 0.18s ease-out,
-      background 0.18s ease-out,
-      border-color 0.18s ease-out,
-      box-shadow 0.18s ease-out,
-      transform 0.18s ease-out;
-  }
-  .learning-tab:hover {
-    color: #f9fafb;
-    background: rgba(15, 23, 42, 0.98);
-    border-color: rgba(148, 163, 184, 0.5);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-    transform: translateY(-1px);
-  }
-  .learning-tab.active {
-    color: #fef3c7;
-    background: radial-gradient(
-      circle at top left,
-      rgba(254, 240, 138, 0.35),
-      rgba(15, 23, 42, 0.98)
-    );
-    border-color: rgba(254, 240, 138, 0.9);
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
-  }
-
-  /* ========= MOBILE TUNING ========= */
-  @media (max-width: 480px) {
+      z-index: 0;
+    }
     .app-shell {
-      padding: 8px;
-      align-items: stretch;
+      width: 100%;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
     }
     .app-inner {
-      padding: 14px 12px 10px;
-      border-radius: 16px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8);
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px 20px 14px;
+      margin: 0 auto;
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.98),
+        rgba(15, 23, 42, 0.9)
+      );
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+    .hidden { display: none !important; }
+    button { font-family: inherit; }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: right;
+      border-top: 1px solid rgba(15, 23, 42, 0.95);
+      padding-top: 6px;
+    }
+
+    /* ========= SPLASH + LOGO UNDERGLOW ========= */
+    .splash-root {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .splash-logo-wrapper {
+      position: relative;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
     }
     .splash-logo-img {
-      width: 170px;
+      width: 240px;
+      height: auto;
+      display: block;
+      filter:
+        drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9))
+        drop-shadow(0 0 35px rgba(34, 211, 238, 0.6));
+      transition:
+        transform 0.32s ease-out,
+        filter 0.32s ease-out;
+      position: relative;
+      z-index: 2;
+    }
+    .splash-logo-wrapper:hover .splash-logo-img,
+    .splash-logo-wrapper:focus-visible .splash-logo-img {
+      transform: translateY(-3px) scale(1.03);
+      filter:
+        drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
+        drop-shadow(0 0 40px rgba(34, 211, 238, 0.9));
+    }
+    .splash-logo-wrapper::before,
+    .splash-logo-wrapper::after {
+      content: "";
+      position: absolute;
+      bottom: -18px;
+      width: 260px;
+      height: 80px;
+      border-radius: 50%;
+      transform-origin: center;
+      pointer-events: none;
+      filter: blur(20px);
+      z-index: 1;
+    }
+    .splash-logo-wrapper::before {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(56,189,248,0.65), transparent 60%),
+        radial-gradient(circle at 30% 20%, rgba(34,211,238,0.9), transparent 55%);
+      opacity: 0.8;
+      animation: pulseUnderglow 2.4s ease-in-out infinite;
+    }
+    .splash-logo-wrapper::after {
+      background:
+        radial-gradient(circle at 70% 20%, rgba(59,130,246,0.9), transparent 60%),
+        radial-gradient(circle at 50% 0%, rgba(8,47,73,0.9), transparent 70%);
+      opacity: 0.5;
+      animation: pulseUnderglowAlt 3.1s ease-in-out infinite;
+    }
+    @keyframes pulseUnderglow {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-4px) scale(1.08); opacity: 1; }
+    }
+    @keyframes pulseUnderglowAlt {
+      0%, 100% { transform: translateY(0) scale(0.95); opacity: 0.5; }
+      50% { transform: translateY(-2px) scale(1.05); opacity: 0.85; }
     }
     .splash-subtitle {
-      font-size: 0.8rem;
-      letter-spacing: 0.14em;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
     .splash-helper {
-      font-size: 0.7rem;
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    /* Fade transitions */
+    .splash-fade-out {
+      animation: splashFadeOut 0.7s ease-out forwards;
+    }
+    .login-fade-in {
+      animation: loginFadeIn 0.7s ease-in forwards;
+    }
+    @keyframes splashFadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes loginFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .logo-tap .splash-logo-img {
+      animation: logoPulse 0.4s ease-out;
+    }
+    @keyframes logoPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* ========= LOGIN ========= */
+    .login-root {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
     }
     .login-card {
-      padding: 16px 14px;
-      max-width: 100%;
-      border-radius: 18px;
-    }
-    .login-title {
-      font-size: 1.05rem;
-    }
-    .login-subtitle {
-      font-size: 0.75rem;
-    }
-    .form-input,
-    .form-select {
-      font-size: 0.85rem;
-      padding: 7px 10px;
-    }
-    .primary-button {
-      padding: 9px 14px;
-      font-size: 0.85rem;
-    }
-    .hub-header {
-      align-items: flex-start;
-    }
-    .hub-title {
-      font-size: 1.15rem;
-    }
-    .hub-subtitle {
-      font-size: 0.8rem;
-    }
-    .hub-user-pill {
       width: 100%;
-      text-align: left;
-      font-size: 0.75rem;
-      padding: 6px 10px;
-    }
-    .hub-grid {
+      max-width: 420px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
+      border-radius: 22px;
+      border: 1px solid var(--border-subtle);
+      padding: 22px 20px 18px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.96);
+      display: flex;
+      flex-direction: column;
       gap: 10px;
+      align-items: center;
     }
-    .hub-card,
-    .learning-center-card {
-      padding: 14px 12px;
-      border-radius: 14px;
-    }
-    .hub-card-title {
-      font-size: 1.05rem;
-    }
-    .hub-card-subtitle {
-      font-size: 0.8rem;
-    }
-    .hub-card-tagline {
-      font-size: 0.75rem;
-    }
-    .module-header {
-      gap: 6px;
-    }
-    .module-logo {
+    .login-logo-small {
       width: 64px;
       height: 64px;
       border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      object-fit: cover;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
     }
-    .module-title {
-      font-size: 1.1rem;
-      letter-spacing: 0.08em;
-    }
-    .module-subtitle {
-      font-size: 0.8rem;
-      padding: 0 4px;
-    }
-    .module-tabs,
-    .learning-tabs {
-      gap: 6px;
-    }
-    .module-tab,
-    .learning-tab {
-      padding: 6px 10px;
-      font-size: 0.78rem;
-    }
-    .glass-panel {
-      padding: 10px;
-      border-radius: 12px;
-    }
-    .section-title {
-      font-size: 1rem;
-    }
-    .section-subtitle {
-      font-size: 0.78rem;
-    }
-    .controls {
-      padding: 10px;
-      gap: 8px;
-    }
-    .search-input {
-      padding: 8px 30px;
-      font-size: 0.85rem;
-    }
-    .filter-group {
-      min-width: 120px;
-    }
-    .filter-input {
-      font-size: 0.78rem;
-      padding: 6px 8px;
-    }
-    .sku-card {
-      padding: 10px;
-    }
-    .sku-name {
-      font-size: 0.95rem;
-    }
-    .sku-meta {
-      font-size: 0.78rem;
-    }
-    .sku-year-pill {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-    }
-    .track-card,
-    .quiz-card,
-    .pc-card {
-      padding: 10px;
-      border-radius: 12px;
-    }
-    .track-title,
-    .quiz-title,
-    .pc-card-title {
-      font-size: 0.9rem;
-    }
-    .track-desc,
-    .quiz-progress-badge,
-    .pc-card-subtitle {
-      font-size: 0.78rem;
-    }
-    .chalk-write {
+    .login-title {
+      text-align: center;
       font-size: 1.2rem;
-      white-space: normal;
-      border-right: none;
+      font-weight: 600;
+      color: var(--heading);
+      margin-top: 6px;
     }
-    .chalk-dust {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-    }
-    .guideline-card {
-      padding: 12px 10px;
-      border-radius: 14px;
-    }
-    .guideline-item {
+    .login-subtitle {
+      text-align: center;
       font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
-    .popup-backdrop {
-      padding: 14px 8px;
-      align-items: center;
-    }
-    .popup {
-      padding: 16px 14px 12px;
-      max-width: 100%;
-      border-radius: 16px;
-    }
-    .popup-image {
-      max-height: 180px;
-    }
-    .popup-close {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
       width: 100%;
-      text-align: center;
     }
-    .footer {
-      font-size: 0.7rem;
-      text-align: center;
+    .form-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-  }
+    .form-input,
+    .form-select {
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.97);
+      color: var(--text);
+      padding: 8px 11px;
+      font-size: 0.9rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+      width: 100%;
+    }
+    .form-input::placeholder {
+      color: #6b7280;
+    }
+    .primary-button {
+      margin-top: 8px;
+      width: 100%;
+      background: radial-gradient(circle at top left, var(--accent-strong), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 14px 36px rgba(37, 99, 235, 0.82);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition:
+        transform 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        filter 0.15s ease-out;
+    }
+    .primary-button:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 18px 42px rgba(59, 130, 246, 0.96);
+    }
+    .login-error {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #fecaca;
+      text-align: center;
+      min-height: 1.1em;
+    }
 
-  @media (max-width: 768px) {
-    .app-shell {
-      padding: 10px;
-    }
-    .app-inner {
-      max-width: 100%;
+    /* ========= HUB ========= */
+    .hub-root {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
     .hub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .hub-title-block {
+      display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      gap: 2px;
+    }
+    .hub-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .hub-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .hub-user-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
     }
     .hub-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    @media (min-width: 800px) {
+      .hub-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+    .hub-card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.97));
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.9);
+      padding: 18px 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+    .hub-card::after {
+      content: "";
+      position: absolute;
+      inset: 40% -30% auto auto;
+      height: 120px;
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.4), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+      pointer-events: none;
+    }
+    .hub-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.94);
+    }
+    .hub-card:hover::after {
+      opacity: 1;
+    }
+    .hub-card-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #bae6fd;
+      margin-bottom: 4px;
+    }
+    .hub-card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .hub-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+    .hub-card-tagline {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ========= MODULES ========= */
+    .module-root {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .module-back-btn {
+      align-self: flex-start;
+      margin-bottom: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+    .module-back-btn:hover {
+      background: rgba(15, 23, 42, 1);
+      color: var(--heading);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+    .module-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .module-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9);
+      object-fit: cover;
+      background: rgba(15, 23, 42, 0.96);
+    }
+    .module-title {
+      margin-top: 6px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--heading);
+    }
+    .module-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .module-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+      margin-top: 6px;
+    }
+    .module-tab {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        color var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+    .module-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+      transform: translateY(-1px);
+    }
+    .module-tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.32), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+    }
+    .module-content { margin-top: 10px; }
+
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .glass-panel {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    /* ========= HPA INNER TABS ========= */
+    .section-inner-tabs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+    .section-inner-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+    .section-inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.4);
+      transform: translateY(-1px);
+    }
+    .section-inner-tab.active {
+      color: var(--heading);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.8);
+    }
+    .section-inner-content { margin-top: 10px; }
+
+    .inner-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .inner-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+    .inner-tab:hover {
+      color: var(--heading);
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      transform: translateY(-1px);
+    }
+    .inner-tab.active {
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+      border-color: rgba(34, 211, 238, 0.9);
+      color: var(--heading);
+    }
+    .inner-content { margin-top: 6px; }
+
+    /* ========= PRODUCT / CARE / POPUP styles ========= */
+    .controls {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+    @media (min-width: 900px) {
+      .controls { flex-direction: row; align-items: center; }
+    }
+    .search-wrapper { flex: 2; position: relative; }
+    .search-input {
+      width: 100%;
+      padding: 10px 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
+    .search-input::placeholder { color: #64748b; }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+    .filters {
+      flex: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      gap: 3px;
+    }
+    .filter-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .filter-input {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.92);
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .results-header strong { color: var(--heading); }
+    .sku-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
       grid-template-columns: 1fr;
     }
-    .controls {
+    @media (min-width: 600px) {
+      .sku-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1000px) {
+      .sku-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .sku-card {
+      position: relative;
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+    .sku-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+    .sku-year-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+    .sku-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #e5f0ff;
+    }
+    .sku-meta {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .empty-state {
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    .order-table-wrapper {
+      background: var(--card-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      margin-top: 10px;
+      backdrop-filter: blur(16px);
+    }
+    .order-table-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--heading);
+    }
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      color: var(--text);
+      overflow: hidden;
+      border-radius: var(--radius-md);
+    }
+    .order-table th {
+      text-align: left;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.96);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-soft);
+      color: #cbd5f5;
+    }
+    .order-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e8f2ff;
+    }
+    .order-table tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.85);
+    }
+    .order-table tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.75);
+    }
+    .order-table tr:hover {
+      background: rgba(34, 211, 238, 0.12);
+      transition: 0.2s;
+    }
+    .status-highlight {
+      background: #facc15;
+      color: #111827;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    .order-details-toggle {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.3), rgba(15, 23, 42, 1));
+      color: #0f172a;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(34, 211, 238, 0.9);
+      padding: 7px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition:
+        background 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        transform 0.18s ease-out;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.45);
+    }
+    .order-details-toggle:hover {
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      border-color: #38bdf8;
+      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.7);
+      transform: translateY(-1px);
+      color: #020617;
+    }
+    .order-details-panel { margin-top: 14px; }
+
+    .order-breakdown-wrapper {
+      margin-top: 6px;
+      display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: center;
+      gap: 16px;
+    }
+    .ob-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 700px;
+    }
+    .ob-week-box,
+    .ob-grades-box {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.7);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      text-align: center;
+      color: #e5f0ff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+    .ob-week-box {
+      max-width: 380px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .ob-grades-box {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+    }
+    @media (min-width: 640px) {
+      .ob-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .ob-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+      min-height: 90px;
+    }
+    .ob-box-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+    .ob-box-body {
+      white-space: pre-line;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    .pc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .pc-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .pc-search-wrapper {
+      position: relative;
+      max-width: 360px;
+    }
+    .pc-search-input {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+    .pc-search-input::placeholder { color: #64748b; }
+    .pc-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #64748b;
+      pointer-events: none;
+    }
+    .pc-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 640px) {
+      .pc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1000px) {
+      .pc-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .pc-card {
+      background: var(--card-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out;
+      backdrop-filter: blur(14px);
+    }
+    .pc-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.25), rgba(15, 23, 42, 0.98));
+    }
+    .pc-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--heading);
+    }
+    .pc-card-subtitle {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .popup-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-soft);
+    }
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 50;
+      padding: 24px 16px 16px;
+      backdrop-filter: blur(8px);
+      overflow-y: auto;
+    }
+    .popup {
+      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
+      padding: 20px 20px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+    .popup h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--heading);
+    }
+    .popup-section-title {
+      font-weight: 600;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--heading);
+    }
+    .popup-text {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-top: 2px;
+    }
+    .popup-close {
+      margin-top: 16px;
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color: #020617;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.7);
+      transition:
+        transform 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        filter 0.15s ease-out;
+    }
+    .popup-close:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(59, 130, 246, 0.9);
+    }
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    @media (max-width: 600px) {
+      .order-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .order-table {
+        min-width: 520px;
+        font-size: 0.75rem;
+      }
+      .order-table th,
+      .order-table td {
+        padding: 6px 8px;
+        white-space: nowrap;
+      }
+    }
+
+    /* ========= GUIDELINES BEAUTIFIED ========= */
+    .guidelines-wrapper {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .guidelines-section-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+    }
+    .guidelines-section-pill {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 5px 11px;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+    }
+    .guidelines-section-pill span {
+      font-size: 0.85rem;
+    }
+    .guidelines-section-pill:hover {
+      color: var(--heading);
+      border-color: rgba(148, 163, 184, 0.65);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+      transform: translateY(-1px);
+    }
+    .guidelines-section-pill.active {
+      background: radial-gradient(
+        circle at top left,
+        rgba(34, 211, 238, 0.35),
+        rgba(15, 23, 42, 0.98)
+      );
+      border-color: rgba(34, 211, 238, 0.9);
+      color: var(--heading);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
+    }
+    .guidelines-sections-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 900px) {
+      .guidelines-sections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    .guideline-card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.92);
+      padding: 14px 14px 12px;
+      overflow: hidden;
+      transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        background 0.18s ease-out;
+    }
+    .guideline-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40% -60px auto;
+      height: 160px;
+      background: radial-gradient(circle at bottom, rgba(56, 189, 248, 0.4), transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+    }
+    .guideline-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.96);
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.28), rgba(15, 23, 42, 0.98));
+    }
+    .guideline-card:hover::after {
+      opacity: 1;
+    }
+    .guideline-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .guideline-card-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.6), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      box-shadow: 0 10px 25px rgba(8, 47, 73, 0.9);
+      font-size: 0.95rem;
+    }
+    .guideline-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--heading);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .guideline-list {
+      list-style: none;
+      margin: 6px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .guideline-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px;
+      align-items: flex-start;
+      font-size: 0.83rem;
+      color: #e5e7eb;
+    }
+    .guideline-item-bullet {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: #e5f0ff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+    .guideline-item-text {
+      line-height: 1.4;
+    }
+    .guideline-card-tag {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    /* ========= LEARNING CENTER THEME ========= */
+    #view-learning {
+      position: relative;
+      padding: 10px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          #1b2b34,
+          #1b2b34 2px,
+          #18252d 2px,
+          #18252d 4px
+        );
+      animation: chalkBoardGlow 8s ease-in-out infinite alternate;
+    }
+    @keyframes chalkBoardGlow {
+      0% { box-shadow: 0 0 0 rgba(254, 240, 138, 0.0); }
+      50% { box-shadow: 0 0 28px rgba(254, 240, 138, 0.3); }
+      100% { box-shadow: 0 0 12px rgba(254, 240, 138, 0.1); }
+    }
+    #view-learning .glass-panel {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(254, 240, 138, 0.7);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.85);
+    }
+    .chalk-write {
+      font-family: "Courier New", monospace;
+      color: #f8fafc;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid #f8fafc;
+      animation: chalkWrite 2.8s steps(35) forwards;
+    }
+    @keyframes chalkWrite {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    .chalk-dust {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: rgba(248, 250, 252, 0.5);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: dustFade 3.4s ease-out forwards;
+    }
+    @keyframes dustFade {
+      0% { opacity: 0; transform: translateY(0); }
+      60% { opacity: 0.4; transform: translateY(-2px); }
+      100% { opacity: 0; transform: translateY(-4px); }
+    }
+    .learning-center-card {
+      position: relative;
+      background: #1b2b34;
+      border-radius: 16px;
+      padding: 18px 16px;
+      color: #f8fafc;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+      cursor: pointer;
+      overflow: hidden;
+      border: 3px solid #8b5a2b;
+      transition:
+        transform 0.2s ease-out,
+        box-shadow 0.2s ease-out,
+        border-color 0.2s ease-out;
+    }
+    .learning-center-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+      border-color: #facc15;
+    }
+    .learning-center-card:hover .chalk-write {
+      animation: chalkSqueak 0.35s ease-in-out;
+    }
+    @keyframes chalkSqueak {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(1deg); }
+      60% { transform: rotate(-1deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    .chalk-icon {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 3px rgba(255,255,255,0.45));
+      margin-right: 6px;
     }
     .learning-grid {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
     }
+
+    .track-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 12px 12px 10px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.8);
+    }
+    .track-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .track-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fef3c7;
+    }
+    .track-badge {
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(254, 240, 138, 0.8);
+      color: #fef3c7;
+    }
+    .track-desc {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+    .track-progress-bar {
+      margin-top: 8px;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+    }
+    .track-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #facc15, #38bdf8);
+      transition: width 0.3s ease-out;
+    }
+    .track-progress-text {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #e5e7eb;
+    }
+
     .quiz-list {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
     }
-  }
+    .quiz-card {
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(96, 165, 250, 0.7);
+      padding: 10px 12px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.8);
+    }
+    .quiz-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .quiz-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #bfdbfe;
+    }
+    .quiz-chip {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.9);
+      color: #dbeafe;
+    }
+    .quiz-progress-badge {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #bbf7d0;
+    }
+    .quiz-start-btn {
+      margin-top: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 165, 250, 0.8);
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      color: #020617;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.7);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .quiz-start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(59, 130, 246, 0.9);
+    }
 
-  @media (max-width: 600px) {
-    .order-table-wrapper::after {
-      content: "Swipe left/right to see all columns →";
-      display: block;
-      margin-top: 6px;
+    #quizContainer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    .quiz-question {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+    .quiz-q-text {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      margin-bottom: 6px;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .quiz-option-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+    .quiz-submit-btn {
+      margin-top: 12px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, 0.8);
+      background: linear-gradient(135deg, #22c55e, #65a30d);
+      color: #020617;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(22, 163, 74, 0.9);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .quiz-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(22, 163, 74, 0.96);
+    }
+    .quiz-result {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .quiz-result.pass { color: #bbf7d0; }
+    .quiz-result.fail { color: #fecaca; }
+
+    .learning-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+      margin-top: 8px;
+    }
+    .learning-tab {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid transparent;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        color 0.18s ease-out,
+        background 0.18s ease-out,
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        transform 0.18s ease-out;
+    }
+    .learning-tab:hover {
+      color: #f9fafb;
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(148, 163, 184, 0.5);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+      transform: translateY(-1px);
+    }
+    .learning-tab.active {
+      color: #fef3c7;
+      background: radial-gradient(
+        circle at top left,
+        rgba(254, 240, 138, 0.35),
+        rgba(15, 23, 42, 0.98)
+      );
+      border-color: rgba(254, 240, 138, 0.9);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.95);
+    }
+
+    /* ========= LEARNING ENHANCEMENTS ========= */
+    .track-skills {
+      margin: 6px 0 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .track-skill-tag {
+      background: rgba(255,255,255,0.1);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      color: #fefce8;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .track-card-complete {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5), var(--shadow-soft);
+    }
+    .track-complete-pill {
+      margin-top: 4px;
       font-size: 0.72rem;
-      color: #9ca3af;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.2);
+      border: 1px solid rgba(22, 163, 74, 0.7);
+      color: #bbf7d0;
     }
-  }
+    .track-start-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      background: #334155;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s ease-out, transform 0.15s ease-out,
+        box-shadow 0.15s ease-out;
+    }
+    .track-start-btn:hover {
+      background: #1f2937;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+    }
 
-  @media (hover: none) {
-    .hub-card:active,
-    .learning-center-card:active,
-    .module-tab:active,
-    .learning-tab:active,
-    .sku-card:active,
-    .pc-card:active,
-    .primary-button:active,
-    .quiz-start-btn:active,
-    .quiz-submit-btn:active,
-    .popup-close:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-      filter: brightness(0.95);
+    .track-intro {
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.25), rgba(15, 23, 42, 0.98));
+      color: #e5e7eb;
+      font-size: 0.82rem;
     }
-  }
+    .track-intro-animate {
+      animation: trackIntroFade 0.35s ease-out;
+    }
+    .track-intro-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fef3c7;
+      margin-bottom: 4px;
+    }
+    .track-intro-skills {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .track-intro-skill {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+    @keyframes trackIntroFade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .recommendation-callout {
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.98));
+      color: #e5e7eb;
+      font-size: 0.8rem;
+    }
+    .recommendation-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #bae6fd;
+      margin-bottom: 3px;
+    }
+    .recommendation-btn {
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(59, 130, 246, 0.9);
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      color: #020617;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .recommendation-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.9);
+    }
+
+    /* Certified badge */
+    .cert-badge {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(34, 197, 94, 0.9);
+      background: radial-gradient(
+        circle at top left,
+        rgba(34, 197, 94, 0.35),
+        rgba(15, 23, 42, 0.98)
+      );
+      color: #bbf7d0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.8rem;
+      animation: certPop 0.4s ease-out;
+    }
+    .cert-badge-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .cert-badge-sub {
+      font-size: 0.78rem;
+    }
+    @keyframes certPop {
+      0% { transform: scale(0.9); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      top: -10px;
+      width: 6px;
+      height: 12px;
+      background: linear-gradient(
+        to bottom,
+        #facc15,
+        #22c55e,
+        #38bdf8,
+        #f97316,
+        #ec4899
+      );
+      opacity: 0.9;
+      border-radius: 2px;
+      animation: confettiFall 1.6s ease-out forwards;
+      z-index: 9999;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    /* Mobile tweaks for LC */
+    @media (max-width: 480px) {
+      #view-learning .module-header {
+        align-items: flex-start;
+        text-align: left;
+      }
+      #learningStats {
+        padding: 8px 10px;
+        border-radius: 12px;
+      }
+      #learningStatsBody {
+        font-size: 0.78rem;
+      }
+      .quiz-card {
+        padding: 10px;
+      }
+      .quiz-title {
+        font-size: 0.9rem;
+      }
+      .quiz-progress-badge {
+        font-size: 0.78rem;
+      }
+      .quiz-question {
+        padding: 8px;
+      }
+      .quiz-q-text {
+        font-size: 0.85rem;
+      }
+      .quiz-option-label {
+        font-size: 0.8rem;
+      }
+      .quiz-submit-btn {
+        width: 100%;
+        text-align: center;
+      }
+      .track-intro {
+        font-size: 0.78rem;
+      }
+      .recommendation-callout {
+        font-size: 0.78rem;
+      }
+      .cert-badge {
+        font-size: 0.78rem;
+        padding: 7px 10px;
+      }
+    }
+
+    /* ========= MOBILE FIRST TUNING ========= */
+    @media (max-width: 480px) {
+      .app-shell {
+        padding: 8px;
+        align-items: stretch;
+      }
+      .app-inner {
+        padding: 14px 12px 10px;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8);
+      }
+      .splash-logo-img {
+        width: 170px;
+      }
+      .splash-subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 0.14em;
+      }
+      .splash-helper {
+        font-size: 0.7rem;
+      }
+      .login-card {
+        padding: 16px 14px;
+        max-width: 100%;
+        border-radius: 18px;
+      }
+      .login-title {
+        font-size: 1.05rem;
+      }
+      .login-subtitle {
+        font-size: 0.75rem;
+      }
+      .form-input,
+      .form-select {
+        font-size: 0.85rem;
+        padding: 7px 10px;
+      }
+      .primary-button {
+        padding: 9px 14px;
+        font-size: 0.85rem;
+      }
+      .hub-header {
+        align-items: flex-start;
+      }
+      .hub-title {
+        font-size: 1.15rem;
+      }
+      .hub-subtitle {
+        font-size: 0.8rem;
+      }
+      .hub-user-pill {
+        width: 100%;
+        text-align: left;
+        font-size: 0.75rem;
+        padding: 6px 10px;
+      }
+      .hub-grid {
+        gap: 10px;
+      }
+      .hub-card,
+      .learning-center-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+      }
+      .hub-card-title {
+        font-size: 1.05rem;
+      }
+      .hub-card-subtitle {
+        font-size: 0.8rem;
+      }
+      .hub-card-tagline {
+        font-size: 0.75rem;
+      }
+      .module-header { gap: 6px; }
+      .module-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+      }
+      .module-title {
+        font-size: 1.1rem;
+        letter-spacing: 0.08em;
+      }
+      .module-subtitle {
+        font-size: 0.8rem;
+        padding: 0 4px;
+      }
+      .module-tabs,
+      .learning-tabs {
+        gap: 6px;
+      }
+      .module-tab,
+      .learning-tab {
+        padding: 6px 10px;
+        font-size: 0.78rem;
+      }
+      .glass-panel {
+        padding: 10px;
+        border-radius: 12px;
+      }
+      .section-title {
+        font-size: 1rem;
+      }
+      .section-subtitle {
+        font-size: 0.78rem;
+      }
+      .controls {
+        padding: 10px;
+        gap: 8px;
+      }
+      .search-input {
+        padding: 8px 30px 8px 30px;
+        font-size: 0.85rem;
+      }
+      .filter-group {
+        min-width: 120px;
+      }
+      .filter-input {
+        font-size: 0.78rem;
+        padding: 6px 8px;
+      }
+      .sku-card {
+        padding: 10px;
+      }
+      .sku-name {
+        font-size: 0.95rem;
+      }
+      .sku-meta {
+        font-size: 0.78rem;
+      }
+      .sku-year-pill {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+      }
+      .popup-backdrop {
+        padding: 14px 8px;
+        align-items: center;
+      }
+      .popup {
+        padding: 16px 14px 12px;
+        max-width: 100%;
+        border-radius: 16px;
+      }
+      .popup-image {
+        max-height: 180px;
+      }
+      .popup-close {
+        width: 100%;
+        text-align: center;
+      }
+      .footer {
+        font-size: 0.7rem;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        padding: 10px;
+      }
+      .app-inner {
+        max-width: 100%;
+      }
+      .hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hub-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .learning-grid {
+        grid-template-columns: 1fr;
+      }
+      .quiz-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Orders table swipe hint */
+    @media (max-width: 600px) {
+      .order-table-wrapper::after {
+        content: "Swipe left/right to see all columns →";
+        display: block;
+        margin-top: 6px;
+        font-size: 0.72rem;
+        color: #9ca3af;
+      }
+    }
+
+    /* Better tap feedback on touch devices */
+    @media (hover: none) {
+      .hub-card:active,
+      .learning-center-card:active,
+      .module-tab:active,
+      .learning-tab:active,
+      .sku-card:active,
+      .pc-card:active,
+      .primary-button:active,
+      .quiz-start-btn:active,
+      .quiz-submit-btn:active,
+      .popup-close:active,
+      .track-start-btn:active,
+      .recommendation-btn:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+        filter: brightness(0.95);
+      }
+    }
+
+    /* ========= MOBILE BOTTOM NAV ========= */
+    .mobile-nav {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      height: 52px;
+      background: rgba(15, 23, 42, 0.96);
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 40;
+    }
+    .mobile-nav-item {
+      background: transparent;
+      border: none;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+    .mobile-nav-item:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
+    }
+    .mobile-nav-item-active {
+      color: #facc15;
+    }
+    @media (max-width: 768px) {
+      .mobile-nav {
+        display: flex;
+      }
+      .app-shell {
+        padding-bottom: 60px;
+      }
+    }
+
   </style>
 </head>
 <body>
   <main class="app-shell">
     <div class="app-inner">
+
       <!-- ========= SPLASH ========= -->
       <section id="view-splash" class="splash-root">
         <div
@@ -1789,19 +2040,20 @@
           tabindex="0"
           aria-label="Enter Hampshire Farms Hub"
         >
-          <img src="hf_logo.png" alt="Hampshire Farms Logo" class="splash-logo-img" />
+          <img src="hf_logo.png" class="splash-logo-img" alt="HF Logo" />
         </div>
         <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
-        <div class="splash-helper">Click the logo or press Enter to enter</div>
+        <div class="splash-helper">Click the logo or press Enter to begin</div>
       </section>
 
       <!-- ========= LOGIN ========= -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
-          <img src="hf_logo.png" alt="HF Logo" class="login-logo-small" />
+          <img src="hf_logo.png" class="login-logo-small" />
+
           <div class="login-title">HF Hub Login</div>
           <div class="login-subtitle">
-            Select your role and sign in to access HF, HPA &amp; Admin tools.
+            Choose your role and sign in to access all HF & HPA tools.
           </div>
 
           <div class="form-group">
@@ -1832,20 +2084,19 @@
           <button id="loginButton" class="primary-button" type="button">
             Enter Hub
           </button>
+
           <div id="loginError" class="login-error"></div>
         </div>
       </section>
 
-      <!-- ========= HUB (MAIN DASHBOARD) ========= -->
+      <!-- ========= HUB DASHBOARD ========= -->
       <section id="view-hub" class="hub-root hidden">
         <header class="hub-header">
           <div class="hub-title-block">
             <div class="hub-title">Hampshire Farms Hub</div>
-            <div class="hub-subtitle">Choose a program area to continue.</div>
+            <div class="hub-subtitle">Select a module to continue.</div>
           </div>
-          <div id="hubUserInfo" class="hub-user-pill">
-            Role: — • User: —
-          </div>
+          <div id="hubUserInfo" class="hub-user-pill">Role: — • User: —</div>
         </header>
 
         <!-- Weather Widget -->
@@ -1860,16 +2111,17 @@
         </div>
 
         <section class="hub-grid">
+
           <button id="hubCardHF" class="hub-card" type="button">
             <div>
               <div class="hub-card-label">Outdoor Perennials</div>
               <div class="hub-card-title">HF</div>
               <div class="hub-card-subtitle">
-                Guidelines &amp; care for HF outdoor perennial programs.
+                Outdoor perennial guidelines & care.
               </div>
             </div>
             <div class="hub-card-tagline">
-              🌱 Spring programs • 🌼 Color • 🌿 Floor performance
+              🌱 Programs • 🌼 Color • 🌿 Quality
             </div>
           </button>
 
@@ -1878,219 +2130,160 @@
               <div class="hub-card-label">Houseplants</div>
               <div class="hub-card-title">HPA</div>
               <div class="hub-card-subtitle">
-                Guidelines, product info &amp; care for houseplant programs.
+                Houseplant guidelines, SKUs, care library & pests.
               </div>
             </div>
             <div class="hub-card-tagline">
-              🪴 Foliage • Blooming • Specialty • Racks &amp; PODs
+              🪴 Foliage • Blooming • Specialty
             </div>
           </button>
 
           <button id="hubCardAdmin" class="hub-card" type="button">
             <div>
-              <div class="hub-card-label">Back-End</div>
+              <div class="hub-card-label">Admin Tools</div>
               <div class="hub-card-title">ADMIN</div>
               <div class="hub-card-subtitle">
-                Store checks, audits, training, AIR, maps &amp; district tools.
+                Audits, AIR, and district tools.
               </div>
             </div>
             <div class="hub-card-tagline">
-              📋 Store health • 🧠 Training • 🗺️ Coverage &amp; mapping
+              📋 Oversight • 🧠 Training Tools
             </div>
           </button>
 
-          <!-- Learning Center Card -->
           <button id="hubCardLearning" class="learning-center-card" type="button">
             <div class="chalk-write">📘 Learning Center</div>
             <div class="chalk-dust">•••</div>
             <div style="margin-top:8px; color:#fde047; font-size:0.85rem;">
-              Fun training, videos, guides &amp; quizzes.
+              Learn, train, level up.
             </div>
           </button>
+
         </section>
       </section>
 
       <!-- ========= HF MODULE ========= -->
       <section id="view-hf" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
+        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+
         <header class="module-header">
-          <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
+          <img src="hf_logo.png" class="module-logo" />
           <div class="module-title">HF</div>
-          <div class="module-subtitle">Outdoor Perennials • Guidelines &amp; Care</div>
+          <div class="module-subtitle">Outdoor Perennials</div>
         </header>
 
         <nav class="module-tabs">
-          <button class="module-tab active" data-module="hf" data-tab="guidelines">
-            Guidelines
-          </button>
-          <button class="module-tab" data-module="hf" data-tab="care">
-            Care &amp; Identification
-          </button>
+          <button class="module-tab active" data-module="hf" data-tab="guidelines">Guidelines</button>
+          <button class="module-tab" data-module="hf" data-tab="care">Care & ID</button>
         </nav>
 
         <section class="module-content">
           <div id="hf-guidelines" class="glass-panel">
             <div class="section-title">HF Guidelines</div>
-            <p class="section-subtitle">
-              High-level guidelines for HF Outdoor Perennials. Content is loaded from
-              <code>hf_guidelines.csv</code>.
-            </p>
+            <p class="section-subtitle">Loaded from hf_guidelines.csv</p>
             <div id="hfGuidelinesContent"></div>
           </div>
 
           <div id="hf-care" class="glass-panel hidden">
-            <div class="section-title">HF Care &amp; Identification</div>
-            <p class="section-subtitle">
-              Add HF-specific care &amp; identification content here.
-            </p>
+            <div class="section-title">Care & Identification</div>
+            <p class="section-subtitle">Coming soon.</p>
           </div>
         </section>
       </section>
 
       <!-- ========= HPA MODULE ========= -->
       <section id="view-hpa" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
+        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+
         <header class="module-header">
-          <img src="hpa_logo.png" alt="HPA Logo" class="module-logo" />
+          <img src="hpa_logo.png" class="module-logo" />
           <div class="module-title">HPA</div>
-          <div class="module-subtitle">Houseplants • Guidelines, Product Info &amp; Care</div>
+          <div class="module-subtitle">Houseplants • Care • SKUs • Pests</div>
         </header>
 
         <nav class="module-tabs">
-          <button class="module-tab active" data-module="hpa" data-tab="guidelines">
-            Guidelines
-          </button>
-          <button
-            class="module-tab"
-            data-module="hpa"
-            data-tab="product"
-            data-min-role="Supervisor"
-          >
-            Product Info
-          </button>
-          <button class="module-tab" data-module="hpa" data-tab="care">
-            Care &amp; Identification
-          </button>
+          <button class="module-tab active" data-module="hpa" data-tab="guidelines">Guidelines</button>
+          <button class="module-tab" data-module="hpa" data-tab="product" data-min-role="Supervisor">Product Info</button>
+          <button class="module-tab" data-module="hpa" data-tab="care">Care & ID</button>
         </nav>
 
         <section class="module-content">
-          <!-- HPA GUIDELINES -->
+          <!-- Guidelines -->
           <div id="hpa-guidelines" class="glass-panel">
             <div class="section-title">HPA Guidelines</div>
-            <p class="section-subtitle">
-              High-level guidelines for HPA Houseplants. Content is loaded from
-              <code>hpa_guidelines.csv</code>.
-            </p>
+            <p class="section-subtitle">Loaded from hpa_guidelines.csv</p>
             <div id="hpaGuidelinesContent"></div>
           </div>
 
-          <!-- HPA PRODUCT INFO -->
+          <!-- SKUs / Orders -->
           <div id="hpa-product" class="glass-panel hidden">
             <section id="tab-products" class="tab-content">
+
               <div class="section-header">
                 <div class="section-title">Product Info</div>
                 <p class="section-subtitle">
-                  Search SKUs, review what’s shipping, and see weekly breakdowns.
+                  Search SKUs and check weekly orders.
                 </p>
               </div>
 
               <div class="section-inner-tabs">
-                <button
-                  class="section-inner-tab active products-inner-tab"
-                  data-products="skus"
-                  type="button"
-                >
-                  SKU Catalogue
-                </button>
-                <button
-                  class="section-inner-tab products-inner-tab"
-                  data-products="orders"
-                  type="button"
-                >
-                  Order Breakdown
-                </button>
+                <button class="section-inner-tab active products-inner-tab" data-products="skus">SKU Catalogue</button>
+                <button class="section-inner-tab products-inner-tab" data-products="orders">Order Breakdown</button>
               </div>
 
-              <!-- PRODUCT INFO → SKUS -->
+              <!-- SKU Section -->
               <section id="products-skus" class="section-inner-content">
                 <section class="controls">
                   <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input
-                      id="nameFilter"
-                      class="search-input"
-                      placeholder="Filter by SKU name..."
-                    />
+                    <input id="nameFilter" class="search-input" placeholder="Filter by name..." />
                   </div>
+
                   <div class="filters">
                     <div class="filter-group">
                       <span class="filter-label">SKU</span>
-                      <input
-                        id="skuFilter"
-                        class="filter-input"
-                        placeholder="e.g. 1005-837-400"
-                      />
+                      <input id="skuFilter" class="filter-input" placeholder="e.g. 1005‑837‑400" />
                     </div>
                     <div class="filter-group">
                       <span class="filter-label">Sent In</span>
-                      <input
-                        id="sentInFilter"
-                        class="filter-input"
-                        placeholder="e.g. 6 or Promo"
-                      />
+                      <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
                     </div>
                     <div class="filter-group">
-                      <span class="filter-label">Year Sent</span>
+                      <span class="filter-label">Year</span>
                       <select id="yearFilter" class="filter-input">
                         <option value="all">All</option>
-                        <option>2022</option>
-                        <option>2023</option>
-                        <option>2024</option>
-                        <option>2025</option>
-                        <option>2026</option>
+                        <option>2022</option><option>2023</option>
+                        <option>2024</option><option>2025</option><option>2026</option>
                       </select>
                     </div>
                   </div>
                 </section>
 
-                <p
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem;"
-                >
-                  Tip: You can filter by partial SKU, name, or “Sent In” (e.g. 6, Promo,
-                  Holiday).
+                <p class="section-subtitle" style="margin-top: 6px;">
+                  Filter by SKU, name, or “Sent In”.
                 </p>
 
                 <div class="results-header">
                   <strong id="resultCount">0</strong> SKUs shown
                 </div>
 
-                <div
-                  id="skuLoading"
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem; display:none;"
-                >
-                  Loading SKU data…
-                </div>
+                <div id="skuLoading" class="section-subtitle" style="display:none;">Loading SKUs…</div>
 
                 <section id="skuGrid" class="sku-grid"></section>
                 <div id="emptyState" class="empty-state hidden">
-                  No SKUs match your filters or the file could not be loaded.
+                  No SKUs found or file missing.
                 </div>
               </section>
 
-              <!-- PRODUCT INFO → ORDERS -->
+              <!-- Orders Section -->
               <section id="products-orders" class="section-inner-content hidden">
                 <div class="order-table-wrapper">
                   <div class="order-table-title">Weekly Shipping Overview</div>
+
                   <table class="order-table">
                     <thead>
                       <tr>
-                        <th>Week #</th>
-                        <th>Week Date</th>
-                        <th>Shipping</th>
-                        <th>Additional</th>
-                        <th>Status</th>
+                        <th>Week #</th><th>Date</th><th>Shipping</th><th>Additional</th><th>Status</th>
                       </tr>
                     </thead>
                     <tbody id="orderWeeksBody"></tbody>
@@ -2102,11 +2295,13 @@
 
                   <div id="orderDetailsPanel" class="order-details-panel hidden">
                     <div class="order-breakdown-wrapper">
+
                       <div class="ob-header-stack">
                         <div class="ob-week-box">
                           Shipping Week #:
                           <span id="obWeekDisplay">TBD</span>
                         </div>
+
                         <div class="ob-grades-box">
                           Store Grade Shipping:
                           <span id="obGradesDisplay">All stores</span>
@@ -2114,185 +2309,103 @@
                       </div>
 
                       <div class="ob-grid">
-                        <div class="ob-box">
-                          <div class="ob-box-title">FLO</div>
-                          <div id="obFloBody" class="ob-box-body"></div>
-                        </div>
-                        <div class="ob-box">
-                          <div class="ob-box-title">FOL</div>
-                          <div id="obFolBody" class="ob-box-body"></div>
-                        </div>
-                        <div class="ob-box">
-                          <div class="ob-box-title">UCO</div>
-                          <div id="obUcoBody" class="ob-box-body"></div>
-                        </div>
-                        <div class="ob-box">
-                          <div class="ob-box-title">FHB</div>
-                          <div id="obFhbBody" class="ob-box-body"></div>
-                        </div>
-                        <div class="ob-box">
-                          <div class="ob-box-title">TRP</div>
-                          <div id="obTrpBody" class="ob-box-body"></div>
-                        </div>
-                        <div class="ob-box">
-                          <div class="ob-box-title">SPC</div>
-                          <div id="obSpcBody" class="ob-box-body"></div>
-                        </div>
+                        <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
+                        <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
+                        <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
+                        <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
+                        <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
+                        <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
                       </div>
+
                     </div>
                   </div>
                 </div>
               </section>
+
             </section>
           </div>
 
-          <!-- HPA CARE & IDENTIFICATION -->
+          <!-- Care & ID -->
           <div id="hpa-care" class="glass-panel hidden">
             <section id="tab-care-id" class="tab-content">
               <div class="section-header">
-                <div class="section-title">Care &amp; Identification</div>
-                <p class="section-subtitle">
-                  Quick reference for plant care and pest identification.
-                </p>
+                <div class="section-title">Care & Identification</div>
+                <p class="section-subtitle">Look up care details & identify pests.</p>
               </div>
 
               <div class="inner-tabs">
-                <button class="inner-tab active" data-inner="care-library" type="button">
-                  Care Library
-                </button>
-                <button class="inner-tab" data-inner="pest-id" type="button">
-                  Pest Identification
-                </button>
+                <button class="inner-tab active" data-inner="care-library">Care Library</button>
+                <button class="inner-tab" data-inner="pest-id">Pest ID</button>
               </div>
 
-              <!-- CARE LIBRARY -->
+              <!-- Care Library -->
               <section id="inner-care-library" class="inner-content">
                 <div class="pc-header">
                   <div class="pc-title">Care Library</div>
                   <div class="pc-search-wrapper">
                     <span class="pc-search-icon">🔎</span>
-                    <input
-                      id="careSearch"
-                      class="pc-search-input"
-                      placeholder="Search plants..."
-                    />
+                    <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
                   </div>
                 </div>
+
                 <div class="pc-grid" id="plantCareGrid"></div>
-                <div
-                  id="plantsLoading"
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem; display:none;"
-                >
-                  Loading plant care library…
-                </div>
-                <div
-                  id="plantsError"
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem; color:#fca5a5; display:none;"
-                >
-                  Could not load plant care data. Please refresh or contact your supervisor.
+
+                <div id="plantsLoading" class="section-subtitle" style="display:none;">Loading care...</div>
+                <div id="plantsError" class="section-subtitle" style="color:#fca5a5; display:none;">
+                  Error loading care library.
                 </div>
               </section>
 
-              <!-- PEST IDENTIFICATION -->
+              <!-- Pests -->
               <section id="inner-pest-id" class="inner-content hidden">
                 <div class="pc-header">
                   <div class="pc-title">Pest Identification</div>
                   <div class="pc-search-wrapper">
                     <span class="pc-search-icon">🔎</span>
-                    <input
-                      id="pestSearch"
-                      class="pc-search-input"
-                      placeholder="Search pests..."
-                    />
+                    <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
                   </div>
                 </div>
+
                 <div class="pc-grid" id="pestGrid"></div>
-                <div
-                  id="pestsLoading"
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem; display:none;"
-                >
-                  Loading pest library…
-                </div>
-                <div
-                  id="pestsError"
-                  class="section-subtitle"
-                  style="margin-top:6px; font-size:0.8rem; color:#fca5a5; display:none;"
-                >
-                  Could not load pest data. Please refresh or contact your supervisor.
+
+                <div id="pestsLoading" class="section-subtitle" style="display:none;">Loading pests...</div>
+                <div id="pestsError" class="section-subtitle" style="color:#fca5a5; display:none;">
+                  Error loading pest library.
                 </div>
               </section>
+
             </section>
           </div>
         </section>
       </section>
 
-      <!-- ========= ADMIN MODULE (updated: no Store Check / Training tabs) ========= -->
+      <!-- ========= ADMIN MODULE ========= -->
       <section id="view-admin" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
+        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+
         <header class="module-header">
-          <img src="hf_logo.png" alt="HF Logo" class="module-logo" />
+          <img src="hf_logo.png" class="module-logo" />
           <div class="module-title">ADMIN</div>
-          <div class="module-subtitle">
-            Audits, AIR, maps &amp; district checklists.
-          </div>
+          <div class="module-subtitle">Audits • AIR • District Tools</div>
         </header>
 
         <nav class="module-tabs">
-          <button
-            class="module-tab active"
-            data-module="admin"
-            data-tab="store-audit"
-            data-min-role="Supervisor"
-          >
-            Store Audit
-          </button>
-          <button
-            class="module-tab"
-            data-module="admin"
-            data-tab="air"
-            data-min-role="Supervisor"
-          >
-            AIR
-          </button>
-          <button
-            class="module-tab"
-            data-module="admin"
-            data-tab="store-map"
-            data-min-role="Supervisor"
-          >
-            Store Map
-          </button>
-          <button
-            class="module-tab"
-            data-module="admin"
-            data-tab="district-checklist"
-            data-min-role="District"
-          >
-            District Checklist
-          </button>
+          <button class="module-tab active" data-module="admin" data-tab="store-audit" data-min-role="Supervisor">Store Audit</button>
+          <button class="module-tab" data-module="admin" data-tab="air" data-min-role="Supervisor">AIR</button>
+          <button class="module-tab" data-module="admin" data-tab="district-checklist" data-min-role="District">District Checklist</button>
         </nav>
 
         <section class="module-content">
           <div id="admin-store-audit" class="glass-panel">
             <div class="section-title">Store Audit</div>
             <p class="section-subtitle">
-              This tab opens our Store Audit form in Microsoft Forms for detailed audits.
-            </p>
-            <p class="section-subtitle" style="margin-top:6px;">
-              When you click the Store Audit tab above, you will be redirected to the live
-              form.
+              This button opens the HF Store Audit in Microsoft Forms.
             </p>
           </div>
 
           <div id="admin-air" class="glass-panel hidden">
-            AIR placeholder.
-          </div>
-
-          <div id="admin-store-map" class="glass-panel hidden">
-            Store Map placeholder.
+            <div class="section-title">AIR</div>
+            <p class="section-subtitle">Redirects to air.inc</p>
           </div>
 
           <div id="admin-district-checklist" class="glass-panel hidden">
@@ -2301,139 +2414,112 @@
         </section>
       </section>
 
-      <!-- ========= LEARNING CENTER MODULE ========= -->
+      <!-- ========= LEARNING CENTER ========= -->
       <section id="view-learning" class="module-root hidden">
-        <button class="module-back-btn" type="button" data-back="hub">⬅ Back to Hub</button>
+        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+
         <header class="module-header">
           <div class="chalk-write">📘 Learning Center</div>
-          <div class="module-subtitle" style="color:#fde047; max-width:480px;">
-            Training made fun • Learn everything you need for HF &amp; HPA success.
-          </div>
-          <div class="chalk-dust">HF • HPA • Pests • Care</div>
+          <div class="module-subtitle" style="color:#fde047;">Train • Level Up • Certify</div>
+          <div class="chalk-dust">HF • HPA • Pests • Skills</div>
         </header>
 
         <nav class="learning-tabs">
-          <button class="learning-tab active" data-learning-tab="overview" type="button">
-            📝 Overview
-          </button>
-          <button class="learning-tab" data-learning-tab="tracks" type="button">
-            🎓 Learning Tracks
-          </button>
-          <button class="learning-tab" data-learning-tab="quizzes" type="button">
-            🧠 Quizzes
-          </button>
-          <button class="learning-tab" data-learning-tab="resources" type="button">
-            📚 Resources
-          </button>
+          <button class="learning-tab active" data-learning-tab="overview">📝 Overview</button>
+          <button class="learning-tab" data-learning-tab="tracks">🎓 Tracks</button>
+          <button class="learning-tab" data-learning-tab="quizzes">🧠 Quizzes</button>
+          <button class="learning-tab" data-learning-tab="resources">📚 Manual</button>
         </nav>
 
         <section class="module-content">
-          <!-- OVERVIEW (aligned with Merchandiser Training manual) -->
+
+          <!-- OVERVIEW -->
           <div id="learning-overview" class="glass-panel">
-            <div class="section-title">Merchandiser Training Hub</div>
-            <p class="section-subtitle">
-              This Learning Center follows the official Merchandiser Training manual:
-              UKG &amp; timekeeping, Picas &amp; markdowns, safety, outdoor &amp; indoor
-              merchandising, watering, holiday setup, pests, and expectations.
-            </p>
-            <div class="learning-grid">
-              <div class="track-card">
-                <div class="track-title-row">
-                  <div class="track-title">Onboarding &amp; Core Systems</div>
-                  <div class="track-badge">Start Here</div>
-                </div>
-                <div class="track-desc">
-                  UKG login, clocking in/out, schedule &amp; time-off, Picas basics,
-                  markdown requirements, and safety foundations.
-                </div>
+            <!-- Stats box -->
+            <div id="learningStats" class="glass-panel" style="margin-bottom:10px;">
+              <div style="font-size:0.9rem; font-weight:600; color:#fef3c7;">
+                🎯 Your Learning Summary
               </div>
-
-              <div class="track-card">
-                <div class="track-title-row">
-                  <div class="track-title">Outdoor &amp; Holiday Merchandising</div>
-                  <div class="track-badge">Outdoor</div>
-                </div>
-                <div class="track-desc">
-                  Apron, IGC &amp; corral layouts, outdoor checklists, outdoor watering,
-                  holiday tables &amp; signage, and picture protocols.
-                </div>
-              </div>
-
-              <div class="track-card">
-                <div class="track-title-row">
-                  <div class="track-title">HPA, Watering &amp; Pests</div>
-                  <div class="track-badge">Indoor</div>
-                </div>
-                <div class="track-desc">
-                  HPA pods &amp; tropical tables, indoor checklist, HPA watering rules,
-                  common HPA pests, and daily recap expectations.
-                </div>
+              <div id="learningStatsBody" style="margin-top:4px; font-size:0.8rem; color:#e5e7eb;">
+                Loading your progress…
               </div>
             </div>
+
+            <!-- Recommended Quiz Callout -->
+            <div id="recommendedQuizCallout" class="recommendation-callout hidden">
+              <div class="recommendation-title">Recommended Next Quiz</div>
+              <div id="recommendedQuizBody" class="recommendation-body">
+                Finding the next best step…
+              </div>
+              <button id="recommendedQuizStartBtn" class="recommendation-btn" type="button">
+                Start This Quiz
+              </button>
+            </div>
+
+            <!-- Certified badge -->
+            <div id="certBadge" class="cert-badge hidden">
+              <div class="cert-badge-title">✅ Certified Merchandiser</div>
+              <div class="cert-badge-sub">Final Certification passed — well done!</div>
+            </div>
+
+            <div class="section-title">Merchandiser Training Hub</div>
+            <p class="section-subtitle">
+              Follow your learning tracks, pass quizzes, level up your training, and become HF Certified.
+            </p>
           </div>
 
-          <!-- TRACKS (JS will render dynamic cards here) -->
+          <!-- TRACKS -->
           <div id="learning-tracks" class="glass-panel hidden">
-            <div class="section-title">Learning Tracks</div>
-            <p class="section-subtitle">
-              Follow a learning track to complete the right modules for your role.
-              Your progress saves on this device.
-            </p>
+            <div class="section-title">Training Tracks</div>
+            <p class="section-subtitle">Select a track to begin.</p>
             <div id="trackGrid" class="learning-grid"></div>
           </div>
 
-          <!-- QUIZZES (JS-driven content) -->
+          <!-- QUIZZES -->
           <div id="learning-quizzes" class="glass-panel hidden">
             <div class="section-title">Quizzes</div>
-            <p class="section-subtitle">
-              Test your knowledge and see how ready you are for the floor.
-            </p>
+            <p class="section-subtitle">Test your knowledge.</p>
+
+            <button
+              id="resetLearningBtn"
+              type="button"
+              style="margin-bottom:8px;font-size:0.75rem;border-radius:999px;border:1px solid rgba(148,163,184,0.7);background:rgba(15,23,42,0.95);color:#e5e7eb;padding:4px 10px;cursor:pointer;"
+            >
+              Reset learning progress (this device)
+            </button>
+
+            <div id="trackIntro" class="track-intro hidden"></div>
+
             <div id="quizList" class="quiz-list"></div>
             <div id="quizContainer" class="hidden"></div>
           </div>
 
-          <!-- RESOURCES (now includes the full Merchandiser training PDF) -->
+          <!-- RESOURCES -->
           <div id="learning-resources" class="glass-panel hidden">
-            <div class="section-title">Resources &amp; Documents</div>
-            <p class="section-subtitle">
-              Core manuals, checklists, and visual guides to support your training.
-            </p>
+            <div class="section-title">Training Manual</div>
+            <p class="section-subtitle">Full official HF Merchandiser Training Manual</p>
+
             <div class="learning-grid" id="learningResourcesGrid">
-              <!-- Full training manual -->
               <a
+                class="pc-card"
                 href="Merchandiser-Training-Updated-20250417.pdf"
                 target="_blank"
-                class="hub-card"
-                style="text-decoration:none;"
               >
                 <span class="chalk-icon">📘</span>
-                Merchandiser Training Manual (Full PDF)
-              </a>
-
-              <!-- Outdoor & checklists (can be pointed to SharePoint/other links) -->
-              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
-                <span class="chalk-icon">💧</span>
-                Outdoor Watering &amp; Checklists
-              </a>
-
-              <!-- HPA / indoor checklist resource -->
-              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
-                <span class="chalk-icon">🪴</span>
-                HPA Setup &amp; Indoor Checklist
-              </a>
-
-              <!-- Pests quick reference -->
-              <a href="#" target="_blank" class="hub-card" style="text-decoration:none;">
-                <span class="chalk-icon">🐛</span>
-                HPA Pests Quick Reference
+                <div style="font-size:0.9rem; font-weight:600; color:#fef3c7;">
+                  Merchandiser Training Manual
+                </div>
+                <div style="font-size:0.75rem; color:#e5e7eb; margin-top:4px;">
+                  Full official training document (96 pages)
+                </div>
               </a>
             </div>
           </div>
+
         </section>
       </section>
 
       <!-- ========= POPUPS ========= -->
-
       <!-- SKU POPUP -->
       <div id="popupBackdrop" class="popup-backdrop" aria-hidden="true">
         <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupName">
@@ -2450,31 +2536,14 @@
         <div class="popup" role="dialog" aria-modal="true" aria-labelledby="careTitle">
           <img id="careImage" class="popup-image" alt="" />
           <h2 id="careTitle"></h2>
-
-          <div class="popup-section-title">Light</div>
-          <div class="popup-text" id="careLight"></div>
-
-          <div class="popup-section-title">Water</div>
-          <div class="popup-text" id="careWater"></div>
-
-          <div class="popup-section-title">Humidity</div>
-          <div class="popup-text" id="careHumidity"></div>
-
-          <div class="popup-section-title">Temperature</div>
-          <div class="popup-text" id="careTemp"></div>
-
-          <div class="popup-section-title">Soil</div>
-          <div class="popup-text" id="careSoil"></div>
-
-          <div class="popup-section-title">Fertilizer</div>
-          <div class="popup-text" id="careFertilizer"></div>
-
-          <div class="popup-section-title">Toxicity</div>
-          <div class="popup-text" id="careToxicity"></div>
-
-          <div class="popup-section-title">Extra Tips</div>
-          <div class="popup-text" id="careTips"></div>
-
+          <div class="popup-section-title">Light</div><div id="careLight"></div>
+          <div class="popup-section-title">Water</div><div id="careWater"></div>
+          <div class="popup-section-title">Humidity</div><div id="careHumidity"></div>
+          <div class="popup-section-title">Temperature</div><div id="careTemp"></div>
+          <div class="popup-section-title">Soil</div><div id="careSoil"></div>
+          <div class="popup-section-title">Fertilizer</div><div id="careFertilizer"></div>
+          <div class="popup-section-title">Toxicity</div><div id="careToxicity"></div>
+          <div class="popup-section-title">Extra Tips</div><div id="careTips"></div>
           <button id="careClose" class="popup-close" type="button">Close</button>
         </div>
       </div>
@@ -2486,25 +2555,19 @@
           <h2 id="pestTitle"></h2>
           <p id="pestScientificName" class="popup-subtitle"></p>
 
-          <div class="popup-section-title">What They Look Like</div>
-          <div class="popup-text" id="pestLooksLike"></div>
-
-          <div class="popup-section-title">Identification</div>
-          <div class="popup-text" id="pestIdentification"></div>
-
-          <div class="popup-section-title">Prevention</div>
-          <div class="popup-text" id="pestPrevention"></div>
-
-          <div class="popup-section-title">Treatment</div>
-          <div class="popup-text" id="pestTreatment"></div>
+          <div class="popup-section-title">What They Look Like</div><div id="pestLooksLike"></div>
+          <div class="popup-section-title">Identification</div><div id="pestIdentification"></div>
+          <div class="popup-section-title">Prevention</div><div id="pestPrevention"></div>
+          <div class="popup-section-title">Treatment</div><div id="pestTreatment"></div>
 
           <button id="pestClose" class="popup-close" type="button">Close</button>
         </div>
       </div>
 
       <div class="footer">
-        Hampshire Farms Hub • v1.3 • HF / HPA / Admin / Learning Center • CSV‑driven
+        Hampshire Farms Hub • v2.0 • HF / HPA / Learning Center / Admin
       </div>
+
     </div>
   </main>
 <!-- ========= SEGMENT 3: SCRIPTS ========= -->
@@ -2539,8 +2602,9 @@
     let PLANTS = [];
     let PESTS = [];
 
-    // Shared UI helpers
     let lastFocusedElement = null;
+
+    /* ========= SHARED UI HELPERS ========= */
 
     function setElementVisible(el, visible, displayType = "block") {
       if (!el) return;
@@ -2607,7 +2671,6 @@
       }
     }
 
-    /* ========= CSV HELPERS ========= */
     function parseCsvLine(line) {
       const out = [];
       let cur = "";
@@ -2633,10 +2696,11 @@
       return out;
     }
 
+    /* ========= CSV PARSERS ========= */
+
     function parseUsersCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const roleIdx = header.indexOf("role");
       const userIdx = header.indexOf("username");
@@ -2661,7 +2725,6 @@
     function parseSkuCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const yearIdx = header.indexOf("year sent");
       const nameIdx = header.indexOf("sku name");
@@ -2685,7 +2748,6 @@
     function parseOrderCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const w = header.indexOf("week");
       const c = header.indexOf("category");
@@ -2709,7 +2771,6 @@
     function parsePlantCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const idx = {
         id: header.indexOf("id"),
@@ -2759,7 +2820,6 @@
     function parsePestCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const idx = {
         id: header.indexOf("id"),
@@ -2803,7 +2863,6 @@
     function parseGuidelinesCsv(text) {
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       if (!lines.length) return [];
-
       const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
       const sectionIdx = header.indexOf("section");
       const textIdx = header.indexOf("text");
@@ -2816,7 +2875,6 @@
         const textCell = textIdx >= 0 ? (row[textIdx] || "").trim() : "";
         const orderRaw = orderIdx >= 0 ? (row[orderIdx] || "").trim() : "";
         const order = Number(orderRaw) || 0;
-
         if (!section && !textCell) continue;
         rows.push({ section, text: textCell, order });
       }
@@ -2845,7 +2903,6 @@
       if (!container) return;
 
       container.innerHTML = "";
-
       if (!rows || !rows.length) {
         const empty = document.createElement("p");
         empty.className = "section-subtitle";
@@ -3025,8 +3082,7 @@
     function updateHubUserInfo() {
       const el = document.getElementById("hubUserInfo");
       if (!el || !CURRENT_USER) return;
-      const name =
-        CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
+      const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
       el.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
     }
 
@@ -3041,7 +3097,6 @@
         el.classList.toggle("hidden", !allowed);
       });
 
-      // Extra rules for Merchandiser
       const hpaProductTab = document.querySelector(
         '.module-tab[data-module="hpa"][data-tab="product"]'
       );
@@ -3076,44 +3131,40 @@
     }
 
     /* ========= WEATHER WIDGET ========= */
+
     async function loadWeather() {
       const widget = document.getElementById("weatherContent");
       if (!widget) return;
-
       try {
         if (!("geolocation" in navigator)) {
           widget.textContent = "Weather unavailable: location not supported.";
           return;
         }
-
         const pos = await new Promise((resolve, reject) =>
           navigator.geolocation.getCurrentPosition(resolve, reject)
         );
-
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         const api = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
         const res = await fetch(api);
         if (!res.ok) throw new Error("Weather API error");
-
         const data = await res.json();
         const w = data.current_weather;
         if (!w) {
           widget.textContent = "Weather data unavailable.";
           return;
         }
-
         const temp = Math.round(w.temperature);
         const wind = Math.round(w.windspeed);
         widget.innerHTML = `<strong>${temp}°F</strong> • Wind ${wind} mph`;
       } catch (err) {
         console.warn("Weather error:", err);
-        widget.textContent =
-          "Unable to load weather (permissions or network).";
+        widget.textContent = "Unable to load weather (permissions or network).";
       }
     }
 
     /* ========= HPA INIT ========= */
+
     async function initHPA() {
       // ORDER BREAKDOWN UI
       const obWeekDisplay = document.getElementById("obWeekDisplay");
@@ -3217,7 +3268,6 @@
           const itemSku = normalizeSku(item.sku || "");
           const itemSent = (item.sentIn || "").toLowerCase();
           const itemYear = item.yearSent || "";
-
           return (
             (!nameQ || itemName.includes(nameQ)) &&
             (!skuQ || itemSku.includes(skuQ)) &&
@@ -3548,7 +3598,6 @@
 
     async function initGuidelines() {
       try {
-        // HF Guidelines
         const hfRes = await fetch(HF_GUIDELINES_CSV_URL);
         if (hfRes.ok) {
           const hfText = await hfRes.text();
@@ -3564,7 +3613,6 @@
       }
 
       try {
-        // HPA Guidelines
         const hpaRes = await fetch(HPA_GUIDELINES_CSV_URL);
         if (hpaRes.ok) {
           const hpaText = await hpaRes.text();
@@ -3581,6 +3629,7 @@
     }
 
     /* ========= LEARNING CENTER DATA ========= */
+
     const LEARNING_TRACKS = [
       {
         id: "track-onboarding",
@@ -3605,6 +3654,14 @@
         description:
           "HPA pods & tropical tables, indoor checklist, HPA watering rules, and common pest identification.",
         quizIds: ["quiz-hpa-pests"]
+      },
+      {
+        id: "track-final-cert",
+        name: "Final Certification",
+        badge: "Certified",
+        description:
+          "Complete all core topics in one final check: UKG, Picas, outdoor & indoor merchandising, watering, pests, safety, and daily recaps.",
+        quizIds: ["quiz-final-cert"]
       }
     ];
 
@@ -3677,6 +3734,61 @@
               {
                 value: "d",
                 text: "You cannot request changes once time is entered.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q4",
+            text:
+              "According to the training, how much advance notice should you give your supervisor when taking time off?",
+            options: [
+              {
+                value: "a",
+                text: "No notice is needed as long as UKG is updated.",
+                correct: false
+              },
+              {
+                value: "b",
+                text: "At least 24 hours.",
+                correct: false
+              },
+              {
+                value: "c",
+                text: "2 weeks in advance whenever possible.",
+                correct: true
+              },
+              {
+                value: "d",
+                text: "Only tell them after the time off has been taken.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q5",
+            text:
+              "Which of the following best describes the proper use of allocations in UKG?",
+            options: [
+              {
+                value: "a",
+                text: "Use any store number; allocations don’t matter.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Use the allocation that matches the specific store location you are working at.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "Always use the main farm location allocation.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Let Home Depot choose the allocation automatically.",
                 correct: false
               }
             ]
@@ -3769,6 +3881,61 @@
               {
                 value: "d",
                 text: "Send it home with associates.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q4",
+            text:
+              "How often should departments have markdowns entered in Picas according to the training?",
+            options: [
+              {
+                value: "a",
+                text: "Once per month.",
+                correct: false
+              },
+              {
+                value: "b",
+                text: "Every other week.",
+                correct: false
+              },
+              {
+                value: "c",
+                text: "Every week, with deadlines such as Wednesday/Thursday.",
+                correct: true
+              },
+              {
+                value: "d",
+                text: "Only at the end of a season.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q5",
+            text:
+              "If a merchandiser does not have access to Picas, what should happen to ensure markdowns still get entered?",
+            options: [
+              {
+                value: "a",
+                text: "Markdowns are skipped until they gain access.",
+                correct: false
+              },
+              {
+                value: "b",
+                text: "The Home Depot store manager must enter them.",
+                correct: false
+              },
+              {
+                value: "c",
+                text:
+                  "The supervisor is responsible for manually entering markdowns or using a toss list from the merchandiser.",
+                correct: true
+              },
+              {
+                value: "d",
+                text: "The product is donated without record.",
                 correct: false
               }
             ]
@@ -3865,6 +4032,61 @@
                 correct: false
               }
             ]
+          },
+          {
+            id: "q4",
+            text:
+              "Which of the following best describes the correct way to build and maintain Apron tables 1, 2, and 3 during the regular season?",
+            options: [
+              {
+                value: "a",
+                text: "Tables are random; product is placed wherever there is space.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Tables follow the Apron Garden Plans, striped short-to-tall, with PW on Table 1, Vigoro on Table 2, and OPP on Table 3.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "All three tables hold mixed, unsorted product.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "All tables should remain empty until a sale.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q5",
+            text:
+              "According to the Outdoor Checklist, when should pictures of the Apron/IGC be sent to your manager if there is no delivery that week?",
+            options: [
+              {
+                value: "a",
+                text: "They are not required if no delivery arrives.",
+                correct: false
+              },
+              {
+                value: "b",
+                text: "Only at the end of the month.",
+                correct: false
+              },
+              {
+                value: "c",
+                text: "Before end of business on Thursday.",
+                correct: true
+              },
+              {
+                value: "d",
+                text: "Only if the supervisor specifically requests them.",
+                correct: false
+              }
+            ]
           }
         ]
       },
@@ -3955,15 +4177,392 @@
                 correct: false
               }
             ]
+          },
+          {
+            id: "q4",
+            text:
+              "Which pest is most associated with cotton-like tufts (mealy nests) on leaves and stems, and can spread by water or contact?",
+            options: [
+              {
+                value: "a",
+                text: "Scale",
+                correct: false
+              },
+              {
+                value: "b",
+                text: "Spider mites",
+                correct: false
+              },
+              {
+                value: "c",
+                text: "Mealybugs",
+                correct: true
+              },
+              {
+                value: "d",
+                text: "Fungus gnats",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q5",
+            text:
+              "According to the training, what is the first step if you suspect a rodent problem in the garden or HPA area?",
+            options: [
+              {
+                value: "a",
+                text: "Ignore it until more damage occurs.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Contact your supervisor right away, document with pictures, and wait for instructions.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "Immediately put out random traps without telling anyone.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Move all plants to another store.",
+                correct: false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "quiz-final-cert",
+        title: "Final Certification – Merchandiser Essentials",
+        trackLabel: "Certification",
+        passingScore: 80,
+        questions: [
+          {
+            id: "q1",
+            text:
+              "You are scheduled for a 7.5-hour shift. According to the Merchandiser Training manual, what must you do regarding your lunch break?",
+            options: [
+              {
+                value: "a",
+                text: "Nothing special; stay on the clock and skip lunch if busy.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Clock out for a 30-minute lunch by the 5th hour of work, then clock back in.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "Take a 10-minute break when convenient, no clock out needed.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "Only take lunch if the store manager says there is time that day.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q2",
+            text:
+              "Which combination best describes product that should be marked down/tossed and recorded in Picas?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Healthy, full plants that have been here more than a week but still look good.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Plants with pests, rot, no bloom on floral product, cracked pots, or more than 50% yellow/dead foliage.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "Any product not on sale regardless of condition.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Only plants that the customer complains about.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q3",
+            text:
+              "Before taking outdoor pictures of your Apron tables for your supervisor, which of the following sequences is correct?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Water everything, then take quick pictures before organizing or sweeping.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Set tables to the Garden Plans, organize overflow racks, fix signage, sweep the area, remove carts, then take pictures before watering.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Take pictures immediately when you arrive, then decide if merchandising is needed.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "Only take pictures of sale items; no need to show full table runs.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q4",
+            text:
+              "For outdoor watering, what is the best practice described in the manual?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Water any time of day; timing does not matter as long as plants get wet.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Water early morning or evening, avoiding 10am–4pm from late April through June due to heat and customer traffic.",
+                correct: true
+              },
+              {
+                value: "c",
+                text: "Only water once per week regardless of temperature or traffic.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Only water if the top of the soil looks dry from a distance.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q5",
+            text:
+              "When cleaning and resetting the HPA PW Pod, which of these steps is correct?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Leave unsellable product on the top shelf so it sells first, then sweep later.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Remove unsellable product to an empty CC rack at the back, remove yellow/dead leaves, sweep the pod, then restock short-to-tall with fresh product and move older product to the bottom.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Put all new product on the bottom and old product on the top to get rid of it quicker.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "Skip sweeping; only rotate product if a customer complains about appearance.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q6",
+            text:
+              "Which symptom set best matches an aphid infestation as described in the training?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Sticky areas on undersides of leaves, stunted/deformed new growth, mature leaves yellowing or curling.",
+                correct: true
+              },
+              {
+                value: "b",
+                text:
+                  "Cotton-like tufts on leaves/stems and slow wilting with mealy nests.",
+                correct: false
+              },
+              {
+                value: "c",
+                text:
+                  "Fine webbing on leaves and a sunburned or faded appearance to foliage.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Perfect leaves with no sticky residue or color change.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q7",
+            text:
+              "Which is the correct initial response if you suspect a rodent problem in the garden or HPA area?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Ignore it and wait until plants are severely damaged before acting.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Contact your supervisor immediately, take pictures of damage, and help assess if product needs to be relocated.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Throw away all product in the area without documenting anything.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "Set traps without telling the store or supervisor so you can handle it alone.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q8",
+            text:
+              "What is a key safety practice before watering inside the store in the HPA area?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Leave hoses stretched across aisles so customers know where you are working.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Place wet floor/caution signs before watering and around the hose to prevent slips and falls.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Only water when no customers are in the store so signs are unnecessary.",
+                correct: false
+              },
+              {
+                value: "d",
+                text: "Avoid using any hoses; watering is not allowed inside.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q9",
+            text:
+              "Daily recaps should include which of the following components to meet expectations in the training manual?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "Only a short note saying 'worked today'; details are optional.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "Staged rack counts, whether you watered, markdowns/tosses (by SKU & qty), comments on open issues, and confirmation that pictures were sent.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Only send pictures; no written recap is necessary if pictures look good.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "Only include markdown numbers; watering and pictures do not matter.",
+                correct: false
+              }
+            ]
+          },
+          {
+            id: "q10",
+            text:
+              "Which statement best summarizes your responsibility as a merchandiser according to the Merchandiser Expectations section?",
+            options: [
+              {
+                value: "a",
+                text:
+                  "You are only responsible for watering; store associates handle all merchandising and cleanliness.",
+                correct: false
+              },
+              {
+                value: "b",
+                text:
+                  "You are responsible for merchandising, plant care, safety, cleanliness, accurate markdowns, and timely communication (pictures and recaps), while representing Hampshire Farms professionally.",
+                correct: true
+              },
+              {
+                value: "c",
+                text:
+                  "Your only responsibility is to clock in and out correctly in UKG.",
+                correct: false
+              },
+              {
+                value: "d",
+                text:
+                  "You are responsible only for HF product; HPA and third-party products are ignored.",
+                correct: false
+              }
+            ]
           }
         ]
       }
     ];
 
-    /* ========= LEARNING PROGRESS (LOCAL) ========= */
+    /* ========= LEARNING PROGRESS & HELPERS ========= */
+
     let LEARNING_PROGRESS = {
-      completedQuizzes: {} // quizId -> { score, total, passed, timestamp }
+      completedQuizzes: {}, // quizId -> { score, total, passed, timestamp }
+      xp: 0,
+      streak: 0,
+      lastQuizDate: null // "YYYY-MM-DD"
     };
+
+    function getLevelFromXP(xp) {
+      const base = xp || 0;
+      let level = Math.floor(base / 50) + 1;
+      if (level > 10) level = 10;
+      if (level < 1) level = 1;
+      return level;
+    }
 
     function loadLearningProgress() {
       try {
@@ -3971,7 +4570,10 @@
         if (!raw) return;
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") {
-          LEARNING_PROGRESS = parsed;
+          LEARNING_PROGRESS.completedQuizzes = parsed.completedQuizzes || {};
+          LEARNING_PROGRESS.xp = parsed.xp || 0;
+          LEARNING_PROGRESS.streak = parsed.streak || 0;
+          LEARNING_PROGRESS.lastQuizDate = parsed.lastQuizDate || null;
         }
       } catch (e) {
         console.warn("Could not load learning progress", e);
@@ -3989,12 +4591,50 @@
       }
     }
 
-    /* ========= LEARNING CENTER RENDERING ========= */
+    function renderLearningStats() {
+      const el = document.getElementById("learningStatsBody");
+      if (!el) return;
+
+      const xp = LEARNING_PROGRESS.xp || 0;
+      const streak = LEARNING_PROGRESS.streak || 0;
+      const quizzes = Object.keys(LEARNING_PROGRESS.completedQuizzes || {});
+      const passedCount = quizzes.filter(qid => {
+        const prog = LEARNING_PROGRESS.completedQuizzes[qid];
+        return prog && prog.passed;
+      }).length;
+
+      const level = getLevelFromXP(xp);
+
+      el.textContent = `Level ${level} • XP: ${xp} • Quizzes passed: ${passedCount} • Streak: ${streak} day(s) in a row`;
+    }
+
+    function renderCertifiedBadge() {
+      const badgeEl = document.getElementById("certBadge");
+      if (!badgeEl) return;
+
+      const finalProg = LEARNING_PROGRESS.completedQuizzes["quiz-final-cert"];
+      const isCertified = finalProg && finalProg.passed;
+
+      if (isCertified) {
+        badgeEl.classList.remove("hidden");
+      } else {
+        badgeEl.classList.add("hidden");
+      }
+    }
+
     function renderLearningTracks() {
       const grid = document.getElementById("trackGrid");
       if (!grid) return;
 
       grid.innerHTML = "";
+
+      const SKILL_TAGS = {
+        "track-onboarding": ["⏱ Timekeeping", "🧾 Picas", "📲 UKG"],
+        "track-outdoor-holiday": ["🌿 Apron", "🪧 Signage", "📸 Pictures"],
+        "track-hpa-pests": ["🪴 Pods", "💧 Watering", "🐛 Pests"],
+        "track-final-cert": ["🎓 All Skills", "📚 Certification"]
+      };
+
       LEARNING_TRACKS.forEach(track => {
         const total = track.quizIds.length;
         let completed = 0;
@@ -4003,24 +4643,108 @@
           if (prog && prog.passed) completed++;
         });
         const percent = total ? Math.round((completed / total) * 100) : 0;
+        const isComplete = total > 0 && completed === total;
+        const skillTags = SKILL_TAGS[track.id] || [];
 
         const card = document.createElement("div");
         card.className = "track-card";
+        if (isComplete) {
+          card.classList.add("track-card-complete");
+        }
+
         card.innerHTML = `
           <div class="track-title-row">
             <div class="track-title">${track.name}</div>
             <div class="track-badge">${track.badge}</div>
           </div>
-          <div class="track-desc">${track.description}</div>
+
+          ${isComplete ? '<div class="track-complete-pill">✔ Track Complete</div>' : ""}
+
+          <div class="track-desc">
+            ${track.description}
+          </div>
+
+          <div class="track-skills">
+            ${skillTags.map(tag => `<span class="track-skill-tag">${tag}</span>`).join("")}
+          </div>
+
           <div class="track-progress-bar">
-            <div class="track-progress-fill" style="width:${percent}%;"></div>
+            <div class="track-progress-fill" style="width:${percent}%"></div>
           </div>
+
           <div class="track-progress-text">
-            ${completed}/${total} quizzes passed • ${percent}% complete
+            ${completed}/${total} quizzes complete • ${percent}% done
           </div>
+
+          <button class="track-start-btn" data-track="${track.id}">
+            Start This Track
+          </button>
         `;
+
         grid.appendChild(card);
       });
+
+      document.querySelectorAll(".track-start-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const trackId = btn.dataset.track;
+          filterQuizzesByTrack(trackId);
+        });
+      });
+    }
+
+    function showTrackIntro(trackId) {
+      const track = LEARNING_TRACKS.find(t => t.id === trackId);
+      const introEl = document.getElementById("trackIntro");
+      if (!track || !introEl) return;
+
+      const SKILL_TAGS = {
+        "track-onboarding": ["⏱ Timekeeping", "🧾 Picas", "📲 UKG"],
+        "track-outdoor-holiday": ["🌿 Apron", "🪧 Signage", "📸 Pictures"],
+        "track-hpa-pests": ["🪴 Pods", "💧 Watering", "🐛 Pests"],
+        "track-final-cert": ["🎓 All Skills", "📚 Certification"]
+      };
+      const skillTags = SKILL_TAGS[track.id] || [];
+
+      introEl.innerHTML = `
+        <div class="track-intro-title">${track.name}</div>
+        <div>${track.description}</div>
+        ${
+          skillTags.length
+            ? `<div class="track-intro-skills">
+                 ${skillTags
+                   .map(tag => `<span class="track-intro-skill">${tag}</span>`)
+                   .join("")}
+               </div>`
+            : ""
+        }
+      `;
+      introEl.classList.remove("hidden");
+
+      // Restart animation
+      introEl.classList.remove("track-intro-animate");
+      // force reflow
+      void introEl.offsetWidth;
+      introEl.classList.add("track-intro-animate");
+    }
+
+    function filterQuizzesByTrack(trackId) {
+      const track = LEARNING_TRACKS.find(t => t.id === trackId);
+      if (!track) return;
+
+      const quizTab = document.querySelector('[data-learning-tab="quizzes"]');
+      if (quizTab) quizTab.click();
+
+      const list = document.getElementById("quizList");
+      if (list) {
+        const quizCards = list.querySelectorAll(".quiz-card");
+        quizCards.forEach(card => {
+          const quizId = card.querySelector(".quiz-start-btn")?.dataset.quizId;
+          card.style.display = track.quizIds.includes(quizId) ? "" : "none";
+        });
+        list.scrollIntoView({ behavior: "smooth" });
+      }
+
+      showTrackIntro(trackId);
     }
 
     function renderQuizList() {
@@ -4129,6 +4853,47 @@
       container.appendChild(resultDiv);
     }
 
+    let CURRENT_RECOMMENDED_QUIZ_ID = null;
+
+    function computeRecommendedQuizId() {
+      // First quiz not yet passed
+      for (const quiz of QUIZZES) {
+        const prog = LEARNING_PROGRESS.completedQuizzes[quiz.id];
+        if (!prog || !prog.passed) {
+          return quiz.id;
+        }
+      }
+      return null;
+    }
+
+    function renderRecommendedQuiz() {
+      const callout = document.getElementById("recommendedQuizCallout");
+      const body = document.getElementById("recommendedQuizBody");
+      const btn = document.getElementById("recommendedQuizStartBtn");
+      if (!callout || !body || !btn) return;
+
+      const recId = computeRecommendedQuizId();
+      CURRENT_RECOMMENDED_QUIZ_ID = recId;
+
+      if (!recId) {
+        callout.classList.remove("hidden");
+        body.textContent =
+          "Nice work! You've passed all quizzes. You can retake any quiz to review or aim for a higher score.";
+        btn.style.display = "none";
+        return;
+      }
+
+      const quiz = QUIZZES.find(q => q.id === recId);
+      if (!quiz) {
+        callout.classList.add("hidden");
+        return;
+      }
+
+      callout.classList.remove("hidden");
+      btn.style.display = "";
+      body.textContent = `${quiz.title} (${quiz.trackLabel}) is a great next step based on what you've done so far.`;
+    }
+
     function submitQuiz(quizId) {
       const quiz = QUIZZES.find(q => q.id === quizId);
       const container = document.getElementById("quizContainer");
@@ -4158,9 +4923,37 @@
         passed,
         timestamp: Date.now()
       };
+
+      if (passed) {
+        LEARNING_PROGRESS.xp = (LEARNING_PROGRESS.xp || 0) + 10;
+
+        const today = new Date();
+        const todayKey = today.toISOString().slice(0, 10);
+
+        if (!LEARNING_PROGRESS.lastQuizDate) {
+          LEARNING_PROGRESS.streak = 1;
+        } else {
+          const last = LEARNING_PROGRESS.lastQuizDate;
+          const lastDate = new Date(last);
+          const diffDays = Math.floor(
+            (today.setHours(0, 0, 0, 0) - lastDate.setHours(0, 0, 0, 0)) /
+              (1000 * 60 * 60 * 24)
+          );
+          if (diffDays === 1) {
+            LEARNING_PROGRESS.streak = (LEARNING_PROGRESS.streak || 0) + 1;
+          } else if (diffDays > 1) {
+            LEARNING_PROGRESS.streak = 1;
+          }
+        }
+        LEARNING_PROGRESS.lastQuizDate = todayKey;
+      }
+
       saveLearningProgress();
       renderQuizList();
       renderLearningTracks();
+      renderLearningStats();
+      renderRecommendedQuiz();
+      renderCertifiedBadge();
 
       resultDiv.classList.remove("pass", "fail");
       resultDiv.classList.add(passed ? "pass" : "fail");
@@ -4170,8 +4963,8 @@
     }
 
     /* ========= DOM READY ========= */
+
     document.addEventListener("DOMContentLoaded", () => {
-      // Splash fade → Login fade
       const splashView = document.getElementById("view-splash");
       const loginView = document.getElementById("view-login");
       const splashLogoWrapper = document.getElementById("splashLogo");
@@ -4182,6 +4975,7 @@
       const loginError = document.getElementById("loginError");
 
       const enterHubFromSplash = () => {
+        if (splashView.classList.contains("hidden")) return;
         splashLogoWrapper.classList.add("logo-tap");
         splashView.classList.add("splash-fade-out");
         setTimeout(() => {
@@ -4195,20 +4989,15 @@
       };
 
       if (splashLogoWrapper && splashView && loginView) {
-        splashLogoWrapper.addEventListener("click", enterHubFromSplash, {
-          once: true
-        });
-        splashLogoWrapper.addEventListener(
-          "keydown",
-          e => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              enterHubFromSplash();
-            }
-          },
-          { once: true }
-        );
+        splashLogoWrapper.addEventListener("click", enterHubFromSplash);
       }
+
+      // "Press Enter" on splash
+      document.addEventListener("keydown", e => {
+        if (e.key === "Enter" && !splashView.classList.contains("hidden")) {
+          enterHubFromSplash();
+        }
+      });
 
       function updateLoginFieldsForRole() {
         const role = loginRole.value;
@@ -4322,9 +5111,7 @@
       hubCardAdmin &&
         hubCardAdmin.addEventListener("click", () => showView("view-admin"));
       hubCardLearning &&
-        hubCardLearning.addEventListener("click", () => {
-          showView("view-learning");
-        });
+        hubCardLearning.addEventListener("click", () => showView("view-learning"));
 
       // BACK BUTTONS
       document.querySelectorAll(".module-back-btn").forEach(btn => {
@@ -4334,21 +5121,20 @@
         });
       });
 
-      // MAIN MODULE TABS (HF, HPA, Admin — except external Admin tabs)
+      // MAIN MODULE TABS
       document.querySelectorAll(".module-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           if (!CURRENT_USER) return;
-
           const moduleKey = tab.getAttribute("data-module");
           const tabKey = tab.getAttribute("data-tab");
           const minRole = tab.getAttribute("data-min-role");
           if (minRole && !canAccess(CURRENT_USER.role, minRole)) return;
 
-          // External Admin tabs handled separately
           if (
             moduleKey === "admin" &&
             (tabKey === "store-audit" || tabKey === "air")
           ) {
+            // handled separately below
             return;
           }
 
@@ -4404,7 +5190,7 @@
         });
       }
 
-      // ADMIN: AIR → air.inc
+      // ADMIN: AIR → external
       const airTab = document.querySelector(
         '.module-tab[data-module="admin"][data-tab="air"]'
       );
@@ -4433,13 +5219,58 @@
               panel.classList.toggle("hidden", key !== target);
             }
           });
+
+          // hide track intro if leaving quizzes tab
+          if (target !== "quizzes") {
+            const introEl = document.getElementById("trackIntro");
+            if (introEl) introEl.classList.add("hidden");
+          }
         });
       });
+
+      // Recommended quiz start button
+      const recommendedBtn = document.getElementById("recommendedQuizStartBtn");
+      if (recommendedBtn) {
+        recommendedBtn.addEventListener("click", () => {
+          if (!CURRENT_RECOMMENDED_QUIZ_ID) return;
+          const quizTab = document.querySelector('[data-learning-tab="quizzes"]');
+          if (quizTab) quizTab.click();
+          startQuiz(CURRENT_RECOMMENDED_QUIZ_ID);
+          const container = document.getElementById("quizContainer");
+          if (container) {
+            container.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      }
+
+      // Reset Learning Progress
+      const resetLearningBtn = document.getElementById("resetLearningBtn");
+      if (resetLearningBtn) {
+        resetLearningBtn.addEventListener("click", () => {
+          const ok = window.confirm(
+            "This will clear quiz history, XP, and streak on this device only. Continue?"
+          );
+          if (!ok) return;
+
+          LEARNING_PROGRESS = {
+            completedQuizzes: {},
+            xp: 0,
+            streak: 0,
+            lastQuizDate: null
+          };
+          saveLearningProgress();
+          renderLearningTracks();
+          renderQuizList();
+          renderLearningStats();
+          renderRecommendedQuiz();
+          renderCertifiedBadge();
+        });
+      }
 
       // Initial view
       showView("view-splash");
 
-      // Load users
+      // Load users CSV
       fetch(USERS_CSV_URL)
         .then(res => {
           if (!res.ok) throw new Error("users.csv not found");
@@ -4451,18 +5282,19 @@
         })
         .catch(err => console.error("Error loading users CSV:", err));
 
-      // Init HPA (load CSVs, wire up UI)
+      // Init modules
       initHPA();
-
-      // Load guidelines (HF & HPA) from CSV
       initGuidelines();
 
-      // Learning center progress + UI
+      // Learning center initialization
       loadLearningProgress();
       renderLearningTracks();
       renderQuizList();
+      renderLearningStats();
+      renderRecommendedQuiz();
+      renderCertifiedBadge();
 
-      // Weather widget at hub
+      // Weather widget
       loadWeather();
     });
   </script>
