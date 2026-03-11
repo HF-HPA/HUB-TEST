@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="hf_logo.png" />
+  <!-- Leaflet (Store Map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
   <style>
     /* ========= CORE THEME ========= */
     :root {
@@ -2025,7 +2029,43 @@
       }
     }
 
-  </style>
+  
+
+/* ========= MAP DASHBOARD (NEW) ========= */
+#view-map{display:flex;flex-direction:column;gap:12px;}
+.map-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:18px;border:1px solid rgba(148,163,184,.45);background:rgba(15,23,42,.92);box-shadow:var(--shadow-soft);}
+.map-brand{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-pill);border:1px solid rgba(34,211,238,.55);background:radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));color:var(--heading);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;}
+.map-brand img{width:22px;height:22px;border-radius:7px;border:1px solid rgba(148,163,184,.6);object-fit:cover;}
+.map-pill{padding:6px 12px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.45);font-size:.8rem;color:var(--muted);background:rgba(2,6,23,.65);white-space:nowrap;}
+.dd{position:relative;}
+.dd-btn{padding:7px 12px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);background:rgba(2,6,23,.75);color:var(--text);cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:6px;transition:transform .15s ease-out,border-color .15s ease-out,background .15s ease-out;}
+.dd-btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.7);background:rgba(2,6,23,.92);}
+.dd-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:240px;border-radius:16px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.98);box-shadow:0 22px 55px rgba(0,0,0,.9);padding:8px;display:none;z-index:1000;}
+.dd.open .dd-menu{display:block;}
+.dd-item{width:100%;text-align:left;padding:10px;border-radius:12px;border:1px solid transparent;background:transparent;color:var(--text);cursor:pointer;font-size:.85rem;display:flex;justify-content:space-between;gap:10px;}
+.dd-item:hover{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.08);}
+.dd-sub{font-size:.75rem;color:var(--muted);}
+.map-layout{display:grid;grid-template-columns:1fr 360px;gap:12px;}
+@media (max-width:900px){.map-layout{grid-template-columns:1fr;}}
+#storeMap{width:100%;min-height:62vh;border-radius:18px;border:1px solid rgba(148,163,184,.35);overflow:hidden;box-shadow:0 18px 42px rgba(0,0,0,.85);}
+.store-panel{border-radius:18px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.9);box-shadow:0 18px 42px rgba(0,0,0,.85);padding:12px;min-height:62vh;display:flex;flex-direction:column;gap:10px;}
+.sp-title{font-size:1rem;font-weight:700;color:var(--heading);} .sp-sub{font-size:.8rem;color:var(--muted);} 
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;padding:6px 0;border-bottom:1px solid rgba(148,163,184,.12);} 
+.kv span:first-child{color:#cbd5e1;} .kv span:last-child{color:var(--heading);font-weight:600;text-align:right;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);font-size:.75rem;background:rgba(2,6,23,.6);} 
+.badge-dot{width:9px;height:9px;border-radius:999px;}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;} 
+.small-btn{padding:8px 10px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);background:rgba(2,6,23,.75);color:var(--text);cursor:pointer;font-size:.82rem;transition:transform .15s ease-out,border-color .15s ease-out;} 
+.small-btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.7);} 
+.small-btn.primary{border-color:rgba(34,211,238,.8);background:radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));}
+.pin{width:18px;height:18px;border-radius:999px;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 18px rgba(0,0,0,.7);position:relative;} 
+.pin::after{content:"";position:absolute;inset:-5px;border-radius:999px;border:3px solid rgba(148,163,184,.9);opacity:.95;} 
+.pin-ok{background:#22c55e;} .pin-warn{background:#facc15;} .pin-bad{background:#ef4444;} .pin-unknown{background:#64748b;} 
+.ship-all::after{border-color:#22c55e;} .ship-ab::after{border-color:#3b82f6;} .ship-limited::after{border-color:#f97316;} .ship-skip::after{border-color:#ef4444;} .ship-unknown::after{border-color:#94a3b8;}
+.leaflet-control-zoom a{background:rgba(2,6,23,.85);color:#e5e7eb;border:1px solid rgba(148,163,184,.35);} 
+.leaflet-control-zoom a:hover{background:rgba(2,6,23,.95);} 
+
+</style>
 </head>
 <body>
   <main class="app-shell">
@@ -2044,6 +2084,7 @@
         </div>
         <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
         <div class="splash-helper">Click the logo or press Enter to begin</div>
+  <button id="splashStartBtn" class="primary-button" type="button" style="max-width:320px;">Enter Hub</button>
       </section>
 
       <!-- ========= LOGIN ========= -->
@@ -2089,7 +2130,85 @@
         </div>
       </section>
 
-      <!-- ========= HUB DASHBOARD ========= -->
+      
+  <!-- ========= MAP DASHBOARD (NEW DEFAULT) ========= -->
+  <section id="view-map" class="module-root hidden">
+    <header class="map-topbar" aria-label="Map top navigation">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="map-brand" title="Hampshire Farms Hub">
+          <img src="hf_logo.png" alt="HF" />
+          <span>Store Map</span>
+        </div>
+
+        <div class="dd" id="ddModules">
+          <button class="dd-btn" type="button" aria-haspopup="true" aria-expanded="false">☰ Modules <span style="opacity:.8;">▾</span></button>
+          <div class="dd-menu" role="menu" aria-label="Modules">
+            <button class="dd-item" type="button" data-open-view="view-hf"><span>HF – Outdoor</span><span class="dd-sub">Guidelines & care</span></button>
+            <button class="dd-item" type="button" data-open-view="view-hpa"><span>HPA – Houseplants</span><span class="dd-sub">SKUs • Orders • Pests</span></button>
+            <button class="dd-item" type="button" data-open-view="view-admin" data-min-role="Supervisor"><span>Admin Tools</span><span class="dd-sub">Audits & links</span></button>
+            <button class="dd-item" type="button" data-open-view="view-learning"><span>Learning Center</span><span class="dd-sub">Tracks & quizzes</span></button>
+          </div>
+        </div>
+
+        <div class="dd" id="ddFilters">
+          <button class="dd-btn" type="button" aria-haspopup="true" aria-expanded="false">🔎 Filters <span style="opacity:.8;">▾</span></button>
+          <div class="dd-menu" role="menu" aria-label="Filters">
+            <button class="dd-item" type="button" data-filter="all"><span>Show All Stores</span><span class="dd-sub">Reset filters</span></button>
+            <button class="dd-item" type="button" data-filter="status:bad"><span>🔴 Needs Attention</span><span class="dd-sub">Red status</span></button>
+            <button class="dd-item" type="button" data-filter="status:warn"><span>🟡 Watch List</span><span class="dd-sub">Yellow status</span></button>
+            <button class="dd-item" type="button" data-filter="ship:skip"><span>🚚 Skip Shipping</span><span class="dd-sub">Skip grade</span></button>
+            <button class="dd-item" type="button" data-filter="ship:ab"><span>🔵 A/B Shipping</span><span class="dd-sub">A/B shipping</span></button>
+            <button class="dd-item" type="button" data-filter="issues:true"><span>⚠ Open Issues</span><span class="dd-sub">Has issues</span></button>
+          </div>
+        </div>
+
+        <div class="dd" id="ddStores">
+          <button class="dd-btn" type="button" aria-haspopup="true" aria-expanded="false">📍 Stores <span style="opacity:.8;">▾</span></button>
+          <div class="dd-menu" role="menu" aria-label="Stores" id="storeListMenu">
+            <div style="padding:10px; color: var(--muted); font-size: .82rem;">Loading stores…</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <div id="syncPill" class="map-pill" title="Sync mode">Sync: Local</div>
+        <div id="mapUserInfo" class="map-pill">Role: — • User: —</div>
+      </div>
+    </header>
+
+    <section class="map-layout">
+      <div id="storeMap" aria-label="Interactive store map"></div>
+      <aside class="store-panel" aria-label="Store details">
+        <div class="sp-title" id="spTitle">Select a store</div>
+        <div class="sp-sub" id="spSub">Click a pin to view the store snippet (includes Shipping Grade).</div>
+        <div>
+          <div class="badge" id="spStatusBadge"><span class="badge-dot" style="background:#94a3b8"></span><span id="spStatusText">—</span></div>
+        </div>
+        <div class="kv"><span>Shipping Grade</span><span id="spShip">—</span></div>
+        <div class="kv"><span>Pictures</span><span id="spPics">—</span></div>
+        <div class="kv"><span>Markdowns</span><span id="spMds">—</span></div>
+        <div class="kv"><span>Negatives</span><span id="spNeg">—</span></div>
+        <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
+        <div class="kv"><span>Last Update</span><span id="spUpdated">—</span></div>
+
+        <div style="margin-top:6px;">
+          <div class="sp-sub" style="margin-bottom:6px;">Quick actions (local demo):</div>
+          <div class="btn-row">
+            <button id="btnTogglePics" class="small-btn" type="button" disabled>Toggle Pictures</button>
+            <button id="btnToggleMds" class="small-btn" type="button" disabled>Toggle Markdowns</button>
+            <button id="btnToggleNeg" class="small-btn" type="button" disabled>Toggle Negatives</button>
+            <button id="btnAddIssue" class="small-btn primary" type="button" disabled>Add Issue</button>
+          </div>
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="btnZoom" class="small-btn" type="button" disabled>Zoom to Store</button>
+            <button id="btnClosePanel" class="small-btn" type="button" disabled>Close Panel</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </section>
+
+<!-- ========= HUB DASHBOARD ========= -->
       <section id="view-hub" class="hub-root hidden">
         <header class="hub-header">
           <div class="hub-title-block">
@@ -2164,7 +2283,7 @@
 
       <!-- ========= HF MODULE ========= -->
       <section id="view-hf" class="module-root hidden">
-        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+        <button class="module-back-btn" data-back="map" type="button">⬅ Back</button>
 
         <header class="module-header">
           <img src="hf_logo.png" class="module-logo" />
@@ -2193,7 +2312,7 @@
 
       <!-- ========= HPA MODULE ========= -->
       <section id="view-hpa" class="module-root hidden">
-        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+        <button class="module-back-btn" data-back="map" type="button">⬅ Back</button>
 
         <header class="module-header">
           <img src="hpa_logo.png" class="module-logo" />
@@ -2381,7 +2500,7 @@
 
       <!-- ========= ADMIN MODULE ========= -->
       <section id="view-admin" class="module-root hidden">
-        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+        <button class="module-back-btn" data-back="map" type="button">⬅ Back</button>
 
         <header class="module-header">
           <img src="hf_logo.png" class="module-logo" />
@@ -2416,7 +2535,7 @@
 
       <!-- ========= LEARNING CENTER ========= -->
       <section id="view-learning" class="module-root hidden">
-        <button class="module-back-btn" data-back="hub" type="button">⬅ Back</button>
+        <button class="module-back-btn" data-back="map" type="button">⬅ Back</button>
 
         <header class="module-header">
           <div class="chalk-write">📘 Learning Center</div>
@@ -3054,6 +3173,7 @@
       const views = [
         "view-splash",
         "view-login",
+    "view-map",
         "view-hub",
         "view-hf",
         "view-hpa",
@@ -4962,7 +5082,333 @@
         : `You scored ${scorePercent}% (${correctCount}/${total}). Review and try again!`;
     }
 
-    /* ========= DOM READY ========= */
+    
+
+/* ========= STORE MAP (Leaflet) ========= */
+const STORES_CSV_URL = "stores.csv";
+const STORE_STATUS_JSON_URL = "store_status.json"; // optional shared polling feed
+const STORE_MAP_SYNC_MODE = "local"; // local | poll
+const STORE_MAP_POLL_MS = 15000;
+const STORE_STATE_LS_KEY = "hfHubStoreState_v1";
+const STORE_STATE_CHANNEL = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
+
+let STORE_LIST = [];
+let STORE_STATE = {};
+let SELECTED_STORE_ID = null;
+let STORE_MAP = null;
+let STORE_MARKERS = new Map();
+let ACTIVE_FILTER = "all";
+
+function updateMapUserInfo() {
+  const el = document.getElementById("mapUserInfo");
+  if (!el || !CURRENT_USER) return;
+  const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
+  el.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
+}
+
+function setSyncPill() {
+  const el = document.getElementById("syncPill");
+  if (!el) return;
+  el.textContent = "Sync: " + (STORE_MAP_SYNC_MODE === "poll" ? "Shared" : "Local");
+}
+
+function loadLocalStoreState() {
+  try {
+    const raw = localStorage.getItem(STORE_STATE_LS_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") STORE_STATE = parsed;
+  } catch (e) {}
+}
+function saveLocalStoreState() {
+  try { localStorage.setItem(STORE_STATE_LS_KEY, JSON.stringify(STORE_STATE)); } catch (e) {}
+  try { STORE_STATE_CHANNEL && STORE_STATE_CHANNEL.postMessage({ type: "state", state: STORE_STATE }); } catch (e) {}
+}
+
+async function pollSharedStateOnce() {
+  try {
+    const res = await fetch(STORE_STATUS_JSON_URL, { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && typeof data === "object") {
+      STORE_STATE = data;
+      saveLocalStoreState();
+      rerenderAllStorePins();
+      if (SELECTED_STORE_ID) renderStoreSnippet(SELECTED_STORE_ID);
+    }
+  } catch (e) {}
+}
+function startSharedPolling() {
+  if (STORE_MAP_SYNC_MODE !== "poll") return;
+  pollSharedStateOnce();
+  setInterval(pollSharedStateOnce, STORE_MAP_POLL_MS);
+}
+
+function seedDemoStores() {
+  STORE_LIST = [
+    { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
+    { id: "1987", name: "Glenview", lat: 42.0792, lon: -87.8223, city: "Glenview", state: "IL", address: "" },
+    { id: "6919", name: "Frankfort", lat: 41.4969, lon: -87.8340, city: "Frankfort", state: "IL", address: "" }
+  ];
+}
+
+function parseStoresCsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (!lines.length) return [];
+  const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+  const idx = {
+    id: header.indexOf("store_id"),
+    name: header.indexOf("store_name"),
+    lat: header.indexOf("lat"),
+    lon: header.indexOf("lon"),
+    city: header.indexOf("city"),
+    state: header.indexOf("state"),
+    address: header.indexOf("address"),
+  };
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCsvLine(lines[i]);
+    const id = (row[idx.id] || "").trim();
+    const name = (row[idx.name] || "").trim();
+    const lat = parseFloat((row[idx.lat] || "").trim());
+    const lon = parseFloat((row[idx.lon] || "").trim());
+    if (!id || !name || Number.isNaN(lat) || Number.isNaN(lon)) continue;
+    out.push({
+      id, name, lat, lon,
+      city: idx.city >= 0 ? (row[idx.city] || "").trim() : "",
+      state: idx.state >= 0 ? (row[idx.state] || "").trim() : "",
+      address: idx.address >= 0 ? (row[idx.address] || "").trim() : "",
+    });
+  }
+  return out;
+}
+
+async function loadStoresList() {
+  try {
+    const res = await fetch(STORES_CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("stores.csv not found");
+    const text = await res.text();
+    const parsed = parseStoresCsv(text);
+    if (parsed.length) STORE_LIST = parsed;
+    else seedDemoStores();
+  } catch (e) {
+    seedDemoStores();
+  }
+}
+
+function normalizeShipGrade(raw) {
+  const s = (raw || "").toString().trim().toUpperCase();
+  if (!s) return { key: "unknown", label: "—" };
+  if (s.includes("SKIP")) return { key: "skip", label: raw };
+  if (s.includes("A/B") || s === "A/B") return { key: "ab", label: raw };
+  if (s.includes("ALL")) return { key: "all", label: raw };
+  if (["A","B","C","D"].includes(s)) return { key: "ab", label: raw };
+  return { key: "limited", label: raw };
+}
+
+function computeStoreStatus(state) {
+  if (!state) return "unknown";
+  const pics = !!state.pictures;
+  const mds = !!state.markdowns;
+  const neg = !!state.negatives;
+  const issues = Array.isArray(state.issues) ? state.issues.length : 0;
+  const missing = [pics, mds, neg].filter(v => !v).length;
+  if (issues > 0) return missing >= 2 ? "bad" : "warn";
+  if (missing === 0) return "ok";
+  if (missing === 1) return "warn";
+  return "bad";
+}
+
+function pinHtml(storeId) {
+  const state = STORE_STATE[storeId] || null;
+  const st = computeStoreStatus(state);
+  const ship = normalizeShipGrade(state?.shippingGrade);
+  const stClass = st === "ok" ? "pin-ok" : st === "warn" ? "pin-warn" : st === "bad" ? "pin-bad" : "pin-unknown";
+  const shipClass = ship.key === "all" ? "ship-all" : ship.key === "ab" ? "ship-ab" : ship.key === "limited" ? "ship-limited" : ship.key === "skip" ? "ship-skip" : "ship-unknown";
+  return `<div class="pin ${stClass} ${shipClass}"></div>`;
+}
+
+function makeStoreMarker(store) {
+  const icon = L.divIcon({ className: "", html: pinHtml(store.id), iconSize: [18, 18], iconAnchor: [9, 9] });
+  const m = L.marker([store.lat, store.lon], { icon });
+  m.on("click", () => {
+    SELECTED_STORE_ID = store.id;
+    renderStoreSnippet(store.id);
+  });
+  return m;
+}
+
+function rerenderStorePin(storeId) {
+  const marker = STORE_MARKERS.get(storeId);
+  if (!marker) return;
+  const icon = L.divIcon({ className: "", html: pinHtml(storeId), iconSize: [18, 18], iconAnchor: [9, 9] });
+  marker.setIcon(icon);
+}
+
+function rerenderAllStorePins() {
+  STORE_LIST.forEach(s => rerenderStorePin(s.id));
+  renderStoresDropdown();
+  applyStoreFilter(ACTIVE_FILTER);
+}
+
+function initLeafletMap() {
+  const el = document.getElementById("storeMap");
+  if (!el) return;
+  if (STORE_MAP) {
+    setTimeout(() => STORE_MAP.invalidateSize(), 50);
+    return;
+  }
+  STORE_MAP = L.map("storeMap", { zoomControl: true, preferCanvas: true });
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(STORE_MAP);
+
+  STORE_MARKERS.clear();
+  const bounds = [];
+  STORE_LIST.forEach(store => {
+    const m = makeStoreMarker(store).addTo(STORE_MAP);
+    STORE_MARKERS.set(store.id, m);
+    bounds.push([store.lat, store.lon]);
+  });
+  if (bounds.length) STORE_MAP.fitBounds(bounds, { padding: [20, 20] });
+  else STORE_MAP.setView([41.8781, -87.6298], 6);
+}
+
+function formatUpdated(ts) {
+  if (!ts) return "—";
+  try { return new Date(ts).toLocaleString(); } catch { return "—"; }
+}
+
+function renderStoresDropdown() {
+  const menu = document.getElementById("storeListMenu");
+  if (!menu) return;
+  menu.innerHTML = "";
+  const sorted = [...STORE_LIST].sort((a, b) => {
+    const an = Number(a.id), bn = Number(b.id);
+    if (!Number.isNaN(an) && !Number.isNaN(bn)) return an - bn;
+    return (a.id || "").localeCompare(b.id || "");
+  });
+  sorted.forEach(store => {
+    const state = STORE_STATE[store.id] || {};
+    const status = computeStoreStatus(state);
+    const ship = normalizeShipGrade(state.shippingGrade);
+    const icon = status === "ok" ? "🟢" : status === "warn" ? "🟡" : status === "bad" ? "🔴" : "⚪";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dd-item";
+    btn.innerHTML = `<span>${icon} ${store.id} – ${store.name}</span><span class="dd-sub">${ship.label || "—"}</span>`;
+    btn.addEventListener("click", () => {
+      closeAllMapDropdowns();
+      SELECTED_STORE_ID = store.id;
+      renderStoreSnippet(store.id);
+      const marker = STORE_MARKERS.get(store.id);
+      if (marker && STORE_MAP) STORE_MAP.setView(marker.getLatLng(), Math.max(STORE_MAP.getZoom(), 11), { animate: true });
+    });
+    menu.appendChild(btn);
+  });
+}
+
+function setStatusBadge(label, color) {
+  const badge = document.getElementById("spStatusBadge");
+  const textEl = document.getElementById("spStatusText");
+  if (!badge || !textEl) return;
+  badge.innerHTML = `<span class="badge-dot" style="background:${color}"></span><span>${label}</span>`;
+  textEl.textContent = label;
+}
+
+function renderStoreSnippet(storeId) {
+  const store = STORE_LIST.find(s => s.id === storeId);
+  const state = STORE_STATE[storeId] || {};
+  const status = computeStoreStatus(state);
+  const ship = normalizeShipGrade(state.shippingGrade);
+
+  document.getElementById("spTitle").textContent = store ? `${store.name} (${store.id})` : `Store ${storeId}`;
+  document.getElementById("spSub").textContent = store ? `${[store.city, store.state].filter(Boolean).join(", ")}${store.address ? " • " + store.address : ""}` : "—";
+
+  const statusLabel = status === "ok" ? "🟢 On Track" : status === "warn" ? "🟡 Watch List" : status === "bad" ? "🔴 Needs Attention" : "⚪ Unknown";
+  const statusColor = status === "ok" ? "#22c55e" : status === "warn" ? "#facc15" : status === "bad" ? "#ef4444" : "#94a3b8";
+  setStatusBadge(statusLabel, statusColor);
+
+  document.getElementById("spShip").textContent = ship.label || "—";
+  document.getElementById("spPics").textContent = state.pictures ? "✅ Complete" : "❌ Missing";
+  document.getElementById("spMds").textContent = state.markdowns ? "✅ Complete" : "❌ Missing";
+  document.getElementById("spNeg").textContent = state.negatives ? "✅ Complete" : "❌ Missing";
+  const issues = Array.isArray(state.issues) ? state.issues : [];
+  document.getElementById("spIssues").textContent = issues.length ? `⚠ ${issues.length} open` : "✅ None";
+  document.getElementById("spUpdated").textContent = formatUpdated(state.updatedAt);
+
+  ["btnTogglePics", "btnToggleMds", "btnToggleNeg", "btnAddIssue", "btnZoom", "btnClosePanel"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = false;
+  });
+}
+
+function updateStoreState(storeId, patch) {
+  const cur = STORE_STATE[storeId] || { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
+  const next = { ...cur, ...patch, updatedAt: Date.now() };
+  if (!Array.isArray(next.issues)) next.issues = [];
+  STORE_STATE[storeId] = next;
+  saveLocalStoreState();
+  rerenderStorePin(storeId);
+  if (SELECTED_STORE_ID === storeId) renderStoreSnippet(storeId);
+}
+
+function applyStoreFilter(filter) {
+  ACTIVE_FILTER = filter || "all";
+  STORE_LIST.forEach(store => {
+    const marker = STORE_MARKERS.get(store.id);
+    if (!marker || !STORE_MAP) return;
+    const state = STORE_STATE[store.id] || {};
+    const status = computeStoreStatus(state);
+    const ship = normalizeShipGrade(state.shippingGrade);
+    const issues = Array.isArray(state.issues) ? state.issues.length : 0;
+
+    let visible = true;
+    if (ACTIVE_FILTER === "status:bad") visible = (status === "bad");
+    else if (ACTIVE_FILTER === "status:warn") visible = (status === "warn");
+    else if (ACTIVE_FILTER === "ship:skip") visible = (ship.key === "skip");
+    else if (ACTIVE_FILTER === "ship:ab") visible = (ship.key === "ab");
+    else if (ACTIVE_FILTER === "issues:true") visible = (issues > 0);
+
+    if (visible) {
+      if (!STORE_MAP.hasLayer(marker)) marker.addTo(STORE_MAP);
+    } else {
+      if (STORE_MAP.hasLayer(marker)) STORE_MAP.removeLayer(marker);
+    }
+  });
+}
+
+function wireMapDropdown(id) {
+  const dd = document.getElementById(id);
+  if (!dd) return;
+  const btn = dd.querySelector(".dd-btn");
+  btn && btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = dd.classList.toggle("open");
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    document.querySelectorAll(".dd").forEach(other => { if (other !== dd) other.classList.remove("open"); });
+  });
+}
+function closeAllMapDropdowns() {
+  document.querySelectorAll(".dd").forEach(dd => dd.classList.remove("open"));
+  document.querySelectorAll(".dd-btn").forEach(btn => btn.setAttribute("aria-expanded", "false"));
+}
+
+async function initStoreMapDashboard() {
+  setSyncPill();
+  updateMapUserInfo();
+  await loadStoresList();
+  loadLocalStoreState();
+  STORE_LIST.forEach(s => {
+    if (!STORE_STATE[s.id]) STORE_STATE[s.id] = { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
+  });
+  saveLocalStoreState();
+  initLeafletMap();
+  renderStoresDropdown();
+  rerenderAllStorePins();
+  startSharedPolling();
+}
+
+
+/* ========= DOM READY ========= */
 
     document.addEventListener("DOMContentLoaded", () => {
       const splashView = document.getElementById("view-splash");
@@ -4990,14 +5436,20 @@
 
       if (splashLogoWrapper && splashView && loginView) {
         splashLogoWrapper.addEventListener("click", enterHubFromSplash);
+    const splashStartBtn = document.getElementById("splashStartBtn");
+    if (splashStartBtn) splashStartBtn.addEventListener("click", enterHubFromSplash);
+    splashView.addEventListener("click", (e) => { if (e.target === splashView) enterHubFromSplash(); });
       }
 
       // "Press Enter" on splash
       document.addEventListener("keydown", e => {
-        if (e.key === "Enter" && !splashView.classList.contains("hidden")) {
+      if (!splashView.classList.contains("hidden")) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           enterHubFromSplash();
         }
-      });
+      }
+    });
 
       function updateLoginFieldsForRole() {
         const role = loginRole.value;
@@ -5044,7 +5496,9 @@
               localStorage.removeItem("hfHubLastUsername");
             } catch (e) {}
             loginError.textContent = "";
-            showView("view-hub");
+            showView("view-map");
+        updateMapUserInfo();
+        initStoreMapDashboard();
             updateHubUserInfo();
             applyRolePermissions();
             return;
@@ -5089,7 +5543,9 @@
           } catch (e) {}
 
           loginError.textContent = "";
-          showView("view-hub");
+          showView("view-map");
+        updateMapUserInfo();
+        initStoreMapDashboard();
           updateHubUserInfo();
           applyRolePermissions();
         });
