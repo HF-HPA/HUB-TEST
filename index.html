@@ -5100,7 +5100,7 @@
 const MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
   const STORE_STATE_KEY = "hfHubStoreState_v2";
-  const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
+  const BC = null; // disabled: cross-device sync handled by Azure SignalR
 
   let stores = [];
   let state = {};
@@ -5119,19 +5119,8 @@ const MapDash = (() => {
   function el(id){ return document.getElementById(id); }
   function safeText(node, txt){ if (node) node.textContent = txt; }
 
-  function loadLocal(){
-    try {
-      const raw = localStorage.getItem(STORE_STATE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") state = parsed;
-      }
-    } catch(e){}
-  }
-  function saveLocal(){
-    try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); } catch(e){}
-    try { BC && BC.postMessage({ type: "state", state }); } catch(e){}
-  }
+  function loadLocal(){ /* disabled: do not use localStorage */ }
+  function saveLocal(){ /* disabled: do not use localStorage */ }
 
   function parseStoresCsv(text){
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -5474,7 +5463,7 @@ const MapDash = (() => {
     initialized = true;
 
     setUserPill();
-    safeText(el('syncPill'), 'Sync: Local');
+    safeText(el('syncPill'), 'Sync: Live');
 
     loadLocal();
     await loadStores();
@@ -5883,7 +5872,7 @@ updateHubUserInfo();
     });
   
 /* ===============================
-   AZURE SIGNALR REALTIME (PATCH)
+   AZURE SIGNALR REALTIME (NO-LOCAL STORAGE)
    =============================== */
 const Realtime = (() => {
   let connection = null;
@@ -5891,6 +5880,7 @@ const Realtime = (() => {
   const API_BASE = window.location.origin;
 
   async function connect() {
+    if (connected) return;
     connection = new signalR.HubConnectionBuilder()
       .withUrl(API_BASE + "/api")
       .withAutomaticReconnect()
@@ -5902,7 +5892,7 @@ const Realtime = (() => {
         if (window.MapDash && typeof window.MapDash.applyRemoteUpdate === "function") {
           window.MapDash.applyRemoteUpdate(payload);
         }
-      } catch (e) { console.warn(e); }
+      } catch (e) { console.warn('Realtime apply failed', e); }
     });
 
     await connection.start();
@@ -5923,14 +5913,18 @@ const Realtime = (() => {
   return { connect, broadcastStoreUpdate };
 })();
 
-(function patchMapDash(){
+(function patchMapDashForSignalR(){
+  // expose MapDash for Realtime handler
+  window.MapDash = window.MapDash || MapDash;
   if (!window.MapDash) return;
-  let APPLYING_REMOTE = false;
-  const origUpdate = MapDash.updateStore || null;
 
-  MapDash.updateStore = function(storeId, patch){
-    if (origUpdate) origUpdate.call(this, storeId, patch);
-    if (!APPLYING_REMOTE && window.Realtime) {
+  let APPLYING_REMOTE = false;
+  const origUpdate = window.MapDash.updateStore;
+
+  // Wrap updateStore to broadcast
+  window.MapDash.updateStore = function(storeId, patch){
+    origUpdate.call(this, storeId, patch);
+    if (!APPLYING_REMOTE) {
       Realtime.broadcastStoreUpdate({
         storeId,
         patch,
@@ -5940,21 +5934,22 @@ const Realtime = (() => {
     }
   };
 
-  MapDash.applyRemoteUpdate = function(payload){
+  // Remote apply without rebroadcast
+  window.MapDash.applyRemoteUpdate = function(payload){
     if (!payload || !payload.storeId || !payload.patch) return;
     APPLYING_REMOTE = true;
-    if (origUpdate) origUpdate.call(this, payload.storeId, payload.patch);
+    origUpdate.call(this, payload.storeId, payload.patch);
     APPLYING_REMOTE = false;
   };
 })();
 
-(function patchShowView(){
+(function autoConnectOnMap(){
   const origShowView = window.showView;
   if (!origShowView) return;
   window.showView = function(viewId){
     const r = origShowView.apply(this, arguments);
-    if (viewId === 'view-map' && window.Realtime) {
-      Realtime.connect().catch(()=>{});
+    if (viewId === 'view-map') {
+      Realtime.connect().catch(err => console.warn('Realtime connect failed', err));
     }
     return r;
   };
