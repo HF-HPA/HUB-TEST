@@ -2079,6 +2079,7 @@
     <div class="app-inner">
 
       <!-- ========= SPLASH ========= -->
+<!-- INLINE SPLASH FIX: onclick/onkeydown added so splash->login works even if scripts fail -->
       <section id="view-splash" class="splash-root">
         <div
           id="splashLogo"
@@ -2086,13 +2087,13 @@
           role="button"
           tabindex="0"
           aria-label="Enter Hampshire Farms Hub"
-        >
+         onclick="document.getElementById('view-splash')&&document.getElementById('view-splash').classList.add('hidden');var lv=document.getElementById('view-login');if(lv){lv.classList.remove('hidden');lv.classList.add('login-fade-in');lv.style.opacity='1';}var r=document.getElementById('loginRole');if(r) r.focus();" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('view-splash')&&document.getElementById('view-splash').classList.add('hidden');var lv=document.getElementById('view-login');if(lv){lv.classList.remove('hidden');lv.classList.add('login-fade-in');lv.style.opacity='1';}var r=document.getElementById('loginRole');if(r) r.focus();}">
           <img src="hf_logo.png" class="splash-logo-img" alt="HF Logo" />
         </div>
         <div class="splash-subtitle">HAMPSHIRE FARMS HUB</div>
         <div class="splash-helper">Click the logo or press Enter to begin</div>
 
-  <button id="splashStartBtn" class="primary-button" type="button" style="max-width:320px;">Enter Hub</button>
+  <button id="splashStartBtn" class="primary-button" type="button" style="max-width:320px;" onclick="document.getElementById('view-splash')&&document.getElementById('view-splash').classList.add('hidden');var lv=document.getElementById('view-login');if(lv){lv.classList.remove('hidden');lv.classList.add('login-fade-in');lv.style.opacity='1';}var r=document.getElementById('loginRole');if(r) r.focus();">Enter Hub</button>
       </section>
 
       <!-- ========= LOGIN ========= -->
@@ -2179,7 +2180,7 @@
       </div>
 
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-        <div id="syncPill" class="map-pill" title="Sync mode">Sync: Server</div>
+        <div id="syncPill" class="map-pill" title="Sync mode">Sync: Local</div>
         <div id="mapUserInfo" class="map-pill">Role: — • User: —</div>
       </div>
     </header>
@@ -2697,7 +2698,6 @@
 
     </div>
   </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <!-- ========= SEGMENT 3: SCRIPTS ========= -->
   <script>
     /* ========= CONFIG ========= */
@@ -2709,12 +2709,6 @@
     const PEST_CSV_URL = "pests.csv";
     const HF_GUIDELINES_CSV_URL = "hf_guidelines.csv";
     const HPA_GUIDELINES_CSV_URL = "hpa_guidelines.csv";
-
- // ===== Server State (Azure Table Storage via Azure Functions) =====
- const API_BASE_URL = window.location.origin;
- const SERVER_STATE_GET_ENDPOINT = '/api/state/get';
- const SERVER_STATE_UPDATE_ENDPOINT = '/api/state/update';
-
 
     const STORE_GRADES_BY_WEEK = {
       "6": "All stores",
@@ -5102,78 +5096,12 @@
 
     
 
-
-/* ===============================
-   REALTIME: Azure SignalR (serverless)
-   Expects Azure Functions endpoints:
-     - POST /api/negotiate  (SignalR negotiate)
-     - GET  /api/state/get  (returns full store state object)
-     - POST /api/state/update (accepts {storeId, patch, user, updatedAt} and broadcasts storeUpdate)
-   =============================== */
-const Realtime = (() => {
-  let connection = null;
-  let connected = false;
-
-  async function connect() {
-    if (connected) return true;
-    if (typeof signalR === 'undefined' || !signalR.HubConnectionBuilder) {
-      console.warn('SignalR client library not loaded.');
-      return false;
-    }
-
-    connection = new signalR.HubConnectionBuilder()
-      .withUrl(API_BASE_URL + '/api')
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Warning)
-      .build();
-
-    connection.on('storeUpdate', (payload) => {
-      try {
-        if (window.MapDash && typeof window.MapDash.applyRemoteUpdate === 'function') {
-          window.MapDash.applyRemoteUpdate(payload);
-        }
-      } catch (e) {
-        console.warn('Failed applying remote update', e);
-      }
-    });
-
-    try {
-      await connection.start();
-      connected = true;
-      const pill = document.getElementById('syncPill');
-      if (pill) pill.textContent = 'Sync: Live';
-      return true;
-    } catch (e) {
-      console.warn('SignalR connect failed', e);
-      const pill = document.getElementById('syncPill');
-      if (pill) pill.textContent = 'Sync: Server (Offline)';
-      return false;
-    }
-  }
-
-  async function broadcastStoreUpdate(payload) {
-    // In server-authoritative mode we do NOT broadcast from the client directly.
-    // We POST to /api/state/update and the server persists + broadcasts.
-    try {
-      await fetch(API_BASE_URL + SERVER_STATE_UPDATE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } catch (e) {
-      console.warn('Failed posting update to server', e);
-      const pill = document.getElementById('syncPill');
-      if (pill) pill.textContent = 'Sync: Server (Offline)';
-    }
-  }
-
-  return { connect, broadcastStoreUpdate };
-})();
-
 /* ========= MAP DASH MODULE (ROBUST WIRING) ========= */
 const MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
- // Server-authoritative state (no localStorage / BroadcastChannel)
+  const STORE_STATE_KEY = "hfHubStoreState_v2";
+  const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
+
   let stores = [];
   let state = {};
   let selectedId = null;
@@ -5191,22 +5119,17 @@ const MapDash = (() => {
   function el(id){ return document.getElementById(id); }
   function safeText(node, txt){ if (node) node.textContent = txt; }
 
-  async function loadServerState(){
-  try {
-    const res = await fetch(API_BASE_URL + SERVER_STATE_GET_ENDPOINT, { cache: 'no-store' });
-    if (!res.ok) throw new Error('state/get failed');
-    const data = await res.json();
-    if (data && typeof data === 'object') {
-      state = data;
-      return true;
-    }
-  } catch(e) {
-    console.warn('Could not load server state', e);
+  function loadLocal(){
+    try {
+      const raw = localStorage.getItem(STORE_STATE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") state = parsed;
+      }
+    } catch(e){}
   }
-  return false;
-}
-  function saveLocal(){ /* no-op: server authoritative */ }
-catch(e){}
+  function saveLocal(){
+    try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); } catch(e){}
     try { BC && BC.postMessage({ type: "state", state }); } catch(e){}
   }
 
@@ -5371,44 +5294,7 @@ catch(e){}
     actionButtons.forEach(b => b.disabled = false);
   }
 
-  
- function normalizeStateEntry(entry){
-  const d = { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
-  const out = { ...d, ...(entry||{}) };
-  if (!Array.isArray(out.issues)) out.issues = [];
-  return out;
- }
-
- let APPLYING_REMOTE = false;
-
- function applyPatch(storeId, patch, updatedAt){
-  const cur = normalizeStateEntry(state[storeId]);
-  const next = normalizeStateEntry({ ...cur, ...(patch||{}) });
-  next.updatedAt = updatedAt || Date.now();
-  state[storeId] = next;
-  rerenderMarker(storeId);
-  renderStoreDropdown();
-  if (selectedId === storeId) selectStore(storeId);
- }
-
- async function postServerUpdate(storeId, patch){
-  // Server persists + broadcasts through SignalR
-  Realtime.broadcastStoreUpdate({
-    storeId,
-    patch,
-    updatedAt: Date.now(),
-    user: (CURRENT_USER && (CURRENT_USER.displayName || CURRENT_USER.username)) || null
-  });
- }
-
- function applyRemoteUpdate(payload){
-  if (!payload || !payload.storeId || !payload.patch) return;
-  APPLYING_REMOTE = true;
-  applyPatch(payload.storeId, payload.patch, payload.updatedAt || Date.now());
-  APPLYING_REMOTE = false;
- }
-
-function updateStore(storeId, patch){
+  function updateStore(storeId, patch){
     const cur = state[storeId] || { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
     const next = { ...cur, ...patch, updatedAt: Date.now() };
     if (!Array.isArray(next.issues)) next.issues = [];
@@ -5603,7 +5489,7 @@ function updateStore(storeId, patch){
     setTimeout(() => { try { map && map.invalidateSize(); } catch(e){} }, 80);
   }
 
-  return { ensureInit, bindUI, invalidate, applyFilter, applyRemoteUpdate, updateStore };
+  return { ensureInit, bindUI, invalidate, applyFilter };
 })();
 
 /* ========= DOM READY ========= */
