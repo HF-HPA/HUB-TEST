@@ -2697,6 +2697,7 @@
 
     </div>
   </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <!-- ========= SEGMENT 3: SCRIPTS ========= -->
   <script>
     /* ========= CONFIG ========= */
@@ -5880,6 +5881,85 @@ updateHubUserInfo();
       // Weather widget
       loadWeather();
     });
-  </script>
+  
+/* ===============================
+   AZURE SIGNALR REALTIME (PATCH)
+   =============================== */
+const Realtime = (() => {
+  let connection = null;
+  let connected = false;
+  const API_BASE = window.location.origin;
+
+  async function connect() {
+    connection = new signalR.HubConnectionBuilder()
+      .withUrl(API_BASE + "/api")
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Warning)
+      .build();
+
+    connection.on("storeUpdate", (payload) => {
+      try {
+        if (window.MapDash && typeof window.MapDash.applyRemoteUpdate === "function") {
+          window.MapDash.applyRemoteUpdate(payload);
+        }
+      } catch (e) { console.warn(e); }
+    });
+
+    await connection.start();
+    connected = true;
+    const pill = document.getElementById('syncPill');
+    if (pill) pill.textContent = 'Sync: Live';
+  }
+
+  async function broadcastStoreUpdate(data) {
+    if (!connected) return;
+    await fetch(API_BASE + '/api/storeUpdate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  }
+
+  return { connect, broadcastStoreUpdate };
+})();
+
+(function patchMapDash(){
+  if (!window.MapDash) return;
+  let APPLYING_REMOTE = false;
+  const origUpdate = MapDash.updateStore || null;
+
+  MapDash.updateStore = function(storeId, patch){
+    if (origUpdate) origUpdate.call(this, storeId, patch);
+    if (!APPLYING_REMOTE && window.Realtime) {
+      Realtime.broadcastStoreUpdate({
+        storeId,
+        patch,
+        updatedAt: Date.now(),
+        user: window.CURRENT_USER?.displayName || window.CURRENT_USER?.username || null
+      });
+    }
+  };
+
+  MapDash.applyRemoteUpdate = function(payload){
+    if (!payload || !payload.storeId || !payload.patch) return;
+    APPLYING_REMOTE = true;
+    if (origUpdate) origUpdate.call(this, payload.storeId, payload.patch);
+    APPLYING_REMOTE = false;
+  };
+})();
+
+(function patchShowView(){
+  const origShowView = window.showView;
+  if (!origShowView) return;
+  window.showView = function(viewId){
+    const r = origShowView.apply(this, arguments);
+    if (viewId === 'view-map' && window.Realtime) {
+      Realtime.connect().catch(()=>{});
+    }
+    return r;
+  };
+})();
+
+</script>
 </body>
 </html>
