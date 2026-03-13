@@ -10,6 +10,8 @@
   <!-- Leaflet (Geographic Store Map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.6/signalr.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <style>
     /* ========= CORE THEME ========= */
     :root {
@@ -5097,9 +5099,47 @@
     
 
 /* ========= MAP DASH MODULE (ROBUST WIRING) ========= */
+
 const MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
-  const STORE_STATE_KEY = "hfHubStoreState_v2";
+
+  // ======= LIVE SYNC CONFIG (GitHub Pages friendly) =======
+  // This app is hosted as a static site on GitHub Pages, so live sync requires an external API.
+  // Set API base by:
+  //   1) Adding ?api=https://YOUR-FUNCTION-APP.azurewebsites.net to the URL (recommended), OR
+  //   2) Writing localStorage key hfHubApiBase = "https://..."
+  // If no API is configured or the API is unreachable, the map gracefully falls back to local-only mode.
+  const API_BASE_KEY = "hfHubApiBase";
+  const STORE_STATE_KEY = "hfHubStoreState_v2"; // local fallback storage
+
+  function getApiBase() {
+    try {
+      const u = new URL(window.location.href);
+      const qp = u.searchParams.get("api");
+      if (qp && qp.startsWith("http")) {
+        localStorage.setItem(API_BASE_KEY, qp.replace(/\/$/, ""));
+      }
+    } catch (e) {}
+    try {
+      const v = localStorage.getItem(API_BASE_KEY);
+      return (v || "").replace(/\/$/, "");
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function apiUrl(path) {
+    const base = getApiBase();
+    if (!base) return "";
+    if (path.startsWith("/")) return base + path;
+    return base + "/" + path;
+  }
+
+  const NEGOTIATE_URL = () => apiUrl('/api/negotiate');
+  const GET_STATE_URL = () => apiUrl('/api/state');
+  const UPDATE_STORE_URL = () => apiUrl('/api/store/update');
+
+  // BroadcastChannel is still useful for multiple tabs on the SAME device (local fallback)
   const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
 
   let stores = [];
@@ -5109,6 +5149,8 @@ const MapDash = (() => {
   let markers = new Map();
   let activeFilter = "all";
   let initialized = false;
+  let hubConn = null;
+  let liveEnabled = false;
 
   const demoStores = [
     { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
@@ -5116,24 +5158,80 @@ const MapDash = (() => {
     { id: "6919", name: "Frankfort", lat: 41.4969, lon: -87.8340, city: "Frankfort", state: "IL", address: "" }
   ];
 
-  function el(id){ return document.getElementById(id); }
-  function safeText(node, txt){ if (node) node.textContent = txt; }
+  function el(id) { return document.getElementById(id); }
+  function safeText(node, txt) { if (node) node.textContent = txt; }
 
-  function loadLocal(){
+  // ======= LOCAL FALLBACK =======
+  function loadLocal() {
     try {
       const raw = localStorage.getItem(STORE_STATE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") state = parsed;
       }
-    } catch(e){}
-  }
-  function saveLocal(){
-    try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); } catch(e){}
-    try { BC && BC.postMessage({ type: "state", state }); } catch(e){}
+    } catch (e) {}
   }
 
-  function parseStoresCsv(text){
+  function saveLocal() {
+    try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); } catch (e) {}
+    try { BC && BC.postMessage({ type: "state", state }); } catch (e) {}
+  }
+
+  // ======= SERVER (LIVE) =======
+  async function loadServerState() {
+    const url = GET_STATE_URL();
+    if (!url) throw new Error("No API base configured");
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to load server state");
+    const data = await res.json();
+    state = (data && data.state && typeof data.state === 'object') ? data.state : {};
+  }
+
+  async function saveServerState(storeId, nextState) {
+    const url = UPDATE_STORE_URL();
+    if (!url) throw new Error("No API base configured");
+    const payload = { storeId, nextState };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error("Failed to save update");
+    // optional response ignored
+  }
+
+  async function connectSignalR() {
+    if (typeof signalR === 'undefined') throw new Error('SignalR client library not loaded');
+    const url = NEGOTIATE_URL();
+    if (!url) throw new Error("No API base configured");
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Negotiate failed");
+    const info = await res.json();
+    if (!info || !info.url || !info.accessToken) throw new Error("Invalid negotiate payload");
+
+    hubConn = new signalR.HubConnectionBuilder()
+      .withUrl(info.url, { accessTokenFactory: () => info.accessToken })
+      .withAutomaticReconnect()
+      .build();
+
+    hubConn.on("stateUpdated", (msg) => {
+      // expected msg: { storeId, nextState } OR { storeId, patch }
+      if (!msg || !msg.storeId) return;
+      if (msg.nextState) {
+        state[msg.storeId] = msg.nextState;
+      } else if (msg.patch) {
+        state[msg.storeId] = { ...(state[msg.storeId] || {}), ...msg.patch };
+      }
+      rerenderMarker(msg.storeId);
+      renderStoreDropdown();
+      applyFilter(activeFilter);
+      if (selectedId === msg.storeId) selectStore(msg.storeId);
+    });
+
+    await hubConn.start();
+  }
+
+  function parseStoresCsv(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (!lines.length) return [];
     const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
@@ -5147,7 +5245,7 @@ const MapDash = (() => {
       address: header.indexOf("address"),
     };
     const out = [];
-    for (let i=1;i<lines.length;i++){
+    for (let i = 1; i < lines.length; i++) {
       const row = parseCsvLine(lines[i]);
       const id = (row[idx.id] || "").trim();
       const name = (row[idx.name] || "").trim();
@@ -5156,110 +5254,109 @@ const MapDash = (() => {
       if (!id || !name || Number.isNaN(lat) || Number.isNaN(lon)) continue;
       out.push({
         id, name, lat, lon,
-        city: idx.city>=0 ? (row[idx.city]||"").trim() : "",
-        state: idx.state>=0 ? (row[idx.state]||"").trim() : "",
-        address: idx.address>=0 ? (row[idx.address]||"").trim() : "",
+        city: idx.city >= 0 ? (row[idx.city] || "").trim() : "",
+        state: idx.state >= 0 ? (row[idx.state] || "").trim() : "",
+        address: idx.address >= 0 ? (row[idx.address] || "").trim() : "",
       });
     }
     return out;
   }
 
-  async function loadStores(){
+  async function loadStores() {
     try {
       const res = await fetch(STORES_CSV_URL, { cache: "no-store" });
       if (!res.ok) throw new Error("stores.csv missing");
       const txt = await res.text();
       const parsed = parseStoresCsv(txt);
       stores = parsed.length ? parsed : demoStores;
-    } catch(e) {
+    } catch (e) {
       stores = demoStores;
     }
   }
 
-  function ensureDefaults(){
+  function ensureDefaults() {
     stores.forEach(s => {
       if (!state[s.id]) {
-        state[s.id] = { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
+        state[s.id] = { pictures: false, markdowns: false, negatives: false, issues: [], shippingGrade: "", updatedAt: null };
       } else {
-        // normalize
         if (!Array.isArray(state[s.id].issues)) state[s.id].issues = [];
       }
     });
-    saveLocal();
+    // In live mode we DO NOT save defaults immediately to server (avoids noisy writes).
+    // In local mode, store defaults.
+    if (!liveEnabled) saveLocal();
   }
 
-  function normalizeShip(raw){
+  function normalizeShip(raw) {
     const s = (raw || "").toString().trim().toUpperCase();
-    if (!s) return { key:"unknown", label:"—" };
-    if (s.includes("SKIP")) return { key:"skip", label: raw };
-    if (s.includes("A/B") || s === "A/B") return { key:"ab", label: raw };
-    if (s.includes("ALL")) return { key:"all", label: raw };
-    if (["A","B","C","D"].includes(s)) return { key:"ab", label: raw };
-    return { key:"limited", label: raw };
+    if (!s) return { key: "unknown", label: "—" };
+    if (s.includes("SKIP")) return { key: "skip", label: raw };
+    if (s.includes("A/B") || s === "A/B") return { key: "ab", label: raw };
+    if (s.includes("ALL")) return { key: "all", label: raw };
+    if (["A", "B", "C", "D"].includes(s)) return { key: "ab", label: raw };
+    return { key: "limited", label: raw };
   }
 
-  function computeStatus(st){
+  function computeStatus(st) {
     if (!st) return "unknown";
     const pics = !!st.pictures;
-    const mds  = !!st.markdowns;
-    const neg  = !!st.negatives;
+    const mds = !!st.markdowns;
+    const neg = !!st.negatives;
     const issues = Array.isArray(st.issues) ? st.issues.length : 0;
-    const missing = [pics,mds,neg].filter(v => !v).length;
-    if (issues>0) return missing>=2 ? "bad" : "warn";
-    if (missing===0) return "ok";
-    if (missing===1) return "warn";
+    const missing = [pics, mds, neg].filter(v => !v).length;
+    if (issues > 0) return missing >= 2 ? "bad" : "warn";
+    if (missing === 0) return "ok";
+    if (missing === 1) return "warn";
     return "bad";
   }
 
-  function pinHtml(storeId){
+  function pinHtml(storeId) {
     const st = state[storeId] || null;
     const status = computeStatus(st);
     const ship = normalizeShip(st?.shippingGrade);
-    const stClass = status==="ok"?"pin-ok":status==="warn"?"pin-warn":status==="bad"?"pin-bad":"pin-unknown";
-    const shipClass = ship.key==="all"?"ship-all":ship.key==="ab"?"ship-ab":ship.key==="limited"?"ship-limited":ship.key==="skip"?"ship-skip":"ship-unknown";
+    const stClass = status === "ok" ? "pin-ok" : status === "warn" ? "pin-warn" : status === "bad" ? "pin-bad" : "pin-unknown";
+    const shipClass = ship.key === "all" ? "ship-all" : ship.key === "ab" ? "ship-ab" : ship.key === "limited" ? "ship-limited" : ship.key === "skip" ? "ship-skip" : "ship-unknown";
     return `<div class="pin ${stClass} ${shipClass}"></div>`;
   }
 
-  function rerenderMarker(storeId){
+  function rerenderMarker(storeId) {
     const marker = markers.get(storeId);
     if (!marker) return;
-    const icon = L.divIcon({ className:"", html: pinHtml(storeId), iconSize:[18,18], iconAnchor:[9,9] });
+    const icon = L.divIcon({ className: "", html: pinHtml(storeId), iconSize: [18, 18], iconAnchor: [9, 9] });
     marker.setIcon(icon);
   }
 
-  function rerenderAll(){
+  function rerenderAll() {
     stores.forEach(s => rerenderMarker(s.id));
     renderStoreDropdown();
     applyFilter(activeFilter);
   }
 
-  function initMap(){
+  function initMap() {
     const mapEl = el("storeMap");
     if (!mapEl) return;
-
     if (!map) {
-      map = L.map("storeMap", { zoomControl:true, preferCanvas:true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19, attribution:"© OpenStreetMap" }).addTo(map);
+      map = L.map("storeMap", { zoomControl: true, preferCanvas: true });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
     }
 
-    // Clear existing markers
-    markers.forEach(m => { try { map.removeLayer(m); } catch(e){} });
+    markers.forEach(m => { try { map.removeLayer(m); } catch (e) {} });
     markers.clear();
 
     const bounds = [];
     stores.forEach(store => {
-      const icon = L.divIcon({ className:"", html: pinHtml(store.id), iconSize:[18,18], iconAnchor:[9,9] });
+      const icon = L.divIcon({ className: "", html: pinHtml(store.id), iconSize: [18, 18], iconAnchor: [9, 9] });
       const m = L.marker([store.lat, store.lon], { icon }).addTo(map);
       m.on("click", () => { selectStore(store.id); });
       markers.set(store.id, m);
       bounds.push([store.lat, store.lon]);
     });
 
-    if (bounds.length) map.fitBounds(bounds, { padding:[20,20] });
-    setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 60);
+    if (bounds.length) map.fitBounds(bounds, { padding: [20, 20] });
+    setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
   }
 
-  function setBadge(label, color){
+  function setBadge(label, color) {
     const badge = el("spStatusBadge");
     const textEl = el("spStatusText");
     if (!badge || !textEl) return;
@@ -5267,7 +5364,7 @@ const MapDash = (() => {
     textEl.textContent = label;
   }
 
-  function selectStore(storeId){
+  function selectStore(storeId) {
     selectedId = storeId;
     const store = stores.find(s => s.id === storeId);
     const st = state[storeId] || {};
@@ -5275,36 +5372,50 @@ const MapDash = (() => {
     const ship = normalizeShip(st.shippingGrade);
 
     safeText(el("spTitle"), store ? `${store.name} (${store.id})` : `Store ${storeId}`);
-    safeText(el("spSub"), store ? `${[store.city, store.state].filter(Boolean).join(", ")}${store.address?" • "+store.address:""}` : "—");
+    safeText(el("spSub"), store ? `${[store.city, store.state].filter(Boolean).join(", ")}${store.address ? " • " + store.address : ""}` : "—");
 
-    const statusLabel = status==="ok"?"🟢 On Track":status==="warn"?"🟡 Watch List":status==="bad"?"🔴 Needs Attention":"⚪ Unknown";
-    const statusColor = status==="ok"?"#22c55e":status==="warn"?"#facc15":status==="bad"?"#ef4444":"#94a3b8";
+    const statusLabel = status === "ok" ? "🟢 On Track" : status === "warn" ? "🟡 Watch List" : status === "bad" ? "🔴 Needs Attention" : "⚪ Unknown";
+    const statusColor = status === "ok" ? "#22c55e" : status === "warn" ? "#facc15" : status === "bad" ? "#ef4444" : "#94a3b8";
     setBadge(statusLabel, statusColor);
 
     safeText(el("spShip"), ship.label || "—");
     safeText(el("spPics"), st.pictures ? "✅ Complete" : "❌ Missing");
     safeText(el("spMds"), st.markdowns ? "✅ Complete" : "❌ Missing");
     safeText(el("spNeg"), st.negatives ? "✅ Complete" : "❌ Missing");
+
     const issues = Array.isArray(st.issues) ? st.issues : [];
     safeText(el("spIssues"), issues.length ? `⚠ ${issues.length} open` : "✅ None");
     safeText(el("spUpdated"), st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—");
 
-    // enable actions
     const actionButtons = document.querySelectorAll('#view-map [data-map-action]');
     actionButtons.forEach(b => b.disabled = false);
   }
 
-  function updateStore(storeId, patch){
-    const cur = state[storeId] || { pictures:false, markdowns:false, negatives:false, issues:[], shippingGrade:"", updatedAt:null };
+  async function updateStore(storeId, patch) {
+    const cur = state[storeId] || { pictures: false, markdowns: false, negatives: false, issues: [], shippingGrade: "", updatedAt: null };
     const next = { ...cur, ...patch, updatedAt: Date.now() };
     if (!Array.isArray(next.issues)) next.issues = [];
     state[storeId] = next;
-    saveLocal();
+
+    // Optimistic UI
     rerenderMarker(storeId);
     if (selectedId === storeId) selectStore(storeId);
+
+    if (liveEnabled) {
+      try {
+        await saveServerState(storeId, next);
+      } catch (e) {
+        console.error("Live save failed; keeping optimistic UI:", e);
+        // Optional: fall back to local mode if server is unreachable
+        // liveEnabled = false;
+        // safeText(el('syncPill'), 'Sync: Local (offline)');
+      }
+    } else {
+      saveLocal();
+    }
   }
 
-  function applyFilter(filter){
+  function applyFilter(filter) {
     activeFilter = filter || "all";
     stores.forEach(store => {
       const marker = markers.get(store.id);
@@ -5329,16 +5440,17 @@ const MapDash = (() => {
     });
   }
 
-  function renderStoreDropdown(){
+  function renderStoreDropdown() {
     const menu = el("storeListMenu");
     if (!menu) return;
     menu.innerHTML = "";
-    const sorted = [...stores].sort((a,b) => (Number(a.id)||0) - (Number(b.id)||0));
+    const sorted = [...stores].sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
     sorted.forEach(store => {
       const st = state[store.id] || {};
       const status = computeStatus(st);
       const ship = normalizeShip(st.shippingGrade);
-      const icon = status==="ok"?"🟢":status==="warn"?"🟡":status==="bad"?"🔴":"⚪";
+      const icon = status === "ok" ? "🟢" : status === "warn" ? "🟡" : status === "bad" ? "🔴" : "⚪";
+
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "dd-item";
@@ -5348,40 +5460,36 @@ const MapDash = (() => {
     });
   }
 
-  function setUserPill(){
+  function setUserPill() {
     const pill = el("mapUserInfo");
     if (!pill || !CURRENT_USER) return;
     const name = CURRENT_USER.displayName || CURRENT_USER.username || "N/A";
     pill.textContent = `Role: ${CURRENT_USER.role} • User: ${name}`;
   }
 
-  function closeAllDropdowns(){
+  function closeAllDropdowns() {
     document.querySelectorAll('#view-map .dd').forEach(dd => dd.classList.remove('open'));
-    document.querySelectorAll('#view-map [data-dd-toggle]').forEach(b => b.setAttribute('aria-expanded','false'));
+    document.querySelectorAll('#view-map [data-dd-toggle]').forEach(b => b.setAttribute('aria-expanded', 'false'));
   }
 
-  function bindUI(){
+  function bindUI() {
     const root = el('view-map');
     if (!root) return;
 
-    // Use event delegation so it always works
     if (!root._bound) {
       root.addEventListener('click', (e) => {
         const t = e.target;
 
-        // Toggle dropdown buttons
         const toggleBtn = t.closest('[data-dd-toggle]');
         if (toggleBtn) {
           e.stopPropagation();
           const dd = toggleBtn.closest('.dd');
           const isOpen = dd.classList.toggle('open');
           toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-          // close others
           root.querySelectorAll('.dd').forEach(other => { if (other !== dd) other.classList.remove('open'); });
           return;
         }
 
-        // Open module views
         const openBtn = t.closest('[data-map-open]');
         if (openBtn) {
           const viewId = openBtn.getAttribute('data-map-open');
@@ -5392,7 +5500,6 @@ const MapDash = (() => {
           return;
         }
 
-        // Filters
         const filterBtn = t.closest('[data-map-filter]');
         if (filterBtn) {
           const f = filterBtn.getAttribute('data-map-filter');
@@ -5401,7 +5508,6 @@ const MapDash = (() => {
           return;
         }
 
-        // Store selection from dropdown
         const storeBtn = t.closest('[data-map-store]');
         if (storeBtn) {
           const id = storeBtn.getAttribute('data-map-store');
@@ -5412,7 +5518,6 @@ const MapDash = (() => {
           return;
         }
 
-        // Store panel actions
         const actionBtn = t.closest('[data-map-action]');
         if (actionBtn) {
           const action = actionBtn.getAttribute('data-map-action');
@@ -5442,7 +5547,6 @@ const MapDash = (() => {
         }
       });
 
-      // Close dropdowns when clicking outside of them
       document.addEventListener('click', (e) => {
         const inMap = e.target.closest('#view-map');
         if (!inMap) return;
@@ -5450,10 +5554,10 @@ const MapDash = (() => {
         if (!inDropdown) closeAllDropdowns();
       });
 
-      // Cross-tab sync
+      // Local cross-tab sync
       if (BC) {
         BC.onmessage = (ev) => {
-          if (ev.data && ev.data.type === 'state' && ev.data.state) {
+          if (ev.data && ev.data.type === 'state' && ev.data.state && !liveEnabled) {
             state = ev.data.state;
             rerenderAll();
             if (selectedId) selectStore(selectedId);
@@ -5465,19 +5569,31 @@ const MapDash = (() => {
     }
   }
 
-  async function ensureInit(){
+  async function ensureInit() {
     if (initialized) {
-      // view might have been hidden; ensure map sizes correctly
-      setTimeout(() => { try { map && map.invalidateSize(); } catch(e){} }, 80);
+      setTimeout(() => { try { map && map.invalidateSize(); } catch (e) {} }, 80);
       return;
     }
     initialized = true;
 
     setUserPill();
-    safeText(el('syncPill'), 'Sync: Local');
+    safeText(el('syncPill'), 'Sync: Connecting…');
 
-    loadLocal();
     await loadStores();
+
+    // Try server mode first (GitHub Pages uses an external API), then fall back to local
+    try {
+      await loadServerState();
+      await connectSignalR();
+      liveEnabled = true;
+      safeText(el('syncPill'), 'Sync: Live');
+    } catch (e) {
+      console.warn('Live sync unavailable, falling back to local:', e);
+      liveEnabled = false;
+      safeText(el('syncPill'), 'Sync: Local');
+      loadLocal();
+    }
+
     ensureDefaults();
     bindUI();
     initMap();
@@ -5485,12 +5601,13 @@ const MapDash = (() => {
     rerenderAll();
   }
 
-  function invalidate(){
-    setTimeout(() => { try { map && map.invalidateSize(); } catch(e){} }, 80);
+  function invalidate() {
+    setTimeout(() => { try { map && map.invalidateSize(); } catch (e) {} }, 80);
   }
 
   return { ensureInit, bindUI, invalidate, applyFilter };
 })();
+
 
 /* ========= DOM READY ========= */
 
