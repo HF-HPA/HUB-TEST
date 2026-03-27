@@ -2768,6 +2768,21 @@ function getFirestore() {
     return null;
   }
 }
+
+/* ========= SPLASH NAV (ROBUST) ========= */
+function enterHubFromSplash(){
+  const splash = document.getElementById('view-splash');
+  const login = document.getElementById('view-login');
+  if (splash) splash.classList.add('hidden');
+  if (login){
+    login.classList.remove('hidden');
+    login.classList.add('login-fade-in');
+    login.style.opacity = '1';
+  }
+  const r = document.getElementById('loginRole');
+  if (r) r.focus();
+}
+
 /* ========= SHARED UI HELPERS ========= */
 
     function setElementVisible(el, visible, displayType = "block") {
