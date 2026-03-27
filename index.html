@@ -2736,7 +2736,39 @@
 
     let lastFocusedElement = null;
 
-    /* ========= SHARED UI HELPERS ========= */
+    
+
+/* ========= FIREBASE (GLOBAL) ========= */
+// Firebase Web App config (provided by you)
+const firebaseConfig = {
+  apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
+  authDomain: "live-map-82f69.firebaseapp.com",
+  projectId: "live-map-82f69",
+  storageBucket: "live-map-82f69.firebasestorage.app",
+  messagingSenderId: "138303920091",
+  appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
+};
+
+let FIREBASE_READY = false;
+try {
+  if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+    if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    FIREBASE_READY = true;
+  }
+} catch (e) {
+  console.error('Firebase init error:', e);
+  FIREBASE_READY = false;
+}
+function getFirestore() {
+  try {
+    if (!FIREBASE_READY) return null;
+    return firebase.firestore();
+  } catch (e) {
+    console.error('Firestore not available:', e);
+    return null;
+  }
+}
+/* ========= SHARED UI HELPERS ========= */
 
     function setElementVisible(el, visible, displayType = "block") {
       if (!el) return;
@@ -5103,21 +5135,7 @@
 /* ========= MAP DASH MODULE (FIREBASE ONLY) ========= */
 const MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
-
-  // ======= FIREBASE CONFIG (Firestore) =======
-  // IMPORTANT: Fill in apiKey + appId from your Firebase Web App settings.
-  // Project details you provided:
-  //   projectId: live-map-82f69
-  //   messagingSenderId: 138303920091
-  // This uses Cloud Firestore (not Realtime Database).
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "live-map-82f69.firebaseapp.com",
-    projectId: "live-map-82f69",
-    storageBucket: "live-map-82f69.appspot.com",
-    messagingSenderId: "138303920091",
-    appId: "YOUR_APP_ID"
-  };
+  // Firebase is initialized globally (see firebaseConfig above).
 
   let stores = [];
   let state = {};
@@ -5141,20 +5159,12 @@ const MapDash = (() => {
   function safeText(node, txt) { if (node) node.textContent = txt; }
 
   function initFirebase() {
-    try {
-      if (typeof firebase === "undefined" || !firebase.initializeApp) {
-        throw new Error("Firebase SDK not loaded");
-      }
-      if (!firebase.apps || !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      db = firebase.firestore();
-      return true;
-    } catch (e) {
-      console.error("Firebase init failed:", e);
-      db = null;
+    db = getFirestore();
+    if (!db) {
+      console.error('Firestore not ready (check firebaseConfig + Firestore rules)');
       return false;
     }
+    return true;
   }
 
   // ======= FIRESTORE STATE =======
@@ -5537,7 +5547,7 @@ const MapDash = (() => {
     // Firebase only
     const ok = initFirebase();
     if (!ok) {
-      safeText(el('syncPill'), 'Sync: Firebase (configure apiKey/appId)');
+      safeText(el('syncPill'), 'Sync: Firebase (init error)');
     } else {
       try {
         await loadFirestoreStateOnce();
@@ -5669,6 +5679,45 @@ const MapDash = (() => {
       }
 
       // Restore last role / username if stored
+
+  async function loadUsersCsvOnce() {
+    if (USERS && USERS.length) return true;
+    try {
+      const res = await fetch(USERS_CSV_URL, { cache: 'no-store' });
+      if (!res.ok) return false;
+      const text = await res.text();
+      USERS = parseUsersCsv(text);
+      return USERS.length > 0;
+    } catch (e) {
+      console.warn('users.csv load failed:', e);
+      return false;
+    }
+  }
+
+  async function firebaseUserMatch(role, username, password) {
+    const db = getFirestore();
+    if (!db) return null;
+    try {
+      const snap = await db.collection('users')
+        .where('role', '==', role)
+        .where('username', '==', username)
+        .where('password', '==', password)
+        .limit(1)
+        .get();
+      if (snap.empty) return null;
+      const data = snap.docs[0].data() || {};
+      return {
+        role: data.role || role,
+        username: data.username || username,
+        displayName: data.display_name || data.displayName || data.name || ''
+      };
+    } catch (e) {
+      console.warn('Firestore user lookup failed:', e);
+      return null;
+    }
+  }
+
+  // Restore last role / username if stored
       try {
         const savedRole = localStorage.getItem("hfHubLastRole");
         const savedUsername = localStorage.getItem("hfHubLastUsername");
@@ -5685,8 +5734,20 @@ const MapDash = (() => {
       loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
       if (loginRole) updateLoginFieldsForRole();
 
+  // Submit login on Enter key
+  [loginUsername, loginPassword].forEach(inp => {
+    if (!inp) return;
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        loginButton && loginButton.click();
+      }
+    });
+  });
+
+
       if (loginButton) {
-        loginButton.addEventListener("click", () => {
+        loginButton.addEventListener("click", async () => {
           const role = loginRole.value;
 
           if (role === "Merchandiser") {
@@ -5714,10 +5775,9 @@ updateHubUserInfo();
             return;
           }
 
+          // Ensure users are loaded (users.csv) OR fall back to Firebase (Firestore) users collection.
           if (!USERS.length) {
-            loginError.textContent =
-              "User data not loaded yet. Try again in a moment.";
-            return;
+            await loadUsersCsvOnce();
           }
 
           const match = USERS.find(
@@ -5727,16 +5787,23 @@ updateHubUserInfo();
               u.password === password
           );
 
+          let fbMatch = null;
           if (!match) {
+            fbMatch = await firebaseUserMatch(role, username, password);
+          }
+
+          if (!match && !fbMatch) {
             loginError.textContent =
               "Invalid login. Check role, username, or password.";
             return;
           }
 
+          const picked = match || fbMatch;
+
           CURRENT_USER = {
-            role: match.role,
-            username: match.username,
-            displayName: match.displayName
+            role: picked.role,
+            username: picked.username,
+            displayName: picked.displayName
           };
 
           try {
@@ -5926,17 +5993,8 @@ updateHubUserInfo();
       // Initial view
       showView("view-splash");
 
-      // Load users CSV
-      fetch(USERS_CSV_URL)
-        .then(res => {
-          if (!res.ok) throw new Error("users.csv not found");
-          return res.text();
-        })
-        .then(text => {
-          USERS = parseUsersCsv(text);
-          console.log("Loaded users:", USERS.length);
-        })
-        .catch(err => console.error("Error loading users CSV:", err));
+      // Load users CSV (best-effort)
+  loadUsersCsvOnce();
 
       // Init modules
       initHPA();
