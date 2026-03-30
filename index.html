@@ -10,9 +10,7 @@
   <!-- Leaflet (Geographic Store Map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<!-- Firebase (Firestore) for live map sync -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.6/signalr.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <style>
     /* ========= CORE THEME ========= */
@@ -2736,54 +2734,7 @@
 
     let lastFocusedElement = null;
 
-    
-
-/* ========= FIREBASE (GLOBAL) ========= */
-// Firebase Web App config (provided by you)
-const firebaseConfig = {
-  apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
-  authDomain: "live-map-82f69.firebaseapp.com",
-  projectId: "live-map-82f69",
-  storageBucket: "live-map-82f69.firebasestorage.app",
-  messagingSenderId: "138303920091",
-  appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
-};
-
-let FIREBASE_READY = false;
-try {
-  if (typeof firebase !== 'undefined' && firebase.initializeApp) {
-    if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    FIREBASE_READY = true;
-  }
-} catch (e) {
-  console.error('Firebase init error:', e);
-  FIREBASE_READY = false;
-}
-function getFirestore() {
-  try {
-    if (!FIREBASE_READY) return null;
-    return firebase.firestore();
-  } catch (e) {
-    console.error('Firestore not available:', e);
-    return null;
-  }
-}
-
-/* ========= SPLASH NAV (ROBUST) ========= */
-function enterHubFromSplash(){
-  const splash = document.getElementById('view-splash');
-  const login = document.getElementById('view-login');
-  if (splash) splash.classList.add('hidden');
-  if (login){
-    login.classList.remove('hidden');
-    login.classList.add('login-fade-in');
-    login.style.opacity = '1';
-  }
-  const r = document.getElementById('loginRole');
-  if (r) r.focus();
-}
-
-/* ========= SHARED UI HELPERS ========= */
+    /* ========= SHARED UI HELPERS ========= */
 
     function setElementVisible(el, visible, displayType = "block") {
       if (!el) return;
@@ -5147,10 +5098,49 @@ function enterHubFromSplash(){
 
     
 
-/* ========= MAP DASH MODULE (FIREBASE ONLY) ========= */
+/* ========= MAP DASH MODULE (ROBUST WIRING) ========= */
+
 const MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
-  // Firebase is initialized globally (see firebaseConfig above).
+
+  // ======= LIVE SYNC CONFIG (GitHub Pages friendly) =======
+  // This app is hosted as a static site on GitHub Pages, so live sync requires an external API.
+  // Set API base by:
+  //   1) Adding ?api=https://YOUR-FUNCTION-APP.azurewebsites.net to the URL (recommended), OR
+  //   2) Writing localStorage key hfHubApiBase = "https://..."
+  // If no API is configured or the API is unreachable, the map gracefully falls back to local-only mode.
+  const API_BASE_KEY = "hfHubApiBase";
+  const STORE_STATE_KEY = "hfHubStoreState_v2"; // local fallback storage
+
+  function getApiBase() {
+    try {
+      const u = new URL(window.location.href);
+      const qp = u.searchParams.get("api");
+      if (qp && qp.startsWith("http")) {
+        localStorage.setItem(API_BASE_KEY, qp.replace(/\/$/, ""));
+      }
+    } catch (e) {}
+    try {
+      const v = localStorage.getItem(API_BASE_KEY);
+      return (v || "").replace(/\/$/, "");
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function apiUrl(path) {
+    const base = getApiBase();
+    if (!base) return "";
+    if (path.startsWith("/")) return base + path;
+    return base + "/" + path;
+  }
+
+  const NEGOTIATE_URL = () => apiUrl('/api/negotiate');
+  const GET_STATE_URL = () => apiUrl('/api/state');
+  const UPDATE_STORE_URL = () => apiUrl('/api/store/update');
+
+  // BroadcastChannel is still useful for multiple tabs on the SAME device (local fallback)
+  const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
 
   let stores = [];
   let state = {};
@@ -5159,10 +5149,8 @@ const MapDash = (() => {
   let markers = new Map();
   let activeFilter = "all";
   let initialized = false;
-
-  // Firestore
-  let db = null;
-  let unsubscribe = null;
+  let hubConn = null;
+  let liveEnabled = false;
 
   const demoStores = [
     { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
@@ -5173,80 +5161,78 @@ const MapDash = (() => {
   function el(id) { return document.getElementById(id); }
   function safeText(node, txt) { if (node) node.textContent = txt; }
 
-  function initFirebase() {
-    db = getFirestore();
-    if (!db) {
-      console.error('Firestore not ready (check firebaseConfig + Firestore rules)');
-      return false;
-    }
-    return true;
+  // ======= LOCAL FALLBACK =======
+  function loadLocal() {
+    try {
+      const raw = localStorage.getItem(STORE_STATE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") state = parsed;
+      }
+    } catch (e) {}
   }
 
-  // ======= FIRESTORE STATE =======
-  // Collection: stores
-  // Document id: storeId
-  // Fields: pictures (bool), markdowns (bool), negatives (bool), issues (array), shippingGrade (string), updatedAt (number)
+  function saveLocal() {
+    try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); } catch (e) {}
+    try { BC && BC.postMessage({ type: "state", state }); } catch (e) {}
+  }
 
-  async function loadFirestoreStateOnce() {
-    if (!db) return;
-    const snap = await db.collection("stores").get();
-    snap.forEach(doc => {
-      const data = doc.data() || {};
-      state[doc.id] = normalizeStoreState(data);
+  // ======= SERVER (LIVE) =======
+  async function loadServerState() {
+    const url = GET_STATE_URL();
+    if (!url) throw new Error("No API base configured");
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to load server state");
+    const data = await res.json();
+    state = (data && data.state && typeof data.state === 'object') ? data.state : {};
+  }
+
+  async function saveServerState(storeId, nextState) {
+    const url = UPDATE_STORE_URL();
+    if (!url) throw new Error("No API base configured");
+    const payload = { storeId, nextState };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
+    if (!res.ok) throw new Error("Failed to save update");
+    // optional response ignored
   }
 
-  function listenFirestore() {
-    if (!db) return;
-    if (unsubscribe) { try { unsubscribe(); } catch(e){} }
+  async function connectSignalR() {
+    if (typeof signalR === 'undefined') throw new Error('SignalR client library not loaded');
+    const url = NEGOTIATE_URL();
+    if (!url) throw new Error("No API base configured");
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Negotiate failed");
+    const info = await res.json();
+    if (!info || !info.url || !info.accessToken) throw new Error("Invalid negotiate payload");
 
-    unsubscribe = db.collection("stores").onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        const id = change.doc.id;
-        if (change.type === "removed") {
-          delete state[id];
-          // Keep UI consistent by recreating defaults if the store is known.
-          ensureDefaults();
-          rerenderMarker(id);
-          renderStoreDropdown();
-          applyFilter(activeFilter);
-          if (selectedId === id) selectStore(id);
-          return;
-        }
-        const data = change.doc.data() || {};
-        state[id] = normalizeStoreState(data);
-        rerenderMarker(id);
-        renderStoreDropdown();
-        applyFilter(activeFilter);
-        if (selectedId === id) selectStore(id);
-      });
-    }, err => {
-      console.error("Firestore listener error:", err);
-      safeText(el('syncPill'), 'Sync: Firebase (error)');
+    hubConn = new signalR.HubConnectionBuilder()
+      .withUrl(info.url, { accessTokenFactory: () => info.accessToken })
+      .withAutomaticReconnect()
+      .build();
+
+    hubConn.on("stateUpdated", (msg) => {
+      // expected msg: { storeId, nextState } OR { storeId, patch }
+      if (!msg || !msg.storeId) return;
+      if (msg.nextState) {
+        state[msg.storeId] = msg.nextState;
+      } else if (msg.patch) {
+        state[msg.storeId] = { ...(state[msg.storeId] || {}), ...msg.patch };
+      }
+      rerenderMarker(msg.storeId);
+      renderStoreDropdown();
+      applyFilter(activeFilter);
+      if (selectedId === msg.storeId) selectStore(msg.storeId);
     });
-  }
 
-  async function saveFirestoreState(storeId, nextState) {
-    if (!db) throw new Error("Firestore not ready");
-    await db.collection("stores").doc(storeId).set(nextState, { merge: true });
-  }
-
-  function normalizeStoreState(raw) {
-    const out = {
-      pictures: !!raw.pictures,
-      markdowns: !!raw.markdowns,
-      negatives: !!raw.negatives,
-      issues: Array.isArray(raw.issues) ? raw.issues : [],
-      shippingGrade: (raw.shippingGrade || "").toString(),
-      updatedAt: raw.updatedAt || null
-    };
-    return out;
+    await hubConn.start();
   }
 
   function parseStoresCsv(text) {
-    const lines = text.split(/
-?
-/).filter(l => l.trim());
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (!lines.length) return [];
     const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
     const idx = {
@@ -5294,9 +5280,11 @@ const MapDash = (() => {
         state[s.id] = { pictures: false, markdowns: false, negatives: false, issues: [], shippingGrade: "", updatedAt: null };
       } else {
         if (!Array.isArray(state[s.id].issues)) state[s.id].issues = [];
-        if (typeof state[s.id].shippingGrade !== 'string') state[s.id].shippingGrade = (state[s.id].shippingGrade || '').toString();
       }
     });
+    // In live mode we DO NOT save defaults immediately to server (avoids noisy writes).
+    // In local mode, store defaults.
+    if (!liveEnabled) saveLocal();
   }
 
   function normalizeShip(raw) {
@@ -5351,8 +5339,10 @@ const MapDash = (() => {
       map = L.map("storeMap", { zoomControl: true, preferCanvas: true });
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
     }
+
     markers.forEach(m => { try { map.removeLayer(m); } catch (e) {} });
     markers.clear();
+
     const bounds = [];
     stores.forEach(store => {
       const icon = L.divIcon({ className: "", html: pinHtml(store.id), iconSize: [18, 18], iconAnchor: [9, 9] });
@@ -5361,6 +5351,7 @@ const MapDash = (() => {
       markers.set(store.id, m);
       bounds.push([store.lat, store.lon]);
     });
+
     if (bounds.length) map.fitBounds(bounds, { padding: [20, 20] });
     setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
   }
@@ -5379,18 +5370,23 @@ const MapDash = (() => {
     const st = state[storeId] || {};
     const status = computeStatus(st);
     const ship = normalizeShip(st.shippingGrade);
+
     safeText(el("spTitle"), store ? `${store.name} (${store.id})` : `Store ${storeId}`);
     safeText(el("spSub"), store ? `${[store.city, store.state].filter(Boolean).join(", ")}${store.address ? " • " + store.address : ""}` : "—");
+
     const statusLabel = status === "ok" ? "🟢 On Track" : status === "warn" ? "🟡 Watch List" : status === "bad" ? "🔴 Needs Attention" : "⚪ Unknown";
     const statusColor = status === "ok" ? "#22c55e" : status === "warn" ? "#facc15" : status === "bad" ? "#ef4444" : "#94a3b8";
     setBadge(statusLabel, statusColor);
+
     safeText(el("spShip"), ship.label || "—");
     safeText(el("spPics"), st.pictures ? "✅ Complete" : "❌ Missing");
     safeText(el("spMds"), st.markdowns ? "✅ Complete" : "❌ Missing");
     safeText(el("spNeg"), st.negatives ? "✅ Complete" : "❌ Missing");
+
     const issues = Array.isArray(st.issues) ? st.issues : [];
     safeText(el("spIssues"), issues.length ? `⚠ ${issues.length} open` : "✅ None");
     safeText(el("spUpdated"), st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—");
+
     const actionButtons = document.querySelectorAll('#view-map [data-map-action]');
     actionButtons.forEach(b => b.disabled = false);
   }
@@ -5405,12 +5401,17 @@ const MapDash = (() => {
     rerenderMarker(storeId);
     if (selectedId === storeId) selectStore(storeId);
 
-    // Persist to Firestore
-    try {
-      await saveFirestoreState(storeId, next);
-    } catch (e) {
-      console.error("Firestore save failed:", e);
-      safeText(el('syncPill'), 'Sync: Firebase (write error)');
+    if (liveEnabled) {
+      try {
+        await saveServerState(storeId, next);
+      } catch (e) {
+        console.error("Live save failed; keeping optimistic UI:", e);
+        // Optional: fall back to local mode if server is unreachable
+        // liveEnabled = false;
+        // safeText(el('syncPill'), 'Sync: Local (offline)');
+      }
+    } else {
+      saveLocal();
     }
   }
 
@@ -5423,12 +5424,14 @@ const MapDash = (() => {
       const status = computeStatus(st);
       const ship = normalizeShip(st.shippingGrade);
       const issues = Array.isArray(st.issues) ? st.issues.length : 0;
+
       let visible = true;
       if (activeFilter === "status:bad") visible = (status === "bad");
       else if (activeFilter === "status:warn") visible = (status === "warn");
       else if (activeFilter === "ship:skip") visible = (ship.key === "skip");
       else if (activeFilter === "ship:ab") visible = (ship.key === "ab");
       else if (activeFilter === "issues:true") visible = (issues > 0);
+
       if (visible) {
         if (!map.hasLayer(marker)) marker.addTo(map);
       } else {
@@ -5447,6 +5450,7 @@ const MapDash = (() => {
       const status = computeStatus(st);
       const ship = normalizeShip(st.shippingGrade);
       const icon = status === "ok" ? "🟢" : status === "warn" ? "🟡" : status === "bad" ? "🔴" : "⚪";
+
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "dd-item";
@@ -5471,9 +5475,11 @@ const MapDash = (() => {
   function bindUI() {
     const root = el('view-map');
     if (!root) return;
+
     if (!root._bound) {
       root.addEventListener('click', (e) => {
         const t = e.target;
+
         const toggleBtn = t.closest('[data-dd-toggle]');
         if (toggleBtn) {
           e.stopPropagation();
@@ -5483,6 +5489,7 @@ const MapDash = (() => {
           root.querySelectorAll('.dd').forEach(other => { if (other !== dd) other.classList.remove('open'); });
           return;
         }
+
         const openBtn = t.closest('[data-map-open]');
         if (openBtn) {
           const viewId = openBtn.getAttribute('data-map-open');
@@ -5492,6 +5499,7 @@ const MapDash = (() => {
           showView(viewId);
           return;
         }
+
         const filterBtn = t.closest('[data-map-filter]');
         if (filterBtn) {
           const f = filterBtn.getAttribute('data-map-filter');
@@ -5499,6 +5507,7 @@ const MapDash = (() => {
           applyFilter(f);
           return;
         }
+
         const storeBtn = t.closest('[data-map-store]');
         if (storeBtn) {
           const id = storeBtn.getAttribute('data-map-store');
@@ -5508,10 +5517,12 @@ const MapDash = (() => {
           if (marker && map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 11), { animate: true });
           return;
         }
+
         const actionBtn = t.closest('[data-map-action]');
         if (actionBtn) {
           const action = actionBtn.getAttribute('data-map-action');
           if (!selectedId) return;
+
           if (action === 'toggle:pictures') {
             updateStore(selectedId, { pictures: !state[selectedId].pictures });
           } else if (action === 'toggle:markdowns') {
@@ -5543,6 +5554,17 @@ const MapDash = (() => {
         if (!inDropdown) closeAllDropdowns();
       });
 
+      // Local cross-tab sync
+      if (BC) {
+        BC.onmessage = (ev) => {
+          if (ev.data && ev.data.type === 'state' && ev.data.state && !liveEnabled) {
+            state = ev.data.state;
+            rerenderAll();
+            if (selectedId) selectStore(selectedId);
+          }
+        };
+      }
+
       root._bound = true;
     }
   }
@@ -5555,23 +5577,21 @@ const MapDash = (() => {
     initialized = true;
 
     setUserPill();
-    safeText(el('syncPill'), 'Sync: Firebase');
+    safeText(el('syncPill'), 'Sync: Connecting…');
 
     await loadStores();
 
-    // Firebase only
-    const ok = initFirebase();
-    if (!ok) {
-      safeText(el('syncPill'), 'Sync: Firebase (init error)');
-    } else {
-      try {
-        await loadFirestoreStateOnce();
-        listenFirestore();
-        safeText(el('syncPill'), 'Sync: Live (Firebase)');
-      } catch (e) {
-        console.error('Firestore init error:', e);
-        safeText(el('syncPill'), 'Sync: Firebase (error)');
-      }
+    // Try server mode first (GitHub Pages uses an external API), then fall back to local
+    try {
+      await loadServerState();
+      await connectSignalR();
+      liveEnabled = true;
+      safeText(el('syncPill'), 'Sync: Live');
+    } catch (e) {
+      console.warn('Live sync unavailable, falling back to local:', e);
+      liveEnabled = false;
+      safeText(el('syncPill'), 'Sync: Local');
+      loadLocal();
     }
 
     ensureDefaults();
@@ -5694,45 +5714,6 @@ const MapDash = (() => {
       }
 
       // Restore last role / username if stored
-
-  async function loadUsersCsvOnce() {
-    if (USERS && USERS.length) return true;
-    try {
-      const res = await fetch(USERS_CSV_URL, { cache: 'no-store' });
-      if (!res.ok) return false;
-      const text = await res.text();
-      USERS = parseUsersCsv(text);
-      return USERS.length > 0;
-    } catch (e) {
-      console.warn('users.csv load failed:', e);
-      return false;
-    }
-  }
-
-  async function firebaseUserMatch(role, username, password) {
-    const db = getFirestore();
-    if (!db) return null;
-    try {
-      const snap = await db.collection('users')
-        .where('role', '==', role)
-        .where('username', '==', username)
-        .where('password', '==', password)
-        .limit(1)
-        .get();
-      if (snap.empty) return null;
-      const data = snap.docs[0].data() || {};
-      return {
-        role: data.role || role,
-        username: data.username || username,
-        displayName: data.display_name || data.displayName || data.name || ''
-      };
-    } catch (e) {
-      console.warn('Firestore user lookup failed:', e);
-      return null;
-    }
-  }
-
-  // Restore last role / username if stored
       try {
         const savedRole = localStorage.getItem("hfHubLastRole");
         const savedUsername = localStorage.getItem("hfHubLastUsername");
@@ -5749,20 +5730,8 @@ const MapDash = (() => {
       loginRole && loginRole.addEventListener("change", updateLoginFieldsForRole);
       if (loginRole) updateLoginFieldsForRole();
 
-  // Submit login on Enter key
-  [loginUsername, loginPassword].forEach(inp => {
-    if (!inp) return;
-    inp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        loginButton && loginButton.click();
-      }
-    });
-  });
-
-
       if (loginButton) {
-        loginButton.addEventListener("click", async () => {
+        loginButton.addEventListener("click", () => {
           const role = loginRole.value;
 
           if (role === "Merchandiser") {
@@ -5790,9 +5759,10 @@ updateHubUserInfo();
             return;
           }
 
-          // Ensure users are loaded (users.csv) OR fall back to Firebase (Firestore) users collection.
           if (!USERS.length) {
-            await loadUsersCsvOnce();
+            loginError.textContent =
+              "User data not loaded yet. Try again in a moment.";
+            return;
           }
 
           const match = USERS.find(
@@ -5802,23 +5772,16 @@ updateHubUserInfo();
               u.password === password
           );
 
-          let fbMatch = null;
           if (!match) {
-            fbMatch = await firebaseUserMatch(role, username, password);
-          }
-
-          if (!match && !fbMatch) {
             loginError.textContent =
               "Invalid login. Check role, username, or password.";
             return;
           }
 
-          const picked = match || fbMatch;
-
           CURRENT_USER = {
-            role: picked.role,
-            username: picked.username,
-            displayName: picked.displayName
+            role: match.role,
+            username: match.username,
+            displayName: match.displayName
           };
 
           try {
@@ -6008,8 +5971,17 @@ updateHubUserInfo();
       // Initial view
       showView("view-splash");
 
-      // Load users CSV (best-effort)
-  loadUsersCsvOnce();
+      // Load users CSV
+      fetch(USERS_CSV_URL)
+        .then(res => {
+          if (!res.ok) throw new Error("users.csv not found");
+          return res.text();
+        })
+        .then(text => {
+          USERS = parseUsersCsv(text);
+          console.log("Loaded users:", USERS.length);
+        })
+        .catch(err => console.error("Error loading users CSV:", err));
 
       // Init modules
       initHPA();
