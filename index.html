@@ -2808,28 +2808,6 @@
         }
       }
 
-/* ======== FIREBASE LIVE MAP ======== */
-function startLiveMap() {
-  const { collection, onSnapshot } = window.fb;
-
-  onSnapshot(collection(window.db, "stores"), (snapshot) => {
-    const nextState = {};
-
-    snapshot.forEach((doc) => {
-      nextState[doc.id] = doc.data();
-    });
-
-    // 🔑 This must match your existing global state object
-    state = nextState;
-
-    // Re-render the map
-    rerenderAll();
-
-    const pill = document.getElementById("syncPill");
-    if (pill) pill.textContent = "Sync: Live";
-  });
-}
-
       backdropEl._dialogKeyHandler = handleKeyDown;
       document.addEventListener("keydown", handleKeyDown);
     }
@@ -5664,7 +5642,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCSVs();
   buildMap();
   attachEvents();
-  startLiveMap();
 });
 
 
