@@ -2768,50 +2768,45 @@
       el.style.display = visible ? displayType : "none";
     }
 
-    function openDialog(backdropEl, firstFocusEl) {
-      if (!backdropEl) return;
+function openDialog(backdropEl, firstFocusEl) {
+  if (!backdropEl) return;
 
-      lastFocusedElement = document.activeElement;
-      backdropEl.style.display = "flex";
-      backdropEl.setAttribute("aria-hidden", "false");
+  lastFocusedElement = document.activeElement;
+  backdropEl.style.display = "flex";
+  backdropEl.setAttribute("aria-hidden", "false");
 
-      if (firstFocusEl && typeof firstFocusEl.focus === "function") {
-        firstFocusEl.focus();
-      }
+  if (firstFocusEl && typeof firstFocusEl.focus === "function") {
+    firstFocusEl.focus();
+  }
 
-      const focusableSelectors =
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-      const focusable = backdropEl.querySelectorAll(focusableSelectors);
-      if (!focusable.length) return;
+  const focusableSelectors =
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  const focusable = backdropEl.querySelectorAll(focusableSelectors);
+  if (!focusable.length) return;
 
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
 
-      function handleKeyDown(e) {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          closeDialog(backdropEl);
-          return;
-        }
-        if (e.key === "Tab") {
-          if (e.shiftKey) {
-            if (document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            }
-          } else {
-            if (document.activeElement === last) {
-              e.preventDefault();
-              first.focus();
-            }
-          }
-        }
-      }
-
-      backdropEl._dialogKeyHandler = handleKeyDown;
-      document.addEventListener("keydown", handleKeyDown);
+  function handleKeyDown(e) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeDialog(backdropEl);
+      return;
     }
+    if (e.key === "Tab") {
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
 
+  backdropEl._dialogKeyHandler = handleKeyDown;
+  document.addEventListener("keydown", handleKeyDown);
+}
     function closeDialog(backdropEl) {
       if (!backdropEl) return;
 
@@ -5634,15 +5629,6 @@ const MapDash = (() => {
 
   return { ensureInit, bindUI, invalidate, applyFilter };
 })();
-
-
-/* ========= DOM READY ========= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadCSVs();
-  buildMap();
-  attachEvents();
-});
 
 
   // ===== Global error trap (helps surface silent JS failures) =====
