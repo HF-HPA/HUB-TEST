@@ -5131,37 +5131,9 @@ const MapDash = (() => {
   //   1) Adding ?api=https://YOUR-FUNCTION-APP.azurewebsites.net to the URL (recommended), OR
   //   2) Writing localStorage key hfHubApiBase = "https://..."
   // If no API is configured or the API is unreachable, the map gracefully falls back to local-only mode.
-  const API_BASE_KEY = "hfHubApiBase";
   const STORE_STATE_KEY = "hfHubStoreState_v2"; // local fallback storage
 
-  function getApiBase() {
-    try {
-      const u = new URL(window.location.href);
-      const qp = u.searchParams.get("api");
-      if (qp && qp.startsWith("http")) {
-        localStorage.setItem(API_BASE_KEY, qp.replace(/\/$/, ""));
-      }
-    } catch (e) {}
-    try {
-      const v = localStorage.getItem(API_BASE_KEY);
-      return (v || "").replace(/\/$/, "");
-    } catch (e) {
-      return "";
-    }
-  }
-
-  function apiUrl(path) {
-    const base = getApiBase();
-    if (!base) return "";
-    if (path.startsWith("/")) return base + path;
-    return base + "/" + path;
-  }
-
-  const NEGOTIATE_URL = () => apiUrl('/api/negotiate');
-  const GET_STATE_URL = () => apiUrl('/api/state');
-  const UPDATE_STORE_URL = () => apiUrl('/api/store/update');
-
-  // BroadcastChannel is still useful for multiple tabs on the SAME device (local fallback)
+   // BroadcastChannel is still useful for multiple tabs on the SAME device (local fallback)
   const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
 
   let stores = [];
@@ -5216,16 +5188,7 @@ function startFirestoreLive() {
   }
 
   // ======= SERVER (LIVE) =======
-  async function loadServerState() {
-    const url = GET_STATE_URL();
-    if (!url) throw new Error("No API base configured");
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("Failed to load server state");
-    const data = await res.json();
-    state = (data && data.state && typeof data.state === 'object') ? data.state : {};
-  }
-
-async function saveServerState(storeId, nextState) {
+ async function saveServerState(storeId, nextState) {
   const { doc, setDoc } = window.fb;
 
   await setDoc(
@@ -5234,37 +5197,6 @@ async function saveServerState(storeId, nextState) {
     { merge: true }
   );
 }
-
-  async function connectSignalR() {
-    if (typeof signalR === 'undefined') throw new Error('SignalR client library not loaded');
-    const url = NEGOTIATE_URL();
-    if (!url) throw new Error("No API base configured");
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("Negotiate failed");
-    const info = await res.json();
-    if (!info || !info.url || !info.accessToken) throw new Error("Invalid negotiate payload");
-
-    hubConn = new signalR.HubConnectionBuilder()
-      .withUrl(info.url, { accessTokenFactory: () => info.accessToken })
-      .withAutomaticReconnect()
-      .build();
-
-    hubConn.on("stateUpdated", (msg) => {
-      // expected msg: { storeId, nextState } OR { storeId, patch }
-      if (!msg || !msg.storeId) return;
-      if (msg.nextState) {
-        state[msg.storeId] = msg.nextState;
-      } else if (msg.patch) {
-        state[msg.storeId] = { ...(state[msg.storeId] || {}), ...msg.patch };
-      }
-      rerenderMarker(msg.storeId);
-      renderStoreDropdown();
-      applyFilter(activeFilter);
-      if (selectedId === msg.storeId) selectStore(msg.storeId);
-    });
-
-    await hubConn.start();
-  }
 
   function parseStoresCsv(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -5618,7 +5550,32 @@ async function saveServerState(storeId, nextState) {
 
     // Try server mode first (GitHub Pages uses an external API), then fall back to local
 try {
-  startFirestoreLive();
+ 
+function startFirestoreLive() {
+  const { collection, onSnapshot } = window.fb;
+
+  onSnapshot(
+    collection(window.db, "stores"),
+    (snapshot) => {
+      const next = {};
+
+      snapshot.forEach((doc) => {
+        next[doc.id] = doc.data();
+      });
+
+      state = next;
+      liveEnabled = true;
+
+      safeText(el("syncPill"), "Sync: Live");
+      ensureDefaults();
+      rerenderAll();
+    },
+    (err) => {
+      console.error("Firestore listener failed:", err);
+      throw err;
+    }
+  );
+}
   liveEnabled = true;
   setSyncPill("Live");
 } catch (e) {
