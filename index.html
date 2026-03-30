@@ -5150,18 +5150,28 @@ const MapDash = (() => {
 function startFirestoreLive() {
   const { collection, onSnapshot } = window.fb;
 
-  onSnapshot(collection(window.db, "stores"), (snapshot) => {
-    const next = {};
+  onSnapshot(
+    collection(window.db, "stores"),
+    (snapshot) => {
+      const next = {};
 
-    snapshot.forEach((doc) => {
-      next[doc.id] = doc.data();
-    });
+      snapshot.forEach((doc) => {
+        next[doc.id] = doc.data();
+      });
 
-    state = next;
-    rerenderAll();
-  });
+      state = next;
+      liveEnabled = true;
+
+      safeText(el("syncPill"), "Sync: Live");
+      ensureDefaults();
+      rerenderAll();
+    },
+    (err) => {
+      console.error("Firestore listener failed:", err);
+      throw err;
+    }
+  );
 }
-
   const demoStores = [
     { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
     { id: "1987", name: "Glenview", lat: 42.0792, lon: -87.8223, city: "Glenview", state: "IL", address: "" },
@@ -5536,52 +5546,34 @@ function startFirestoreLive() {
     }
   }
 
-  async function ensureInit() {
-    if (initialized) {
-      setTimeout(() => { try { map && map.invalidateSize(); } catch (e) {} }, 80);
-      return;
-    }
-    initialized = true;
+async function ensureInit() {
+  if (initialized) {
+    setTimeout(() => {
+      try { map && map.invalidateSize(); } catch (e) {}
+    }, 80);
+    return;
+  }
 
-    setUserPill();
-    safeText(el('syncPill'), 'Sync: Connecting…');
+  initialized = true;
+  setUserPill();
+  safeText(el("syncPill"), "Sync: Connecting…");
 
-    await loadStores();
+  await loadStores();
+  bindUI();
+  initMap();
 
-    // Try server mode first (GitHub Pages uses an external API), then fall back to local
-try {
- 
-function startFirestoreLive() {
-  const { collection, onSnapshot } = window.fb;
+  try {
+    startFirestoreLive(); // ✅ REAL call
+  } catch (e) {
+    console.warn("Firestore unavailable, using local:", e);
+    loadLocal();
+    liveEnabled = false;
+    safeText(el("syncPill"), "Sync: Local");
+  }
 
-  onSnapshot(
-    collection(window.db, "stores"),
-    (snapshot) => {
-      const next = {};
-
-      snapshot.forEach((doc) => {
-        next[doc.id] = doc.data();
-      });
-
-      state = next;
-      liveEnabled = true;
-
-      safeText(el("syncPill"), "Sync: Live");
-      ensureDefaults();
-      rerenderAll();
-    },
-    (err) => {
-      console.error("Firestore listener failed:", err);
-      throw err;
-    }
-  );
-}
-  liveEnabled = true;
-  setSyncPill("Live");
-} catch (e) {
-  console.warn("Firestore unavailable, using local:", e);
-  loadLocal();
-  setSyncPill("Local");
+  ensureDefaults();
+  renderStoreDropdown();
+  rerenderAll();
 }
 
 
