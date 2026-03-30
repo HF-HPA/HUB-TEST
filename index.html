@@ -2702,6 +2702,34 @@
   </main>
 <!-- ========= SEGMENT 3: SCRIPTS ========= -->
   <script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
+  authDomain: "live-map-82f69.firebaseapp.com",
+  projectId: "live-map-82f69",
+  storageBucket: "live-map-82f69.firebasestorage.app",
+  messagingSenderId: "138303920091",
+  appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Expose to the rest of your app
+  window.db = db;
+  window.fb = { collection, doc, setDoc, onSnapshot };
+</script>
+ <script>
     /* ========= CONFIG ========= */
     const USERS_CSV_URL = "users.csv";
     const SKU_CSV_URL = "SKU_Name_2026.csv";
@@ -2780,6 +2808,28 @@
           }
         }
       }
+
+/* ======== FIREBASE LIVE MAP ======== */
+function startLiveMap() {
+  const { collection, onSnapshot } = window.fb;
+
+  onSnapshot(collection(window.db, "stores"), (snapshot) => {
+    const nextState = {};
+
+    snapshot.forEach((doc) => {
+      nextState[doc.id] = doc.data();
+    });
+
+    // 🔑 This must match your existing global state object
+    state = nextState;
+
+    // Re-render the map
+    rerenderAll();
+
+    const pill = document.getElementById("syncPill");
+    if (pill) pill.textContent = "Sync: Live";
+  });
+}
 
       backdropEl._dialogKeyHandler = handleKeyDown;
       document.addEventListener("keydown", handleKeyDown);
@@ -5611,7 +5661,13 @@ const MapDash = (() => {
 
 /* ========= DOM READY ========= */
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  loadCSVs();
+  buildMap();
+  attachEvents();
+  startLiveMap();
+});
+
 
   // ===== Global error trap (helps surface silent JS failures) =====
   window.addEventListener("error", (ev) => {
