@@ -5174,6 +5174,22 @@ const MapDash = (() => {
   let hubConn = null;
   let liveEnabled = false;
 
+
+function startFirestoreLive() {
+  const { collection, onSnapshot } = window.fb;
+
+  onSnapshot(collection(window.db, "stores"), (snapshot) => {
+    const next = {};
+
+    snapshot.forEach((doc) => {
+      next[doc.id] = doc.data();
+    });
+
+    state = next;
+    rerenderAll();
+  });
+}
+
   const demoStores = [
     { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
     { id: "1987", name: "Glenview", lat: 42.0792, lon: -87.8223, city: "Glenview", state: "IL", address: "" },
@@ -5209,18 +5225,15 @@ const MapDash = (() => {
     state = (data && data.state && typeof data.state === 'object') ? data.state : {};
   }
 
-  async function saveServerState(storeId, nextState) {
-    const url = UPDATE_STORE_URL();
-    if (!url) throw new Error("No API base configured");
-    const payload = { storeId, nextState };
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error("Failed to save update");
-    // optional response ignored
-  }
+async function saveServerState(storeId, nextState) {
+  const { doc, setDoc } = window.fb;
+
+  await setDoc(
+    doc(window.db, "stores", storeId),
+    nextState,
+    { merge: true }
+  );
+}
 
   async function connectSignalR() {
     if (typeof signalR === 'undefined') throw new Error('SignalR client library not loaded');
@@ -5604,17 +5617,16 @@ const MapDash = (() => {
     await loadStores();
 
     // Try server mode first (GitHub Pages uses an external API), then fall back to local
-    try {
-      await loadServerState();
-      await connectSignalR();
-      liveEnabled = true;
-      safeText(el('syncPill'), 'Sync: Live');
-    } catch (e) {
-      console.warn('Live sync unavailable, falling back to local:', e);
-      liveEnabled = false;
-      safeText(el('syncPill'), 'Sync: Local');
-      loadLocal();
-    }
+try {
+  startFirestoreLive();
+  liveEnabled = true;
+  setSyncPill("Live");
+} catch (e) {
+  console.warn("Firestore unavailable, using local:", e);
+  loadLocal();
+  setSyncPill("Local");
+}
+
 
     ensureDefaults();
     bindUI();
