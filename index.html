@@ -486,6 +486,14 @@
       text-transform:uppercase;
       margin-bottom: 14px;
     }
+.login-logo{
+  width: 96px;
+  height: auto;
+  margin-bottom: 6px;
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,184,.6);
+  box-shadow: 0 10px 28px rgba(0,0,0,.85);
+}
   </style>
 </head>
 <body>
@@ -531,8 +539,8 @@
            LOGIN
            ====================================================== -->
       <section id="view-login" class="login-root hidden">
-        <div class="login-card">
-          <img src="hf_logo.png" class="login-logo-small" alt="Logo"/>
+<div class="login-card">
+  <img src="hf_logo.png" alt="Logo" class="login-logo" />
           <div class="login-title">Sign In</div>
           <div class="login-subtitle">Internal Tool • Live Store Map</div>
 
@@ -748,22 +756,38 @@ $("btnSplashEnter")?.addEventListener("click", () => {
 /* =========================================================
    LOGIN (FIXED + HARDENED)
    ========================================================= */
-async function doLogin(){
-  const user = $("loginUser").value.trim();
-  const pass = $("loginPass").value.trim();
-  const err = $("loginError");
-  err.textContent = "";
 
-  const btn = $("loginBtn");
-  btn.disabled = true;
-  btn.textContent = "Signing in…";
+async function loadUsers(){
+  try{
+    const txt = await fetch("users.csv", { cache:"no-store" }).then(r => r.text());
+    const lines = txt.split(/\r?\n/).filter(l => l.trim());
 
-  if(!user || !pass){
-    err.textContent = "Enter username and password.";
-    btn.disabled = false;
-    btn.textContent = "Login";
-    return;
+    // Parse header safely
+    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+    const idx = {
+      user: header.indexOf("username"),
+      pass: header.indexOf("password"),
+      role: header.indexOf("role"),
+      name: header.indexOf("displayname")
+    };
+
+    return lines.slice(1).map(l => {
+      const r = parseCsvLine(l);
+      return {
+        u: (r[idx.user] || "").trim().toLowerCase(),
+        p: (r[idx.pass] || "").trim(),
+        role: (r[idx.role] || "Merchandiser").trim(),
+        name: (r[idx.name] || r[idx.user] || "").trim()
+      };
+    }).filter(x => x.u && x.p);
+  } catch {
+    // ✅ Safe fallback
+    return [
+      { u:"demo",  p:"demo",  role:"Merchandiser", name:"Demo User" },
+      { u:"super", p:"super", role:"Supervisor",   name:"Supervisor" }
+    ];
   }
+}
 
   // CSV users OR fallback demo
   let users;
@@ -780,7 +804,12 @@ async function doLogin(){
     ];
   }
 
-  const match = users.find(x=>x.u===user && x.p===pass);
+const users = await loadUsers();
+const match = users.find(x =>
+  x.u === user.toLowerCase().trim() &&
+  x.p === pass.trim()
+);
+
   if(!match){
     err.textContent = "Invalid login.";
     btn.disabled = false;
