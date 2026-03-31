@@ -1231,7 +1231,20 @@
       }
     }
 
-    async function doLogin(){
+async function doLogin() {
+const loginButton = document.getElementById("loginBtn");
+if (loginButton) {
+  loginButton.disabled = true;
+  loginButton.textContent = "Signing in…";
+}
+
+  const resetLoginButton = () => {
+    if (loginButton) {
+      loginButton.disabled = false;
+      loginButton.textContent = "Login";
+    }
+  };
+
       $("loginError").textContent = "";
       const u = ($("loginUser").value || "").trim();
       const p = ($("loginPass").value || "").trim();
@@ -1253,13 +1266,11 @@
         displayName: found.displayName
       };
 
-      persistAuth();
-      setUserPill();
-      applyRoleGates();
+      	persistAuth();
+	setUserPill();
+	applyRoleGates();
+	onLoginSuccess();
 
-      // Show global top bar + map homepage
-      $("globalTopBar").classList.remove("hidden");
-      showView("view-map");
     }
 
     function doLogout(){
@@ -1270,8 +1281,17 @@
       showView("view-login");
     }
 
-    $("loginBtn")?.addEventListener("click", doLogin);
-    $("loginPass")?.addEventListener("keydown", e => e.key === "Enter" && doLogin());
+	document.getElementById("loginBtn")?.addEventListener("click", (e) => {
+	  e.preventDefault();
+	  doLogin();
+	});
+
+	document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
+  	if (e.key === "Enter") {
+  	  e.preventDefault();
+  	  doLogin();
+  	}
+	});
     $("btnLogout")?.addEventListener("click", doLogout);
     $("globalLogoutBtn")?.addEventListener("click", doLogout);
 
@@ -2598,7 +2618,28 @@ async function renderOrderBreakdown(){
     if(btn) startBasicsQuiz();
   });
 })();
+  
+function onLoginSuccess() {
+  // Show global nav
+  const topBar = document.getElementById("globalTopBar");
+  if (topBar) topBar.classList.remove("hidden");
 
+  // Sync nav button state
+  document.querySelectorAll(".nav-link").forEach(b => b.classList.remove("active"));
+  document.querySelector('.nav-link[data-page="map"]')?.classList.add("active");
+
+  // Force map to be the homepage
+  showView("view-map");
+
+  // Ensure map actually initializes
+  if (window.MapDash) {
+    setTimeout(() => {
+      MapDash.ensureInit();
+      MapDash.invalidate?.();
+    }, 50);
+  }
+}
+  
 /* =========================================================
    PAGE LOAD: when HF/HPA pages are opened, load CSV content
    ========================================================= */
