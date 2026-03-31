@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Merchandising Hub</title>
 
   <!-- Icons -->
   <link rel="icon" href="hf_logo.png" />
   <link rel="apple-touch-icon" href="hf_logo.png" />
 
-  <!-- ✅ Leaflet (correct + minimal) -->
+  <!-- Leaflet (map used later, safe to load now) -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -20,6 +20,9 @@
   ></script>
 
   <style>
+    /* =========================
+       DESIGN TOKENS
+       ========================= */
     :root{
       --bg:#020617;
       --panel:rgba(15,23,42,.92);
@@ -54,7 +57,9 @@
 
     .hidden{ display:none !important; }
 
-    /* App shell */
+    /* =========================
+       APP SHELL
+       ========================= */
     .app-shell{
       min-height:100vh;
       display:flex;
@@ -62,6 +67,7 @@
       justify-content:center;
       padding:16px;
     }
+
     .app-inner{
       width:100%;
       max-width:1200px;
@@ -73,7 +79,9 @@
       gap:14px;
     }
 
-    /* Splash */
+    /* =========================
+       SPLASH (FIXED)
+       ========================= */
     .splash{
       min-height:80vh;
       display:flex;
@@ -81,21 +89,52 @@
       align-items:center;
       justify-content:center;
       gap:14px;
+    }
+
+    .splash-logo-wrap{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
       cursor:pointer;
     }
+
+    /* ✅ PERFECT CIRCULAR GLOW */
+    .splash-glow{
+      position:absolute;
+      width:200px;
+      height:200px;
+      border-radius:50%;
+      background: radial-gradient(
+        circle,
+        rgba(34,211,238,.55) 0%,
+        rgba(34,211,238,.35) 35%,
+        rgba(34,211,238,.15) 55%,
+        rgba(34,211,238,0) 70%
+      );
+      filter: blur(14px);
+      animation: glowPulse 2.6s ease-in-out infinite;
+      z-index:1;
+    }
+
+    @keyframes glowPulse{
+      0%{ transform:scale(.85); opacity:.55; }
+      50%{ transform:scale(1.05); opacity:.9; }
+      100%{ transform:scale(.85); opacity:.55; }
+    }
+
     .splash-logo{
       width:160px;
       height:160px;
       border-radius:30px;
       object-fit:cover;
-      box-shadow:0 0 40px rgba(34,211,238,.6);
-      animation:pulse 2.8s ease-in-out infinite;
+      position:relative;
+      z-index:2;
+      box-shadow:
+        0 18px 50px rgba(0,0,0,.85),
+        0 0 24px rgba(34,211,238,.25);
     }
-    @keyframes pulse{
-      0%{ box-shadow:0 0 30px rgba(34,211,238,.4); }
-      50%{ box-shadow:0 0 55px rgba(34,211,238,.9); }
-      100%{ box-shadow:0 0 30px rgba(34,211,238,.4); }
-    }
+
     .splash-hint{
       font-size:.8rem;
       letter-spacing:.2em;
@@ -103,7 +142,9 @@
       color:var(--muted);
     }
 
-    /* Map container (defined early, JS later) */
+    /* =========================
+       MAP CONTAINER (used later)
+       ========================= */
     #storeMap{
       width:100%;
       height:60vh;
@@ -113,56 +154,91 @@
   </style>
 </head>
 <body>
+
 <main class="app-shell">
   <div class="app-inner">
 
     <!-- ================= SPLASH ================= -->
     <section id="view-splash" class="splash">
-      <img src="hf_logo.png" alt="HF Logo" class="splash-logo" />
+      <div class="splash-logo-wrap"
+           id="splashEnter"
+           role="button"
+           aria-label="Enter login">
+
+        <div class="splash-glow"></div>
+        hf_logo.png
+
+      </div>
+
       <div class="splash-hint">Tap to continue</div>
     </section>
 
     <!-- ================= LOGIN ================= -->
     <section id="view-login" class="hidden">
-      <div class="bubble-soft" style="max-width:360px;margin:auto;">
-        <img src="hf_logo.png" alt="HF Logo" style="width:90px;border-radius:18px;margin-bottom:10px;" />
-        <h2 style="margin-bottom:6px;">Sign In</h2>
-        <p class="bubble-sub">Internal Tool</p>
+      <div style="max-width:360px;margin:auto;background:rgba(15,23,42,.78);padding:18px;border-radius:18px;">
+
+        hf_logo.png
+
+        <h2 style="margin-top:10px;">Sign In</h2>
+        <p style="color:var(--muted);font-size:.85rem;">Internal Tool</p>
 
         <div style="margin-top:12px;">
-          <label class="bubble-sub">Username</label>
-          <input id="loginUser" type="text" style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
+          <label style="font-size:.8rem;color:var(--muted);">Username</label>
+          <input
+            id="loginUser"
+            type="text"
+            autocomplete="username"
+            style="width:100%;padding:10px;border-radius:12px;margin-top:4px;"
+          />
         </div>
 
         <div style="margin-top:10px;">
-          <label class="bubble-sub">Password</label>
-          <input id="loginPass" type="password" style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
+          <label style="font-size:.8rem;color:var(--muted);">Password</label>
+          <input
+            id="loginPass"
+            type="password"
+            autocomplete="current-password"
+            style="width:100%;padding:10px;border-radius:12px;margin-top:4px;"
+          />
         </div>
 
-        <button id="loginBtn" class="btn primary" style="width:100%;margin-top:14px;">
+        <button
+          id="loginBtn"
+          style="width:100%;margin-top:14px;padding:10px;border-radius:999px;font-weight:900;
+                 background:linear-gradient(135deg,var(--accent),var(--accent2));
+                 color:#020617;border:none;cursor:pointer;"
+        >
           Login
         </button>
 
-        <div id="loginError" style="margin-top:8px;color:#ef4444;font-size:.85rem;"></div>
+        <div
+          id="loginError"
+          style="margin-top:8px;color:#ef4444;font-size:.85rem;"
+        ></div>
+
       </div>
     </section>
 
     <!-- ================= TOP BAR ================= -->
-    <header id="topbar" class="hidden bubble-soft" style="display:flex;justify-content:space-between;align-items:center;">
+    <header id="topbar" class="hidden"
+      style="display:flex;justify-content:space-between;align-items:center;
+             background:rgba(15,23,42,.78);padding:10px;border-radius:18px;">
+
       <strong>Merchandising Hub</strong>
-      <nav style="display:flex;gap:8px;">
-        <button class="btn nav-link active" data-view="map">Map</button>
-        <button class="btn nav-link" data-view="hf">HF</button>
-        <button class="btn nav-link" data-view="hpa">HPA</button>
-        <button class="btn nav-link" data-view="admin">Admin</button>
-        <button class="btn nav-link" data-view="training">Training</button>
-        <button class="btn danger" id="logoutBtn">Logout</button>
+
+      <nav style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="nav-link active" data-view="map">Map</button>
+        <button class="nav-link" data-view="hf">HF</button>
+        <button class="nav-link" data-view="hpa">HPA</button>
+        <button class="nav-link" data-view="admin">Admin</button>
+        <button class="nav-link" data-view="training">Training</button>
+        <button id="logoutBtn">Logout</button>
       </nav>
     </header>
 
     <!-- ================= MAP ================= -->
     <section id="view-map" class="hidden">
-      <div class="bubble-soft">
+      <div style="margin-bottom:8px;">
         <strong>Store Map</strong>
       </div>
 
@@ -172,57 +248,72 @@
         <aside class="store-panel">
           <div>
             <div class="sp-title" id="spTitle">Select a store</div>
-            <div class="sp-sub" id="spSub">Click a pin</div>
+            <div class="sp-sub" id="spSub">Click a pin on the map</div>
           </div>
 
-          <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
-          <div class="kv"><span>Negatives</span><span id="spNegatives">—</span></div>
-          <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
+          <div class="kv">
+            <span>Watered</span>
+            <span id="spWatered">—</span>
+          </div>
+
+          <div class="kv">
+            <span>Negatives</span>
+            <span id="spNegatives">—</span>
+          </div>
+
+          <div class="kv">
+            <span>Issues</span>
+            <span id="spIssues">—</span>
+          </div>
 
           <!-- checklist injected later -->
 
-          <button id="btnAddIssue" class="small-btn" disabled>Add Issue</button>
+          <button id="btnAddIssue" disabled>Add Issue</button>
         </aside>
       </div>
     </section>
 
     <!-- ================= HF ================= -->
     <section id="view-hf" class="hidden">
-      <div class="bubble">
-        <div class="bubble-title">HF</div>
-        <div id="hf-guidelines" class="bubble-grid"></div>
+      <div>
+        <h3>HF</h3>
+        <div id="hf-guidelines"></div>
       </div>
     </section>
 
     <!-- ================= HPA ================= -->
     <section id="view-hpa" class="hidden">
-      <div class="bubble">
-        <div class="bubble-title">HPA</div>
-        <div id="hpa-guidelines" class="bubble-grid"></div>
+      <div>
+        <h3>HPA</h3>
+        <div id="hpa-guidelines"></div>
       </div>
     </section>
 
     <!-- ================= ADMIN ================= -->
     <section id="view-admin" class="hidden">
-      <div class="bubble">
-        <div class="bubble-title">Admin</div>
-        <p class="bubble-sub">Admin tools will appear here.</p>
+      <div>
+        <h3>Admin</h3>
+        <p style="color:var(--muted);font-size:.85rem;">
+          Admin tools will appear here.
+        </p>
       </div>
     </section>
 
     <!-- ================= TRAINING ================= -->
     <section id="view-training" class="hidden">
-      <div class="bubble">
-        <div class="bubble-title">Training</div>
-        <p class="bubble-sub">Training modules will appear here.</p>
+      <div>
+        <h3>Training</h3>
+        <p style="color:var(--muted);font-size:.85rem;">
+          Training modules will appear here.
+        </p>
       </div>
     </section>
 
   </div>
 </main>
-  <script>
+<script>
 /* ======================================================
-   BLOCK 3 — APP STATE, LOGIN, ROUTING
+   SEGMENT 3 — SPLASH → LOGIN, LOGIN, ROUTING
    ====================================================== */
 
 /* ------------------ App State ------------------ */
@@ -231,25 +322,16 @@ const App = {
   view: "splash"
 };
 
-const views = [
-  "splash",
-  "login",
-  "map",
-  "hf",
-  "hpa",
-  "admin",
-  "training"
-];
+const VIEWS = ["splash","login","map","hf","hpa","admin","training"];
 
 /* ------------------ Helpers ------------------ */
 const $ = (id) => document.getElementById(id);
 
 function show(view){
-  views.forEach(v=>{
+  VIEWS.forEach(v=>{
     const el = $("view-" + v);
     if(el) el.classList.toggle("hidden", v !== view);
   });
-
   App.view = view;
 }
 
@@ -259,7 +341,7 @@ function setActiveNav(view){
   });
 }
 
-/* ------------------ CSV Parser (REAL) ------------------ */
+/* ------------------ CSV Parser (REAL, SAFE) ------------------ */
 function parseCSV(text){
   const rows = [];
   let row = [], val = "", inQuotes = false;
@@ -291,32 +373,45 @@ function parseCSV(text){
   return rows;
 }
 
-/* ------------------ Splash ------------------ */
-$("view-splash").addEventListener("click", ()=>{
-  show("login");
-});
+/* ======================================================
+   SPLASH → LOGIN (FIXED CLICK TARGET)
+   ====================================================== */
+const splashEnter = $("splashEnter");
 
-/* ------------------ Login ------------------ */
+if(splashEnter){
+  splashEnter.addEventListener("click", (e)=>{
+    e.preventDefault();
+    show("login");
+  });
+
+  splashEnter.style.cursor = "pointer";
+}
+
+/* ======================================================
+   LOGIN
+   ====================================================== */
 async function loadUsers(){
   try{
     const txt = await fetch("users.csv", { cache:"no-store" }).then(r=>r.text());
     const rows = parseCSV(txt);
-    const header = rows[0].map(h=>h.toLowerCase());
+    const header = rows[0].map(h=>String(h).toLowerCase());
 
     const uIdx = header.indexOf("username");
     const pIdx = header.indexOf("password");
 
-    return rows.slice(1).map(r=>({
-      username: (r[uIdx]||"").trim().toLowerCase(),
-      password: (r[pIdx]||"").trim()
-    })).filter(u=>u.username && u.password);
+    return rows.slice(1)
+      .map(r=>({
+        username: (r[uIdx]||"").trim().toLowerCase(),
+        password: (r[pIdx]||"").trim()
+      }))
+      .filter(u=>u.username && u.password);
   }catch{
-    // Safe fallback
+    /* ✅ Safe fallback so login ALWAYS works */
     return [{ username:"demo", password:"demo" }];
   }
 }
 
-async function login(){
+async function doLogin(){
   const user = $("loginUser").value.trim().toLowerCase();
   const pass = $("loginPass").value.trim();
   const err = $("loginError");
@@ -328,7 +423,7 @@ async function login(){
   }
 
   const users = await loadUsers();
-  const match = users.find(u=>u.username===user && u.password===pass);
+  const match = users.find(u => u.username === user && u.password === pass);
 
   if(!match){
     err.textContent = "Invalid credentials.";
@@ -339,18 +434,18 @@ async function login(){
   sessionStorage.setItem("hub_user", JSON.stringify(App.user));
 
   $("topbar").classList.remove("hidden");
-  $("globalUserPill")?.textContent = user;
-
   setActiveNav("map");
   show("map");
 }
 
-$("loginBtn").addEventListener("click", login);
+$("loginBtn").addEventListener("click", doLogin);
 $("loginPass").addEventListener("keydown", e=>{
-  if(e.key === "Enter") login();
+  if(e.key === "Enter") doLogin();
 });
 
-/* ------------------ Logout ------------------ */
+/* ======================================================
+   LOGOUT
+   ====================================================== */
 $("logoutBtn").addEventListener("click", ()=>{
   App.user = null;
   sessionStorage.removeItem("hub_user");
@@ -358,7 +453,9 @@ $("logoutBtn").addEventListener("click", ()=>{
   show("splash");
 });
 
-/* ------------------ Navigation ------------------ */
+/* ======================================================
+   NAVIGATION
+   ====================================================== */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     const view = btn.dataset.view;
@@ -367,8 +464,10 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
   });
 });
 
-/* ------------------ Session Restore ------------------ */
-(function restore(){
+/* ======================================================
+   SESSION RESTORE
+   ====================================================== */
+(function restoreSession(){
   try{
     const raw = sessionStorage.getItem("hub_user");
     if(raw){
@@ -379,85 +478,122 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
       return;
     }
   }catch{}
+
   show("splash");
 })();
 </script>
-  <script>
+<script>
 /* ======================================================
-   BLOCK 4 — LEAFLET MAP (stable init) + stores.csv markers
-   Depends on BLOCK 3: parseCSV(), show(), App, etc.
+   SEGMENT 4 — Leaflet Map + stores.csv + Pins (Stable)
+   Depends on SEGMENT 3:
+   - parseCSV()
+   - show(view)
+   - App (session state)
    ====================================================== */
 
-/* ---------- Add missing UI styles used in BLOCK 2 (safe, additive) ---------- */
-(function injectNiceUIStyles(){
-  if (document.getElementById("niceUIStyles")) return;
+(function injectMapStyles(){
+  if (document.getElementById("mapStyles")) return;
   const st = document.createElement("style");
-  st.id = "niceUIStyles";
+  st.id = "mapStyles";
   st.textContent = `
-    .bubble{ background: rgba(15,23,42,.55); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:14px; box-shadow:0 14px 40px rgba(0,0,0,.45); backdrop-filter:blur(14px); }
-    .bubble-soft{ background: rgba(15,23,42,.75); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:14px; box-shadow:0 14px 40px rgba(0,0,0,.55); backdrop-filter:blur(16px); }
-    .bubble-title{ font-weight:900; letter-spacing:.10em; text-transform:uppercase; color:#f9fafb; margin-bottom:8px; font-size:.9rem; }
-    .bubble-sub{ color:#9ca3af; font-size:.85rem; line-height:1.35; }
-    .btn.primary{ background: linear-gradient(135deg,#22d3ee,#3b82f6); color:#020617; border:none; }
-    .btn.danger{ border-color: rgba(239,68,68,.65) !important; }
-    .map-layout{ display:grid; grid-template-columns: 1fr 360px; gap:12px; margin-top:10px; }
-    @media (max-width: 900px){ .map-layout{ grid-template-columns: 1fr; } }
-    .store-panel{ background: rgba(15,23,42,.8); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:12px; box-shadow:0 14px 40px rgba(0,0,0,.55); }
-    .sp-title{ font-weight:900; font-size:1rem; color:#f9fafb; }
-    .sp-sub{ color:#9ca3af; font-size:.82rem; margin-top:2px; }
-    .kv{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid rgba(148,163,184,.12); font-size:.86rem; }
-    .kv span:first-child{ color:#cbd5e1; }
-    .kv span:last-child{ color:#f9fafb; font-weight:800; text-align:right; }
-    .small-btn{ padding:8px 10px; border-radius:999px; border:1px solid rgba(148,163,184,.25); background: rgba(2,6,23,.75); color:#e5e7eb; cursor:pointer; font-weight:900; }
-    .small-btn:disabled{ opacity:.55; cursor:not-allowed; }
-    /* marker */
-    .pin{ width:18px;height:18px;border-radius:999px;border:2px solid rgba(255,255,255,.85); box-shadow:0 6px 18px rgba(0,0,0,.7); background:#ef4444; }
+    .map-layout{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width: 900px){
+      .map-layout{ grid-template-columns: 1fr; }
+    }
+
+    /* Store picker block */
+    .picker{
+      background: rgba(15,23,42,.78);
+      border-radius: 18px;
+      padding: 12px;
+      border: 1px solid rgba(148,163,184,.22);
+      margin-bottom: 10px;
+    }
+    .picker-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .picker-row input, .picker-row select{
+      flex:1;
+      min-width: 220px;
+      padding:10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.22);
+      background: rgba(2,6,23,.85);
+      color: var(--text);
+    }
+    .picker-row button{
+      padding:10px 14px;
+      border-radius:999px;
+      border:none;
+      font-weight:900;
+      cursor:pointer;
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#020617;
+    }
+
+    /* Marker */
+    .pin{
+      width:18px;height:18px;border-radius:999px;
+      border:2px solid rgba(255,255,255,.85);
+      box-shadow:0 6px 18px rgba(0,0,0,.7);
+      background: var(--bad);
+    }
   `;
   document.head.appendChild(st);
 })();
 
-/* ---------- Map module ---------- */
+/* -------- MapModule (single owner, no overrides) -------- */
 const MapModule = (() => {
   let map = null;
   let markers = new Map();
   let stores = [];
-  let initialized = false;
+  let inited = false;
 
-  function isVisible(el){
-    return el && !el.classList.contains("hidden");
+  function waitForLeaflet(){
+    return new Promise(resolve => {
+      const tick = () => {
+        if (window.L && typeof window.L.map === "function") resolve();
+        else setTimeout(tick, 50);
+      };
+      tick();
+    });
   }
 
-  function waitForLeafletReady(cb){
-    const tryNow = () => {
-      if (window.L && typeof window.L.map === "function") cb();
-      else setTimeout(tryNow, 50);
-    };
-    tryNow();
+  function isMapViewVisible(){
+    const v = document.getElementById("view-map");
+    return v && !v.classList.contains("hidden");
   }
 
-  function ensurePickerUI(){
-    // Insert a store picker above the map container (BLOCK 2 didn't include it)
+  function ensurePicker(){
     const mapView = document.getElementById("view-map");
-    if (!mapView) return;
-    if (document.getElementById("storePickerBox")) return;
+    if(!mapView) return;
+    if(document.getElementById("storePicker")) return;
 
-    const header = document.createElement("div");
-    header.id = "storePickerBox";
-    header.className = "bubble-soft";
-    header.innerHTML = `
-      <div class="bubble-title">Store Picker</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <input id="storeSearch" placeholder="Search store name or #…" style="flex:1;min-width:220px;padding:10px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(2,6,23,.85);color:#e5e7eb;" />
-        <select id="storeSelect" style="flex:1;min-width:220px;padding:10px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(2,6,23,.85);color:#e5e7eb;"></select>
-        <button id="storeFocusBtn" class="btn primary" type="button">Focus</button>
+    const picker = document.createElement("div");
+    picker.id = "storePicker";
+    picker.className = "picker";
+    picker.innerHTML = `
+      <div style="font-weight:900;letter-spacing:.10em;text-transform:uppercase;color:var(--heading);font-size:.85rem;">
+        Store Picker
       </div>
-      <div class="bubble-sub" style="margin-top:8px;">
-        Tip: Click a pin or use the dropdown to jump to a store.
+      <div class="picker-row" style="margin-top:10px;">
+        <input id="storeSearch" placeholder="Search store # or name…" />
+        <select id="storeSelect"></select>
+        <button id="storeGoBtn" type="button">Go</button>
+      </div>
+      <div style="margin-top:8px;color:var(--muted);font-size:.82rem;">
+        Tip: click any pin to open that store panel.
       </div>
     `;
-
-    // place at top of map view
-    mapView.insertBefore(header, mapView.firstChild);
+    mapView.insertBefore(picker, mapView.firstChild);
   }
 
   async function loadStores(){
@@ -466,15 +602,16 @@ const MapModule = (() => {
         if(!r.ok) throw new Error("stores.csv missing");
         return r.text();
       });
-      const rows = parseCSV(txt);
-      const header = rows[0].map(h => h.toLowerCase().trim());
 
-      const idIdx   = header.indexOf("store_id");
+      const rows = parseCSV(txt);
+      const header = rows[0].map(h => String(h).toLowerCase().trim());
+
+      const idIdx = header.indexOf("store_id");
       const nameIdx = header.indexOf("store_name");
-      const latIdx  = header.indexOf("lat");
-      const lonIdx  = header.indexOf("lon");
+      const latIdx = header.indexOf("lat");
+      const lonIdx = header.indexOf("lon");
       const cityIdx = header.indexOf("city");
-      const stIdx   = header.indexOf("state");
+      const stateIdx = header.indexOf("state");
 
       stores = rows.slice(1).map(r=>({
         id: (r[idIdx]||"").trim(),
@@ -482,50 +619,32 @@ const MapModule = (() => {
         lat: parseFloat((r[latIdx]||"").trim()),
         lon: parseFloat((r[lonIdx]||"").trim()),
         city: (r[cityIdx]||"").trim(),
-        state: (r[stIdx]||"").trim()
+        state: (r[stateIdx]||"").trim()
       })).filter(s => s.id && s.name && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
+
+      if(!stores.length) throw new Error("no valid rows");
     }catch(e){
       console.warn("[map] using demo stores:", e);
       stores = [
         { id:"1950", name:"South Loop", lat:41.856, lon:-87.624, city:"Chicago", state:"IL" },
-        { id:"1987", name:"Glenview", lat:42.079, lon:-87.822, city:"Glenview", state:"IL" }
+        { id:"1987", name:"Glenview",  lat:42.079, lon:-87.822, city:"Glenview", state:"IL" }
       ];
     }
 
     window.AppStores = stores;
   }
 
-  function buildSelectOptions(){
-    const sel = document.getElementById("storeSelect");
-    if(!sel) return;
-
-    const sorted = [...stores].sort((a,b) => (Number(a.id)||0) - (Number(b.id)||0));
-    sel.innerHTML = sorted.map(s => `<option value="${s.id}">${s.id} — ${s.name}</option>`).join("");
-
-    const search = document.getElementById("storeSearch");
-    if(search){
-      search.oninput = () => {
-        const q = search.value.toLowerCase().trim();
-        const match = sorted.find(s => (s.id+" "+s.name).toLowerCase().includes(q));
-        if(match) sel.value = match.id;
-      };
-    }
-
-    document.getElementById("storeFocusBtn").onclick = () => {
-      const id = sel.value;
-      const s = stores.find(x=>x.id===id);
-      if(s) focusStore(s);
-    };
-  }
-
   function initLeaflet(){
     if(map) return;
-
     const mapEl = document.getElementById("storeMap");
     if(!mapEl) return;
 
     map = L.map(mapEl, { zoomControl:true, preferCanvas:true });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19 }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+  }
+
+  function markerIconHTML(){
+    return `<div class="pin"></div>`;
   }
 
   function clearMarkers(){
@@ -540,41 +659,63 @@ const MapModule = (() => {
     stores.forEach(s=>{
       const icon = L.divIcon({
         className:"",
-        html:`<div class="pin"></div>`,
+        html: markerIconHTML(),
         iconSize:[18,18],
         iconAnchor:[9,9]
       });
 
       const m = L.marker([s.lat, s.lon], { icon }).addTo(map);
-      m.on("click", () => selectStore(s));
+      m.on("click", ()=> selectStore(s));
       markers.set(s.id, m);
-      bounds.push([s.lat,s.lon]);
+      bounds.push([s.lat, s.lon]);
     });
 
     if(bounds.length) map.fitBounds(bounds, { padding:[24,24] });
   }
 
+  function buildPicker(){
+    const select = document.getElementById("storeSelect");
+    const search = document.getElementById("storeSearch");
+    const go = document.getElementById("storeGoBtn");
+    if(!select || !search || !go) return;
+
+    const sorted = [...stores].sort((a,b)=>(Number(a.id)||0)-(Number(b.id)||0));
+    select.innerHTML = sorted.map(s=>`<option value="${s.id}">${s.id} — ${s.name}</option>`).join("");
+
+    search.oninput = ()=>{
+      const q = search.value.toLowerCase().trim();
+      if(!q) return;
+      const match = sorted.find(s => (`${s.id} ${s.name}`).toLowerCase().includes(q));
+      if(match) select.value = match.id;
+    };
+
+    go.onclick = ()=>{
+      const id = select.value;
+      const s = stores.find(x=>x.id===id);
+      if(!s) return;
+      focusStore(s);
+    };
+  }
+
   function focusStore(store){
-    const m = markers.get(store.id);
-    if(m) map.setView(m.getLatLng(), 12, { animate:true });
+    const marker = markers.get(store.id);
+    if(marker) map.setView(marker.getLatLng(), 12, { animate:true });
     selectStore(store);
   }
 
   function selectStore(store){
-    // Update panel fields
     document.getElementById("spTitle").textContent = `${store.name} (${store.id})`;
     document.getElementById("spSub").textContent = [store.city, store.state].filter(Boolean).join(", ") || "—";
 
-    // placeholders (Block 5 will wire real values)
+    // placeholder values until Segment 5
     document.getElementById("spWatered").textContent = "—";
     document.getElementById("spNegatives").textContent = "—";
     document.getElementById("spIssues").textContent = "—";
 
-    // enable issue button later, but enable now to show UI responsiveness
+    // enable issue button now; Segment 5 will wire logic
     const addIssue = document.getElementById("btnAddIssue");
     if(addIssue) addIssue.disabled = false;
 
-    // expose selection globally for checklist/issue system in Block 5
     window.SelectedStore = store;
   }
 
@@ -584,61 +725,100 @@ const MapModule = (() => {
   }
 
   async function ensureInit(){
-    if(initialized) return;
-    initialized = true;
+    if(inited) {
+      if(isMapViewVisible()) invalidate();
+      return;
+    }
+    inited = true;
 
-    ensurePickerUI();
-
+    ensurePicker();
+    await waitForLeaflet();
     await loadStores();
 
-    waitForLeafletReady(() => {
+    // only init when map view is visible
+    if(isMapViewVisible()){
       initLeaflet();
       renderMarkers();
-      buildSelectOptions();
+      buildPicker();
       invalidate();
-    });
+    }
   }
 
-  /* Observe visibility of view-map so we only init when map is visible */
-  function observeMapView(){
+  // watch view-map visibility changes to init map only when shown
+  function watchVisibility(){
     const mapView = document.getElementById("view-map");
     if(!mapView) return;
 
-    const obs = new MutationObserver(() => {
-      if(isVisible(mapView)) {
+    const obs = new MutationObserver(()=>{
+      if(isMapViewVisible()){
         ensureInit();
-        invalidate();
+        if(map) invalidate();
       }
     });
 
     obs.observe(mapView, { attributes:true, attributeFilter:["class"] });
   }
 
-  return { ensureInit, observeMapView, invalidate };
+  return { ensureInit, watchVisibility, invalidate };
 })();
 
-/* Start observing map view visibility right away */
-MapModule.observeMapView();
+/* Start watching map view right away */
+MapModule.watchVisibility();
 
-/* If user lands on map via session restore, init immediately */
-if(!document.getElementById("view-map")?.classList.contains("hidden")){
+/* If session restore already put us on map, init now */
+if(!document.getElementById("view-map").classList.contains("hidden")){
   MapModule.ensureInit();
 }
+
+/* Also hook navigation so selecting "map" always triggers invalidate */
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.dataset.view === "map"){
+      MapModule.ensureInit();
+      MapModule.invalidate();
+    }
+  });
+});
 </script>
-<script>
+  <script>
 /* ======================================================
-   BLOCK 5 — CHECKLIST + ISSUES + MARKER STATUS LOGIC
-   Works with BLOCK 4 MapModule + window.AppStores + window.SelectedStore
+   SEGMENT 5 — Checklist + Issues + Status Markers
+   Works with Segment 4 MapModule by capturing L.map()
+   Depends on Segment 3 parseCSV()
    ====================================================== */
 
-/* ------------------ Styles (safe, additive) ------------------ */
-(function injectChecklistStyles(){
-  if (document.getElementById("checklistStyles")) return;
+/* ---------- Style injection (pins + flag + checklist + modal) ---------- */
+(function injectChecklistAndPinStyles(){
+  if (document.getElementById("seg5Styles")) return;
   const st = document.createElement("style");
-  st.id = "checklistStyles";
+  st.id = "seg5Styles";
   st.textContent = `
+    /* Pin colors */
+    .pin-ok{ background: var(--good) !important; }
+    .pin-warn{ background: var(--warn) !important; }
+    .pin-bad{ background: var(--bad) !important; }
+
+    /* Flag above pin for issues */
+    .pin .flagpole{
+      position:absolute; left:8px; top:-14px;
+      width:2px; height:14px;
+      background: rgba(255,255,255,.85);
+      border-radius:2px;
+      box-shadow:0 6px 14px rgba(0,0,0,.5);
+    }
+    .pin .flagpole::after{
+      content:"";
+      position:absolute; top:2px; left:2px;
+      width:12px; height:8px;
+      background: var(--bad);
+      clip-path: polygon(0 0, 100% 18%, 0 50%, 100% 82%, 0 100%);
+      border-radius:2px;
+      box-shadow:0 6px 14px rgba(0,0,0,.55);
+    }
+
+    /* Checklist box */
     .checklist-box{
-      margin-top: 10px;
+      margin-top:10px;
       background: rgba(15,23,42,.78);
       border: 1px solid rgba(148,163,184,.22);
       border-radius: 18px;
@@ -647,10 +827,10 @@ if(!document.getElementById("view-map")?.classList.contains("hidden")){
     }
     .checklist-title{
       font-weight: 900;
-      letter-spacing: .10em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      color: #f9fafb;
-      font-size: .85rem;
+      font-size: .82rem;
+      color: var(--heading);
       margin-bottom: 8px;
     }
     .checklist-row{
@@ -662,12 +842,15 @@ if(!document.getElementById("view-map")?.classList.contains("hidden")){
       font-size: .9rem;
       cursor:pointer;
     }
-    .checklist-row:last-child{ border-bottom: none; }
-    .checklist-row input{ margin-top: 2px; accent-color: #22d3ee; }
+    .checklist-row:last-child{ border-bottom:none; }
+    .checklist-row input{
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
     .checklist-meta{
       margin-top:10px;
+      color: var(--muted);
       font-size:.82rem;
-      color:#9ca3af;
       display:flex;
       justify-content:space-between;
       gap:10px;
@@ -683,11 +866,11 @@ if(!document.getElementById("view-map")?.classList.contains("hidden")){
       justify-content:center;
       padding: 22px 16px;
       backdrop-filter: blur(8px);
-      z-index:9999;
+      z-index: 9999;
       overflow-y:auto;
     }
     .modal{
-      width: min(560px, 100%);
+      width:min(560px,100%);
       background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
       border: 1px solid rgba(148,163,184,.55);
       border-radius: 20px;
@@ -697,11 +880,11 @@ if(!document.getElementById("view-map")?.classList.contains("hidden")){
     .modal h2{
       font-size: 1.1rem;
       font-weight: 900;
-      color:#f9fafb;
+      color: var(--heading);
       margin-bottom: 2px;
     }
     .modal .sub{
-      color:#9ca3af;
+      color: var(--muted);
       font-size:.82rem;
       margin-bottom: 12px;
     }
@@ -721,49 +904,59 @@ if(!document.getElementById("view-map")?.classList.contains("hidden")){
     }
     .issue-meta{
       margin-top:4px;
-      color:#9ca3af;
+      color: var(--muted);
       font-size:.8rem;
     }
-    .issue-status-open{ color:#ef4444; font-weight:900; }
-    .issue-status-done{ color:#22c55e; font-weight:900; }
-
+    .issue-open{ color: var(--bad); font-weight:900; }
+    .issue-done{ color: var(--good); font-weight:900; }
     .modal-actions{
-      margin-top: 10px;
+      margin-top:10px;
       display:flex;
       justify-content:flex-end;
       gap:8px;
+    }
+    .pill-btn{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.22);
+      background: rgba(2,6,23,.85);
+      color: var(--text);
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .pill-btn:hover{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#020617;
+      border-color: transparent;
     }
   `;
   document.head.appendChild(st);
 })();
 
-/* ------------------ Data + persistence ------------------ */
-const STORE_STATE_KEY = "hub_store_state_v9";
+/* ---------- Persistent state ---------- */
+const STORE_STATE_KEY = "hub_store_state_v10";
 const todayKey = () => new Date().toISOString().slice(0,10);
 const uuid = () => (crypto?.randomUUID?.()) || (String(Date.now()) + Math.random().toString(16).slice(2));
 
 function loadState(){
-  try{
-    const raw = localStorage.getItem(STORE_STATE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch{ return {}; }
+  try { return JSON.parse(localStorage.getItem(STORE_STATE_KEY) || "{}"); }
+  catch { return {}; }
 }
 function saveState(){
-  try{ localStorage.setItem(STORE_STATE_KEY, JSON.stringify(StoreState)); }catch{}
+  try { localStorage.setItem(STORE_STATE_KEY, JSON.stringify(StoreState)); } catch {}
 }
 
 const StoreState = loadState();
 
-/* Default per store */
 function defaultStoreState(){
   return {
-    watered: false,
-    wateredOn: null,      // YYYY-MM-DD
-    negatives: false,
-    pictures: false,
-    checklist: {},        // dynamic item_id: bool
-    issues: [],           // {id,text,createdAt,createdBy,resolved}
-    updatedAt: null
+    watered:false,
+    wateredOn:null,       // YYYY-MM-DD
+    negatives:false,
+    pictures:false,
+    checklist:{},         // dynamic items
+    issues:[],            // {id,text,createdAt,createdBy,resolved}
+    updatedAt:null
   };
 }
 
@@ -780,21 +973,18 @@ function ensureStore(id){
   return st;
 }
 
-/* ------------------ Checklist schema (CSV) ------------------ */
-/* checklist_items.csv format:
-   item_id,label,active
-*/
+/* ---------- Dynamic checklist items from CSV ---------- */
 const ChecklistSchema = {
-  loaded: false,
-  items: [],
+  loaded:false,
+  items:[],
   async load(){
     if(this.loaded) return this.items;
     try{
-      const txt = await fetch("checklist_items.csv", { cache:"no-store" }).then(r=>{
+      const txt = await fetch("checklist_items.csv",{cache:"no-store"}).then(r=>{
         if(!r.ok) throw new Error("missing");
         return r.text();
       });
-      const rows = parseCSV(txt); // from BLOCK 3
+      const rows = parseCSV(txt); // from Segment 3
       const header = rows[0].map(h=>String(h).toLowerCase().trim());
       const idIdx = header.indexOf("item_id");
       const labelIdx = header.indexOf("label");
@@ -805,9 +995,8 @@ const ChecklistSchema = {
         label: String(r[labelIdx]||"").trim(),
         active: String(r[activeIdx]||"true").trim().toLowerCase() !== "false"
       })).filter(x=>x.id && x.label && x.active);
-
     }catch(e){
-      console.warn("[checklist] checklist_items.csv missing/invalid, using none", e);
+      console.warn("[checklist] checklist_items.csv missing; using none", e);
       this.items = [];
     }
     this.loaded = true;
@@ -815,10 +1004,9 @@ const ChecklistSchema = {
   }
 };
 
-/* ------------------ Completion + status rules ------------------ */
+/* ---------- Completion + status rules ---------- */
 function openIssueCount(storeId){
-  const st = ensureStore(storeId);
-  return st.issues.filter(i=>!i.resolved).length;
+  return ensureStore(storeId).issues.filter(i=>!i.resolved).length;
 }
 function hasOpenIssues(storeId){
   return openIssueCount(storeId) > 0;
@@ -827,7 +1015,7 @@ function hasOpenIssues(storeId){
 function completion(storeId){
   const st = ensureStore(storeId);
   const dyn = ChecklistSchema.items;
-  const total = 3 + dyn.length;
+  const total = 3 + dyn.length; // Watered/Negatives/Pictures + CSV
   let done = 0;
 
   if(st.watered && st.wateredOn === todayKey()) done++;
@@ -838,15 +1026,12 @@ function completion(storeId){
     if(st.checklist[it.id] === true) done++;
   });
 
-  const pct = total ? done/total : 0;
-  return { done, total, pct };
+  return { done, total, pct: total ? done/total : 0 };
 }
 
-/* Marker color:
-   - If open issues: yellow + red flag
-   - else pct < .5 red
-   - pct >= .5 yellow
-   - pct == 1 green
+/* Your rules:
+   - any open issue => yellow + red flag
+   - else <50 red, >=50 yellow, 100 green
 */
 function storeStatus(storeId){
   if(hasOpenIssues(storeId)) return "warn";
@@ -856,47 +1041,68 @@ function storeStatus(storeId){
   return "bad";
 }
 
-/* ------------------ Marker indexing (no map overrides) ------------------ */
-/* We locate markers by matching their lat/lon to store lat/lon */
-const MarkerIndex = {
-  built: false,
-  byStoreId: new Map(),
+/* ---------- Capture Leaflet map instance by wrapping L.map() ---------- */
+let HUB_MAP = null;
 
-  build(){
-    if(!window.MAP || !window.AppStores?.length) return;
-    this.byStoreId.clear();
+function hookLeafletMapCapture(){
+  if(!window.L || window.L.__hubWrapped) return;
 
-    // Collect all markers currently on map
-    const layers = [];
-    window.MAP.eachLayer(layer=>{
-      if(layer && typeof layer.getLatLng === "function") layers.push(layer);
-    });
+  const orig = window.L.map;
+  window.L.map = function(...args){
+    const m = orig.apply(this, args);
+    HUB_MAP = m;
+    window.L.__hubWrapped = true;
+    // build marker index after map is ready
+    setTimeout(buildMarkerIndex, 150);
+    return m;
+  };
+}
 
-    for(const s of window.AppStores){
-      const match = layers.find(m=>{
-        const ll = m.getLatLng();
-        return Math.abs(ll.lat - s.lat) < 1e-6 && Math.abs(ll.lng - s.lon) < 1e-6;
-      });
-      if(match) this.byStoreId.set(s.id, match);
+/* Poll until Leaflet loads, then wrap */
+(function waitForLeaflet(){
+  const tick = ()=>{
+    if(window.L){
+      hookLeafletMapCapture();
+    } else {
+      setTimeout(tick, 50);
     }
-    this.built = true;
-  },
+  };
+  tick();
+})();
 
-  get(storeId){
-    return this.byStoreId.get(storeId);
-  }
+/* ---------- Marker index: storeId -> marker layer ---------- */
+const MarkerIndex = {
+  built:false,
+  byId:new Map()
 };
 
-/* Build marker index after map init */
-setTimeout(()=> MarkerIndex.build(), 400);
+function buildMarkerIndex(){
+  if(!HUB_MAP || !window.AppStores?.length) return;
 
-/* ------------------ Apply marker HTML (color + flag) ------------------ */
+  MarkerIndex.byId.clear();
+  const layers = [];
+  HUB_MAP.eachLayer(layer=>{
+    if(layer && typeof layer.getLatLng === "function" && typeof layer.setIcon === "function"){
+      layers.push(layer);
+    }
+  });
+
+  for(const s of window.AppStores){
+    const match = layers.find(m=>{
+      const ll = m.getLatLng();
+      return Math.abs(ll.lat - s.lat) < 1e-7 && Math.abs(ll.lng - s.lon) < 1e-7;
+    });
+    if(match) MarkerIndex.byId.set(s.id, match);
+  }
+
+  MarkerIndex.built = true;
+  updateAllMarkers();
+}
+
 function markerHtml(storeId){
   const status = storeStatus(storeId);
   const flag = hasOpenIssues(storeId);
-
   const cls = status === "ok" ? "pin-ok" : status === "warn" ? "pin-warn" : "pin-bad";
-
   return `
     <div class="pin ${cls}">
       ${flag ? `<span class="flagpole"></span>` : ``}
@@ -905,7 +1111,8 @@ function markerHtml(storeId){
 }
 
 function updateMarker(storeId){
-  const marker = MarkerIndex.get(storeId);
+  if(!MarkerIndex.built) buildMarkerIndex();
+  const marker = MarkerIndex.byId.get(storeId);
   if(!marker || !window.L) return;
 
   const icon = L.divIcon({
@@ -919,15 +1126,14 @@ function updateMarker(storeId){
 
 function updateAllMarkers(){
   if(!ChecklistSchema.loaded) return;
-  if(!MarkerIndex.built) MarkerIndex.build();
   for(const s of (window.AppStores||[])){
     ensureStore(s.id);
     updateMarker(s.id);
   }
 }
 
-/* ------------------ Checklist UI injection ------------------ */
-function ensureChecklistBox(){
+/* ---------- Checklist UI injection ---------- */
+function ensureChecklistUI(){
   if(document.getElementById("checklistBox")) return;
 
   const panel = document.querySelector(".store-panel");
@@ -945,14 +1151,20 @@ function ensureChecklistBox(){
     </div>
   `;
 
-  // insert before Add Issue button
   const addIssueBtn = document.getElementById("btnAddIssue");
   panel.insertBefore(box, addIssueBtn);
+
+  // Add View Issues button
+  const viewBtn = document.createElement("button");
+  viewBtn.id = "btnViewIssues";
+  viewBtn.className = "pill-btn";
+  viewBtn.style.display = "none";
+  viewBtn.textContent = "🚩 View Issues";
+  panel.insertBefore(viewBtn, addIssueBtn.nextSibling);
 }
 
-/* Render checklist for selected store */
 function renderChecklist(storeId){
-  ensureChecklistBox();
+  ensureChecklistUI();
   const st = ensureStore(storeId);
 
   const rowsEl = document.getElementById("checklistRows");
@@ -968,7 +1180,7 @@ function renderChecklist(storeId){
   const row = (key, label, checked) => `
     <label class="checklist-row">
       <input type="checkbox" data-ck="${key}" ${checked ? "checked" : ""} />
-      <span>${esc(label)}</span>
+      <span>${label}</span>
     </label>
   `;
 
@@ -976,7 +1188,7 @@ function renderChecklist(storeId){
     row("watered", "Watered (resets daily)", st.watered && st.wateredOn === todayKey()),
     row("negatives", "Negatives", !!st.negatives),
     row("pictures", "Pictures", !!st.pictures),
-    ...dyn.map(it=>row("dyn:"+it.id, it.label, st.checklist[it.id] === true))
+    ...dyn.map(it => row("dyn:"+it.id, it.label, st.checklist[it.id] === true))
   ].join("");
 
   rowsEl.onchange = (e)=>{
@@ -1000,59 +1212,48 @@ function renderChecklist(storeId){
     StoreState[storeId] = st;
     saveState();
 
-    // update side stats in panel
+    // Update side panel indicators
     document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌";
     document.getElementById("spNegatives").textContent = st.negatives ? "⚠️" : "✅";
     document.getElementById("spIssues").textContent = openIssueCount(storeId) ? `🚩 ${openIssueCount(storeId)}` : "✅ None";
 
-    // update checklist + marker
+    // Update visuals
     renderChecklist(storeId);
     updateMarker(storeId);
     renderViewIssuesButton(storeId);
   };
 }
 
-/* ------------------ Issues UI: View button + modal ------------------ */
+/* ---------- Issues Modal ---------- */
 function ensureIssuesModal(){
-  if(document.getElementById("issuesModalBackdrop")) return;
+  if(document.getElementById("issuesBackdrop")) return;
 
   const bd = document.createElement("div");
-  bd.id = "issuesModalBackdrop";
+  bd.id = "issuesBackdrop";
   bd.className = "modal-backdrop";
   bd.innerHTML = `
     <div class="modal">
       <h2>Store Issues</h2>
-      <div class="sub" id="issuesStoreLabel"></div>
+      <div class="sub" id="issuesLabel"></div>
       <div id="issuesList"></div>
       <div class="modal-actions">
-        <button class="btn" id="issuesCloseBtn" type="button">Close</button>
+        <button class="pill-btn" id="issuesClose">Close</button>
       </div>
     </div>
   `;
   document.body.appendChild(bd);
 
   const close = ()=> bd.style.display="none";
-  document.getElementById("issuesCloseBtn").onclick = close;
+  document.getElementById("issuesClose").onclick = close;
   bd.onclick = (e)=>{ if(e.target === bd) close(); };
 }
 
 function renderViewIssuesButton(storeId){
-  // Create the button if missing
-  let btn = document.getElementById("btnViewIssues");
-  if(!btn){
-    btn = document.createElement("button");
-    btn.id = "btnViewIssues";
-    btn.className = "small-btn";
-    btn.textContent = "🚩 View Issues";
-    btn.style.display = "none";
-
-    const panel = document.querySelector(".store-panel");
-    const addIssue = document.getElementById("btnAddIssue");
-    panel.insertBefore(btn, addIssue.nextSibling);
-  }
-
+  const btn = document.getElementById("btnViewIssues");
+  if(!btn) return;
   const st = ensureStore(storeId);
-  btn.style.display = st.issues.length ? "inline-block" : "none";
+
+  btn.style.display = st.issues.length ? "inline-flex" : "none";
   btn.onclick = ()=> openIssuesModal(storeId);
 }
 
@@ -1060,7 +1261,7 @@ function openIssuesModal(storeId){
   ensureIssuesModal();
 
   const store = (window.AppStores||[]).find(s=>s.id===storeId);
-  document.getElementById("issuesStoreLabel").textContent =
+  document.getElementById("issuesLabel").textContent =
     store ? `${store.name} (${store.id})` : `Store ${storeId}`;
 
   const st = ensureStore(storeId);
@@ -1069,28 +1270,25 @@ function openIssuesModal(storeId){
   if(!st.issues.length){
     list.innerHTML = `<div class="issue-card">No issues reported.</div>`;
   } else {
-    list.innerHTML = st.issues.map(issue=>`
+    list.innerHTML = st.issues.map(i=>`
       <div class="issue-card">
         <div class="issue-top">
-          <div>${esc(issue.text)}</div>
-          <div class="${issue.resolved ? "issue-status-done" : "issue-status-open"}">
-            ${issue.resolved ? "Resolved" : "Open"}
-          </div>
+          <div>${i.text.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+          <div class="${i.resolved ? "issue-done" : "issue-open"}">${i.resolved ? "Resolved" : "Open"}</div>
         </div>
         <div class="issue-meta">
-          Reported by ${esc(issue.createdBy)} • ${new Date(issue.createdAt).toLocaleString()}
+          Reported by ${i.createdBy.replace(/</g,"&lt;").replace(/>/g,"&gt;")} • ${new Date(i.createdAt).toLocaleString()}
         </div>
-        ${!issue.resolved ? `<button class="small-btn" data-resolve="${issue.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ``}
+        ${!i.resolved ? `<button class="pill-btn" data-resolve="${i.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ``}
       </div>
     `).join("");
   }
 
   list.onclick = (e)=>{
-    const btn = e.target.closest("[data-resolve]");
-    if(!btn) return;
-
-    const id = btn.getAttribute("data-resolve");
-    const issue = st.issues.find(i=>i.id===id);
+    const b = e.target.closest("[data-resolve]");
+    if(!b) return;
+    const id = b.getAttribute("data-resolve");
+    const issue = st.issues.find(x=>x.id===id);
     if(!issue) return;
 
     issue.resolved = true;
@@ -1098,24 +1296,24 @@ function openIssuesModal(storeId){
     StoreState[storeId] = st;
     saveState();
 
-    // update UI + marker (issues override)
     updateMarker(storeId);
     renderChecklist(storeId);
     renderViewIssuesButton(storeId);
+
     document.getElementById("spIssues").textContent = openIssueCount(storeId) ? `🚩 ${openIssueCount(storeId)}` : "✅ None";
 
-    openIssuesModal(storeId); // re-render modal
+    openIssuesModal(storeId); // refresh modal
   };
 
-  document.getElementById("issuesModalBackdrop").style.display = "flex";
+  document.getElementById("issuesBackdrop").style.display = "flex";
 }
 
-/* ------------------ Add Issue button wiring ------------------ */
+/* ---------- Add Issue button wiring ---------- */
 function wireAddIssue(storeId){
   const btn = document.getElementById("btnAddIssue");
   if(!btn) return;
-
   btn.disabled = false;
+
   btn.onclick = ()=>{
     const st = ensureStore(storeId);
     const msg = prompt("Enter issue details:");
@@ -1125,7 +1323,7 @@ function wireAddIssue(storeId){
       id: uuid(),
       text: msg.trim(),
       createdAt: Date.now(),
-      createdBy: App.user?.username || "User",
+      createdBy: (App?.user?.username || "User"),
       resolved: false
     });
 
@@ -1133,30 +1331,27 @@ function wireAddIssue(storeId){
     StoreState[storeId] = st;
     saveState();
 
-    // issue override forces yellow + flag
+    // Issue override => Yellow + Red flag
     updateMarker(storeId);
-    renderViewIssuesButton(storeId);
     renderChecklist(storeId);
+    renderViewIssuesButton(storeId);
+
     document.getElementById("spIssues").textContent = `🚩 ${openIssueCount(storeId)}`;
   };
 }
 
-/* ------------------ Hook store selection from BLOCK 4 ------------------ */
-/* We detect selected store via window.SelectedStore set in BLOCK 4 */
-let lastSelectedId = null;
+/* ---------- Hook into store selection from Segment 4 (window.SelectedStore) ---------- */
+let lastStore = null;
 setInterval(()=>{
   const s = window.SelectedStore;
   if(!s || !s.id) return;
-  if(s.id === lastSelectedId) return;
+  if(lastStore === s.id) return;
+  lastStore = s.id;
 
-  lastSelectedId = s.id;
-
-  // Ensure schema loaded and render UI
   ChecklistSchema.load().then(()=>{
-    ensureStore(s.id);
-
-    // Update panel quick status fields
+    // ensure state + render panel values
     const st = ensureStore(s.id);
+
     document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌";
     document.getElementById("spNegatives").textContent = st.negatives ? "⚠️" : "✅";
     document.getElementById("spIssues").textContent = openIssueCount(s.id) ? `🚩 ${openIssueCount(s.id)}` : "✅ None";
@@ -1165,26 +1360,32 @@ setInterval(()=>{
     wireAddIssue(s.id);
     renderViewIssuesButton(s.id);
 
-    // marker refresh for this store
+    // ensure marker index exists & paint this marker correctly
+    buildMarkerIndex();
     updateMarker(s.id);
   });
-}, 250);
+}, 200);
 
-/* ------------------ Init on load: schema + marker refresh ------------------ */
+/* ---------- Initial load: schema + paint markers once stores & map exist ---------- */
 ChecklistSchema.load().then(()=>{
-  // Once markers exist, rebuild marker index & refresh colors
-  setTimeout(()=>{
-    MarkerIndex.build();
+  // try to build marker index a few times until map is created
+  let tries = 0;
+  const tick = ()=>{
+    tries++;
+    buildMarkerIndex();
     updateAllMarkers();
-  }, 600);
+    if((MarkerIndex.built && HUB_MAP) || tries > 30) return;
+    setTimeout(tick, 200);
+  };
+  tick();
 });
 </script>
 <script>
 /* ======================================================
-   BLOCK 6 — HF / HPA / TRAINING + FINAL BOOT
+   SEGMENT 6 — HF / HPA CONTENT + TRAINING + FINAL BOOT
    ====================================================== */
 
-/* ------------------ Small helpers ------------------ */
+/* ------------------ Helpers ------------------ */
 function esc(s){
   return String(s ?? "")
     .replace(/&/g,"&amp;")
@@ -1193,46 +1394,6 @@ function esc(s){
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#39;");
 }
-
-/* ------------------ HF / HPA tab toggles ------------------ */
-document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t = btn.dataset.hfTab;
-    document.getElementById("hf-guidelines").classList.toggle("hidden", t!=="guidelines");
-    document.getElementById("hf-care").classList.toggle("hidden", t!=="care");
-  };
-});
-
-document.querySelectorAll("[data-hf-care]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hf-care]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("hf-plants").classList.toggle("hidden", btn.dataset.hfCare!=="plants");
-    document.getElementById("hf-pests").classList.toggle("hidden", btn.dataset.hfCare!=="pests");
-  };
-});
-
-document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t = btn.dataset.hpaTab;
-    document.getElementById("hpa-guidelines").classList.toggle("hidden", t!=="guidelines");
-    document.getElementById("hpa-products").classList.toggle("hidden", t!=="products");
-    document.getElementById("hpa-care").classList.toggle("hidden", t!=="care");
-  };
-});
-
-document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hpa-care]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("hpa-plants").classList.toggle("hidden", btn.dataset.hpaCare!=="plants");
-    document.getElementById("hpa-pests").classList.toggle("hidden", btn.dataset.hpaCare!=="pests");
-  };
-});
 
 /* ------------------ Simple CSV loader ------------------ */
 async function loadCsvSafe(url){
@@ -1245,111 +1406,96 @@ async function loadCsvSafe(url){
   }
 }
 
-/* ------------------ HF / HPA Guidelines ------------------ */
+/* ------------------ Render Guidelines ------------------ */
+/* Expected CSV headers (flexible):
+   category | section
+   text | guideline | item
+*/
 async function renderGuidelines(csvUrl, mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
   const rows = await loadCsvSafe(csvUrl);
   if(!rows || rows.length < 2){
-    mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
+    mount.innerHTML = `<div style="color:var(--muted);">No guidelines available.</div>`;
     return;
   }
 
-  const header = rows[0].map(h=>h.toLowerCase());
-  const catIdx = header.indexOf("category") >= 0 ? header.indexOf("category") : 0;
-  const txtIdx = header.indexOf("text") >= 0 ? header.indexOf("text") : 1;
+  const header = rows[0].map(h=>String(h).toLowerCase().trim());
+  const catIdx =
+    header.indexOf("category") >= 0 ? header.indexOf("category") :
+    header.indexOf("section") >= 0 ? header.indexOf("section") : 0;
 
-  const groups = {};
+  const txtIdx =
+    header.indexOf("text") >= 0 ? header.indexOf("text") :
+    header.indexOf("guideline") >= 0 ? header.indexOf("guideline") :
+    header.indexOf("item") >= 0 ? header.indexOf("item") : 1;
+
+  const grouped = {};
   rows.slice(1).forEach(r=>{
-    const c = r[catIdx] || "General";
-    const t = r[txtIdx];
-    if(!t) return;
-    if(!groups[c]) groups[c] = [];
-    groups[c].push(t);
+    const cat = r[catIdx] || "General";
+    const txt = r[txtIdx];
+    if(!txt) return;
+    if(!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(txt);
   });
 
-  mount.innerHTML = Object.entries(groups).map(([cat,items])=>`
-    <div class="bubble-soft">
-      <div class="bubble-title">${esc(cat)}</div>
-      <ul style="margin-left:16px;">
+  mount.innerHTML = Object.entries(grouped).map(([cat,items])=>`
+    <div style="margin-bottom:12px;padding:12px;border-radius:14px;
+                background:rgba(15,23,42,.78);
+                border:1px solid rgba(148,163,184,.22);">
+      <div style="font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+                  font-size:.82rem;margin-bottom:6px;">
+        ${esc(cat)}
+      </div>
+      <ul style="margin-left:16px;font-size:.9rem;">
         ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
       </ul>
     </div>
   `).join("");
 }
 
-/* ------------------ Plants / Pests (name-only) ------------------ */
-function renderNameCards(list, mountId, title){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  mount.innerHTML = list.map(x=>`
-    <div class="bubble-soft" style="cursor:pointer;">
-      <strong>${esc(x.name)}</strong>
-      <div class="bubble-sub">${esc(title)}</div>
-    </div>
-  `).join("");
-}
-
-/* ------------------ Load HF ------------------ */
+/* ------------------ HF Loader ------------------ */
 async function loadHF(){
   await renderGuidelines("hf_guidelines.csv", "hf-guidelines");
-  renderNameCards(
-    [{name:"Ferns"},{name:"Palms"},{name:"Succulents"}],
-    "hf-plants",
-    "Plant Care"
-  );
-  renderNameCards(
-    [{name:"Aphids"},{name:"Spider Mites"}],
-    "hf-pests",
-    "Pest Info"
-  );
 }
 
-/* ------------------ Load HPA ------------------ */
+/* ------------------ HPA Loader ------------------ */
 async function loadHPA(){
   await renderGuidelines("hpa_guidelines.csv", "hpa-guidelines");
-  renderNameCards(
-    [{name:"Annuals"},{name:"Perennials"}],
-    "hpa-plants",
-    "Plant Care"
-  );
-  renderNameCards(
-    [{name:"Thrips"},{name:"Mealybugs"}],
-    "hpa-pests",
-    "Pest Info"
-  );
-
-  document.getElementById("products-skus").innerHTML =
-    `<div class="bubble-soft">SKU Catalogue will render here.</div>`;
-  document.getElementById("products-orders").innerHTML =
-    `<div class="bubble-soft">Order Breakdown will render here.</div>`;
 }
 
-/* ------------------ Training tab ------------------ */
-document.querySelectorAll("[data-train]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-train]").forEach(b=>b.classList.remove("primary"));
-    btn.classList.add("primary");
-    ["basics","merch","supervisor"].forEach(k=>{
-      document.getElementById("train-"+k).classList.toggle("hidden", btn.dataset.train!==k);
-    });
-  };
-});
+/* ------------------ Training Tabs ------------------ */
+(function initTraining(){
+  const btns = document.querySelectorAll("[data-train]");
+  if(!btns.length) return;
 
-/* ------------------ Nav hooks ------------------ */
+  btns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      btns.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const key = btn.dataset.train;
+      ["basics","merch","supervisor"].forEach(k=>{
+        const el = document.getElementById("train-"+k);
+        if(el) el.classList.toggle("hidden", k !== key);
+      });
+    });
+  });
+})();
+
+/* ------------------ Navigation Hooks ------------------ */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    if(btn.dataset.view === "hf") loadHF();
-    if(btn.dataset.view === "hpa") loadHPA();
+    const view = btn.dataset.view;
+    if(view === "hf") loadHF();
+    if(view === "hpa") loadHPA();
   });
 });
 
-/* ------------------ Final boot sanity ------------------ */
-console.log("✅ HUB fully initialized (login, map, checklist, HF/HPA ready)");
+/* ------------------ Final Boot Sanity ------------------ */
+console.log("✅ SEGMENT 6 loaded — HF, HPA, Training ready");
 </script>
-
 </body>
 </html>
-
+``
