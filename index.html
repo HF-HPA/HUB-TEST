@@ -10,399 +10,187 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* ===========================
-       YOUR CSS (PASTED AS-IS)
-       =========================== */
-    /* ========= CORE THEME ========= */
-    :root {
-      --bg: #020617;
-      --bg-alt: #030a1a;
+    :root{
+      --bg:#020617;
+      --bg-alt:#030a1a;
       --card-bg: rgba(15, 23, 42, 0.85);
       --card-glass: rgba(15, 23, 42, 0.75);
-      --text: #e5e7eb;
-      --heading: #f9fafb;
-      --muted: #9ca3af;
+      --text:#e5e7eb;
+      --heading:#f9fafb;
+      --muted:#9ca3af;
+
       --border-subtle: rgba(148, 163, 184, 0.45);
       --border-soft: rgba(148, 163, 184, 0.25);
-      --radius-lg: 14px;
-      --radius-md: 10px;
+
+      --radius-lg: 18px;
+      --radius-md: 14px;
       --radius-pill: 999px;
-      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
-      --transition-fast: 0.18s ease-out;
-      --accent: #22d3ee;
+
+      --shadow-soft: 0 16px 40px rgba(0,0,0,.55);
+      --shadow-pop: 0 20px 60px rgba(0,0,0,.75);
+
+      --transition-fast: .18s ease-out;
+
+      --accent:#22d3ee;
       --accent-soft: rgba(34, 211, 238, 0.15);
-      --accent-strong: #06b6d4;
+      --accent-strong:#06b6d4;
+
+      --warn:#facc15;
+      --bad:#ef4444;
+      --good:#22c55e;
+
+      --chalk:#f8fafc;
+      --chalk-dim: rgba(248,250,252,.65);
+      --chalkboard:#1b2b34;
+      --chalkboard-border:#8b5a2b;
+      --chalk-glow: rgba(254,240,138,.28);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+        linear-gradient(rgba(0,0,0,.60), rgba(0,0,0,.82)),
         url("philo.jpg") no-repeat center center fixed;
       background-size: cover;
       backdrop-filter: blur(6px);
       color: var(--text);
       min-height: 100vh;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
+    body::before{
+      content:"";
+      position:fixed; inset:0;
       background:
-        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
-        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(circle at 30% 20%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(34,211,238,.10), transparent 70%);
+      pointer-events:none;
+      z-index:0;
     }
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(
-        circle at center,
-        rgba(0, 0, 0, 0) 40%,
-        rgba(0, 0, 0, 0.35) 100%
-      );
-      z-index: 0;
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background: radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%);
+      z-index:0;
     }
-    .app-shell {
-      width: 100%;
-      padding: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
+
+    .hidden{ display:none!important; }
+    button{ font-family:inherit; }
+
+    .app-shell{
+      width:100%;
+      padding:16px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      position:relative;
+      z-index:1;
+      min-height:100vh;
     }
-    .app-inner {
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 20px 20px 14px;
-      margin: 0 auto;
-      background: linear-gradient(
-        135deg,
-        rgba(15, 23, 42, 0.98),
-        rgba(15, 23, 42, 0.9)
-      );
-      border-radius: 24px;
+    .app-inner{
+      width:100%;
+      max-width:1200px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      padding:20px 20px 14px;
+      margin:0 auto;
+      background: linear-gradient(135deg, rgba(15,23,42,.98), rgba(15,23,42,.90));
+      border-radius:24px;
       box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(148, 163, 184, 0.35);
+      border:1px solid rgba(148,163,184,.35);
       backdrop-filter: blur(18px);
-      position: relative;
-      overflow: hidden;
-    }
-    .hidden { display: none !important; }
-    button { font-family: inherit; }
-
-    .footer {
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: #6b7280;
-      text-align: right;
-      border-top: 1px solid rgba(15, 23, 42, 0.95);
-      padding-top: 6px;
+      position:relative;
+      overflow:hidden;
     }
 
-    /* ========= SPLASH + LOGO UNDERGLOW ========= */
-    .splash-root {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 20px;
+    .footer{
+      margin-top:10px;
+      font-size:.75rem;
+      color:#6b7280;
+      text-align:right;
+      border-top:1px solid rgba(15,23,42,.95);
+      padding-top:6px;
     }
-    .splash-logo-wrapper {
-      position: relative;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      outline: none;
-      background: transparent;
-      border: none;
-      padding: 0;
-    }
-    .splash-logo-img {
-      width: 240px;
-      height: auto;
-      display: block;
-      filter:
-        drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9))
-        drop-shadow(0 0 35px rgba(34, 211, 238, 0.6));
-      transition:
-        transform 0.32s ease-out,
-        filter 0.32s ease-out;
-      position: relative;
-      z-index: 2;
-    }
-    .splash-logo-wrapper:hover .splash-logo-img,
-    .splash-logo-wrapper:focus-visible .splash-logo-img {
-      transform: translateY(-3px) scale(1.03);
-      filter:
-        drop-shadow(0 28px 55px rgba(0, 0, 0, 0.95))
-        drop-shadow(0 0 40px rgba(34, 211, 238, 0.9));
-    }
-    .splash-logo-wrapper::before,
-    .splash-logo-wrapper::after {
-      content: "";
-      position: absolute;
-      bottom: -18px;
-      width: 260px;
-      height: 80px;
-      border-radius: 50%;
-      transform-origin: center;
-      pointer-events: none;
-      filter: blur(20px);
-      z-index: 1;
-    }
-    .splash-logo-wrapper::before {
+
+    /* ===== Bubble UI ===== */
+    .bubble{
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148,163,184,.35);
       background:
-        radial-gradient(circle at 50% 0%, rgba(56,189,248,0.65), transparent 60%),
-        radial-gradient(circle at 30% 20%, rgba(34,211,238,0.9), transparent 55%);
-      opacity: 0.8;
-      animation: pulseUnderglow 2.4s ease-in-out infinite;
+        radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
+      box-shadow: var(--shadow-pop);
+      padding: 14px;
+      backdrop-filter: blur(16px);
     }
-    .splash-logo-wrapper::after {
-      background:
-        radial-gradient(circle at 70% 20%, rgba(59,130,246,0.9), transparent 60%),
-        radial-gradient(circle at 50% 0%, rgba(8,47,73,0.9), transparent 70%);
-      opacity: 0.5;
-      animation: pulseUnderglowAlt 3.1s ease-in-out infinite;
+    .bubble-soft{
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.78);
+      box-shadow: var(--shadow-soft);
+      padding: 14px;
+      backdrop-filter: blur(14px);
     }
-    @keyframes pulseUnderglow {
-      0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
-      50% { transform: translateY(-4px) scale(1.08); opacity: 1; }
+    .bubble-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
     }
-    @keyframes pulseUnderglowAlt {
-      0%, 100% { transform: translateY(0) scale(0.95); opacity: 0.5; }
-      50% { transform: translateY(-2px) scale(1.05); opacity: 0.85; }
-    }
-    .splash-subtitle {
-      text-align: center;
-      font-size: 0.95rem;
-      color: var(--muted);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-    .splash-helper {
-      margin-top: 4px;
-      font-size: 0.8rem;
-      color: #94a3b8;
-      text-align: center;
-    }
-
-    /* Fade transitions */
-    .splash-fade-out { animation: splashFadeOut 0.7s ease-out forwards; }
-    .login-fade-in { animation: loginFadeIn 0.7s ease-in forwards; }
-    @keyframes splashFadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
-    @keyframes loginFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-    .logo-tap .splash-logo-img { animation: logoPulse 0.4s ease-out; }
-    @keyframes logoPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-    /* ========= LOGIN ========= */
-    .login-root {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-    }
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.98));
-      border-radius: 22px;
-      border: 1px solid var(--border-subtle);
-      padding: 22px 20px 18px;
-      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-    }
-    .login-logo-small {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      object-fit: cover;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
-    }
-    .login-title {
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 600;
+    .bubble-title{
+      font-size: .95rem;
+      font-weight: 900;
       color: var(--heading);
-      margin-top: 6px;
-    }
-    .login-subtitle {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 8px;
-      width: 100%;
-    }
-    .form-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
+      letter-spacing: .08em;
       text-transform: uppercase;
-    }
-    .form-input,
-    .form-select {
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.97);
-      color: var(--text);
-      padding: 8px 11px;
-      font-size: 0.9rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
-      width: 100%;
-    }
-    .form-input::placeholder { color: #6b7280; }
-    .primary-button {
-      margin-top: 8px;
-      width: 100%;
-      background: radial-gradient(circle at top left, var(--accent-strong), #3b82f6);
-      color: #020617;
-      border: none;
-      border-radius: var(--radius-pill);
-      padding: 10px 18px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      box-shadow: 0 14px 36px rgba(37, 99, 235, 0.82);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition:
-        transform 0.15s ease-out,
-        box-shadow 0.15s ease-out,
-        filter 0.15s ease-out;
-    }
-    .primary-button:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-      box-shadow: 0 18px 42px rgba(59, 130, 246, 0.96);
-    }
-    .login-error {
-      margin-top: 4px;
-      font-size: 0.8rem;
-      color: #fecaca;
-      text-align: center;
-      min-height: 1.1em;
-    }
-
-    /* ========= HUB (kept) ========= */
-    .hub-root { flex: 1; display: flex; flex-direction: column; gap: 16px; }
-    .hub-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
       margin-bottom: 6px;
     }
-    .hub-title-block { display: flex; flex-direction: column; gap: 2px; }
-    .hub-title { font-size: 1.4rem; font-weight: 600; color: var(--heading); }
-    .hub-subtitle { font-size: 0.9rem; color: var(--muted); }
-    .hub-user-pill {
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.45);
-      font-size: 0.8rem;
+    .bubble-sub{
       color: var(--muted);
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.08), transparent 55%);
+      font-size: .82rem;
+      line-height: 1.35;
     }
 
-    /* ========= MOBILE BOTTOM NAV ========= */
-    .mobile-nav {
-      position: fixed;
-      inset-inline: 0;
-      bottom: 0;
-      height: 52px;
-      background: rgba(15, 23, 42, 0.96);
-      border-top: 1px solid rgba(148, 163, 184, 0.4);
-      display: none;
-      align-items: center;
-      justify-content: space-around;
-      z-index: 40;
+    .pill{
+      padding:6px 12px;
+      border-radius: var(--radius-pill);
+      border:1px solid rgba(148,163,184,.45);
+      font-size:.8rem;
+      color:var(--muted);
+      background: rgba(2,6,23,.65);
+      white-space: nowrap;
     }
-    .mobile-nav-item {
-      background: transparent;
-      border: none;
-      color: #e5e7eb;
-      font-size: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      cursor: pointer;
+    .btn{
+      padding:8px 14px;
+      border-radius: var(--radius-pill);
+      border:1px solid rgba(148,163,184,.35);
+      background: rgba(2,6,23,.75);
+      color: var(--text);
+      cursor:pointer;
+      font-size: .86rem;
+      font-weight: 800;
+      transition: transform .15s ease-out, border-color .15s ease-out, background .15s ease-out;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
     }
-    .mobile-nav-item:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
-    .mobile-nav-item-active { color: #facc15; }
-    @media (max-width: 768px) {
-      .mobile-nav { display: flex; }
-      .app-shell { padding-bottom: 60px; }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(34,211,238,.7);
+      background: rgba(2,6,23,.92);
     }
+    .btn.primary{
+      border-color: rgba(34,211,238,.85);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
+      color: var(--heading);
+      box-shadow: 0 10px 24px rgba(34,211,238,.18);
+    }
+    .btn.danger{
+      border-color: rgba(239,68,68,.65);
+      background: rgba(239,68,68,.12);
+    }
+    .btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
 
-    /* ========= MAP DASHBOARD (MAP-FIRST) ========= */
-    #view-map{flex:1;display:flex;flex-direction:column;gap:12px;}
-    .map-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:18px;border:1px solid rgba(148,163,184,.45);background:rgba(15,23,42,.92);box-shadow:var(--shadow-soft);}
-    .map-brand{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-pill);border:1px solid rgba(34,211,238,.55);background:radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));color:var(--heading);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;}
-    .map-brand img{width:22px;height:22px;border-radius:7px;border:1px solid rgba(148,163,184,.6);object-fit:cover;}
-    .map-pill{padding:6px 12px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.45);font-size:.8rem;color:var(--muted);background:rgba(2,6,23,.65);white-space:nowrap;}
-
-    .dd{position:relative;}
-    .dd-btn{padding:7px 12px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);background:rgba(2,6,23,.75);color:var(--text);cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:6px;transition:transform .15s ease-out,border-color .15s ease-out,background .15s ease-out;}
-    .dd-btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.7);background:rgba(2,6,23,.92);}
-    .dd-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:260px;border-radius:16px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.98);box-shadow:0 22px 55px rgba(0,0,0,.9);padding:8px;display:none;z-index:1000;}
-    .dd.open .dd-menu{display:block;}
-    .dd-item{width:100%;text-align:left;padding:10px;border-radius:12px;border:1px solid transparent;background:transparent;color:var(--text);cursor:pointer;font-size:.85rem;display:flex;justify-content:space-between;gap:10px;}
-    .dd-item:hover{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.08);}
-    .dd-sub{font-size:.75rem;color:var(--muted);}
-
-    .map-layout{display:grid;grid-template-columns:1fr 360px;gap:12px;}
-    @media (max-width:900px){.map-layout{grid-template-columns:1fr;}}
-    #storeMap{width:100%;min-height:62vh;border-radius:18px;border:1px solid rgba(148,163,184,.35);overflow:hidden;box-shadow:0 18px 42px rgba(0,0,0,.85);}
-    .store-panel{border-radius:18px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.9);box-shadow:0 18px 42px rgba(0,0,0,.85);padding:12px;min-height:62vh;display:flex;flex-direction:column;gap:10px;}
-    .sp-title{font-size:1rem;font-weight:700;color:var(--heading);}
-    .sp-sub{font-size:.8rem;color:var(--muted);}
-    .kv{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;padding:6px 0;border-bottom:1px solid rgba(148,163,184,.12);}
-    .kv span:first-child{color:#cbd5e1;}
-    .kv span:last-child{color:var(--heading);font-weight:600;text-align:right;}
-    .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);font-size:.75rem;background:rgba(2,6,23,.6);}
-    .badge-dot{width:9px;height:9px;border-radius:999px;}
-    .btn-row{display:flex;flex-wrap:wrap;gap:8px;}
-    .small-btn{padding:8px 10px;border-radius:var(--radius-pill);border:1px solid rgba(148,163,184,.35);background:rgba(2,6,23,.75);color:var(--text);cursor:pointer;font-size:.82rem;transition:transform .15s ease-out,border-color .15s ease-out;}
-    .small-btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.7);}
-    .small-btn.primary{border-color:rgba(34,211,238,.8);background:radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));}
-    .small-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
-
-    .pin{width:18px;height:18px;border-radius:999px;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 18px rgba(0,0,0,.7);position:relative;}
-    .pin::after{content:"";position:absolute;inset:-5px;border-radius:999px;border:3px solid rgba(148,163,184,.9);opacity:.95;}
-    .pin-ok{background:#22c55e;} .pin-warn{background:#facc15;} .pin-bad{background:#ef4444;} .pin-unknown{background:#64748b;}
-    .ship-all::after{border-color:#22c55e;} .ship-ab::after{border-color:#3b82f6;} .ship-limited::after{border-color:#f97316;} .ship-skip::after{border-color:#ef4444;} .ship-unknown::after{border-color:#94a3b8;}
-    .leaflet-control-zoom a{background:rgba(2,6,23,.85);color:#e5e7eb;border:1px solid rgba(148,163,184,.35);}
-    .leaflet-control-zoom a:hover{background:rgba(2,6,23,.95);}
-
-    /* =========================================================
-       ADD-ON (NEW, SAFE): Global top bar "pages" + tabs styling
-       - Doesn’t break your design; uses your existing tokens
-       ========================================================= */
+    /* ===== Global top bar ===== */
     .global-topbar{
       display:flex;
       align-items:center;
@@ -412,58 +200,291 @@
       padding:10px 12px;
       border-radius:18px;
       border:1px solid rgba(148,163,184,.45);
-      background:rgba(15,23,42,.92);
-      box-shadow:var(--shadow-soft);
+      background: rgba(15,23,42,.92);
+      box-shadow: var(--shadow-soft);
     }
-    .nav-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .nav-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .nav-link.active{
-      border-color:rgba(34,211,238,.85)!important;
-      background:radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85))!important;
-      color:var(--heading)!important;
+      border-color: rgba(34,211,238,.85)!important;
+      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85))!important;
+      color: var(--heading)!important;
+      box-shadow: 0 10px 25px rgba(34,211,238,.18);
     }
-    .page-shell{
+
+    /* ===== Splash/Login ===== */
+    .splash-root{
       flex:1;
       display:flex;
+      align-items:center;
+      justify-content:center;
       flex-direction:column;
-      gap:12px;
+      gap:18px;
+      padding: 18px 10px;
     }
-    .tabs-row{
+    .splash-logo-wrapper{
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      position:relative;
+    }
+    .splash-logo-img{
+      width:240px;
+      filter: drop-shadow(0 25px 50px rgba(0,0,0,.9)) drop-shadow(0 0 35px rgba(34,211,238,.6));
+      transition: transform .32s ease-out, filter .32s ease-out;
+    }
+    .splash-logo-wrapper:hover .splash-logo-img{
+      transform: translateY(-3px) scale(1.03);
+      filter: drop-shadow(0 28px 55px rgba(0,0,0,.95)) drop-shadow(0 0 40px rgba(34,211,238,.9));
+    }
+    .splash-subtitle{
+      text-align:center;
+      font-size:.95rem;
+      color:var(--muted);
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+    .splash-helper{
+      font-size:.82rem;
+      color:#94a3b8;
+      text-align:center;
+    }
+
+    .login-root{ flex:1; display:flex; align-items:center; justify-content:center; }
+    .login-card{
+      width:100%;
+      max-width:420px;
+      border-radius:22px;
+      border:1px solid var(--border-subtle);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.18), rgba(15,23,42,.98));
+      padding: 22px 20px 18px;
+      box-shadow: 0 22px 55px rgba(0,0,0,.96);
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      padding-bottom:4px;
-      border-bottom:1px solid rgba(15, 23, 42, 0.95);
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .login-title{ font-size:1.2rem; font-weight:800; color:var(--heading); margin-top:6px; }
+    .login-subtitle{ font-size:.8rem; color:var(--muted); margin-bottom:8px; text-align:center; }
+    .form-group{ width:100%; display:flex; flex-direction:column; gap:4px; margin-bottom:8px; }
+    .form-label{ font-size:.75rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+    .form-input{
+      border-radius: 10px;
+      border:1px solid var(--border-soft);
+      background: rgba(2,6,23,.97);
+      color: var(--text);
+      padding: 8px 11px;
+      font-size: .9rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,.70);
+    }
+    .primary-button{
+      margin-top:8px;
+      width:100%;
+      border:none;
+      border-radius: var(--radius-pill);
+      padding:10px 18px;
+      cursor:pointer;
+      font-size:.9rem;
+      font-weight:900;
+      background: radial-gradient(circle at top left, var(--accent-strong), #3b82f6);
+      color: #020617;
+      box-shadow: 0 14px 36px rgba(37,99,235,.82);
+    }
+    .login-error{ min-height:1.1em; color:#fecaca; font-size:.82rem; text-align:center; }
+
+    /* ===== Map (keep perfect) ===== */
+    #view-map{ flex:1; display:flex; flex-direction:column; gap:12px; }
+    .map-topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      padding:10px 12px; border-radius:18px; border:1px solid rgba(148,163,184,.45);
+      background:rgba(15,23,42,.92); box-shadow:var(--shadow-soft);
+    }
+    .map-brand{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:var(--radius-pill);
+      border:1px solid rgba(34,211,238,.55);
+      background:radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
+      color:var(--heading); font-weight:900; letter-spacing:.1em; text-transform:uppercase; font-size:.85rem;
+    }
+    .map-brand img{ width:22px; height:22px; border-radius:7px; border:1px solid rgba(148,163,184,.6); object-fit:cover; }
+
+    .dd{ position:relative; }
+    .dd-menu{
+      position:absolute; top:calc(100% + 8px); left:0;
+      min-width:260px; border-radius:16px; border:1px solid rgba(148,163,184,.35);
+      background:rgba(15,23,42,.98); box-shadow:0 22px 55px rgba(0,0,0,.9);
+      padding:8px; display:none; z-index:1000;
+    }
+    .dd.open .dd-menu{ display:block; }
+    .dd-item{
+      width:100%; text-align:left; padding:10px; border-radius:12px;
+      border:1px solid transparent; background:transparent; color:var(--text);
+      cursor:pointer; font-size:.85rem; display:flex; justify-content:space-between; gap:10px;
+    }
+    .dd-item:hover{ border-color:rgba(34,211,238,.5); background:rgba(34,211,238,.08); }
+
+    .map-layout{ display:grid; grid-template-columns:1fr 360px; gap:12px; }
+    @media (max-width:900px){ .map-layout{ grid-template-columns:1fr; } }
+    #storeMap{
+      width:100%; min-height:62vh; border-radius:18px; border:1px solid rgba(148,163,184,.35);
+      overflow:hidden; box-shadow:0 18px 42px rgba(0,0,0,.85);
+    }
+    .store-panel{
+      border-radius:18px; border:1px solid rgba(148,163,184,.35);
+      background:rgba(15,23,42,.90);
+      box-shadow:0 18px 42px rgba(0,0,0,.85);
+      padding:12px; min-height:62vh; display:flex; flex-direction:column; gap:10px;
+    }
+    .sp-title{ font-size:1rem; font-weight:900; color:var(--heading); }
+    .sp-sub{ font-size:.8rem; color:var(--muted); }
+    .kv{ display:flex; justify-content:space-between; gap:10px; font-size:.85rem; padding:6px 0; border-bottom:1px solid rgba(148,163,184,.12); }
+    .kv span:first-child{ color:#cbd5e1; }
+    .kv span:last-child{ color:var(--heading); font-weight:800; text-align:right; }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 8px; border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.35); font-size:.75rem; background:rgba(2,6,23,.6);
+    }
+    .badge-dot{ width:9px; height:9px; border-radius:999px; background:#94a3b8; }
+
+    .btn-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .small-btn{
+      padding:8px 10px; border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.35);
+      background:rgba(2,6,23,.75);
+      color:var(--text); cursor:pointer; font-size:.82rem; font-weight:800;
+      transition:transform .15s ease-out,border-color .15s ease-out;
+    }
+    .small-btn:hover{ transform:translateY(-1px); border-color:rgba(34,211,238,.7); }
+    .small-btn.primary{ border-color:rgba(34,211,238,.8); background:radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85)); }
+    .small-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+
+    /* Marker with ring + (NEW) issue flag dot */
+    .pin{ width:18px;height:18px;border-radius:999px;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 18px rgba(0,0,0,.7);position:relative; }
+    .pin::after{ content:""; position:absolute; inset:-5px; border-radius:999px; border:3px solid rgba(148,163,184,.9); opacity:.95; }
+    .pin-ok{background:var(--good);} .pin-warn{background:var(--warn);} .pin-bad{background:var(--bad);} .pin-unknown{background:#64748b;}
+    .ship-all::after{border-color:var(--good);} .ship-ab::after{border-color:#3b82f6;} .ship-limited::after{border-color:#f97316;} .ship-skip::after{border-color:var(--bad);} .ship-unknown::after{border-color:#94a3b8;}
+    .pin-flag::before{
+      content:"";
+      position:absolute;
+      right:-2px; top:-2px;
+      width:7px; height:7px;
+      border-radius:999px;
+      background:var(--bad);
+      border:1px solid rgba(255,255,255,.85);
+      box-shadow: 0 4px 10px rgba(0,0,0,.55);
+    }
+
+    /* Guidelines bubble categories */
+    .guidelines-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap:12px;
+      margin-top: 10px;
+    }
+    .guideline-bubble{
+      border-radius: 16px;
+      border:1px solid rgba(148,163,184,.45);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.18), rgba(15,23,42,.92));
+      box-shadow: var(--shadow-soft);
+      padding: 14px;
+    }
+    .guideline-bubble h3{
+      margin:0 0 8px;
+      font-size:.9rem;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:#bae6fd;
+      font-weight:900;
+    }
+    .guideline-bubble ul{ list-style:none; display:flex; flex-direction:column; gap:6px; margin:0; padding:0; font-size:.86rem; }
+    .guideline-bubble li{ line-height:1.35; padding-left:14px; position:relative; }
+    .guideline-bubble li::before{ content:"•"; position:absolute; left:0; top:0; color:rgba(34,211,238,.85); font-weight:900; }
+
+    /* Tabs row */
+    .tabs-row{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding-bottom:6px; border-bottom:1px solid rgba(15,23,42,.95);
+      margin-top: 10px;
     }
     .tab-pill{
-      padding:7px 14px;
-      border-radius:999px;
-      background:rgba(15,23,42,.7);
+      padding:7px 14px; border-radius:999px;
+      background: rgba(15,23,42,.70);
       border:1px solid transparent;
-      color:var(--muted);
+      color: var(--muted);
       font-size:.85rem;
       cursor:pointer;
-      white-space:nowrap;
+      font-weight:800;
       transition: transform .18s ease-out, background .18s ease-out, border-color .18s ease-out;
     }
-    .tab-pill:hover{
-      background:rgba(15,23,42,.98);
-      border-color:rgba(148,163,184,.5);
-      transform: translateY(-1px);
-      color:var(--heading);
+    .tab-pill:hover{ color:var(--heading); background:rgba(15,23,42,.98); border-color:rgba(148,163,184,.5); transform:translateY(-1px); }
+    .tab-pill.active{ color:var(--heading); background:radial-gradient(circle at top left, rgba(34,211,238,.32), rgba(15,23,42,.98)); border-color:rgba(34,211,238,.85); box-shadow:0 10px 28px rgba(34,211,238,.15); }
+
+    /* Admin buttons */
+    .admin-btns{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .admin-btn{ flex: 1 1 240px; justify-content:center; }
+
+    /* District popup */
+    .mini-backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 9999;
+      padding: 18px;
+      backdrop-filter: blur(8px);
     }
-    .tab-pill.active{
-      background:radial-gradient(circle at top left, rgba(34,211,238,.32), rgba(15,23,42,.98));
-      border-color:rgba(34,211,238,.8);
-      color:var(--heading);
+    .mini-modal{
+      width:min(420px, 100%);
+      border-radius: 18px;
+      border:1px solid rgba(148,163,184,.55);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.95));
+      box-shadow: var(--shadow-pop);
+      padding: 16px;
+      color: var(--text);
     }
-    .coming-soon{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px dashed rgba(254,240,138,.7);
-      background: rgba(254,240,138,.10);
-      color:#fef3c7;
-      font-weight:700;
-      font-size:.85rem;
+    .mini-modal h2{ margin:0 0 6px; font-size:1.05rem; color:var(--heading); font-weight:900; }
+
+    /* Training chalkboard vibe */
+    #view-training.training-chalkboard{
+      padding: 14px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          #1b2b34,
+          #1b2b34 2px,
+          #18252d 2px,
+          #18252d 4px
+        );
+      border: 3px solid var(--chalkboard-border);
+      box-shadow: 0 0 28px var(--chalk-glow);
+      animation: chalkBoardGlow 7s ease-in-out infinite alternate;
+    }
+    @keyframes chalkBoardGlow{
+      0%{ box-shadow: 0 0 12px rgba(254,240,138,.08); }
+      50%{ box-shadow: 0 0 30px rgba(254,240,138,.25); }
+      100%{ box-shadow: 0 0 18px rgba(254,240,138,.12); }
+    }
+    .chalk-title{
+      font-family:"Courier New", monospace;
+      color: var(--chalk);
+      font-size: 1.8rem;
+      letter-spacing:.04em;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 6px;
+    }
+    .chalk-sub{
+      color: var(--chalk-dim);
+      font-family:"Courier New", monospace;
+      letter-spacing:.22em;
+      font-size:.8rem;
+      text-transform:uppercase;
+      margin-bottom: 14px;
     }
   </style>
 </head>
@@ -472,28 +493,26 @@
     <div class="app-inner">
 
       <!-- ======================================================
-           GLOBAL TOP BAR (shown after login)
+           GLOBAL TOP BAR
            ====================================================== -->
       <div id="globalTopBar" class="global-topbar hidden">
-        <div style="display:flex;flex-direction:column;gap:2px;">
-          <div style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--heading);">
-            Merchandising Hub
-          </div>
-          <div id="globalSubtitle" style="color:var(--muted);font-size:.82rem;">
-            Live Map • Firestore Sync • Weather
+        <div>
+          <div class="bubble-title">Merchandising Hub</div>
+          <div class="bubble-sub" id="globalSubtitle">
+            Live Map • Weather • Store Status
           </div>
         </div>
 
         <div class="nav-row">
-          <button class="dd-btn nav-link active" type="button" data-page="map">MAP</button>
-          <button class="dd-btn nav-link" type="button" data-page="hf">HF</button>
-          <button class="dd-btn nav-link" type="button" data-page="hpa">HPA</button>
-          <button class="dd-btn nav-link" type="button" data-page="admin">ADMIN</button>
-          <button class="dd-btn nav-link" type="button" data-page="training">TRAINING CENTER</button>
+          <button class="btn nav-link active" data-page="map">MAP</button>
+          <button class="btn nav-link" data-page="hf">HF</button>
+          <button class="btn nav-link" data-page="hpa">HPA</button>
+          <button class="btn nav-link" data-page="admin">ADMIN</button>
+          <button class="btn nav-link" data-page="training">TRAINING</button>
 
-          <span class="map-pill" id="weatherWidget">Weather: —</span>
-          <span class="map-pill" id="globalUserPill">User: —</span>
-          <button class="dd-btn" type="button" id="globalLogoutBtn">Logout</button>
+          <span class="pill" id="weatherWidget">Weather: —</span>
+          <span class="pill" id="globalUserPill">User: —</span>
+          <button class="btn danger" id="globalLogoutBtn">Logout</button>
         </div>
       </div>
 
@@ -501,8 +520,8 @@
            SPLASH
            ====================================================== -->
       <section id="view-splash" class="splash-root">
-        <button class="splash-logo-wrapper" id="btnSplashEnter" aria-label="Enter">
-          <img class="splash-logo-img" src="hf_logo.png" alt="Logo" />
+        <button class="splash-logo-wrapper" id="btnSplashEnter">
+          <img src="hf_logo.png" class="splash-logo-img" alt="Logo"/>
         </button>
         <div class="splash-subtitle">Merchandising Hub</div>
         <div class="splash-helper">Tap logo to continue</div>
@@ -512,108 +531,51 @@
            LOGIN
            ====================================================== -->
       <section id="view-login" class="login-root hidden">
-        <div class="login-card login-fade-in">
-          <img class="login-logo-small" src="hf_logo.png" alt="Logo" />
+        <div class="login-card">
+          <img src="hf_logo.png" class="login-logo-small" alt="Logo"/>
           <div class="login-title">Sign In</div>
-          <div class="login-subtitle">GitHub Pages (static) + Firebase (live map)</div>
+          <div class="login-subtitle">Internal Tool • Live Store Map</div>
 
           <div class="form-group">
-            <label class="form-label" for="loginUser">Username</label>
-            <input class="form-input" id="loginUser" autocomplete="username" placeholder="username" />
+            <label class="form-label">Username</label>
+            <input id="loginUser" class="form-input" placeholder="username"/>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="loginPass">Password</label>
-            <input class="form-input" id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" />
+            <label class="form-label">Password</label>
+            <input id="loginPass" class="form-input" type="password"/>
           </div>
 
-          <button class="primary-button" id="loginBtn" type="button">Login</button>
-          <div class="login-error" id="loginError"></div>
+          <button id="loginBtn" class="primary-button">Login</button>
+          <div id="loginError" class="login-error"></div>
         </div>
       </section>
 
       <!-- ======================================================
-           HUB (kept for compatibility; not the default homepage)
+           MAP (HOME)
            ====================================================== -->
-      <section id="view-hub" class="hub-root hidden">
-        <div class="hub-header">
-          <div class="hub-title-block">
-            <div class="hub-title">Merchandising Hub</div>
-            <div class="hub-subtitle">Select a module</div>
-          </div>
-          <div class="hub-user-pill" id="userPill">Not signed in</div>
-        </div>
-
-        <div class="hub-grid">
-          <div class="hub-card" data-open="view-map" data-min-role="Merchandiser">
-            <div>
-              <div class="hub-card-label">Live</div>
-              <div class="hub-card-title">Store Map</div>
-              <div class="hub-card-subtitle">Realtime store status</div>
-            </div>
-            <div class="hub-card-tagline">Firestore synced</div>
-          </div>
-
-          <div class="hub-card" data-open="view-hf" data-min-role="Merchandiser">
-            <div>
-              <div class="hub-card-label">HF</div>
-              <div class="hub-card-title">Guidelines</div>
-              <div class="hub-card-subtitle">Care / ID</div>
-            </div>
-            <div class="hub-card-tagline">CSV driven</div>
-          </div>
-
-          <div class="hub-card" data-open="view-hpa" data-min-role="Merchandiser">
-            <div>
-              <div class="hub-card-label">HPA</div>
-              <div class="hub-card-title">Product Info</div>
-              <div class="hub-card-subtitle">SKUs & Orders</div>
-            </div>
-            <div class="hub-card-tagline">CSV driven</div>
-          </div>
-
-          <div class="hub-card" data-open="view-training" data-min-role="Merchandiser">
-            <div>
-              <div class="hub-card-label">Fun</div>
-              <div class="hub-card-title">Training Center</div>
-              <div class="hub-card-subtitle">Level up</div>
-            </div>
-            <div class="hub-card-tagline">Badges + XP</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======================================================
-           MAP (Homepage after login)
-           ====================================================== -->
-      <section id="view-map" class="page-shell hidden">
+      <section id="view-map" class="hidden">
         <div class="map-topbar">
           <div class="map-brand">
-            <img src="hf_logo.png" alt="Logo" />
-            Store Map
+            <img src="hf_logo.png" alt="Logo"/> Store Map
           </div>
 
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <div class="nav-row">
             <div class="dd">
-              <button class="dd-btn" type="button" data-dd-toggle aria-expanded="false">Store ▾</button>
+              <button class="btn" data-dd-toggle>Store ▾</button>
               <div class="dd-menu" id="storeListMenu"></div>
             </div>
 
             <div class="dd">
-              <button class="dd-btn" type="button" data-dd-toggle aria-expanded="false">Filter ▾</button>
+              <button class="btn" data-dd-toggle>Filter ▾</button>
               <div class="dd-menu">
-                <button class="dd-item" type="button" data-map-filter="all"><span>All stores</span><span class="dd-sub">Show all</span></button>
-                <button class="dd-item" type="button" data-map-filter="status:bad"><span>🔴 Needs attention</span><span class="dd-sub">Bad status</span></button>
-                <button class="dd-item" type="button" data-map-filter="status:warn"><span>🟡 Watch list</span><span class="dd-sub">Warn status</span></button>
-                <button class="dd-item" type="button" data-map-filter="issues:true"><span>⚠ Has issues</span><span class="dd-sub">Issue count &gt; 0</span></button>
-                <button class="dd-item" type="button" data-map-filter="ship:skip"><span>Shipping: SKIP</span><span class="dd-sub">Skip ring</span></button>
-                <button class="dd-item" type="button" data-map-filter="ship:ab"><span>Shipping: A/B</span><span class="dd-sub">A/B ring</span></button>
+                <button class="dd-item" data-map-filter="status:bad">🔴 Needs Attention</button>
+                <button class="dd-item" data-map-filter="issues:true">🚩 Has Issues</button>
               </div>
             </div>
 
-            <span class="map-pill" id="syncPill">Sync: —</span>
-            <button class="dd-btn" type="button" id="btnBackToHub">← Hub</button>
-            <button class="dd-btn" type="button" id="btnLogout">Logout</button>
+            <span class="pill" id="syncPill">Sync: —</span>
+            <button class="btn" id="btnLogout">Logout</button>
           </div>
         </div>
 
@@ -623,30 +585,24 @@
           <aside class="store-panel">
             <div>
               <div class="sp-title" id="spTitle">Select a store</div>
-              <div class="sp-sub" id="spSub">Click a pin to view details.</div>
+              <div class="sp-sub" id="spSub">Click a pin to view details</div>
             </div>
 
             <div class="badge" id="spStatusBadge">
-              <span class="badge-dot" style="background:#94a3b8;"></span>
+              <span class="badge-dot"></span>
               <span>—</span>
             </div>
 
-            <div class="kv"><span>Shipping grade</span><span id="spShip">—</span></div>
-            <div class="kv"><span>Pictures</span><span id="spPics">—</span></div>
-            <div class="kv"><span>Markdowns</span><span id="spMds">—</span></div>
+            <div class="kv"><span>Shipping</span><span id="spShip">—</span></div>
+            <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
             <div class="kv"><span>Negatives</span><span id="spNeg">—</span></div>
             <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
             <div class="kv"><span>Updated</span><span id="spUpdated">—</span></div>
 
             <div class="btn-row">
-              <button class="small-btn" type="button" data-map-action="toggle:pictures" disabled>Toggle Pictures</button>
-              <button class="small-btn" type="button" data-map-action="toggle:markdowns" disabled>Toggle Markdowns</button>
-              <button class="small-btn" type="button" data-map-action="toggle:negatives" disabled>Toggle Negatives</button>
-              <button class="small-btn primary" type="button" data-map-action="add:issue" disabled>Add Issue</button>
-              <button class="small-btn" type="button" data-map-action="zoom" disabled>Zoom</button>
-              <button class="small-btn" type="button" data-map-action="close" disabled>Close</button>
-
-              <button class="small-btn primary" type="button" id="btnOpenChecklist" disabled>Supervisor Checklist</button>
+              <button class="small-btn primary" id="btnWatered">Mark Watered</button>
+              <button class="small-btn" data-map-action="add:issue">Add Issue</button>
+              <button class="small-btn" data-map-action="zoom">Zoom</button>
             </div>
           </aside>
         </div>
@@ -655,1587 +611,434 @@
       <!-- ======================================================
            HF PAGE
            ====================================================== -->
-      <section id="view-hf" class="page-shell hidden">
-        <div class="map-topbar">
-          <div class="map-brand">
-            <img src="hf_logo.png" alt="Logo" />
-            HF
-          </div>
-          <span class="map-pill">hf_guidelines.csv • perennials.csv</span>
+      <section id="view-hf" class="hidden">
+        <div class="bubble">
+          <div class="bubble-title">HF Guidelines</div>
+          <div id="hfGuidelines" class="guidelines-grid"></div>
         </div>
 
         <div class="tabs-row">
-          <button class="tab-pill active" type="button" data-hf-tab="guidelines">GUIDELINES</button>
-          <button class="tab-pill" type="button" data-hf-tab="care">CARE / IDENTIFICATION</button>
+          <button class="tab-pill active" data-hf-tab="plants">Plants</button>
+          <button class="tab-pill" data-hf-tab="pests">Pests</button>
         </div>
 
-        <div id="hfTab-guidelines" class="glass-panel">
-          <div class="section-header">
-            <div class="section-title">HF Guidelines</div>
-            <div class="section-subtitle">Loaded from <code>hf_guidelines.csv</code></div>
-          </div>
-          <div id="hfGuidelinesContent">Loading…</div>
-        </div>
-
-        <div id="hfTab-care" class="hidden">
-          <div class="controls">
-            <div class="search-wrapper">
-              <span class="search-icon">🔎</span>
-              <input id="hfPerennialSearch" class="search-input" placeholder="Search perennials…" />
-            </div>
-          </div>
-
-          <div class="section-header" style="margin-top:10px;">
-            <div class="section-title">Perennial Care / Identification</div>
-            <div class="section-subtitle">Loaded from <code>perennials.csv</code></div>
-          </div>
-
-          <div id="hfPerennialGrid" class="pc-grid">Loading…</div>
-
-          <div class="section-header" style="margin-top:16px;">
-            <div class="section-title">Pest Identification (Shared)</div>
-            <div class="section-subtitle">Static list (same in HF + HPA)</div>
-          </div>
-          <div class="glass-panel">
-            <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
-              <li><strong>Aphids</strong> — clustered soft-bodied insects; sticky honeydew.</li>
-              <li><strong>Spider Mites</strong> — stippling; webbing under leaves.</li>
-              <li><strong>Mealybugs</strong> — cottony masses in nodes.</li>
-              <li><strong>Thrips</strong> — silver streaking; tiny fast movers.</li>
-              <li><strong>Fungus Gnats</strong> — small flies; larvae in wet soil.</li>
-            </ul>
-          </div>
-        </div>
+        <div id="hfPlants" class="bubble-grid"></div>
+        <div id="hfPests" class="bubble-grid hidden"></div>
       </section>
 
       <!-- ======================================================
-           HPA PAGE
+           HPA PAGE (NO ADMIN TAB)
            ====================================================== -->
-      <section id="view-hpa" class="page-shell hidden">
-        <div class="map-topbar">
-          <div class="map-brand">
-            <img src="hpa_logo.png" alt="Logo" />
-            HPA
-          </div>
-          <span class="map-pill">hpa_guidelines.csv • SKU_Name_2026.csv • Orders</span>
+      <section id="view-hpa" class="hidden">
+        <div class="bubble">
+          <div class="bubble-title">HPA Guidelines</div>
+          <div id="hpaGuidelines" class="guidelines-grid"></div>
         </div>
 
         <div class="tabs-row">
-          <button class="tab-pill active" type="button" data-hpa-tab="guidelines">GUIDELINES</button>
-          <button class="tab-pill" type="button" data-hpa-tab="product">PRODUCT INFO</button>
-          <button class="tab-pill" type="button" data-hpa-tab="admin">ADMIN</button>
+          <button class="tab-pill active" data-hpa-tab="plants">Plants</button>
+          <button class="tab-pill" data-hpa-tab="pests">Pests</button>
         </div>
 
-        <!-- HPA Guidelines -->
-        <div id="hpaTab-guidelines" class="glass-panel">
-          <div class="section-header">
-            <div class="section-title">HPA Guidelines</div>
-            <div class="section-subtitle">Loaded from <code>hpa_guidelines.csv</code></div>
-          </div>
-          <div id="hpaGuidelinesContent">Loading…</div>
-        </div>
+        <div id="hpaPlants" class="bubble-grid"></div>
+        <div id="hpaPests" class="bubble-grid hidden"></div>
+      </section>
 
-        <!-- HPA Product Info -->
-        <div id="hpaTab-product" class="hidden">
-          <div class="section-inner-tabs">
-            <button class="section-inner-tab active" type="button" data-product-tab="sku">SKU CATALOGUE</button>
-            <button class="section-inner-tab" type="button" data-product-tab="orders">ORDER BREAKDOWN</button>
-          </div>
+      <!-- ======================================================
+           ADMIN PAGE
+           ====================================================== -->
+      <section id="view-admin" class="hidden">
+        <div class="bubble">
+          <div class="bubble-title">Admin Tools</div>
 
-          <!-- SKU Catalogue -->
-          <div id="productTab-sku">
-            <div class="controls">
-              <div class="search-wrapper">
-                <span class="search-icon">🔎</span>
-                <input id="skuSearch" class="search-input" placeholder="Search SKU catalogue…" />
-              </div>
-              <div class="filters">
-                <div class="filter-group">
-                  <div class="filter-label">Year</div>
-                  <select id="skuYearFilter" class="filter-input">
-                    <option value="">All</option>
-                    <option value="2026">2026</option>
-                    <option value="2025">2025</option>
-                  </select>
-                </div>
-                <div class="filter-group">
-                  <div class="filter-label">Category</div>
-                  <select id="skuCategoryFilter" class="filter-input">
-                    <option value="">All</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+          <div class="admin-btns">
+            <button class="btn admin-btn primary"
+              onclick="window.open('https://app.air.inc/b/uploads-e6ca3284-16b4-48ec-b02f-884d1e7c52e4')">
+              AIR
+            </button>
 
-            <div class="results-header">
-              <div>Showing <strong id="skuCount">0</strong> results</div>
-              <div style="opacity:.8">Source: <code>SKU_Name_2026.csv</code></div>
-            </div>
+            <button class="btn admin-btn"
+              onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl')">
+              Store Audit
+            </button>
 
-            <div id="skuGrid" class="sku-grid">Loading…</div>
-          </div>
+            <button class="btn admin-btn"
+              onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl')">
+              Rack Counts
+            </button>
 
-          <!-- Order Breakdown -->
-          <div id="productTab-orders" class="hidden">
-            <div class="controls">
-              <div class="filter-group">
-                <div class="filter-label">Order Week</div>
-                <select id="orderWeekSelect" class="filter-input"></select>
-              </div>
-              <div class="filter-group">
-                <div class="filter-label">Filter</div>
-                <input id="orderFilter" class="filter-input" placeholder="Filter breakdown…" />
-              </div>
-            </div>
-
-            <div class="order-breakdown-wrapper">
-              <div class="ob-header-stack">
-                <div class="ob-week-box" id="obWeekBox">Week: —</div>
-                <div class="ob-grades-box" id="obGradesBox">Grades: —</div>
-              </div>
-              <div id="obGrid" class="ob-grid">Loading…</div>
-            </div>
-          </div>
-
-          <!-- Shared pests -->
-          <div class="section-header" style="margin-top:16px;">
-            <div class="section-title">Pest Identification (Shared)</div>
-            <div class="section-subtitle">Static list (same in HF + HPA)</div>
-          </div>
-          <div class="glass-panel">
-            <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
-              <li><strong>Aphids</strong> — clustered soft-bodied insects; sticky honeydew.</li>
-              <li><strong>Spider Mites</strong> — stippling; webbing under leaves.</li>
-              <li><strong>Mealybugs</strong> — cottony masses in nodes.</li>
-              <li><strong>Thrips</strong> — silver streaking; tiny fast movers.</li>
-              <li><strong>Fungus Gnats</strong> — small flies; larvae in wet soil.</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- HPA Admin -->
-        <div id="hpaTab-admin" class="hidden">
-          <div class="hub-grid">
-            <div class="hub-card" onclick="window.open('https://app.air.inc/b/uploads-e6ca3284-16b4-48ec-b02f-884d1e7c52e4')">
-              <div>
-                <div class="hub-card-label">Admin</div>
-                <div class="hub-card-title">AIR</div>
-                <div class="hub-card-subtitle">Upload photos</div>
-              </div>
-              <div class="hub-card-tagline">air.inc</div>
-            </div>
-
-            <div class="hub-card" onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl')">
-              <div>
-                <div class="hub-card-label">Admin</div>
-                <div class="hub-card-title">Store Audit</div>
-                <div class="hub-card-subtitle">Microsoft Forms</div>
-              </div>
-              <div class="hub-card-tagline">forms.office.com</div>
-            </div>
-
-            <div class="hub-card" onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl')">
-              <div>
-                <div class="hub-card-label">Admin</div>
-                <div class="hub-card-title">Rack Counts</div>
-                <div class="hub-card-subtitle">Microsoft Forms</div>
-              </div>
-              <div class="hub-card-tagline">forms.office.com</div>
-            </div>
-
-            <div class="hub-card" style="cursor:default;">
-              <div>
-                <div class="hub-card-label">Admin</div>
-                <div class="hub-card-title">District Checklist</div>
-                <div class="hub-card-subtitle">Coming soon</div>
-              </div>
-              <div class="hub-card-tagline">—</div>
-            </div>
-          </div>
-
-          <div class="coming-soon" style="margin-top:12px;">
-            🚧 District Checklist is coming soon.
+            <button class="btn admin-btn danger" id="btnDistrictChecklist">
+              District Checklist
+            </button>
           </div>
         </div>
       </section>
 
       <!-- ======================================================
-           ADMIN PAGE (quick links)
+           TRAINING CENTER (CHALKBOARD)
            ====================================================== -->
-      <section id="view-admin" class="page-shell hidden">
-        <div class="map-topbar">
-          <div class="map-brand">
-            <img src="hf_logo.png" alt="Logo" />
-            Admin
-          </div>
-          <span class="map-pill">Quick Links</span>
-        </div>
+      <section id="view-training" class="hidden training-chalkboard">
+        <div class="chalk-title">📚 Training Center</div>
+        <div class="chalk-sub">Learn • Level Up • Lead</div>
 
-        <div class="hub-grid">
-          <div class="hub-card" onclick="window.open('https://app.air.inc/b/uploads-e6ca3284-16b4-48ec-b02f-884d1e7c52e4')">
-            <div>
-              <div class="hub-card-label">Admin</div>
-              <div class="hub-card-title">AIR</div>
-              <div class="hub-card-subtitle">Uploads</div>
-            </div>
-            <div class="hub-card-tagline">air.inc</div>
+        <div class="bubble-grid">
+          <div class="bubble-soft">
+            <div class="bubble-title">Level 1</div>
+            Store Basics & Safety
           </div>
-
-          <div class="hub-card" onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl')">
-            <div>
-              <div class="hub-card-label">Admin</div>
-              <div class="hub-card-title">Store Audit</div>
-              <div class="hub-card-subtitle">Microsoft Forms</div>
-            </div>
-            <div class="hub-card-tagline">forms.office.com</div>
+          <div class="bubble-soft">
+            <div class="bubble-title">Level 2</div>
+            Merchandising Excellence
           </div>
-
-          <div class="hub-card" onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl')">
-            <div>
-              <div class="hub-card-label">Admin</div>
-              <div class="hub-card-title">Rack Counts</div>
-              <div class="hub-card-subtitle">Microsoft Forms</div>
-            </div>
-            <div class="hub-card-tagline">forms.office.com</div>
+          <div class="bubble-soft">
+            <div class="bubble-title">Level 3</div>
+            Supervisor Skills
           </div>
-
-          <div class="hub-card" style="cursor:default;">
-            <div>
-              <div class="hub-card-label">Admin</div>
-              <div class="hub-card-title">District Checklist</div>
-              <div class="hub-card-subtitle">Coming soon</div>
-            </div>
-            <div class="hub-card-tagline">—</div>
-          </div>
-        </div>
-
-        <div class="coming-soon" style="margin-top:12px;">
-          🚧 District Checklist is coming soon.
         </div>
       </section>
 
       <!-- ======================================================
-           TRAINING CENTER PAGE
+           DISTRICT CHECKLIST POPUP
            ====================================================== -->
-      <section id="view-training" class="page-shell hidden">
-        <div class="map-topbar">
-          <div class="map-brand">
-            <img src="hf_logo.png" alt="Logo" />
-            Training Center
-          </div>
-          <span class="map-pill" id="trainingPill">Level: 1 • XP: 0</span>
-        </div>
-
-        <div class="glass-panel track-intro track-intro-animate">
-          <div class="track-intro-title">Welcome to the Training Center</div>
-          Earn XP by completing modules and quizzes. Level up to unlock badges and advanced tracks.
-        </div>
-
-        <div class="learning-grid" id="trainingGrid">
-          <div class="learning-center-card">
-            <div class="chalk-write"><span class="chalk-icon">🧩</span> Level 1: Basics</div>
-            <div class="chalk-dust">complete to unlock…</div>
-          </div>
-          <div class="learning-center-card">
-            <div class="chalk-write"><span class="chalk-icon">🌿</span> Level 2: Merchandising</div>
-            <div class="chalk-dust">in progress…</div>
-          </div>
-          <div class="learning-center-card">
-            <div class="chalk-write"><span class="chalk-icon">🧠</span> Level 3: Supervisor</div>
-            <div class="chalk-dust">locked</div>
-          </div>
-        </div>
-
-        <div class="glass-panel" id="badgesPanel">
-          <div class="section-header">
-            <div class="section-title">Badges</div>
-            <div class="section-subtitle">Earned badges show here</div>
-          </div>
-          <div id="badgeRow" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span class="track-skill-tag">🏁 Starter</span>
-          </div>
-        </div>
-
-        <div class="glass-panel" id="quizPanel">
-          <div class="section-header">
-            <div class="section-title">Quizzes</div>
-            <div class="section-subtitle">Short quizzes reinforce each module</div>
-          </div>
-
-          <div class="quiz-list" id="quizList">
-            <div class="quiz-card">
-              <div class="quiz-title-row">
-                <div class="quiz-title">Basics Check</div>
-                <div class="quiz-chip">Quiz</div>
-              </div>
-              <div class="quiz-progress-badge">Progress: 0%</div>
-              <button class="quiz-start-btn" type="button" data-quiz="basics">Start</button>
-            </div>
-          </div>
-
-          <div id="quizContainer"></div>
-        </div>
-      </section>
-
-      <!-- ======================================================
-           CHECKLIST MODAL SHELL
-           ====================================================== -->
-      <div class="popup-backdrop" id="checklistBackdrop" style="display:none;">
-        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="checklistTitle">
-          <h2 id="checklistTitle">Supervisor Checklist</h2>
-          <div class="popup-subtitle" id="checklistSubtitle">Select a store on the map.</div>
-
-          <div class="controls" style="margin-top:10px;">
-            <div class="filter-group" style="min-width:220px;">
-              <div class="filter-label">Week</div>
-              <select id="checklistWeek" class="filter-input"></select>
-            </div>
-            <div class="filter-group" style="min-width:220px;">
-              <div class="filter-label">Progress</div>
-              <div class="filter-input" id="checklistProgress">0 / 0</div>
-            </div>
-            <div class="filter-group" style="min-width:220px;">
-              <div class="filter-label">Save</div>
-              <div class="filter-input" id="checklistSaveStatus">Local</div>
-            </div>
-          </div>
-
-          <div class="guidelines-wrapper" id="checklistSections" style="margin-top:12px;"></div>
-          <button class="popup-close" type="button" id="checklistCloseBtn">Close</button>
+      <div class="mini-backdrop" id="districtModal">
+        <div class="mini-modal">
+          <h2>District Checklist</h2>
+          <p>This feature is currently under construction.</p>
+          <button class="btn primary"
+            onclick="document.getElementById('districtModal').style.display='none'">
+            Close
+          </button>
         </div>
       </div>
 
-      <!-- ======================================================
-           FOOTER
-           ====================================================== -->
       <div class="footer">Internal Tool • GitHub Pages + Firebase</div>
-
     </div>
   </div>
+ <script>
+/* =========================================================
+   GLOBAL HELPERS
+   ========================================================= */
+const $ = (id) => document.getElementById(id);
+const VIEWS = ["view-splash","view-login","view-map","view-hf","view-hpa","view-admin","view-training"];
+let CURRENT_USER = null;
 
-  <!-- ======================================================
-       MOBILE NAV
-       ====================================================== -->
-  <nav class="mobile-nav hidden" id="mobileNav">
-    <button class="mobile-nav-item" type="button" id="mHub">
-      <span>🏠</span><span>Hub</span>
-    </button>
-    <button class="mobile-nav-item" type="button" id="mMap">
-      <span>🗺️</span><span>Map</span>
-    </button>
-    <button class="mobile-nav-item" type="button" id="mOut">
-      <span>🚪</span><span>Logout</span>
-    </button>
-  </nav>
-<!-- ======================================================
-       FIREBASE (MODULE) — Exact config
-       ====================================================== -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      setDoc,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+/* =========================================================
+   VIEW ROUTER
+   ========================================================= */
+function showView(id){
+  VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== id));
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
-      authDomain: "live-map-82f69.firebaseapp.com",
-      databaseURL: "https://live-map-82f69-default-rtdb.firebaseio.com",
-      projectId: "live-map-82f69",
-      storageBucket: "live-map-82f69.firebasestorage.app",
-      messagingSenderId: "138303920091",
-      appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
-    };
+  // Chalkboard effect only when training is visible
+  $("view-training")?.classList.toggle("training-chalkboard", id === "view-training");
 
-    try {
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      window.db = db;
-      window.fb = { collection, doc, setDoc, onSnapshot };
-      console.log("[firebase] ready");
-    } catch (e) {
-      console.warn("[firebase] init failed; app will use local fallback:", e);
-    }
-  </script>
+  // Init map if needed
+  if(id === "view-map" && window.MapDash){
+    MapDash.ensureInit();
+    MapDash.invalidate();
+  }
+}
 
-  <!-- ======================================================
-       CORE APP SCRIPT — includes LOGIN FIXES
-       ====================================================== -->
-  <script>
-    /**********************************************************
-     * UTILITIES
-     **********************************************************/
-    const ROLES = ["Merchandiser","Supervisor","District","RMM","Admin"];
-    const AUTH_KEY = "hub_current_user_v1";
-    window.CURRENT_USER = null;
+/* =========================================================
+   SPLASH → LOGIN
+   ========================================================= */
+$("btnSplashEnter")?.addEventListener("click", () => {
+  showView("view-login");
+});
 
-    const VIEWS = [
-      "view-splash",
-      "view-login",
-      "view-hub",
-      "view-map",
-      "view-hf",
-      "view-hpa",
-      "view-admin",
-      "view-training"
+/* =========================================================
+   LOGIN (FIXED + HARDENED)
+   ========================================================= */
+async function doLogin(){
+  const user = $("loginUser").value.trim();
+  const pass = $("loginPass").value.trim();
+  const err = $("loginError");
+  err.textContent = "";
+
+  const btn = $("loginBtn");
+  btn.disabled = true;
+  btn.textContent = "Signing in…";
+
+  if(!user || !pass){
+    err.textContent = "Enter username and password.";
+    btn.disabled = false;
+    btn.textContent = "Login";
+    return;
+  }
+
+  // CSV users OR fallback demo
+  let users;
+  try{
+    const txt = await fetch("users.csv",{cache:"no-store"}).then(r=>r.text());
+    users = txt.split(/\r?\n/).slice(1).map(l=>{
+      const r=l.split(",");
+      return {u:r[0],p:r[1],role:r[2]||"Merchandiser",name:r[3]||r[0]};
+    });
+  }catch{
+    users = [
+      {u:"demo",p:"demo",role:"Merchandiser",name:"Demo User"},
+      {u:"super",p:"super",role:"Supervisor",name:"Supervisor"}
     ];
+  }
 
-    const $ = (id) => document.getElementById(id);
+  const match = users.find(x=>x.u===user && x.p===pass);
+  if(!match){
+    err.textContent = "Invalid login.";
+    btn.disabled = false;
+    btn.textContent = "Login";
+    return;
+  }
 
-    function safeText(node, txt){ if(node) node.textContent = txt; }
+  CURRENT_USER = { username:match.u, role:match.role, displayName:match.name };
+  sessionStorage.setItem("hub_user", JSON.stringify(CURRENT_USER));
 
-    function canAccess(userRole, minRole){
-      const a = ROLES.indexOf(userRole || "");
-      const b = ROLES.indexOf(minRole || "");
-      if (b < 0) return true;
-      return a >= b;
+  $("globalUserPill").textContent = CURRENT_USER.displayName;
+  $("globalTopBar").classList.remove("hidden");
+
+  btn.disabled = false;
+  btn.textContent = "Login";
+
+  showView("view-map");
+  startWeather();
+}
+
+$("loginBtn").onclick = doLogin;
+$("loginPass").onkeydown = (e)=>{ if(e.key==="Enter") doLogin(); };
+
+$("globalLogoutBtn").onclick = ()=>{
+  CURRENT_USER = null;
+  sessionStorage.removeItem("hub_user");
+  $("globalTopBar").classList.add("hidden");
+  showView("view-login");
+};
+
+/* =========================================================
+   NAV BUTTONS
+   ========================================================= */
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll(".nav-link").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    showView("view-"+btn.dataset.page);
+  };
+});
+
+/* =========================================================
+   LOCATION-BASED WEATHER (ASKS USER)
+   ========================================================= */
+function startWeather(){
+  const box = $("weatherWidget");
+  box.textContent = "Weather: Locating…";
+
+  if(!navigator.geolocation){
+    box.textContent = "Weather unavailable";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const {latitude,longitude} = pos.coords;
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
+        .then(r=>r.json())
+        .then(d=>{
+          const w=d.current_weather;
+          box.textContent = `🌡 ${Math.round(w.temperature)}° • 💨 ${Math.round(w.windspeed)} mph`;
+        });
+    },
+    ()=>{
+      box.textContent = "Weather blocked";
     }
+  );
+}
 
-    function parseCsvLine(line){
-      const out = [];
-      let cur = "", inQ = false;
-      for (let i=0; i<line.length; i++){
-        const ch = line[i];
-        if (ch === '"'){
-          if (inQ && line[i+1] === '"'){ cur += '"'; i++; }
-          else inQ = !inQ;
-        } else if (ch === "," && !inQ){
-          out.push(cur); cur = "";
-        } else cur += ch;
-      }
-      out.push(cur);
-      return out;
-    }
-
-    async function fetchCsv(url){
-      const res = await fetch(url, { cache: "no-store" });
-      if(!res.ok) throw new Error(`${url} not found`);
-      return await res.text();
-    }
-
-    function showView(id){
-      VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== id));
-
-      // Ensure login fade-in opacity if we show it
-      if(id === "view-login"){
-        const login = $("view-login");
-        if(login) login.style.opacity = "1";
-      }
-
-      setMobileNav();
-      setMobileActive(id);
-
-      // If map view is shown and MapDash exists, init it
-      if(id === "view-map" && window.MapDash){
-        window.MapDash.ensureInit?.();
-        window.MapDash.invalidate?.();
-      }
-    }
-
-    function setMobileNav(){
-      const nav = $("mobileNav");
-      if(!nav) return;
-      nav.classList.toggle("hidden", !window.CURRENT_USER);
-    }
-
-    function setMobileActive(viewId){
-      ["mHub","mMap"].forEach(x => $(x)?.classList.remove("mobile-nav-item-active"));
-      if(viewId === "view-hub") $("mHub")?.classList.add("mobile-nav-item-active");
-      if(viewId === "view-map") $("mMap")?.classList.add("mobile-nav-item-active");
-    }
-
-    function applyRoleGates(){
-      // Hide hub cards user can't access
-      document.querySelectorAll(".hub-card[data-open]").forEach(card => {
-        const minRole = card.getAttribute("data-min-role");
-        if(card.getAttribute("aria-disabled") === "true") return;
-        const allowed = window.CURRENT_USER && canAccess(window.CURRENT_USER.role, minRole);
-        card.style.display = allowed ? "" : "none";
-      });
-    }
-
-    function persistAuth(){
-      try { sessionStorage.setItem(AUTH_KEY, JSON.stringify(window.CURRENT_USER)); } catch(e){}
-    }
-    function restoreAuth(){
-      try {
-        const raw = sessionStorage.getItem(AUTH_KEY);
-        if(raw) window.CURRENT_USER = JSON.parse(raw);
-      } catch(e){}
-    }
-
-    function setUserPills(){
-      const u = window.CURRENT_USER;
-      if(!u){
-        safeText($("userPill"), "Not signed in");
-        safeText($("globalUserPill"), "User: —");
-        return;
-      }
-      safeText($("userPill"), `${u.displayName} • ${u.role}`);
-      safeText($("globalUserPill"), `User: ${u.displayName}`);
-    }
-
-    /**********************************************************
-     * WEATHER WIDGET (Open-Meteo, no API key)
-     **********************************************************/
-    function startWeather(){
-      const box = $("weatherWidget");
-      if(box) box.textContent = "Weather: Loading…";
-
-      if(!navigator.geolocation){
-        if(box) box.textContent = "Weather: Location blocked";
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
-            .then(r => r.json())
-            .then(d => {
-              const w = d.current_weather;
-              if(!w){
-                if(box) box.textContent = "Weather: —";
-                return;
-              }
-              if(box) box.textContent = `Weather: ${Math.round(w.temperature)}° • Wind ${Math.round(w.windspeed)} mph`;
-            })
-            .catch(() => {
-              if(box) box.textContent = "Weather: —";
-            });
-        },
-        () => {
-          if(box) box.textContent = "Weather: Location denied";
-        },
-        { enableHighAccuracy:false, timeout:5000, maximumAge:600000 }
-      );
-    }
-
-    /**********************************************************
-     * SPLASH → LOGIN
-     **********************************************************/
-    $("btnSplashEnter")?.addEventListener("click", () => {
-      $("btnSplashEnter").classList.add("logo-tap");
-      $("view-splash").classList.add("splash-fade-out");
-      setTimeout(() => showView("view-login"), 350);
-    });
-
-    /**********************************************************
-     * USERS (CSV LOGIN)
-     **********************************************************/
-    async function loadUsers(){
-      // Expected: username,password,role,displayName
-      try {
-        const txt = await fetchCsv("users.csv");
-        const lines = txt.split(/\r?\n/).filter(l => l.trim());
-        if(!lines.length) throw new Error("users.csv empty");
-
-        const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
-        const idx = {
-          username: header.indexOf("username"),
-          password: header.indexOf("password"),
-          role: header.indexOf("role"),
-          display: header.indexOf("displayname")
-        };
-
-        const users = [];
-        for(let i=1;i<lines.length;i++){
-          const row = parseCsvLine(lines[i]);
-          const username = (row[idx.username] || "").trim();
-          const password = (row[idx.password] || "").trim();
-          if(!username || !password) continue;
-
-          users.push({
-            username,
-            password,
-            role: (row[idx.role] || "Merchandiser").trim() || "Merchandiser",
-            displayName: (idx.display >= 0 ? (row[idx.display] || "").trim() : username) || username
-          });
-        }
-        return users;
-      } catch (e) {
-        console.warn("[auth] users.csv missing/invalid, using demo accounts:", e);
-        return [
-          { username:"demo",  password:"demo",  role:"Merchandiser", displayName:"Demo User" },
-          { username:"super", password:"super", role:"Supervisor",   displayName:"Supervisor User" }
-        ];
-      }
-    }
-
-    /**********************************************************
-     * POST-LOGIN SUCCESS (single source of truth)
-     **********************************************************/
-    function onLoginSuccess(){
-      // Show global nav
-      $("globalTopBar")?.classList.remove("hidden");
-
-      // Activate MAP nav button
-      document.querySelectorAll(".nav-link").forEach(b => b.classList.remove("active"));
-      document.querySelector('.nav-link[data-page="map"]')?.classList.add("active");
-
-      // Update subtitle & weather
-      safeText($("globalSubtitle"), "Live Map • Firestore Sync • Weather");
-      startWeather();
-
-      // Map is homepage now
-      showView("view-map");
-
-      // Ensure map gets initialized
-      setTimeout(() => {
-        window.MapDash?.ensureInit?.();
-        window.MapDash?.invalidate?.();
-      }, 60);
-    }
-
-    /**********************************************************
-     * LOGIN (FIX #3 + Optional UX)
-     **********************************************************/
-    async function doLogin(){
-      const loginError = $("loginError");
-      if(loginError) loginError.textContent = "";
-
-      const username = ($("loginUser")?.value || "").trim();
-      const password = ($("loginPass")?.value || "").trim();
-
-      // Optional UX: disable button while logging in
-      const loginButton = $("loginBtn");
-      if (loginButton) {
-        loginButton.disabled = true;
-        loginButton.textContent = "Signing in…";
-      }
-      const resetLoginButton = () => {
-        if (loginButton) {
-          loginButton.disabled = false;
-          loginButton.textContent = "Login";
-        }
-      };
-
-      if(!username || !password){
-        if(loginError) loginError.textContent = "Enter username and password.";
-        resetLoginButton();
-        return;
-      }
-
-      const users = await loadUsers();
-      const match = users.find(u =>
-        u.username.toLowerCase() === username.toLowerCase() &&
-        u.password === password
-      );
-
-      if(!match){
-        if(loginError) loginError.textContent = "Invalid login.";
-        resetLoginButton();
-        return;
-      }
-
-      window.CURRENT_USER = {
-        username: match.username,
-        role: match.role,
-        displayName: match.displayName
-      };
-
-      persistAuth();
-      setUserPills();
-      applyRoleGates();
-
-      resetLoginButton();
-      onLoginSuccess();
-    }
-
-    function doLogout(){
-      window.CURRENT_USER = null;
-      try { sessionStorage.removeItem(AUTH_KEY); } catch(e){}
-
-      $("globalTopBar")?.classList.add("hidden");
-      setUserPills();
-      applyRoleGates();
-
-      // Send them to login (not splash)
-      showView("view-login");
-    }
-
-    /* ✅ FIX #3 Hardened event wiring (button + Enter) */
-    $("loginBtn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      doLogin();
-    });
-
-    $("loginPass")?.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        doLogin();
-      }
-    });
-
-    /**********************************************************
-     * GLOBAL NAV ROUTER (MAP/HF/HPA/ADMIN/TRAINING)
-     **********************************************************/
-    document.querySelectorAll(".nav-link").forEach(btn => {
-      btn.addEventListener("click", () => {
-        // prevent access if not logged in
-        if(!window.CURRENT_USER){
-          showView("view-login");
-          return;
-        }
-        document.querySelectorAll(".nav-link").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const page = btn.getAttribute("data-page");
-        showView("view-" + page);
-      });
-    });
-
-    /**********************************************************
-     * BUTTONS: logout and hub shortcuts
-     **********************************************************/
-    $("btnLogout")?.addEventListener("click", doLogout);
-    $("globalLogoutBtn")?.addEventListener("click", doLogout);
-    $("mOut")?.addEventListener("click", doLogout);
-
-    $("btnBackToHub")?.addEventListener("click", () => showView("view-hub"));
-    $("mHub")?.addEventListener("click", () => showView("view-hub"));
-    $("mMap")?.addEventListener("click", () => showView("view-map"));
-
-    /**********************************************************
-     * HUB CARD NAV (event delegation)
-     **********************************************************/
-    document.addEventListener("click", (e) => {
-      const card = e.target.closest(".hub-card[data-open]");
-      if(!card) return;
-      if(card.getAttribute("aria-disabled") === "true") return;
-
-      if(!window.CURRENT_USER){
-        showView("view-login");
-        return;
-      }
-
-      const minRole = card.getAttribute("data-min-role");
-      if(minRole && !canAccess(window.CURRENT_USER.role, minRole)) return;
-
-      const dest = card.getAttribute("data-open");
-      showView(dest);
-    });
-
-    /**********************************************************
-     * BOOT
-     **********************************************************/
-    (function boot(){
-      restoreAuth();
-      setUserPills();
-      applyRoleGates();
-      setMobileNav();
-
-      if(window.CURRENT_USER){
-        onLoginSuccess(); // map homepage
-      } else {
-        showView("view-splash");
-      }
-    })();
-  </script>
-<!-- ======================================================
-     PORTION 4: MapDash + Checklist Modules
-     ====================================================== -->
-<script>
-/**********************************************************
- * MAPDASH (Leaflet + Firestore Live + Local Fallback)
- **********************************************************/
+/* =========================================================
+   MAPDASH (Watered + Issue Flag)
+   ========================================================= */
 window.MapDash = (() => {
-  const STORES_CSV_URL = "stores.csv";
-  const STORE_STATE_KEY = "hfHubStoreState_v2";
-  const BC = ("BroadcastChannel" in window) ? new BroadcastChannel("hfHubStoreState") : null;
+  let map, markers=new Map(), stores=[], state={}, initialized=false;
+  const LS_KEY="store_state_v3";
 
-  const DEFAULT_STORE_STATE = () => ({
-    pictures: false,
-    markdowns: false,
-    negatives: false,
-    issues: [],
-    shippingGrade: "",
-    updatedAt: null,
-    updatedBy: null
-  });
+  function loadState(){
+    try{ state=JSON.parse(localStorage.getItem(LS_KEY))||{}; }catch{}
+  }
+  function saveState(){ localStorage.setItem(LS_KEY,JSON.stringify(state)); }
 
-  let stores = [];
-  let state = {};
-  let selectedId = null;
-  let initialized = false;
-
-  let map = null;
-  let markers = new Map();
-  let activeFilter = "all";
-
-  // Firestore live
-  let liveEnabled = false;
-  let unsubscribeLive = null;
-
-  const demoStores = [
-    { id: "1950", name: "South Loop", lat: 41.8561, lon: -87.6244, city: "Chicago", state: "IL", address: "" },
-    { id: "1987", name: "Glenview",  lat: 42.0792, lon: -87.8223, city: "Glenview", state: "IL", address: "" },
-    { id: "6919", name: "Frankfort", lat: 41.4969, lon: -87.8340, city: "Frankfort", state: "IL", address: "" }
-  ];
-
-  function el(id){ return document.getElementById(id); }
-  function setPanelButtonsEnabled(enabled){
-    document.querySelectorAll('#view-map [data-map-action]').forEach(b => b.disabled = !enabled);
-    const chk = el("btnOpenChecklist");
-    if (chk) chk.disabled = !enabled;
+  function todayKey(){
+    return new Date().toISOString().slice(0,10);
   }
 
-  function loadLocal(){
-    try{
-      const raw = localStorage.getItem(STORE_STATE_KEY);
-      if(raw){
-        const parsed = JSON.parse(raw);
-        if(parsed && typeof parsed === "object") state = parsed;
-      }
-    }catch{}
-  }
-
-  function saveLocal(){
-    try{ localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); }catch{}
-    try{ BC && BC.postMessage({ type:"state", state }); }catch{}
-  }
-
-  function parseStoresCsv(text){
-    const lines = text.split(/\r?\n/).filter(l => l.trim());
-    if(!lines.length) return [];
-    const header = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
-    const idx = {
-      id: header.indexOf("store_id"),
-      name: header.indexOf("store_name"),
-      lat: header.indexOf("lat"),
-      lon: header.indexOf("lon"),
-      city: header.indexOf("city"),
-      state: header.indexOf("state"),
-      address: header.indexOf("address"),
-    };
-    const out = [];
-    for(let i=1;i<lines.length;i++){
-      const row = parseCsvLine(lines[i]);
-      const id = (row[idx.id] || "").trim();
-      const name = (row[idx.name] || "").trim();
-      const lat = parseFloat((row[idx.lat] || "").trim());
-      const lon = parseFloat((row[idx.lon] || "").trim());
-      if(!id || !name || Number.isNaN(lat) || Number.isNaN(lon)) continue;
-      out.push({
-        id, name, lat, lon,
-        city: idx.city >= 0 ? (row[idx.city] || "").trim() : "",
-        state: idx.state >= 0 ? (row[idx.state] || "").trim() : "",
-        address: idx.address >= 0 ? (row[idx.address] || "").trim() : "",
-      });
+  function ensureDefaults(id){
+    if(!state[id]){
+      state[id]={ wateredOn:null, issues:[] };
     }
-    return out;
+    // reset watered daily
+    if(state[id].wateredOn !== todayKey()){
+      state[id].watered=false;
+    }
+  }
+
+  function pinHtml(id){
+    ensureDefaults(id);
+    const hasIssues = state[id].issues.length>0;
+    return `<div class="pin pin-ok ${hasIssues?"pin-flag":""}"></div>`;
   }
 
   async function loadStores(){
     try{
-      const txt = await fetchCsv(STORES_CSV_URL);
-      const parsed = parseStoresCsv(txt);
-      stores = parsed.length ? parsed : demoStores;
-    }catch(e){
-      console.warn("[map] stores.csv missing; using demo stores", e);
-      stores = demoStores;
+      const txt = await fetch("stores.csv",{cache:"no-store"}).then(r=>r.text());
+      const lines=txt.split(/\r?\n/).slice(1);
+      stores=lines.map(l=>{
+        const r=l.split(",");
+        return {id:r[0],name:r[1],lat:+r[2],lon:+r[3]};
+      });
+    }catch{
+      stores=[
+        {id:"1950",name:"South Loop",lat:41.856,lon:-87.624},
+        {id:"1987",name:"Glenview",lat:42.079,lon:-87.822}
+      ];
     }
-  }
-
-  function ensureDefaults(){
-    stores.forEach(s => {
-      if(!state[s.id]) state[s.id] = DEFAULT_STORE_STATE();
-      if(!Array.isArray(state[s.id].issues)) state[s.id].issues = [];
-    });
-    if(!liveEnabled) saveLocal();
-  }
-
-  function normalizeShip(raw){
-    const s = (raw || "").toString().trim().toUpperCase();
-    if(!s) return { key:"unknown", label:"—" };
-    if(s.includes("SKIP")) return { key:"skip", label:raw };
-    if(s.includes("A/B") || s === "A/B") return { key:"ab", label:raw };
-    if(s.includes("ALL")) return { key:"all", label:raw };
-    if(["A","B","C","D"].includes(s)) return { key:"ab", label:raw };
-    return { key:"limited", label:raw };
-  }
-
-  function computeStatus(st){
-    if(!st) return "unknown";
-    const pics = !!st.pictures;
-    const mds  = !!st.markdowns;
-    const neg  = !!st.negatives;
-    const issues = Array.isArray(st.issues) ? st.issues.length : 0;
-    const missing = [pics, mds, neg].filter(v => !v).length;
-
-    if(issues > 0) return missing >= 2 ? "bad" : "warn";
-    if(missing === 0) return "ok";
-    if(missing === 1) return "warn";
-    return "bad";
-  }
-
-  function pinHtml(storeId){
-    const st = state[storeId] || DEFAULT_STORE_STATE();
-    const status = computeStatus(st);
-    const ship = normalizeShip(st.shippingGrade);
-
-    const stClass =
-      status === "ok" ? "pin-ok" :
-      status === "warn" ? "pin-warn" :
-      status === "bad" ? "pin-bad" : "pin-unknown";
-
-    const shipClass =
-      ship.key === "all" ? "ship-all" :
-      ship.key === "ab" ? "ship-ab" :
-      ship.key === "limited" ? "ship-limited" :
-      ship.key === "skip" ? "ship-skip" : "ship-unknown";
-
-    return `<div class="pin ${stClass} ${shipClass}"></div>`;
-  }
-
-  function rerenderMarker(storeId){
-    const marker = markers.get(storeId);
-    if(!marker) return;
-    const icon = L.divIcon({ className:"", html: pinHtml(storeId), iconSize:[18,18], iconAnchor:[9,9] });
-    marker.setIcon(icon);
-  }
-
-  function rerenderAll(){
-    stores.forEach(s => rerenderMarker(s.id));
-    renderStoreDropdown();
-    applyFilter(activeFilter);
   }
 
   function initMap(){
-    const mapEl = el("storeMap");
-    if(!mapEl) return;
+    if(map) return;
+    map=L.map("storeMap").setView([41.8,-87.6],7);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
+  }
 
-    if(!map){
-      map = L.map("storeMap", { zoomControl:true, preferCanvas:true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom:19,
-        attribution:"© OpenStreetMap"
-      }).addTo(map);
-    }
-
-    markers.forEach(m => { try{ map.removeLayer(m); }catch{} });
+  function renderMarkers(){
+    markers.forEach(m=>map.removeLayer(m));
     markers.clear();
-
-    const bounds = [];
-    stores.forEach(store => {
-      const icon = L.divIcon({ className:"", html: pinHtml(store.id), iconSize:[18,18], iconAnchor:[9,9] });
-      const m = L.marker([store.lat, store.lon], { icon }).addTo(map);
-      m.on("click", () => selectStore(store.id));
-      markers.set(store.id, m);
-      bounds.push([store.lat, store.lon]);
+    stores.forEach(s=>{
+      ensureDefaults(s.id);
+      const icon=L.divIcon({html:pinHtml(s.id),iconSize:[18,18],iconAnchor:[9,9]});
+      const m=L.marker([s.lat,s.lon],{icon}).addTo(map);
+      m.on("click",()=>selectStore(s.id,s.name));
+      markers.set(s.id,m);
     });
-
-    if(bounds.length) map.fitBounds(bounds, { padding:[20,20] });
-    setTimeout(() => { try{ map.invalidateSize(); }catch{} }, 80);
   }
 
-  function setBadge(label, color){
-    const badge = el("spStatusBadge");
-    if(!badge) return;
-    badge.innerHTML = `<span class="badge-dot" style="background:${color}"></span><span>${label}</span>`;
-  }
-
-  function selectStore(storeId){
-    selectedId = storeId;
-    window.SELECTED_STORE_ID = storeId;
-
-    const store = stores.find(s => s.id === storeId);
-    const st = state[storeId] || DEFAULT_STORE_STATE();
-    const status = computeStatus(st);
-    const ship = normalizeShip(st.shippingGrade);
-
-    safeText(el("spTitle"), store ? `${store.name} (${store.id})` : `Store ${storeId}`);
-    safeText(el("spSub"), store ? `${[store.city, store.state].filter(Boolean).join(", ")}${store.address ? " • " + store.address : ""}` : "—");
-
-    const statusLabel =
-      status === "ok" ? "🟢 On Track" :
-      status === "warn" ? "🟡 Watch List" :
-      status === "bad" ? "🔴 Needs Attention" : "⚪ Unknown";
-
-    const statusColor =
-      status === "ok" ? "#22c55e" :
-      status === "warn" ? "#facc15" :
-      status === "bad" ? "#ef4444" : "#94a3b8";
-
-    setBadge(statusLabel, statusColor);
-
-    safeText(el("spShip"), ship.label || "—");
-    safeText(el("spPics"), st.pictures ? "✅ Complete" : "❌ Missing");
-    safeText(el("spMds"),  st.markdowns ? "✅ Complete" : "❌ Missing");
-    safeText(el("spNeg"),  st.negatives ? "✅ Complete" : "❌ Missing");
-
-    const issues = Array.isArray(st.issues) ? st.issues : [];
-    safeText(el("spIssues"), issues.length ? `⚠ ${issues.length} open` : "✅ None");
-    safeText(el("spUpdated"), st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—");
-
-    setPanelButtonsEnabled(true);
-  }
-
-  function closePanel(){
-    selectedId = null;
-    window.SELECTED_STORE_ID = null;
-
-    safeText(el("spTitle"), "Select a store");
-    safeText(el("spSub"), "Click a pin to view details.");
-    setBadge("—", "#94a3b8");
-    safeText(el("spShip"), "—");
-    safeText(el("spPics"), "—");
-    safeText(el("spMds"), "—");
-    safeText(el("spNeg"), "—");
-    safeText(el("spIssues"), "—");
-    safeText(el("spUpdated"), "—");
-
-    setPanelButtonsEnabled(false);
-  }
-
-  async function saveServerState(storeId, nextState){
-    const fb = window.fb;
-    const db = window.db;
-    if(!fb || !db) throw new Error("Firebase not ready");
-    const { doc, setDoc } = fb;
-    await setDoc(doc(db, "stores", storeId), nextState, { merge:true });
-  }
-
-  async function updateStore(storeId, patch){
-    const cur = state[storeId] || DEFAULT_STORE_STATE();
-    const next = {
-      ...cur,
-      ...patch,
-      updatedAt: Date.now(),
-      updatedBy: (window.CURRENT_USER?.displayName || window.CURRENT_USER?.username || "Unknown")
+  function selectStore(id,name){
+    ensureDefaults(id);
+    $("spTitle").textContent = `${name} (${id})`;
+    $("spWatered").textContent = state[id].watered ? "✅ Yes" : "❌ No";
+    $("spIssues").textContent = state[id].issues.length;
+    $("btnWatered").onclick = ()=>{
+      state[id].watered=true;
+      state[id].wateredOn=todayKey();
+      saveState();
+      $("spWatered").textContent="✅ Yes";
     };
-    if(!Array.isArray(next.issues)) next.issues = [];
-    state[storeId] = next;
-
-    // optimistic UI
-    rerenderMarker(storeId);
-    if(selectedId === storeId) selectStore(storeId);
-
-    if(liveEnabled){
-      try{
-        await saveServerState(storeId, next);
-      }catch(e){
-        console.error("[map] live save failed -> local fallback", e);
-        liveEnabled = false;
-        safeText(el("syncPill"), "Sync: Local");
-        saveLocal();
-      }
-    } else {
-      saveLocal();
-    }
   }
 
-  function applyFilter(filter){
-    activeFilter = filter || "all";
-    stores.forEach(store => {
-      const marker = markers.get(store.id);
-      if(!marker || !map) return;
+  function addIssue(){
+    const id=$("spTitle").textContent.match(/\((.*?)\)/)?.[1];
+    if(!id) return;
+    const msg=prompt("Describe the issue:");
+    if(!msg) return;
+    state[id].issues.push(msg);
+    saveState();
+    renderMarkers();
+    $("spIssues").textContent=state[id].issues.length;
+  }
 
-      const st = state[store.id] || DEFAULT_STORE_STATE();
-      const status = computeStatus(st);
-      const ship = normalizeShip(st.shippingGrade);
-      const issues = Array.isArray(st.issues) ? st.issues.length : 0;
-
-      let visible = true;
-      if(activeFilter === "status:bad") visible = (status === "bad");
-      else if(activeFilter === "status:warn") visible = (status === "warn");
-      else if(activeFilter === "ship:skip") visible = (ship.key === "skip");
-      else if(activeFilter === "ship:ab") visible = (ship.key === "ab");
-      else if(activeFilter === "issues:true") visible = (issues > 0);
-
-      if(visible){
-        if(!map.hasLayer(marker)) marker.addTo(map);
-      } else {
-        if(map.hasLayer(marker)) map.removeLayer(marker);
-      }
+  function ensureInit(){
+    if(initialized) return;
+    initialized=true;
+    loadState();
+    loadStores().then(()=>{
+      initMap();
+      renderMarkers();
     });
   }
 
-  function renderStoreDropdown(){
-    const menu = el("storeListMenu");
-    if(!menu) return;
-    menu.innerHTML = "";
+  function invalidate(){ setTimeout(()=>map.invalidateSize(),50); }
 
-    const sorted = [...stores].sort((a,b) => (Number(a.id)||0)-(Number(b.id)||0));
-    sorted.forEach(store => {
-      const st = state[store.id] || DEFAULT_STORE_STATE();
-      const status = computeStatus(st);
-      const ship = normalizeShip(st.shippingGrade);
-      const icon = status === "ok" ? "🟢" : status === "warn" ? "🟡" : status === "bad" ? "🔴" : "⚪";
+  document.querySelector('[data-map-action="add:issue"]')?.addEventListener("click",addIssue);
 
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "dd-item";
-      btn.setAttribute("data-map-store", store.id);
-      btn.innerHTML = `<span>${icon} ${store.id} – ${store.name}</span><span class="dd-sub">${ship.label || "—"}</span>`;
-      menu.appendChild(btn);
-    });
-  }
-
-  function closeAllDropdowns(){
-    document.querySelectorAll('#view-map .dd').forEach(dd => dd.classList.remove('open'));
-    document.querySelectorAll('#view-map [data-dd-toggle]').forEach(b => b.setAttribute('aria-expanded','false'));
-  }
-
-  function bindUI(){
-    const root = el("view-map");
-    if(!root || root._bound) return;
-
-    root.addEventListener("click", (e) => {
-      const t = e.target;
-
-      // Dropdown toggle
-      const toggleBtn = t.closest("[data-dd-toggle]");
-      if(toggleBtn){
-        e.stopPropagation();
-        const dd = toggleBtn.closest(".dd");
-        const isOpen = dd.classList.toggle("open");
-        toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        root.querySelectorAll(".dd").forEach(other => { if(other !== dd) other.classList.remove("open"); });
-        return;
-      }
-
-      // Filters
-      const filterBtn = t.closest("[data-map-filter]");
-      if(filterBtn){
-        closeAllDropdowns();
-        applyFilter(filterBtn.getAttribute("data-map-filter"));
-        return;
-      }
-
-      // Store select
-      const storeBtn = t.closest("[data-map-store]");
-      if(storeBtn){
-        closeAllDropdowns();
-        const id = storeBtn.getAttribute("data-map-store");
-        selectStore(id);
-        const marker = markers.get(id);
-        if(marker && map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 11), { animate:true });
-        return;
-      }
-
-      // Actions
-      const actionBtn = t.closest("[data-map-action]");
-      if(actionBtn){
-        if(!selectedId) return;
-        const action = actionBtn.getAttribute("data-map-action");
-        const cur = state[selectedId] || DEFAULT_STORE_STATE();
-
-        if(action === "toggle:pictures") updateStore(selectedId, { pictures: !cur.pictures });
-        else if(action === "toggle:markdowns") updateStore(selectedId, { markdowns: !cur.markdowns });
-        else if(action === "toggle:negatives") updateStore(selectedId, { negatives: !cur.negatives });
-        else if(action === "add:issue"){
-          const msg = window.prompt("Add an issue for this store:");
-          if(!msg) return;
-          const issues = Array.isArray(cur.issues) ? [...cur.issues] : [];
-          issues.push(msg.trim());
-          updateStore(selectedId, { issues });
-        }
-        else if(action === "zoom"){
-          const marker = markers.get(selectedId);
-          if(marker && map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 12), { animate:true });
-        }
-        else if(action === "close"){
-          closePanel();
-        }
-        return;
-      }
-    });
-
-    // close dropdown on outside click
-    document.addEventListener("click", (e) => {
-      const inMap = e.target.closest("#view-map");
-      if(!inMap) return;
-      const inDropdown = e.target.closest(".dd");
-      if(!inDropdown) closeAllDropdowns();
-    });
-
-    // cross-tab local sync
-    if(BC){
-      BC.onmessage = (ev) => {
-        if(ev.data && ev.data.type === "state" && ev.data.state && !liveEnabled){
-          state = ev.data.state;
-          ensureDefaults();
-          rerenderAll();
-          if(selectedId) selectStore(selectedId);
-        }
-      };
-    }
-
-    root._bound = true;
-  }
-
-  function startFirestoreLive(){
-    const fb = window.fb;
-    const db = window.db;
-    if(!fb || !db) throw new Error("Firebase not ready");
-    const { collection, onSnapshot } = fb;
-
-    if(unsubscribeLive){
-      try{ unsubscribeLive(); }catch{}
-      unsubscribeLive = null;
-    }
-
-    unsubscribeLive = onSnapshot(
-      collection(db, "stores"),
-      (snapshot) => {
-        const next = {};
-        snapshot.forEach(docSnap => { next[docSnap.id] = docSnap.data(); });
-        state = next;
-        liveEnabled = true;
-        safeText(el("syncPill"), "Sync: Live");
-        ensureDefaults();
-        rerenderAll();
-        if(selectedId) selectStore(selectedId);
-      },
-      (err) => {
-        console.error("[map] Firestore listener failed:", err);
-        throw err;
-      }
-    );
-  }
-
-  async function waitForFirebaseReady(){
-    for(let i=0;i<30;i++){
-      if(window.db && window.fb) return true;
-      await new Promise(r => setTimeout(r, 50));
-    }
-    return false;
-  }
-
-  async function ensureInit(){
-    if(initialized){
-      invalidate();
-      return;
-    }
-    initialized = true;
-
-    safeText(el("syncPill"), "Sync: Connecting…");
-
-    await loadStores();
-    bindUI();
-    initMap();
-
-    // local first
-    loadLocal();
-    liveEnabled = false;
-    safeText(el("syncPill"), "Sync: Local");
-
-    ensureDefaults();
-    renderStoreDropdown();
-    rerenderAll();
-    closePanel();
-
-    // upgrade to live
-    try{
-      const ready = await waitForFirebaseReady();
-      if(ready) startFirestoreLive();
-    }catch(e){
-      console.warn("[map] staying local", e);
-      liveEnabled = false;
-      safeText(el("syncPill"), "Sync: Local");
-    }
-  }
-
-  function invalidate(){
-    setTimeout(() => { try{ map && map.invalidateSize(); }catch{} }, 80);
-  }
-
-  return { ensureInit, invalidate, applyFilter };
+  return { ensureInit, invalidate };
 })();
 
+/* =========================================================
+   HF / HPA TAB SWITCHING
+   ========================================================= */
+document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    $("hfPlants").classList.toggle("hidden",btn.dataset.hfTab!=="plants");
+    $("hfPests").classList.toggle("hidden",btn.dataset.hfTab!=="pests");
+  };
+});
+document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    $("hpaPlants").classList.toggle("hidden",btn.dataset.hpaTab!=="plants");
+    $("hpaPests").classList.toggle("hidden",btn.dataset.hpaTab!=="pests");
+  };
+});
 
-/**********************************************************
- * SUPERVISOR CHECKLIST (CSV-driven, localStorage for now)
- **********************************************************/
-window.Checklist = (() => {
-  const CSV_URL = "supervisor_checklist.csv";
-  const LS_PREFIX = "supervisorChecklist_v1";
+/* =========================================================
+   ADMIN POPUP
+   ========================================================= */
+$("btnDistrictChecklist").onclick = ()=>{
+  $("districtModal").style.display="flex";
+};
 
-  let rows = [];
-  let weeks = [];
-  let loaded = false;
-
-  function el(id){ return document.getElementById(id); }
-  function showBackdrop(show){
-    const b = el("checklistBackdrop");
-    if(!b) return;
-    b.style.display = show ? "flex" : "none";
+/* =========================================================
+   BOOT
+   ========================================================= */
+(function boot(){
+  try{
+    CURRENT_USER=JSON.parse(sessionStorage.getItem("hub_user"));
+  }catch{}
+  if(CURRENT_USER){
+    $("globalUserPill").textContent=CURRENT_USER.displayName;
+    $("globalTopBar").classList.remove("hidden");
+    showView("view-map");
+    startWeather();
+  }else{
+    showView("view-splash");
   }
-
-  function isoWeekKey(d = new Date()){
-    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    const dayNum = date.getUTCDay() || 7;
-    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-    const yyyy = date.getUTCFullYear();
-    return `${yyyy}-W${String(weekNo).padStart(2,"0")}`;
-  }
-
-  async function loadCsv(){
-    const txt = await fetchCsv(CSV_URL);
-    const lines = txt.split(/\r?\n/).filter(l => l.trim());
-    if(lines.length < 2) throw new Error("Checklist CSV is empty");
-
-    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
-    const idx = {
-      week: header.indexOf("week"),
-      section: header.indexOf("section"),
-      order: header.indexOf("order"),
-      item_id: header.indexOf("item_id"),
-      label: header.indexOf("label"),
-      details: header.indexOf("details"),
-      requires_notes: header.indexOf("requires_notes"),
-      requires_photo: header.indexOf("requires_photo")
-    };
-
-    const parsed = [];
-    for(let i=1;i<lines.length;i++){
-      const r = parseCsvLine(lines[i]);
-      const week = (r[idx.week] || "").trim();
-      const section = (r[idx.section] || "").trim() || "General";
-      const order = Number((r[idx.order] || "0").trim()) || 0;
-      const item_id = (r[idx.item_id] || "").trim();
-      const label = (r[idx.label] || "").trim();
-      const details = (r[idx.details] || "").trim();
-      const requires_notes = ((r[idx.requires_notes] || "").trim().toLowerCase() === "true");
-      const requires_photo = ((r[idx.requires_photo] || "").trim().toLowerCase() === "true");
-      if(!week || !item_id || !label) continue;
-
-      parsed.push({ week, section, order, item_id, label, details, requires_notes, requires_photo });
-    }
-
-    rows = parsed;
-    weeks = [...new Set(rows.map(x => x.week))].sort();
-    loaded = true;
-  }
-
-  function getDefaultWeek(){
-    const current = isoWeekKey();
-    if(weeks.includes(current)) return current;
-    return weeks.length ? weeks[weeks.length - 1] : current;
-  }
-
-  function storageKey(storeId, week){
-    return `${LS_PREFIX}__${storeId}__${week}`;
-  }
-
-  function loadState(storeId, week){
-    try{
-      const raw = localStorage.getItem(storageKey(storeId, week));
-      if(raw) return JSON.parse(raw);
-    }catch{}
-    return { items: {}, updatedAt: null, updatedBy: null };
-  }
-
-  function saveState(storeId, week, st){
-    try{
-      localStorage.setItem(storageKey(storeId, week), JSON.stringify(st));
-      el("checklistSaveStatus").textContent = "Local ✓";
-      setTimeout(() => {
-        const s = el("checklistSaveStatus");
-        if(s && s.textContent.startsWith("Local")) s.textContent = "Local";
-      }, 900);
-    }catch{
-      el("checklistSaveStatus").textContent = "Local (failed)";
-    }
-  }
-
-  function updateProgress(storeId, week){
-    const items = rows.filter(r => r.week === week);
-    const st = loadState(storeId, week);
-    const total = items.length;
-    let done = 0;
-    items.forEach(it => { if(st.items[it.item_id]?.checked) done++; });
-    el("checklistProgress").textContent = `${done} / ${total}`;
-  }
-
-  function renderWeekSelector(selected){
-    const sel = el("checklistWeek");
-    sel.innerHTML = weeks.map(w => `<option value="${w}">${w}</option>`).join("");
-    sel.value = selected;
-  }
-
-  function buildSections(storeId, week){
-    const container = el("checklistSections");
-    container.innerHTML = "";
-
-    const items = rows.filter(r => r.week === week).sort((a,b)=>a.section.localeCompare(b.section) || a.order-b.order);
-    const st = loadState(storeId, week);
-
-    // group by section
-    const by = new Map();
-    items.forEach(it => {
-      if(!by.has(it.section)) by.set(it.section, []);
-      by.get(it.section).push(it);
-    });
-
-    by.forEach((list, sectionName) => {
-      const panel = document.createElement("div");
-      panel.className = "glass-panel";
-
-      panel.innerHTML = `
-        <div class="section-header">
-          <div class="section-title">${sectionName}</div>
-          <div class="section-subtitle">Mark complete; notes required where indicated.</div>
-        </div>
-      `;
-
-      list.forEach(it => {
-        const saved = st.items[it.item_id] || { checked:false, notes:"", photo:false };
-
-        const row = document.createElement("div");
-        row.style.display = "grid";
-        row.style.gridTemplateColumns = "auto 1fr";
-        row.style.gap = "10px";
-        row.style.padding = "10px 0";
-        row.style.borderTop = "1px solid rgba(148,163,184,.12)";
-
-        row.innerHTML = `
-          <div style="padding-top:2px;">
-            <input type="checkbox" data-item-check="${it.item_id}" ${saved.checked ? "checked":""}/>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;">
-              <div style="font-weight:600;color:var(--heading);">${it.label}</div>
-              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                ${it.requires_photo ? `
-                  <label style="display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);">
-                    <input type="checkbox" data-item-photo="${it.item_id}" ${saved.photo ? "checked":""}/> Photo
-                  </label>
-                ` : ""}
-                ${it.requires_notes ? `<span style="font-size:.72rem;color:#fecaca;">Notes required</span>` : ""}
-              </div>
-            </div>
-
-            ${it.details ? `<div style="font-size:.82rem;color:var(--muted);line-height:1.35;">${it.details}</div>` : ""}
-
-            <div data-notes-wrap="${it.item_id}" style="display:${(saved.checked || it.requires_notes) ? "block" : "none"};">
-              <textarea
-                class="form-input"
-                style="min-height:70px;resize:vertical;"
-                placeholder="${it.requires_notes ? "Required: enter notes…" : "Optional notes…"}"
-                data-item-notes="${it.item_id}"
-              >${saved.notes || ""}</textarea>
-            </div>
-          </div>
-        `;
-
-        panel.appendChild(row);
-      });
-
-      container.appendChild(panel);
-    });
-
-    // Delegated events
-    container.onclick = (e) => {
-      const chk = e.target.closest("[data-item-check]");
-      const pchk = e.target.closest("[data-item-photo]");
-      if(!chk && !pchk) return;
-
-      const stNow = loadState(storeId, week);
-      const user = (window.CURRENT_USER?.displayName || window.CURRENT_USER?.username || "Unknown");
-
-      if(chk){
-        const id = chk.getAttribute("data-item-check");
-        stNow.items[id] = stNow.items[id] || { checked:false, notes:"", photo:false };
-        stNow.items[id].checked = chk.checked;
-
-        // show notes if checked OR required
-        const meta = rows.find(r => r.week===week && r.item_id===id);
-        const wrap = container.querySelector(`[data-notes-wrap="${CSS.escape(id)}"]`);
-        if(wrap){
-          wrap.style.display = (chk.checked || (meta && meta.requires_notes)) ? "block" : "none";
-        }
-      }
-
-      if(pchk){
-        const id = pchk.getAttribute("data-item-photo");
-        stNow.items[id] = stNow.items[id] || { checked:false, notes:"", photo:false };
-        stNow.items[id].photo = pchk.checked;
-      }
-
-      stNow.updatedAt = Date.now();
-      stNow.updatedBy = user;
-      saveState(storeId, week, stNow);
-      updateProgress(storeId, week);
-    };
-
-    container.oninput = (e) => {
-      const notes = e.target.closest("[data-item-notes]");
-      if(!notes) return;
-
-      const id = notes.getAttribute("data-item-notes");
-      const stNow = loadState(storeId, week);
-      const user = (window.CURRENT_USER?.displayName || window.CURRENT_USER?.username || "Unknown");
-
-      stNow.items[id] = stNow.items[id] || { checked:false, notes:"", photo:false };
-      stNow.items[id].notes = notes.value;
-
-      stNow.updatedAt = Date.now();
-      stNow.updatedBy = user;
-      saveState(storeId, week, stNow);
-    };
-
-    updateProgress(storeId, week);
-  }
-
-  async function openForStore(storeId, storeLabel){
-    try{
-      if(!loaded) await loadCsv();
-      const week = el("checklistWeek")?.value || getDefaultWeek();
-      renderWeekSelector(week);
-
-      el("checklistSubtitle").textContent = `${storeLabel} • Week ${week}`;
-      buildSections(storeId, week);
-
-      el("checklistWeek").onchange = () => {
-        const w = el("checklistWeek").value;
-        el("checklistSubtitle").textContent = `${storeLabel} • Week ${w}`;
-        buildSections(storeId, w);
-      };
-
-      showBackdrop(true);
-    } catch (e) {
-      el("checklistSubtitle").textContent = "Checklist CSV missing or invalid.";
-      el("checklistSections").innerHTML = `<div class="glass-panel">Error: ${String(e.message || e)}</div>`;
-      showBackdrop(true);
-    }
-  }
-
-  function close(){
-    showBackdrop(false);
-  }
-
-  // Wire open/close buttons
-  (function wireModal(){
-    el("btnOpenChecklist")?.addEventListener("click", () => {
-      const id = window.SELECTED_STORE_ID;
-      if(!id) return;
-      const label = el("spTitle")?.textContent || `Store ${id}`;
-      openForStore(id, label);
-    });
-
-    el("checklistCloseBtn")?.addEventListener("click", close);
-    el("checklistBackdrop")?.addEventListener("click", (e) => {
-      if(e.target === el("checklistBackdrop")) close();
-    });
-  })();
-
-  return { openForStore, close };
 })();
 </script>
-<!-- ======================================================
-     PORTION 5: HF/HPA/Training + CSV renderers + close
+  <!-- ======================================================
+     SEGMENT 4: Firestore + Pretty CSV renderers + Improved MapDash
      ====================================================== -->
+
+<!-- Firebase (module) — keeps Firestore code IN -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore, collection, doc, setDoc, onSnapshot, getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
+    authDomain: "live-map-82f69.firebaseapp.com",
+    databaseURL: "https://live-map-82f69-default-rtdb.firebaseio.com",
+    projectId: "live-map-82f69",
+    storageBucket: "live-map-82f69.firebasestorage.app",
+    messagingSenderId: "138303920091",
+    appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
+  };
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Expose in a way the non-module script can use
+    window.db = db;
+    window.fb = { collection, doc, setDoc, onSnapshot, getDoc };
+    console.log("[firebase] ready");
+  } catch (e) {
+    console.warn("[firebase] init failed; map will use local fallback", e);
+  }
+</script>
+
 <script>
-/**********************************************************
- * Small helper: HTML escape for safe rendering
- **********************************************************/
+/* =========================================================
+   Shared helpers (SEGMENT 3 used simplified CSV parsing — keep compatible)
+   ========================================================= */
 function esc(s){
   return String(s ?? "")
     .replaceAll("&","&amp;")
@@ -2245,484 +1048,812 @@ function esc(s){
     .replaceAll("'","&#39;");
 }
 
-/**********************************************************
- * HF/HPA TAB WIRING
- **********************************************************/
-(function wireTabs(){
-  // HF tabs
-  document.querySelectorAll("[data-hf-tab]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-hf-tab]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const tab = btn.getAttribute("data-hf-tab");
-      $("hfTab-guidelines")?.classList.toggle("hidden", tab !== "guidelines");
-      $("hfTab-care")?.classList.toggle("hidden", tab !== "care");
-    });
-  });
+function parseCsvLine(line){
+  // robust CSV parsing with quotes
+  const out = [];
+  let cur = "", inQ = false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch === '"'){
+      if(inQ && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if(ch === "," && !inQ){
+      out.push(cur); cur="";
+    } else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
 
-  // HPA tabs
-  document.querySelectorAll("[data-hpa-tab]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-hpa-tab]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const tab = btn.getAttribute("data-hpa-tab");
-      $("hpaTab-guidelines")?.classList.toggle("hidden", tab !== "guidelines");
-      $("hpaTab-product")?.classList.toggle("hidden", tab !== "product");
-      $("hpaTab-admin")?.classList.toggle("hidden", tab !== "admin");
-    });
-  });
+async function fetchCsvText(url){
+  const res = await fetch(url, { cache:"no-store" });
+  if(!res.ok) throw new Error(`${url} missing`);
+  return await res.text();
+}
 
-  // Product subtabs (SKU vs Orders)
-  document.querySelectorAll("[data-product-tab]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-product-tab]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const tab = btn.getAttribute("data-product-tab");
-      $("productTab-sku")?.classList.toggle("hidden", tab !== "sku");
-      $("productTab-orders")?.classList.toggle("hidden", tab !== "orders");
-    });
-  });
+function todayKey(){
+  return new Date().toISOString().slice(0,10);
+}
+
+/* =========================================================
+   Modal system (used for plant/pest details + admin popup is separate)
+   Creates a lightweight popup using your bubble style.
+   ========================================================= */
+(function ensureDetailModal(){
+  if(document.getElementById("detailBackdrop")) return;
+
+  const bd = document.createElement("div");
+  bd.id = "detailBackdrop";
+  bd.className = "mini-backdrop";
+  bd.innerHTML = `
+    <div class="mini-modal" id="detailModal">
+      <h2 id="detailTitle">Details</h2>
+      <div id="detailBody" style="margin-top:8px;color:var(--text);line-height:1.45;"></div>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+        <button class="btn primary" id="detailCloseBtn" type="button">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(bd);
+
+  bd.addEventListener("click", (e)=>{ if(e.target === bd) bd.style.display="none"; });
+  document.getElementById("detailCloseBtn").onclick = ()=> bd.style.display="none";
+
+  window.openDetailModal = (title, html) => {
+    document.getElementById("detailTitle").textContent = title || "Details";
+    document.getElementById("detailBody").innerHTML = html || "";
+    bd.style.display = "flex";
+  };
 })();
 
-/**********************************************************
- * GUIDELINES RENDERER (hf_guidelines.csv / hpa_guidelines.csv)
- * Expected columns (flexible): section,title,body OR details
- **********************************************************/
-async function renderGuidelines(csvUrl, mountId){
+/* =========================================================
+   Pests (static, shared for HF + HPA)
+   ========================================================= */
+const PESTS = [
+  {
+    name:"Aphids",
+    symptoms:"Clusters on new growth; sticky honeydew; curled leaves.",
+    actions:"Spray with water, insecticidal soap, remove heavily infested tips."
+  },
+  {
+    name:"Spider Mites",
+    symptoms:"Stippling; dusty leaves; fine webbing underneath.",
+    actions:"Increase humidity; rinse foliage; miticide if severe."
+  },
+  {
+    name:"Mealybugs",
+    symptoms:"Cottony masses at nodes; stunted growth.",
+    actions:"Alcohol swab; systemic option if permitted; isolate plants."
+  },
+  {
+    name:"Thrips",
+    symptoms:"Silver streaking; tiny fast movers; black specks.",
+    actions:"Sticky traps; isolate; targeted treatment cycles."
+  },
+  {
+    name:"Fungus Gnats",
+    symptoms:"Small flies; larvae in wet soil; slow decline.",
+    actions:"Let topsoil dry; yellow traps; BTI dunk in watering if allowed."
+  }
+];
+
+function renderPests(targetId){
+  const mount = document.getElementById(targetId);
+  if(!mount) return;
+
+  mount.innerHTML = PESTS.map(p => `
+    <div class="bubble-soft" style="cursor:pointer" data-pest="${esc(p.name)}">
+      <div class="bubble-title">🪲 ${esc(p.name)}</div>
+      <div class="bubble-sub"><strong>Symptoms:</strong> ${esc(p.symptoms)}</div>
+      <div class="bubble-sub" style="margin-top:6px;"><strong>Actions:</strong> ${esc(p.actions)}</div>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll("[data-pest]").forEach(card=>{
+    card.onclick = ()=>{
+      const name = card.getAttribute("data-pest");
+      const p = PESTS.find(x=>x.name===name);
+      openDetailModal(
+        `Pest: ${p.name}`,
+        `<div class="bubble-soft">
+           <div class="bubble-sub"><strong>Symptoms</strong><br>${esc(p.symptoms)}</div>
+           <div class="bubble-sub" style="margin-top:10px;"><strong>Recommended Actions</strong><br>${esc(p.actions)}</div>
+         </div>`
+      );
+    };
+  });
+}
+
+/* =========================================================
+   GUIDELINES: CSV -> category-separated bubble boxes
+   Expected columns (flexible):
+   - category OR section
+   - item OR text OR guideline
+   ========================================================= */
+async function renderGuidelinesCsv(csvUrl, mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
   try{
-    const txt = await fetchCsv(csvUrl);
-    const lines = txt.split(/\r?\n/).filter(l => l.trim());
+    const txt = await fetchCsvText(csvUrl);
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
     if(lines.length < 2){
-      mount.innerHTML = `<div class="empty-state">${esc(csvUrl)} is empty</div>`;
+      mount.innerHTML = `<div class="bubble-soft"><div class="bubble-sub">${esc(csvUrl)} is empty.</div></div>`;
       return;
     }
 
-    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+    const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
     const idx = {
-      section: header.indexOf("section"),
-      title: header.indexOf("title"),
-      body: header.indexOf("body"),
-      details: header.indexOf("details"),
+      cat: header.indexOf("category") >= 0 ? header.indexOf("category") : header.indexOf("section"),
+      item: header.indexOf("item") >= 0 ? header.indexOf("item") : (header.indexOf("text") >=0 ? header.indexOf("text") : header.indexOf("guideline")),
+      detail: header.indexOf("details")
     };
 
-    const rows = lines.slice(1).map(l => {
-      const r = parseCsvLine(l);
-      const section = (idx.section >= 0 ? r[idx.section] : "General") || "General";
-      const title = (idx.title >= 0 ? r[idx.title] : r[0]) || "";
-      const body  = (idx.body >= 0 ? r[idx.body] : (idx.details >= 0 ? r[idx.details] : r[1])) || "";
-      return { section: section.trim() || "General", title: title.trim(), body: body.trim() };
-    }).filter(x => x.title);
+    const rows = lines.slice(1).map(l=>{
+      const r=parseCsvLine(l);
+      const cat = (idx.cat>=0 ? r[idx.cat] : "General") || "General";
+      const item = (idx.item>=0 ? r[idx.item] : r[0]) || "";
+      const detail = (idx.detail>=0 ? r[idx.detail] : "") || "";
+      return { cat: cat.trim() || "General", item: item.trim(), detail: detail.trim() };
+    }).filter(x=>x.item);
 
-    // group by section
     const by = new Map();
-    rows.forEach(x => {
-      if(!by.has(x.section)) by.set(x.section, []);
-      by.get(x.section).push(x);
+    rows.forEach(x=>{
+      if(!by.has(x.cat)) by.set(x.cat, []);
+      by.get(x.cat).push(x);
     });
 
-    let html = "";
-    for(const [sec, items] of by.entries()){
-      html += `
-        <div class="guideline-card" style="margin-bottom:12px;">
-          <div class="guideline-card-header">
-            <div class="guideline-card-icon">📌</div>
-            <div class="guideline-card-title">${esc(sec)}</div>
-            <div class="guideline-card-tag">${esc(csvUrl)}</div>
-          </div>
-          <ul class="guideline-list">
-            ${items.map(it => `
-              <li class="guideline-item">
-                <span class="guideline-item-bullet">•</span>
-                <span class="guideline-item-text">
-                  <strong>${esc(it.title)}</strong>${it.body ? ` — ${esc(it.body)}` : ""}
-                </span>
-              </li>
-            `).join("")}
-          </ul>
-        </div>
-      `;
-    }
-
-    mount.innerHTML = html || `<div class="empty-state">No rows found in ${esc(csvUrl)}</div>`;
+    mount.innerHTML = [...by.entries()].map(([cat, items])=>`
+      <div class="guideline-bubble">
+        <h3>${esc(cat)}</h3>
+        <ul>
+          ${items.map(it=>`
+            <li>${esc(it.item)}${it.detail ? ` <span style="color:var(--muted)">— ${esc(it.detail)}</span>` : ""}</li>
+          `).join("")}
+        </ul>
+      </div>
+    `).join("");
   }catch(e){
-    mount.innerHTML = `<div class="empty-state">Missing/invalid CSV: ${esc(csvUrl)}</div>`;
+    mount.innerHTML = `<div class="bubble-soft"><div class="bubble-sub">Missing/invalid ${esc(csvUrl)}</div></div>`;
   }
 }
 
-/**********************************************************
- * PERENNIALS (perennials.csv) — card grid + search
- * Expected columns (flexible): name,common_name,light,water,notes,image
- **********************************************************/
-async function renderPerennials(){
-  const grid = $("hfPerennialGrid");
-  if(!grid) return;
+/* =========================================================
+   PLANTS CSV -> bubble cards (HF uses perennials.csv, HPA uses plants.csv)
+   Expected columns (flexible):
+   name, common_name, light, water, notes
+   ========================================================= */
+async function renderPlantsCsv(csvUrl, mountId, titleIcon){
+  const mount = document.getElementById(mountId);
+  if(!mount) return;
 
   try{
-    const txt = await fetchCsv("perennials.csv");
-    const lines = txt.split(/\r?\n/).filter(l => l.trim());
+    const txt = await fetchCsvText(csvUrl);
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
     if(lines.length < 2){
-      grid.innerHTML = `<div class="empty-state">perennials.csv is empty</div>`;
+      mount.innerHTML = `<div class="bubble-soft"><div class="bubble-sub">${esc(csvUrl)} is empty.</div></div>`;
       return;
     }
 
-    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+    const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
     const idx = {
       name: header.indexOf("name"),
       common: header.indexOf("common_name"),
       light: header.indexOf("light"),
       water: header.indexOf("water"),
-      notes: header.indexOf("notes"),
-      image: header.indexOf("image"),
+      notes: header.indexOf("notes")
     };
 
-    const rows = lines.slice(1).map(l => {
-      const r = parseCsvLine(l);
+    const rows = lines.slice(1).map(l=>{
+      const r=parseCsvLine(l);
       return {
         name: (idx.name>=0 ? r[idx.name] : r[0]) || "",
         common: (idx.common>=0 ? r[idx.common] : "") || "",
         light: (idx.light>=0 ? r[idx.light] : "") || "",
         water: (idx.water>=0 ? r[idx.water] : "") || "",
-        notes: (idx.notes>=0 ? r[idx.notes] : "") || "",
-        image: (idx.image>=0 ? r[idx.image] : "") || ""
+        notes: (idx.notes>=0 ? r[idx.notes] : "") || ""
       };
     }).filter(x => (x.name || x.common).trim());
 
-    const search = $("hfPerennialSearch");
-    const render = () => {
-      const q = (search?.value || "").toLowerCase().trim();
-      const filtered = !q ? rows : rows.filter(p => {
-        const blob = `${p.name} ${p.common} ${p.light} ${p.water} ${p.notes}`.toLowerCase();
-        return blob.includes(q);
-      });
-
-      grid.innerHTML = filtered.map(p => `
-        <div class="pc-card">
-          <div class="pc-card-title">${esc(p.common || p.name)}</div>
-          ${p.common ? `<div class="pc-card-subtitle"><em>${esc(p.name)}</em></div>` : ""}
-          <div class="pc-card-subtitle">Light: ${esc(p.light || "—")}</div>
-          <div class="pc-card-subtitle">Water: ${esc(p.water || "—")}</div>
-          ${p.notes ? `<div class="pc-card-subtitle">${esc(p.notes)}</div>` : ""}
-        </div>
-      `).join("") || `<div class="empty-state">No matches</div>`;
-    };
-
-    search?.addEventListener("input", render);
-    render();
-  }catch{
-    grid.innerHTML = `<div class="empty-state">Missing perennials.csv</div>`;
-  }
-}
-
-/**********************************************************
- * SKU CATALOGUE (SKU_Name_2026.csv) — grid + search + filters
- * Expected columns (flexible): sku,name,category,year,size,notes
- **********************************************************/
-async function renderSkuCatalogue(){
-  const grid = $("skuGrid");
-  const count = $("skuCount");
-  const yearSel = $("skuYearFilter");
-  const catSel = $("skuCategoryFilter");
-  const search = $("skuSearch");
-  if(!grid) return;
-
-  try{
-    const txt = await fetchCsv("SKU_Name_2026.csv");
-    const lines = txt.split(/\r?\n/).filter(l => l.trim());
-    if(lines.length < 2){
-      grid.innerHTML = `<div class="empty-state">SKU_Name_2026.csv is empty</div>`;
-      return;
-    }
-
-    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
-    const idx = {
-      sku: header.indexOf("sku"),
-      name: header.indexOf("name"),
-      category: header.indexOf("category"),
-      year: header.indexOf("year"),
-      size: header.indexOf("size"),
-      notes: header.indexOf("notes"),
-    };
-
-    const rows = lines.slice(1).map(l => {
-      const r = parseCsvLine(l);
-      return {
-        sku: (idx.sku>=0 ? r[idx.sku] : r[0]) || "",
-        name: (idx.name>=0 ? r[idx.name] : r[1]) || "",
-        category: (idx.category>=0 ? r[idx.category] : "") || "",
-        year: (idx.year>=0 ? r[idx.year] : "2026") || "2026",
-        size: (idx.size>=0 ? r[idx.size] : "") || "",
-        notes: (idx.notes>=0 ? r[idx.notes] : "") || "",
-      };
-    }).filter(x => (x.sku || x.name).trim());
-
-    // Populate categories once
-    if(catSel && catSel.options.length <= 1){
-      const cats = [...new Set(rows.map(r => r.category).filter(Boolean))].sort();
-      cats.forEach(c => {
-        const o = document.createElement("option");
-        o.value = c;
-        o.textContent = c;
-        catSel.appendChild(o);
-      });
-    }
-
-    const render = () => {
-      const q = (search?.value || "").toLowerCase().trim();
-      const y = (yearSel?.value || "").trim();
-      const c = (catSel?.value || "").trim();
-
-      const filtered = rows.filter(r => {
-        if(y && String(r.year).trim() !== y) return false;
-        if(c && String(r.category).trim() !== c) return false;
-        if(q){
-          const blob = `${r.sku} ${r.name} ${r.category} ${r.size} ${r.notes}`.toLowerCase();
-          if(!blob.includes(q)) return false;
-        }
-        return true;
-      });
-
-      if(count) count.textContent = String(filtered.length);
-
-      grid.innerHTML = filtered.map(r => `
-        <div class="sku-card">
-          <div class="sku-year-pill">${esc(r.year)}</div>
-          <div class="sku-name">${esc(r.name || "SKU")}</div>
-          <div class="sku-meta">
-            <div><strong>SKU:</strong> ${esc(r.sku)}</div>
-            ${r.category ? `<div><strong>Category:</strong> ${esc(r.category)}</div>` : ""}
-            ${r.size ? `<div><strong>Size:</strong> ${esc(r.size)}</div>` : ""}
-            ${r.notes ? `<div>${esc(r.notes)}</div>` : ""}
-          </div>
-        </div>
-      `).join("") || `<div class="empty-state">No results</div>`;
-    };
-
-    search?.addEventListener("input", render);
-    yearSel?.addEventListener("change", render);
-    catSel?.addEventListener("change", render);
-    render();
-  }catch{
-    grid.innerHTML = `<div class="empty-state">Missing SKU_Name_2026.csv</div>`;
-  }
-}
-
-/**********************************************************
- * ORDER BREAKDOWN (OrderWeeks.csv + OrderBreakdown.csv)
- * Expected columns (flexible): week,grade,item,qty,notes
- **********************************************************/
-async function renderOrderBreakdown(){
-  const weekSel = $("orderWeekSelect");
-  const filter = $("orderFilter");
-  const weekBox = $("obWeekBox");
-  const gradesBox = $("obGradesBox");
-  const grid = $("obGrid");
-  if(!weekSel || !grid) return;
-
-  try{
-    // weeks
-    const weeksTxt = await fetchCsv("OrderWeeks.csv");
-    const wl = weeksTxt.split(/\r?\n/).filter(l => l.trim());
-    const weekRows = wl.slice(1).map(l => parseCsvLine(l)).filter(r => r.length && r[0]);
-    const weeks = weekRows.map(r => r[0]).filter(Boolean);
-
-    weekSel.innerHTML = weeks.map(w => `<option value="${esc(w)}">${esc(w)}</option>`).join("");
-
-    // breakdown
-    const bdTxt = await fetchCsv("OrderBreakdown.csv");
-    const bl = bdTxt.split(/\r?\n/).filter(l => l.trim());
-    const header = parseCsvLine(bl[0]).map(h => h.trim().toLowerCase());
-
-    const idx = {
-      week: header.indexOf("week"),
-      grade: header.indexOf("grade"),
-      item: header.indexOf("item"),
-      qty: header.indexOf("qty"),
-      notes: header.indexOf("notes"),
-    };
-
-    const rows = bl.slice(1).map(l => {
-      const r = parseCsvLine(l);
-      return {
-        week: (idx.week>=0 ? r[idx.week] : r[0]) || "",
-        grade: (idx.grade>=0 ? r[idx.grade] : r[1]) || "",
-        item: (idx.item>=0 ? r[idx.item] : r[2]) || "",
-        qty: (idx.qty>=0 ? r[idx.qty] : r[3]) || "",
-        notes: (idx.notes>=0 ? r[idx.notes] : "") || "",
-      };
-    }).filter(x => x.week.trim());
-
-    const render = () => {
-      const w = weekSel.value;
-      const q = (filter?.value || "").toLowerCase().trim();
-
-      const filtered = rows.filter(r => {
-        if(String(r.week).trim() !== String(w).trim()) return false;
-        if(q){
-          const blob = `${r.grade} ${r.item} ${r.qty} ${r.notes}`.toLowerCase();
-          if(!blob.includes(q)) return false;
-        }
-        return true;
-      });
-
-      if(weekBox) weekBox.textContent = `Week: ${w || "—"}`;
-      const grades = [...new Set(filtered.map(r => r.grade).filter(Boolean))];
-      if(gradesBox) gradesBox.textContent = `Grades: ${grades.length ? grades.join(", ") : "—"}`;
-
-      const by = new Map();
-      filtered.forEach(r => {
-        const g = r.grade || "Other";
-        if(!by.has(g)) by.set(g, []);
-        by.get(g).push(r);
-      });
-
-      grid.innerHTML = [...by.entries()].map(([g, items]) => `
-        <div class="ob-box">
-          <div class="ob-box-title">${esc(g)}</div>
-          <div class="ob-box-body">${
-            items.map(it => `${esc(it.item)}${it.qty ? " — " + esc(it.qty) : ""}${it.notes ? " (" + esc(it.notes) + ")" : ""}`).join("\n")
-          }</div>
-        </div>
-      `).join("") || `<div class="empty-state">No breakdown rows for this week</div>`;
-    };
-
-    // default
-    if(weeks.length) weekSel.value = weeks[0];
-
-    weekSel.addEventListener("change", render);
-    filter?.addEventListener("input", render);
-
-    render();
-  }catch{
-    grid.innerHTML = `<div class="empty-state">Missing OrderWeeks.csv or OrderBreakdown.csv</div>`;
-  }
-}
-
-/**********************************************************
- * TRAINING CENTER (XP + badges + quiz) — localStorage
- **********************************************************/
-(function trainingInit(){
-  const pill = $("trainingPill");
-  if(!pill) return;
-
-  const KEY = "trainingProgress_v1";
-  const defaultState = { xp:0, level:1, badges:["🏁 Starter"], quizzes:{ basics:0 } };
-
-  function load(){
-    try{
-      const raw = localStorage.getItem(KEY);
-      if(raw) return { ...defaultState, ...JSON.parse(raw) };
-    }catch{}
-    return { ...defaultState };
-  }
-  function save(st){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch{} }
-  function recalc(st){
-    st.level = 1 + Math.floor(st.xp / 100);
-    if(st.level < 1) st.level = 1;
-    return st;
-  }
-  function render(st){
-    pill.textContent = `Level: ${st.level} • XP: ${st.xp}`;
-    const badgeRow = $("badgeRow");
-    if(badgeRow) badgeRow.innerHTML = st.badges.map(b => `<span class="track-skill-tag">${esc(b)}</span>`).join("");
-  }
-
-  let st = recalc(load());
-  render(st);
-
-  const quizList = $("quizList");
-  const quizContainer = $("quizContainer");
-
-  function startBasicsQuiz(){
-    if(!quizContainer) return;
-    quizContainer.innerHTML = `
-      <div class="quiz-question">
-        <div class="quiz-q-text">Which is most important to check first on a store visit?</div>
-        <div class="quiz-options">
-          <label class="quiz-option-label"><input type="radio" name="q1" value="a"/> Pretty signage</label>
-          <label class="quiz-option-label"><input type="radio" name="q1" value="b"/> Emergency situations (watering/empty endcaps)</label>
-          <label class="quiz-option-label"><input type="radio" name="q1" value="c"/> Rearranging tables</label>
-        </div>
+    mount.innerHTML = rows.map(p=>`
+      <div class="bubble-soft" style="cursor:pointer" data-plant="${esc(p.common||p.name)}">
+        <div class="bubble-title">${titleIcon || "🌿"} ${esc(p.common || p.name)}</div>
+        ${p.common ? `<div class="bubble-sub"><em>${esc(p.name)}</em></div>` : ""}
+        ${p.light ? `<div class="bubble-sub"><strong>Light:</strong> ${esc(p.light)}</div>` : ""}
+        ${p.water ? `<div class="bubble-sub"><strong>Water:</strong> ${esc(p.water)}</div>` : ""}
+        ${p.notes ? `<div class="bubble-sub" style="margin-top:6px;">${esc(p.notes)}</div>` : ""}
       </div>
-      <button class="quiz-submit-btn" type="button" id="quizSubmit">Submit</button>
-      <div class="quiz-result" id="quizResult"></div>
-    `;
+    `).join("");
 
-    $("quizSubmit").onclick = () => {
-      const ans = document.querySelector('input[name="q1"]:checked')?.value;
-      const res = $("quizResult");
-      if(!ans){
-        res.textContent = "Choose an answer.";
-        res.className = "quiz-result fail";
-        return;
-      }
-      if(ans === "b"){
-        res.textContent = "Pass! +25 XP";
-        res.className = "quiz-result pass";
-        st.xp += 25;
-        if(!st.badges.includes("✅ Basics Pass")) st.badges.push("✅ Basics Pass");
-        st.quizzes.basics = 100;
-        recalc(st);
-        save(st);
-        render(st);
-      } else {
-        res.textContent = "Not quite — try again.";
-        res.className = "quiz-result fail";
-      }
-    };
+    mount.querySelectorAll("[data-plant]").forEach(card=>{
+      card.onclick = ()=>{
+        const plantName = card.getAttribute("data-plant");
+        const p = rows.find(x => (x.common||x.name) === plantName) || rows[0];
+        openDetailModal(
+          `Plant: ${p.common || p.name}`,
+          `<div class="bubble-soft">
+             <div class="bubble-sub"><strong>Botanical:</strong> ${esc(p.name || "—")}</div>
+             <div class="bubble-sub" style="margin-top:8px;"><strong>Light:</strong> ${esc(p.light || "—")}</div>
+             <div class="bubble-sub" style="margin-top:4px;"><strong>Water:</strong> ${esc(p.water || "—")}</div>
+             ${p.notes ? `<div class="bubble-sub" style="margin-top:10px;"><strong>Notes:</strong><br>${esc(p.notes)}</div>` : ""}
+           </div>`
+        );
+      };
+    });
+
+  }catch(e){
+    mount.innerHTML = `<div class="bubble-soft"><div class="bubble-sub">Missing ${esc(csvUrl)} (add it to repo root)</div></div>`;
   }
+}
 
-  quizList?.addEventListener("click", (e) => {
-    const btn = e.target.closest('[data-quiz="basics"]');
-    if(btn) startBasicsQuiz();
-  });
-})();
+/* =========================================================
+   TRAINING CENTER (expanded chalkboard content)
+   ========================================================= */
+(function enhanceTraining(){
+  const view = document.getElementById("view-training");
+  if(!view) return;
 
-/**********************************************************
- * Auto-load CSV content on page navigation
- **********************************************************/
-(function autoLoadOnNav(){
-  document.querySelectorAll(".nav-link").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const page = btn.getAttribute("data-page");
+  // Expand training UI with XP + badges + quests
+  const panel = document.createElement("div");
+  panel.className = "bubble-soft";
+  panel.style.marginTop = "14px";
+  panel.innerHTML = `
+    <div class="bubble-title">🎓 Student Progress</div>
+    <div class="bubble-sub" id="tcProgressLine">Level 1 • XP 0 • Badge: 🏁 Starter</div>
+    <div style="margin-top:10px;">
+      <div class="bubble-sub" style="margin-bottom:6px;">XP Progress</div>
+      <div style="height:10px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;">
+        <div id="tcXpBar" style="height:100%;width:10%;background:linear-gradient(90deg,#facc15,#38bdf8);"></div>
+      </div>
+    </div>
+  `;
+  view.appendChild(panel);
 
-      if(page === "hf"){
-        await renderGuidelines("hf_guidelines.csv", "hfGuidelinesContent");
-        await renderPerennials();
-      }
+  const quizBox = document.createElement("div");
+  quizBox.className = "bubble-soft";
+  quizBox.style.marginTop = "12px";
+  quizBox.innerHTML = `
+    <div class="bubble-title">🧠 Quick Quiz (Chalk Talk)</div>
+    <div class="bubble-sub">Answer correctly to earn XP and unlock badges.</div>
+    <div style="margin-top:10px;">
+      <div class="bubble-sub"><strong>Question:</strong> What should be prioritized first on a store visit?</div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <button class="btn" type="button" data-q="wrong">Rearranging tables</button>
+        <button class="btn primary" type="button" data-q="right">Emergency situations (watering / empty endcaps)</button>
+        <button class="btn" type="button" data-q="wrong">Only taking pictures</button>
+      </div>
+      <div id="tcQuizResult" style="margin-top:10px;font-weight:800;"></div>
+    </div>
+  `;
+  view.appendChild(quizBox);
 
-      if(page === "hpa"){
-        await renderGuidelines("hpa_guidelines.csv", "hpaGuidelinesContent");
-        await renderSkuCatalogue();
-        await renderOrderBreakdown();
+  const KEY = "tc_progress_v1";
+  const load = ()=>{
+    try{ return JSON.parse(localStorage.getItem(KEY)) || { xp:0, level:1, badge:"🏁 Starter" }; }catch{ return { xp:0, level:1, badge:"🏁 Starter" }; }
+  };
+  const save = (st)=>{ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch{} };
+
+  const render = ()=>{
+    const st = load();
+    const level = 1 + Math.floor(st.xp / 100);
+    st.level = level;
+
+    // simple badge unlock
+    if(st.xp >= 25) st.badge = "✅ Basics Pass";
+    if(st.xp >= 100) st.badge = "🏅 Level Up";
+    save(st);
+
+    const pct = Math.min(100, (st.xp % 100));
+    document.getElementById("tcProgressLine").textContent = `Level ${st.level} • XP ${st.xp} • Badge: ${st.badge}`;
+    document.getElementById("tcXpBar").style.width = `${Math.max(8,pct)}%`;
+  };
+
+  render();
+
+  quizBox.querySelectorAll("[data-q]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const st = load();
+      const res = document.getElementById("tcQuizResult");
+
+      if(btn.getAttribute("data-q") === "right"){
+        st.xp += 25;
+        save(st);
+        res.style.color = "#bbf7d0";
+        res.textContent = "Correct! +25 XP 🎉";
+        render();
+      }else{
+        res.style.color = "#fecaca";
+        res.textContent = "Not quite — try again.";
       }
     });
   });
 })();
 
-/**********************************************************
- * Also load on HUB navigation (hub cards)
- **********************************************************/
-(function autoLoadOnHubCards(){
-  document.addEventListener("click", async (e) => {
-    const card = e.target.closest(".hub-card[data-open]");
-    if(!card) return;
-    const dest = card.getAttribute("data-open");
-    if(dest === "view-hf"){
-      await renderGuidelines("hf_guidelines.csv", "hfGuidelinesContent");
-      await renderPerennials();
-    }
-    if(dest === "view-hpa"){
-      await renderGuidelines("hpa_guidelines.csv", "hpaGuidelinesContent");
-      await renderSkuCatalogue();
-      await renderOrderBreakdown();
-    }
+/* =========================================================
+   MAPDASH OVERRIDE: Firestore live + Watered daily reset + Issue flag on pins
+   This REPLACES the simplified MapDash from Segment 3.
+   ========================================================= */
+window.MapDash = (() => {
+  const STORES_CSV_URL = "stores.csv";
+  const STORE_LOCAL_KEY = "store_state_live_v4";
+
+  const DEFAULT_STORE = () => ({
+    shippingGrade: "",
+    watered: false,
+    wateredOn: null,        // YYYY-MM-DD
+    negatives: false,
+    issues: [],
+    updatedAt: null,
+    updatedBy: null
   });
+
+  let stores = [];
+  let state = {};
+  let map = null;
+  let markers = new Map();
+  let selectedId = null;
+  let initialized = false;
+  let liveEnabled = false;
+  let unsubscribe = null;
+
+  function loadLocal(){
+    try{
+      const raw = localStorage.getItem(STORE_LOCAL_KEY);
+      if(raw) state = JSON.parse(raw) || {};
+    }catch{}
+  }
+  function saveLocal(){
+    try{ localStorage.setItem(STORE_LOCAL_KEY, JSON.stringify(state)); }catch{}
+  }
+  function ensureDefaults(id){
+    if(!state[id]) state[id] = DEFAULT_STORE();
+
+    // Daily reset for watered
+    if(state[id].wateredOn !== todayKey()){
+      state[id].watered = false;
+    }
+    if(!Array.isArray(state[id].issues)) state[id].issues = [];
+  }
+
+  async function loadStores(){
+    try{
+      const txt = await fetchCsvText(STORES_CSV_URL);
+      const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+      const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
+      const idx = {
+        id: header.indexOf("store_id"),
+        name: header.indexOf("store_name"),
+        lat: header.indexOf("lat"),
+        lon: header.indexOf("lon"),
+        city: header.indexOf("city"),
+        state: header.indexOf("state")
+      };
+      stores = lines.slice(1).map(l=>{
+        const r = parseCsvLine(l);
+        return {
+          id: (r[idx.id] || "").trim(),
+          name: (r[idx.name] || "").trim(),
+          lat: parseFloat((r[idx.lat] || "").trim()),
+          lon: parseFloat((r[idx.lon] || "").trim()),
+          city: idx.city>=0 ? (r[idx.city]||"").trim() : "",
+          state: idx.state>=0 ? (r[idx.state]||"").trim() : ""
+        };
+      }).filter(s => s.id && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
+    }catch{
+      stores = [
+        { id:"1950", name:"South Loop", lat:41.856, lon:-87.624, city:"Chicago", state:"IL" },
+        { id:"1987", name:"Glenview", lat:42.079, lon:-87.822, city:"Glenview", state:"IL" }
+      ];
+    }
+  }
+
+  function normalizeShip(raw){
+    const s = (raw || "").toString().trim().toUpperCase();
+    if(!s) return { key:"unknown", label:"—" };
+    if(s.includes("SKIP")) return { key:"skip", label:raw };
+    if(s.includes("A/B") || s === "A/B") return { key:"ab", label:raw };
+    if(s.includes("ALL")) return { key:"all", label:raw };
+    return { key:"limited", label:raw };
+  }
+
+  function computeStatus(st){
+    // very lightweight status: issues -> warn/bad; otherwise ok
+    const issues = (st.issues || []).length;
+    if(issues > 0) return "warn";
+    return "ok";
+  }
+
+  function pinHtml(id){
+    ensureDefaults(id);
+    const st = state[id];
+    const status = computeStatus(st);
+    const ship = normalizeShip(st.shippingGrade);
+
+    const stClass = status==="ok"?"pin-ok":status==="warn"?"pin-warn":"pin-unknown";
+    const shipClass =
+      ship.key==="all"?"ship-all":
+      ship.key==="ab"?"ship-ab":
+      ship.key==="skip"?"ship-skip":"ship-unknown";
+
+    const hasIssues = (st.issues||[]).length > 0;
+    return `<div class="pin ${stClass} ${shipClass} ${hasIssues ? "pin-flag" : ""}"></div>`;
+  }
+
+  function initMap(){
+    if(map) return;
+    map = L.map("storeMap", { zoomControl:true, preferCanvas:true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
+  }
+
+  function renderMarkers(){
+    markers.forEach(m=>{ try{ map.removeLayer(m); }catch{} });
+    markers.clear();
+
+    const bounds=[];
+    stores.forEach(s=>{
+      ensureDefaults(s.id);
+      const icon = L.divIcon({ className:"", html: pinHtml(s.id), iconSize:[18,18], iconAnchor:[9,9] });
+      const m = L.marker([s.lat,s.lon], { icon }).addTo(map);
+      m.on("click",()=>selectStore(s.id));
+      markers.set(s.id,m);
+      bounds.push([s.lat,s.lon]);
+    });
+    if(bounds.length) map.fitBounds(bounds,{padding:[20,20]});
+  }
+
+  function updatePanel(){
+    if(!selectedId) return;
+    const s = stores.find(x=>x.id===selectedId);
+    const st = state[selectedId];
+    const ship = normalizeShip(st.shippingGrade);
+
+    $("spTitle").textContent = s ? `${s.name} (${s.id})` : `Store ${selectedId}`;
+    $("spSub").textContent = s ? `${s.city}${s.state ? ", "+s.state : ""}` : "—";
+    $("spShip").textContent = ship.label || "—";
+    $("spWatered").textContent = st.watered ? "✅ Yes (Today)" : "❌ No";
+    $("spNeg").textContent = st.negatives ? "⚠️ Yes" : "✅ No";
+    $("spIssues").textContent = (st.issues||[]).length ? `🚩 ${st.issues.length}` : "✅ None";
+    $("spUpdated").textContent = st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—";
+  }
+
+  function selectStore(id){
+    selectedId = id;
+    window.SELECTED_STORE_ID = id;
+    ensureDefaults(id);
+    updatePanel();
+
+    // Enable watered button only when a store is selected
+    $("btnWatered").disabled = false;
+  }
+
+  async function writeStore(id){
+    // write to Firestore if available else local only
+    if(window.db && window.fb){
+      const { doc, setDoc } = window.fb;
+      await setDoc(doc(window.db, "stores", id), state[id], { merge:true });
+    }
+  }
+
+  async function markWatered(){
+    if(!selectedId) return;
+    ensureDefaults(selectedId);
+    state[selectedId].watered = true;
+    state[selectedId].wateredOn = todayKey();
+    state[selectedId].updatedAt = Date.now();
+    state[selectedId].updatedBy = (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown");
+
+    updatePanel();
+    renderMarkers();
+    saveLocal();
+
+    try{ await writeStore(selectedId); }catch(e){ console.warn("Watered write failed:", e); }
+  }
+
+  async function addIssue(){
+    if(!selectedId) return;
+    ensureDefaults(selectedId);
+
+    const msg = prompt("Describe the issue:");
+    if(!msg) return;
+
+    state[selectedId].issues.push(msg.trim());
+    state[selectedId].updatedAt = Date.now();
+    state[selectedId].updatedBy = (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown");
+
+    updatePanel();
+    renderMarkers();
+    saveLocal();
+
+    try{ await writeStore(selectedId); }catch(e){ console.warn("Issue write failed:", e); }
+  }
+
+  function zoomToStore(){
+    if(!selectedId) return;
+    const marker = markers.get(selectedId);
+    if(marker && map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 12), { animate:true });
+  }
+
+  function wireMapUI(){
+    // dropdown toggles
+    document.querySelectorAll("#view-map [data-dd-toggle]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const dd = btn.closest(".dd");
+        dd.classList.toggle("open");
+      };
+    });
+
+    // filter clicks
+    document.querySelectorAll("#view-map [data-map-filter]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const filter = btn.getAttribute("data-map-filter");
+        applyFilter(filter);
+      };
+    });
+
+    // action buttons
+    document.querySelector('[data-map-action="add:issue"]')?.addEventListener("click", addIssue);
+    document.querySelector('[data-map-action="zoom"]')?.addEventListener("click", zoomToStore);
+    $("btnWatered")?.addEventListener("click", markWatered);
+
+    // store dropdown click delegation
+    $("storeListMenu")?.addEventListener("click", (e)=>{
+      const b = e.target.closest("[data-store-id]");
+      if(!b) return;
+      selectStore(b.getAttribute("data-store-id"));
+      const m = markers.get(b.getAttribute("data-store-id"));
+      if(m && map) map.setView(m.getLatLng(), Math.max(map.getZoom(), 11), { animate:true });
+    });
+  }
+
+  function renderStoreDropdown(){
+    const menu = $("storeListMenu");
+    if(!menu) return;
+    menu.innerHTML = stores.map(s=>`
+      <button class="dd-item" type="button" data-store-id="${esc(s.id)}">
+        <span>${esc(s.id)} — ${esc(s.name)}</span>
+        <span class="dd-sub">${esc(s.city || "")}</span>
+      </button>
+    `).join("");
+  }
+
+  function applyFilter(filter){
+    // minimal filter: issues:true or status:bad (same result here)
+    stores.forEach(s=>{
+      ensureDefaults(s.id);
+      const st = state[s.id];
+      const hasIssues = (st.issues||[]).length > 0;
+      const marker = markers.get(s.id);
+      if(!marker || !map) return;
+
+      let show = true;
+      if(filter === "issues:true") show = hasIssues;
+      if(filter === "status:bad") show = hasIssues;
+
+      if(show){
+        if(!map.hasLayer(marker)) marker.addTo(map);
+      }else{
+        if(map.hasLayer(marker)) map.removeFrom(map);
+        else map.removeLayer(marker);
+      }
+    });
+  }
+
+  function startFirestoreLive(){
+    if(!window.db || !window.fb) return;
+
+    const { collection, onSnapshot } = window.fb;
+    if(unsubscribe){ try{ unsubscribe(); }catch{} }
+    unsubscribe = onSnapshot(collection(window.db, "stores"), snap=>{
+      const next = {};
+      snap.forEach(d=> next[d.id] = d.data());
+      state = next;
+
+      // daily reset enforcement on every tick
+      stores.forEach(s=>ensureDefaults(s.id));
+
+      liveEnabled = true;
+      $("syncPill").textContent = "Sync: Live";
+      renderMarkers();
+      renderStoreDropdown();
+      if(selectedId) updatePanel();
+    }, err=>{
+      console.warn("[firestore] live listener failed", err);
+      $("syncPill").textContent = "Sync: Local";
+    });
+  }
+
+  async function ensureInit(){
+    if(initialized) return;
+    initialized = true;
+
+    $("syncPill").textContent = "Sync: Connecting…";
+    loadLocal();
+    await loadStores();
+    stores.forEach(s=>ensureDefaults(s.id));
+
+    initMap();
+    renderMarkers();
+    renderStoreDropdown();
+    wireMapUI();
+
+    $("syncPill").textContent = "Sync: Local";
+
+    // Upgrade to live if possible
+    startFirestoreLive();
+  }
+
+  function invalidate(){
+    setTimeout(()=>{ try{ map && map.invalidateSize(); }catch{} }, 80);
+  }
+
+  return { ensureInit, invalidate };
+})();
+
+/* =========================================================
+   HF/HPA Content Initialization (guidelines + plants + pests)
+   Called when user visits HF or HPA
+   ========================================================= */
+async function loadHF(){
+  await renderGuidelinesCsv("hf_guidelines.csv", "hfGuidelines");
+  await renderPlantsCsv("perennials.csv", "hfPlants", "🌼");
+  renderPests("hfPests");
+}
+async function loadHPA(){
+  await renderGuidelinesCsv("hpa_guidelines.csv", "hpaGuidelines");
+  await renderPlantsCsv("plants.csv", "hpaPlants", "🪴");
+  renderPests("hpaPests");
+}
+
+/* =========================================================
+   Tabs: HF/HPA Plants/Pests
+   ========================================================= */
+document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const t = btn.getAttribute("data-hf-tab");
+    $("hfPlants").classList.toggle("hidden", t !== "plants");
+    $("hfPests").classList.toggle("hidden", t !== "pests");
+  });
+});
+document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const t = btn.getAttribute("data-hpa-tab");
+    $("hpaPlants").classList.toggle("hidden", t !== "plants");
+    $("hpaPests").classList.toggle("hidden", t !== "pests");
+  });
+});
+
+/* =========================================================
+   Admin popup wiring
+   ========================================================= */
+$("btnDistrictChecklist")?.addEventListener("click", ()=>{
+  $("districtModal").style.display = "flex";
+});
+
+/* =========================================================
+   Hook: Load page content when navigating
+   Requires SEGMENT 3 nav handlers exist; we add listeners here too.
+   ========================================================= */
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const page = btn.getAttribute("data-page");
+    if(page === "hf") loadHF();
+    if(page === "hpa") loadHPA();
+  });
+});
+</script>
+<script>
+/* =========================================================
+   SESSION-SAFE WEATHER (ask once per session)
+   ========================================================= */
+(function weatherOnce(){
+  const KEY = "weather_permission_v1";
+  const asked = sessionStorage.getItem(KEY);
+
+  window.startWeather = function(){
+    const box = document.getElementById("weatherWidget");
+    if(!box) return;
+
+    if(!navigator.geolocation){
+      box.textContent = "Weather unavailable";
+      return;
+    }
+
+    if(asked === "denied"){
+      box.textContent = "Weather blocked";
+      return;
+    }
+
+    box.textContent = "Weather: Locating…";
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        sessionStorage.setItem(KEY, "granted");
+        const { latitude, longitude } = pos.coords;
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
+          .then(r=>r.json())
+          .then(d=>{
+            const w=d.current_weather;
+            box.textContent = `🌡 ${Math.round(w.temperature)}° • 💨 ${Math.round(w.windspeed)} mph`;
+          })
+          .catch(()=> box.textContent="Weather unavailable");
+      },
+      () => {
+        sessionStorage.setItem(KEY, "denied");
+        box.textContent = "Weather blocked";
+      },
+      { enableHighAccuracy:false, timeout:6000, maximumAge:600000 }
+    );
+  };
+})();
+
+/* =========================================================
+   DROPDOWN POLISH (bubble feel)
+   ========================================================= */
+(function dropdownPolish(){
+  document.addEventListener("click", (e)=>{
+    const dd = e.target.closest(".dd");
+    document.querySelectorAll(".dd").forEach(d=>{
+      if(d !== dd) d.classList.remove("open");
+    });
+  });
+
+  document.querySelectorAll("[data-dd-toggle]").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const dd = btn.closest(".dd");
+      dd.classList.toggle("open");
+    });
+  });
+})();
+
+/* =========================================================
+   NAVIGATION GUARD (prevent duplicate loads)
+   ========================================================= */
+(function navGuard(){
+  let lastPage = null;
+
+  document.querySelectorAll(".nav-link").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const page = btn.getAttribute("data-page");
+      if(page === lastPage) return;
+      lastPage = page;
+
+      if(page === "hf") loadHF();
+      if(page === "hpa") loadHPA();
+      if(page === "map") {
+        MapDash.ensureInit();
+        MapDash.invalidate();
+      }
+    });
+  });
+})();
+
+/* =========================================================
+   FINAL BOOTSTRAP
+   ========================================================= */
+(function finalBoot(){
+  try{
+    CURRENT_USER = JSON.parse(sessionStorage.getItem("hub_user"));
+  }catch{
+    CURRENT_USER = null;
+  }
+
+  if(CURRENT_USER){
+    document.getElementById("globalUserPill").textContent = CURRENT_USER.displayName;
+    document.getElementById("globalTopBar").classList.remove("hidden");
+    showView("view-map");
+    startWeather();
+    MapDash.ensureInit();
+  }else{
+    showView("view-splash");
+  }
 })();
 </script>
 
 </body>
 </html>
-
+``
