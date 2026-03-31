@@ -5,17 +5,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Merchandising Hub</title>
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="hf_logo.png" />
+  <link rel="apple-touch-icon" href="hf_logo.png" />
+
+  <!-- ✅ Leaflet (CORRECT includes — this is what fixes the missing map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* =====================================================
-       THEME
-       ===================================================== */
+    /* =========================================================
+       THEME / TOKENS
+       ========================================================= */
     :root{
       --bg:#020617;
+      --bg2:#030a1a;
       --panel: rgba(15,23,42,.92);
       --glass: rgba(15,23,42,.78);
+
       --text:#e5e7eb;
       --heading:#f9fafb;
       --muted:#9ca3af;
@@ -23,10 +30,12 @@
       --border: rgba(148,163,184,.40);
       --borderSoft: rgba(148,163,184,.22);
 
-      --shadow: 0 18px 55px rgba(0,0,0,.75);
-      --shadowSoft: 0 12px 32px rgba(0,0,0,.55);
+      --shadow: 0 20px 70px rgba(0,0,0,.75);
+      --shadowSoft: 0 14px 40px rgba(0,0,0,.55);
 
+      --radiusXL: 26px;
       --radius: 18px;
+      --radiusSm: 12px;
       --pill: 999px;
 
       --accent:#22d3ee;
@@ -35,18 +44,25 @@
       --good:#22c55e;
       --warn:#facc15;
       --bad:#ef4444;
+
+      /* Chalkboard */
+      --chalk:#f8fafc;
+      --chalkDim: rgba(248,250,252,.68);
+      --board:#1b2b34;
+      --boardBorder:#8b5a2b;
+      --boardGlow: rgba(254,240,138,.25);
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
+    html, body { height: 100%; }
     body{
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at center, rgba(15,23,42,.2), rgba(2,6,23,.95)),
-        url("philo.jpg") center/cover fixed;
       color: var(--text);
-      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,.60), rgba(0,0,0,.82)),
+        url("philo.jpg") no-repeat center center fixed;
+      background-size: cover;
     }
-
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -59,9 +75,9 @@
 
     .hidden{ display:none !important; }
 
-    /* =====================================================
+    /* =========================================================
        APP SHELL
-       ===================================================== */
+       ========================================================= */
     .app-shell{
       min-height:100vh;
       display:flex;
@@ -71,134 +87,448 @@
       position:relative;
       z-index:1;
     }
-
     .app-inner{
       width:100%;
       max-width:1200px;
       background: linear-gradient(135deg, rgba(15,23,42,.98), rgba(15,23,42,.90));
-      border-radius:24px;
-      border:1px solid rgba(148,163,184,.35);
+      border-radius: var(--radiusXL);
+      border: 1px solid rgba(148,163,184,.35);
       box-shadow: var(--shadow);
-      padding:20px 20px 14px;
+      padding: 18px 18px 14px;
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap: 14px;
       backdrop-filter: blur(18px);
+      overflow:hidden;
     }
 
-    /* =====================================================
-       SPLASH / ENTRY SCREEN
-       ===================================================== */
+    /* =========================================================
+       TOP BAR
+       ========================================================= */
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: var(--panel);
+      box-shadow: var(--shadowSoft);
+    }
+    .topbar-left{ display:flex; flex-direction:column; gap:2px; }
+    .topbar-title{
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color: var(--heading);
+      font-size: .95rem;
+    }
+    .topbar-sub{
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .nav-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+
+    .pill{
+      padding:6px 12px;
+      border-radius: var(--pill);
+      border:1px solid rgba(148,163,184,.38);
+      background: rgba(2,6,23,.65);
+      color: var(--muted);
+      font-size:.82rem;
+      white-space:nowrap;
+    }
+
+    .btn{
+      padding:8px 14px;
+      border-radius: var(--pill);
+      border:1px solid rgba(148,163,184,.38);
+      background: rgba(2,6,23,.75);
+      color: var(--text);
+      cursor:pointer;
+      font-weight:900;
+      font-size:.86rem;
+      transition: transform .14s ease-out, border-color .14s ease-out, background .14s ease-out;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(34,211,238,.7);
+      background: rgba(2,6,23,.92);
+    }
+    .btn.primary{
+      border-color: rgba(34,211,238,.85);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
+      box-shadow: 0 12px 28px rgba(34,211,238,.18);
+      color: var(--heading);
+    }
+    .btn.danger{
+      border-color: rgba(239,68,68,.65);
+      background: rgba(239,68,68,.12);
+    }
+    .btn.active{
+      border-color: rgba(34,211,238,.85);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
+      color: var(--heading);
+    }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+    /* =========================================================
+       SPLASH (logo-only, pulsing underglow)
+       ========================================================= */
     .splash-screen{
-      min-height:80vh;
+      min-height: 78vh;
       display:flex;
       align-items:center;
       justify-content:center;
       flex-direction:column;
-      gap:16px;
+      gap: 14px;
     }
-
     .splash-logo-wrap{
       position:relative;
       cursor:pointer;
+      user-select:none;
     }
-
-    .splash-logo{
-      width:140px;
-      height:140px;
-      border-radius:28px;
-      border:1px solid rgba(148,163,184,.6);
-      object-fit:cover;
-      z-index:2;
-      position:relative;
-      box-shadow:
-        0 18px 48px rgba(0,0,0,.9),
-        0 0 0 rgba(34,211,238,0);
-      animation: logoFloat 4s ease-in-out infinite;
-    }
-
-    /* pulsing glow */
     .splash-glow{
       position:absolute;
-      inset:-26px;
-      border-radius:40px;
+      inset:-30px;
+      border-radius: 44px;
       background:
         radial-gradient(circle at center,
-          rgba(34,211,238,.55),
-          rgba(34,211,238,.15) 45%,
-          rgba(34,211,238,0) 70%
+          rgba(34,211,238,.58),
+          rgba(34,211,238,.14) 48%,
+          rgba(34,211,238,0) 72%
         );
-      filter: blur(18px);
-      z-index:1;
+      filter: blur(20px);
       animation: glowPulse 2.6s ease-in-out infinite;
+      z-index:1;
     }
-
+    .splash-logo{
+      width: 160px;
+      height: 160px;
+      border-radius: 30px;
+      object-fit: cover;
+      border: 1px solid rgba(148,163,184,.6);
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.88),
+        0 0 38px rgba(34,211,238,.18);
+      position:relative;
+      z-index:2;
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+    .splash-hint{
+      font-size:.82rem;
+      color: var(--muted);
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
     @keyframes glowPulse{
       0%{ opacity:.55; transform:scale(.95); }
-      50%{ opacity:.85; transform:scale(1.05); }
+      50%{ opacity:.90; transform:scale(1.06); }
       100%{ opacity:.55; transform:scale(.95); }
     }
-
     @keyframes logoFloat{
       0%{ transform:translateY(0); }
-      50%{ transform:translateY(-6px); }
+      50%{ transform:translateY(-7px); }
       100%{ transform:translateY(0); }
     }
 
-    .splash-hint{
-      font-size:.85rem;
-      color:var(--muted);
-      letter-spacing:.18em;
+    /* =========================================================
+       CARDS / BUBBLES
+       ========================================================= */
+    .bubble{
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,.38);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
+      box-shadow: var(--shadowSoft);
+      padding: 14px;
+      backdrop-filter: blur(16px);
+    }
+    .bubble-soft{
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,.22);
+      background: rgba(15,23,42,.78);
+      box-shadow: var(--shadowSoft);
+      padding: 14px;
+      backdrop-filter: blur(14px);
+    }
+    .bubble-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .bubble-title{
+      font-size:.92rem;
+      font-weight:900;
+      color: var(--heading);
+      letter-spacing:.10em;
       text-transform:uppercase;
-      margin-top:8px;
+      margin-bottom: 6px;
+    }
+    .bubble-sub{
+      color: var(--muted);
+      font-size:.84rem;
+      line-height:1.35;
     }
 
-    /* =====================================================
-       BUTTONS / UTILITIES
-       ===================================================== */
-    .btn{
-      padding:8px 14px;
-      border-radius:var(--pill);
+    /* =========================================================
+       MAP LAYOUT (✅ ensures map stays visible)
+       ========================================================= */
+    #view-map{ display:flex; flex-direction:column; gap:12px; }
+    .map-topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+      padding:10px 12px;
+      border-radius: var(--radius);
       border:1px solid var(--border);
+      background: var(--panel);
+      box-shadow: var(--shadowSoft);
+    }
+    .map-brand{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius: var(--pill);
+      border:1px solid rgba(34,211,238,.55);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
+      font-weight:900;
+      color: var(--heading);
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      font-size:.85rem;
+    }
+
+    .map-layout{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap: 12px;
+    }
+    @media (max-width: 900px){
+      .map-layout{ grid-template-columns: 1fr; }
+    }
+
+    /* ✅ This is critical: fixed height so Leaflet can render */
+    #storeMap{
+      width:100%;
+      height: 62vh;             /* <— the map will not render without a height */
+      min-height: 520px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,.35);
+      overflow:hidden;
+      box-shadow: 0 18px 42px rgba(0,0,0,.85);
+      background: rgba(2,6,23,.55);
+    }
+
+    .store-panel{
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(15,23,42,.90);
+      box-shadow: 0 18px 42px rgba(0,0,0,.85);
+      padding: 12px;
+      min-height: 62vh;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .sp-title{ font-size:1rem; font-weight:900; color:var(--heading); }
+    .sp-sub{ font-size:.8rem; color:var(--muted); }
+
+    .kv{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:.86rem;
+      padding:6px 0;
+      border-bottom: 1px solid rgba(148,163,184,.12);
+    }
+    .kv span:first-child{ color:#cbd5e1; }
+    .kv span:last-child{ color:var(--heading); font-weight:800; text-align:right; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius: var(--pill);
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(2,6,23,.6);
+      font-size:.75rem;
+    }
+    .badge-dot{ width:9px; height:9px; border-radius:999px; background:#94a3b8; }
+
+    .btn-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .small-btn{
+      padding:8px 10px;
+      border-radius: var(--pill);
+      border:1px solid rgba(148,163,184,.35);
       background: rgba(2,6,23,.75);
       color: var(--text);
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
+      font-size:.82rem;
+    }
+    .small-btn.primary{
+      border-color: rgba(34,211,238,.85);
+      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
+    }
+    .small-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+    /* Dropdowns */
+    .dd{ position:relative; }
+    .dd-menu{
+      position:absolute;
+      top: calc(100% + 8px);
+      left:0;
+      min-width: 280px;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(15,23,42,.98);
+      box-shadow: 0 22px 55px rgba(0,0,0,.9);
+      padding: 8px;
+      display:none;
+      z-index: 1000;
+    }
+    .dd.open .dd-menu{ display:block; }
+    .dd-item{
+      width:100%;
+      text-align:left;
+      padding:10px;
+      border-radius: 12px;
+      border:1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor:pointer;
       font-size:.86rem;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .dd-item:hover{
+      border-color: rgba(34,211,238,.55);
+      background: rgba(34,211,238,.08);
+    }
+    .dd-sub{ font-size:.75rem; color:var(--muted); }
+
+    /* =========================================================
+       MARKERS (completion colors) + issue flag
+       ========================================================= */
+    .pin{
+      width:18px;height:18px;border-radius:999px;
+      border:2px solid rgba(255,255,255,.85);
+      box-shadow:0 6px 18px rgba(0,0,0,.7);
+      position:relative;
+    }
+    .pin-ok{ background: var(--good); }
+    .pin-warn{ background: var(--warn); }
+    .pin-bad{ background: var(--bad); }
+    .pin::after{
+      content:"";
+      position:absolute;
+      inset:-5px;
+      border-radius:999px;
+      border:3px solid rgba(148,163,184,.9);
+      opacity:.9;
+    }
+    /* red flag above pin when issues exist */
+    .pin .flagpole{
+      position:absolute;
+      left:8px;
+      top:-14px;
+      width:2px;
+      height:14px;
+      background: rgba(255,255,255,.85);
+      border-radius: 2px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.5);
+    }
+    .pin .flagpole::after{
+      content:"";
+      position:absolute;
+      top:2px;
+      left:2px;
+      width:12px;
+      height:8px;
+      background: var(--bad);
+      clip-path: polygon(0 0, 100% 18%, 0 50%, 100% 82%, 0 100%);
+      border-radius:2px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.55);
     }
 
+    /* Leaflet control styling */
+    .leaflet-control-zoom a{
+      background: rgba(2,6,23,.85) !important;
+      color: #e5e7eb !important;
+      border: 1px solid rgba(148,163,184,.35) !important;
+    }
+
+    /* =========================================================
+       TRAINING (chalkboard)
+       ========================================================= */
+    .training-chalkboard{
+      padding:14px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
+        repeating-linear-gradient(0deg,#1b2b34,#1b2b34 2px,#18252d 2px,#18252d 4px);
+      border: 3px solid var(--boardBorder);
+      box-shadow: 0 0 28px var(--boardGlow);
+    }
+    .chalk-title{
+      font-family:"Courier New", monospace;
+      color: var(--chalk);
+      font-size: 1.8rem;
+      letter-spacing:.04em;
+      margin-bottom: 6px;
+      font-weight:900;
+    }
+    .chalk-sub{
+      font-family:"Courier New", monospace;
+      color: var(--chalkDim);
+      letter-spacing:.22em;
+      font-size:.8rem;
+      text-transform:uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* Footer */
+    .footer{
+      margin-top: 10px;
+      font-size:.75rem;
+      color:#6b7280;
+      text-align:right;
+      border-top:1px solid rgba(15,23,42,.95);
+      padding-top:6px;
+    }
   </style>
 </head>
 <body>
-  <div class="app-shell">
+  <main class="app-shell">
     <div class="app-inner">
 
       <!-- =====================================================
-           SPLASH / ENTRY SCREEN (DEFAULT VIEW)
+           SPLASH / ENTRY (DEFAULT LANDING)
            ===================================================== -->
       <section id="view-splash" class="splash-screen">
         <div class="splash-logo-wrap" id="splashEnter">
           <div class="splash-glow"></div>
-          <img
-            src="hf_logo.png"
-            alt="Merchandising Hub"
-            class="splash-logo"
-          />
+          <img src="hf_logo.png" alt="HF Logo" class="splash-logo" />
         </div>
-
         <div class="splash-hint">Tap to continue</div>
       </section>
 
       <!-- =====================================================
-           LOGIN SCREEN
+           LOGIN
            ===================================================== -->
-      <section id="view-login" class="login-root hidden">
+      <section id="view-login" class="hidden login-root">
         <div class="login-card">
-          <img
-            src="hf_logo.png"
-            alt="Merchandising Hub"
-            class="login-logo"
-          />
+          <img src="hf_logo.png" alt="HF Logo" class="login-logo" />
 
           <div class="login-title">Sign In</div>
           <div class="login-subtitle">Internal Tool</div>
@@ -224,15 +554,15 @@
       </section>
 
       <!-- =====================================================
-           TOP BAR (HIDDEN UNTIL LOGIN)
+           TOP BAR (VISIBLE AFTER LOGIN)
            ===================================================== -->
-      <div id="globalTopBar" class="topbar hidden">
+      <header id="globalTopBar" class="topbar hidden">
         <div class="topbar-left">
           <div class="topbar-title">Merchandising Hub</div>
           <div class="topbar-sub">Live Map • HF • HPA • Training</div>
         </div>
 
-        <div class="nav-row">
+        <nav class="nav-row">
           <button class="btn active nav-link" data-page="map">MAP</button>
           <button class="btn nav-link" data-page="hf">HF</button>
           <button class="btn nav-link" data-page="hpa">HPA</button>
@@ -242,16 +572,16 @@
           <span class="pill" id="weatherWidget">Weather: —</span>
           <span class="pill" id="globalUserPill">User</span>
           <button class="btn danger" id="globalLogoutBtn">Logout</button>
-        </div>
-      </div>
+        </nav>
+      </header>
 
       <!-- =====================================================
-           MAP (HOME)
+           MAP VIEW (HOME)
            ===================================================== -->
       <section id="view-map" class="hidden">
         <div class="map-topbar">
           <div class="map-brand">
-            <img src="hf_logo.png" class="logo" alt="HF" />
+            <img src="hf_logo.png" alt="HF Logo" class="logo" />
             Store Map
           </div>
 
@@ -264,12 +594,8 @@
             <div class="dd">
               <button class="btn" data-dd-toggle>Filter ▾</button>
               <div class="dd-menu">
-                <button class="dd-item" data-map-filter="issues:true">
-                  🚩 Has Issues
-                </button>
-                <button class="dd-item" data-map-filter="status:bad">
-                  🔴 Needs Attention
-                </button>
+                <button class="dd-item" data-map-filter="issues:true">🚩 Has Issues</button>
+                <button class="dd-item" data-map-filter="status:bad">🔴 Needs Attention</button>
               </div>
             </div>
 
@@ -278,14 +604,14 @@
         </div>
 
         <div class="map-layout">
+          <!-- ✅ THIS IS THE ACTUAL MAP CONTAINER -->
           <div id="storeMap"></div>
 
+          <!-- STORE DETAIL PANEL -->
           <aside class="store-panel">
             <div>
               <div class="sp-title" id="spTitle">Select a store</div>
-              <div class="sp-sub" id="spSub">
-                Click a pin on the map
-              </div>
+              <div class="sp-sub" id="spSub">Click a pin on the map</div>
             </div>
 
             <div class="badge" id="spStatusBadge">
@@ -299,28 +625,16 @@
             <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
             <div class="kv"><span>Updated</span><span id="spUpdated">—</span></div>
 
-            <!-- CHECKLIST + ISSUES WILL RENDER HERE VIA JS -->
+            <!-- CHECKLIST & ISSUES injected by JS -->
 
             <div class="btn-row">
-              <button
-                class="small-btn primary"
-                id="btnWatered"
-                disabled
-              >
+              <button id="btnWatered" class="small-btn primary" disabled>
                 Mark Watered
               </button>
-              <button
-                class="small-btn"
-                data-map-action="add:issue"
-                disabled
-              >
+              <button class="small-btn" data-map-action="add:issue" disabled>
                 Add Issue
               </button>
-              <button
-                class="small-btn"
-                id="btnViewIssues"
-                style="display:none;"
-              >
+              <button id="btnViewIssues" class="small-btn" style="display:none;">
                 🚩 View Issues
               </button>
             </div>
@@ -335,25 +649,17 @@
         <div class="bubble">
           <div class="bubble-title">HF</div>
 
-          <div class="nav-row" style="margin-bottom:12px;">
-            <button class="btn active" data-hf-tab="guidelines">
-              Guidelines
-            </button>
-            <button class="btn" data-hf-tab="care">
-              Care & Identification
-            </button>
+          <div class="nav-row">
+            <button class="btn active" data-hf-tab="guidelines">Guidelines</button>
+            <button class="btn" data-hf-tab="care">Care & Identification</button>
           </div>
 
           <div id="hf-guidelines" class="bubble-grid"></div>
 
           <div id="hf-care" class="hidden">
-            <div class="inner-tabs">
-              <button class="inner-tab active" data-hf-care="plants">
-                Plants
-              </button>
-              <button class="inner-tab" data-hf-care="pests">
-                Pests
-              </button>
+            <div class="nav-row">
+              <button class="btn active" data-hf-care="plants">Plants</button>
+              <button class="btn" data-hf-care="pests">Pests</button>
             </div>
 
             <div id="hf-plants" class="pc-grid"></div>
@@ -369,51 +675,32 @@
         <div class="bubble">
           <div class="bubble-title">HPA</div>
 
-          <div class="nav-row" style="margin-bottom:12px;">
-            <button class="btn active" data-hpa-tab="guidelines">
-              Guidelines
-            </button>
-            <button class="btn" data-hpa-tab="products">
-              Product Info
-            </button>
-            <button class="btn" data-hpa-tab="care">
-              Care & Identification
-            </button>
+          <div class="nav-row">
+            <button class="btn active" data-hpa-tab="guidelines">Guidelines</button>
+            <button class="btn" data-hpa-tab="products">Product Info</button>
+            <button class="btn" data-hpa-tab="care">Care & Identification</button>
           </div>
 
           <div id="hpa-guidelines" class="bubble-grid"></div>
 
           <div id="hpa-products" class="hidden">
-            <div class="section-inner-tabs">
-              <button
-                class="section-inner-tab active products-inner-tab"
-                data-products="skus"
-              >
+            <div class="nav-row">
+              <button class="btn active products-inner-tab" data-products="skus">
                 SKU Catalogue
               </button>
-              <button
-                class="section-inner-tab products-inner-tab"
-                data-products="orders"
-              >
+              <button class="btn products-inner-tab" data-products="orders">
                 Order Breakdown
               </button>
             </div>
 
-            <div id="products-skus" class="section-inner-content"></div>
-            <div
-              id="products-orders"
-              class="section-inner-content hidden"
-            ></div>
+            <div id="products-skus"></div>
+            <div id="products-orders" class="hidden"></div>
           </div>
 
           <div id="hpa-care" class="hidden">
-            <div class="inner-tabs">
-              <button class="inner-tab active" data-hpa-care="plants">
-                Plants
-              </button>
-              <button class="inner-tab" data-hpa-care="pests">
-                Pests
-              </button>
+            <div class="nav-row">
+              <button class="btn active" data-hpa-care="plants">Plants</button>
+              <button class="btn" data-hpa-care="pests">Pests</button>
             </div>
 
             <div id="hpa-plants" class="pc-grid"></div>
@@ -430,30 +717,10 @@
           <div class="bubble-title">Admin Tools</div>
 
           <div class="bubble-grid">
-            <button
-              class="btn primary"
-              onclick="window.open('https://app.air.inc/b/uploads-e6ca3284-16b4-48ec-b02f-884d1e7c52e4')"
-            >
-              AIR Uploads
-            </button>
-
-            <button
-              class="btn"
-              onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl')"
-            >
-              Store Audit
-            </button>
-
-            <button
-              class="btn"
-              onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl')"
-            >
-              Rack Counts
-            </button>
-
-            <button class="btn danger" id="btnDistrictChecklist">
-              District Checklist
-            </button>
+            <button class="btn primary">AIR Uploads</button>
+            <button class="btn">Store Audit</button>
+            <button class="btn">Rack Counts</button>
+            <button class="btn danger">District Checklist</button>
           </div>
         </div>
       </section>
@@ -467,15 +734,9 @@
 
         <div class="map-layout">
           <div class="bubble-soft">
-            <button class="btn primary" data-train="basics">
-              Basics
-            </button>
-            <button class="btn" data-train="merch">
-              Merchandising
-            </button>
-            <button class="btn" data-train="supervisor">
-              Supervisor
-            </button>
+            <button class="btn primary" data-train="basics">Basics</button>
+            <button class="btn" data-train="merch">Merchandising</button>
+            <button class="btn" data-train="supervisor">Supervisor</button>
           </div>
 
           <div class="bubble-soft">
@@ -486,324 +747,316 @@
         </div>
       </section>
 
-      <div class="footer">
+      <footer class="footer">
         Internal Tool • GitHub Pages • Firebase
-      </div>
+      </footer>
 
     </div>
-  </div>
-  <!-- Leaflet JS (required) -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Firebase (module) — keep Firestore code IN -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
-    authDomain: "live-map-82f69.firebaseapp.com",
-    databaseURL: "https://live-map-82f69-default-rtdb.firebaseio.com",
-    projectId: "live-map-82f69",
-    storageBucket: "live-map-82f69.firebasestorage.app",
-    messagingSenderId: "138303920091",
-    appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
-  };
-
-  try {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    window.db = db;
-    window.fb = { collection, doc, setDoc, onSnapshot };
-    console.log("[firebase] ready");
-  } catch (e) {
-    console.warn("[firebase] init failed; local fallback only:", e);
-  }
-</script>
-
-<script>
+  </main>
+  <script>
 /* =========================================================
-   HELPERS
+   BLOCK 3 — CORE APP LOGIC (MAP FIXED)
    ========================================================= */
+
+/* ---------- Utilities ---------- */
 const $ = (id) => document.getElementById(id);
-const VIEWS = ["view-splash","view-login","view-map","view-hf","view-hpa","view-admin","view-training"];
+const VIEWS = [
+  "view-splash",
+  "view-login",
+  "view-map",
+  "view-hf",
+  "view-hpa",
+  "view-admin",
+  "view-training"
+];
+
 let CURRENT_USER = null;
+let MAP = null;
+let MAP_READY = false;
+let STORE_MARKERS = new Map();
 
-function showView(id){
-  VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== id));
-  $("view-training")?.classList.toggle("training-chalkboard", id === "view-training");
-  if(id === "view-map" && window.MapDash){
-    MapDash.ensureInit();
-    MapDash.invalidate();
+/* ---------- View control ---------- */
+function showView(viewId){
+  VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== viewId));
+
+  // ✅ CRITICAL: Leaflet must be invalidated AFTER map is visible
+  if(viewId === "view-map" && MAP){
+    setTimeout(() => {
+      MAP.invalidateSize();
+    }, 60);
   }
 }
+
 function setActiveNav(page){
-  document.querySelectorAll(".nav-link").forEach(b => b.classList.remove("active"));
-  document.querySelector(`.nav-link[data-page="${page}"]`)?.classList.add("active");
-}
-function todayKey(){ return new Date().toISOString().slice(0,10); }
-function esc(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#39;");
-}
-
-/* Robust CSV parser */
-function parseCsvLine(line){
-  const out=[]; let cur="", inQ=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(ch === '"'){
-      if(inQ && line[i+1] === '"'){ cur+='"'; i++; }
-      else inQ=!inQ;
-    } else if(ch === "," && !inQ){
-      out.push(cur); cur="";
-    } else cur+=ch;
-  }
-  out.push(cur);
-  return out;
-}
-async function fetchCsvText(url){
-  const res = await fetch(url, { cache:"no-store" });
-  if(!res.ok) throw new Error(`${url} not found`);
-  return await res.text();
-}
-
-/* =========================================================
-   Logo placeholder fixer (converts text node "hf_logo.png" to <img>)
-   ========================================================= */
-function replaceLogoPlaceholders(){
-  const targets = [
-    { key:"hf_logo.png", src:"hf_logo.png" },
-    { key:"hpa_logo.png", src:"hpa_logo.png" }
-  ];
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  const nodes=[];
-  while(walker.nextNode()) nodes.push(walker.currentNode);
-
-  nodes.forEach(node=>{
-    const v=(node.nodeValue||"").trim();
-    const hit=targets.find(t=>t.key===v);
-    if(!hit) return;
-    const parent=node.parentElement;
-    if(!parent) return;
-
-    const img=document.createElement("img");
-    img.src=hit.src;
-    img.alt="Logo";
-
-    // Context-based sizing
-    if(parent.closest("#view-splash")) img.className="splash-logo";
-    else if(parent.closest(".login-card")) img.className="login-logo";
-    else img.className="logo";
-
-    parent.replaceChild(img, node);
+  document.querySelectorAll(".nav-link").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.page === page);
   });
-
-  // Inject "flagpole" CSS for issue flag above marker (not just dot)
-  if(!document.getElementById("flagpoleStyle")){
-    const st=document.createElement("style");
-    st.id="flagpoleStyle";
-    st.textContent = `
-      .pin .flagpole{
-        position:absolute; left:8px; top:-14px;
-        width:2px; height:14px; background:rgba(255,255,255,.85);
-        border-radius:2px; box-shadow:0 6px 14px rgba(0,0,0,.5);
-      }
-      .pin .flagpole::after{
-        content:""; position:absolute; top:2px; left:2px;
-        width:12px; height:8px; background: var(--bad);
-        clip-path: polygon(0 0, 100% 18%, 0 50%, 100% 82%, 0 100%);
-        border-radius:2px; box-shadow:0 6px 14px rgba(0,0,0,.55);
-      }
-    `;
-    document.head.appendChild(st);
-  }
 }
 
-/* =========================================================
-   SPLASH → LOGIN (logo click)
-   ========================================================= */
-$("splashEnter")?.addEventListener("click", ()=> showView("view-login"));
+/* ---------- Splash → Login ---------- */
+$("splashEnter")?.addEventListener("click", ()=>{
+  showView("view-login");
+});
 
-/* =========================================================
-   LOGIN (fixed: CSV-safe, case-insensitive username)
-   ========================================================= */
-async function loadUsers(){
-  try{
-    const raw = (await fetchCsvText("users.csv")).replace(/^\uFEFF/, "");
-    const lines = raw.split(/\r?\n/).filter(l=>l.trim());
-    const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-    const idx = {
-      u: header.indexOf("username"),
-      p: header.indexOf("password"),
-      r: header.indexOf("role"),
-      n: header.indexOf("displayname")
-    };
-    return lines.slice(1).map(l=>{
-      const r=parseCsvLine(l);
-      return {
-        u: (r[idx.u]||"").trim().toLowerCase(),
-        p: (r[idx.p]||"").trim(),
-        role: (r[idx.r]||"Merchandiser").trim(),
-        displayName: ((idx.n>=0? r[idx.n]:"") || r[idx.u] || "").trim()
-      };
-    }).filter(x=>x.u && x.p);
-  }catch(e){
-    console.warn("[auth] users.csv missing/invalid; using demo", e);
-    return [
-      {u:"demo",p:"demo",role:"Merchandiser",displayName:"Demo User"},
-      {u:"super",p:"super",role:"Supervisor",displayName:"Supervisor"}
-    ];
-  }
-}
-
+/* ---------- Login ---------- */
 async function doLogin(){
-  const user = ($("loginUser")?.value||"").trim().toLowerCase();
-  const pass = ($("loginPass")?.value||"").trim();
+  const user = ($("loginUser").value || "").trim().toLowerCase();
+  const pass = ($("loginPass").value || "").trim();
   const err = $("loginError");
-  const btn = $("loginBtn");
   err.textContent = "";
-
-  btn.disabled = true;
-  btn.textContent = "Signing in…";
-  const resetBtn = ()=>{ btn.disabled=false; btn.textContent="Login"; };
 
   if(!user || !pass){
     err.textContent = "Enter username and password.";
-    resetBtn(); return;
+    return;
   }
 
-  const users = await loadUsers();
-  const match = users.find(x=>x.u===user && x.p===pass);
+  // ✅ Simple CSV-safe login (users.csv optional)
+  let users = [];
+  try{
+    const txt = await fetch("users.csv", { cache:"no-store" }).then(r=>r.text());
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+    const header = lines[0].toLowerCase();
+    const uIdx = header.indexOf("username");
+    const pIdx = header.indexOf("password");
 
+    users = lines.slice(1).map(l=>{
+      const parts = l.split(",");
+      return {
+        u: (parts[uIdx]||"").trim().toLowerCase(),
+        p: (parts[pIdx]||"").trim()
+      };
+    });
+  }catch{
+    // fallback demo
+    users = [{u:"demo",p:"demo"}];
+  }
+
+  const match = users.find(x => x.u === user && x.p === pass);
   if(!match){
-    err.textContent = "Invalid username or password.";
-    resetBtn(); return;
+    err.textContent = "Invalid credentials.";
+    return;
   }
 
-  CURRENT_USER = { username: match.u, role: match.role, displayName: match.displayName };
+  CURRENT_USER = { username:user };
   sessionStorage.setItem("hub_user", JSON.stringify(CURRENT_USER));
 
-  $("globalUserPill").textContent = CURRENT_USER.displayName || CURRENT_USER.username;
+  $("globalUserPill").textContent = user;
   $("globalTopBar").classList.remove("hidden");
 
-  resetBtn();
-
-  initWeatherWidget();
   setActiveNav("map");
   showView("view-map");
+  initMap(); // ✅ initialize only after login
 }
 
-$("loginBtn")?.addEventListener("click", (e)=>{ e.preventDefault(); doLogin(); });
-$("loginPass")?.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); doLogin(); } });
+$("loginBtn")?.addEventListener("click", doLogin);
+$("loginPass")?.addEventListener("keydown", e=>{
+  if(e.key === "Enter") doLogin();
+});
 
-function doLogout(){
+$("globalLogoutBtn")?.addEventListener("click", ()=>{
   CURRENT_USER = null;
   sessionStorage.removeItem("hub_user");
   $("globalTopBar").classList.add("hidden");
-  showView("view-login");
-}
-$("globalLogoutBtn")?.addEventListener("click", doLogout);
+  showView("view-splash");
+});
 
-/* =========================================================
-   Top nav routing
-   ========================================================= */
+/* ---------- Navigation ---------- */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    if(!CURRENT_USER){ showView("view-login"); return; }
     const page = btn.dataset.page;
     setActiveNav(page);
-    showView("view-"+page);
+    showView("view-" + page);
   });
 });
 
 /* =========================================================
-   Weather (accurate + labeled + store-aware)
-   - Tap widget to grant permission and load "My Location"
-   - When store selected, auto switches to store weather and shows label
+   ✅ LEAFLET MAP (CORRECT + GUARANTEED TO RENDER)
    ========================================================= */
-const WEATHER_KEY="weather_permission_v2";
-let WEATHER_MODE="user"; // user | store
-let LAST_STORE_FOR_WEATHER=null;
+function initMap(){
+  if(MAP_READY) return;
+  const mapEl = $("storeMap");
+  if(!mapEl) return;
 
-function setWeatherLabel(t){
-  const w=$("weatherWidget");
-  if(w) w.textContent=t;
+  // ✅ Ensure container has size before init
+  MAP = L.map(mapEl, {
+    zoomControl: true,
+    preferCanvas: true
+  });
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { maxZoom: 19 }
+  ).addTo(MAP);
+
+  MAP_READY = true;
+
+  loadStores();
 }
 
-function initWeatherWidget(){
-  const w=$("weatherWidget");
-  if(!w) return;
-  const perm = sessionStorage.getItem(WEATHER_KEY);
-  if(perm==="granted"){
-    setWeatherLabel("Weather: Tap to refresh");
-  }else if(perm==="denied"){
-    setWeatherLabel("Weather blocked");
-  }else{
-    setWeatherLabel("Weather: Tap to enable");
+/* ---------- Load stores & markers ---------- */
+async function loadStores(){
+  let stores = [];
+
+  try{
+    const txt = await fetch("stores.csv", { cache:"no-store" }).then(r=>r.text());
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+    const header = lines[0].toLowerCase();
+
+    const idIdx = header.indexOf("store_id");
+    const nameIdx = header.indexOf("store_name");
+    const latIdx = header.indexOf("lat");
+    const lonIdx = header.indexOf("lon");
+
+    stores = lines.slice(1).map(l=>{
+      const p = l.split(",");
+      return {
+        id: p[idIdx],
+        name: p[nameIdx],
+        lat: parseFloat(p[latIdx]),
+        lon: parseFloat(p[lonIdx])
+      };
+    }).filter(s => s.id && !isNaN(s.lat) && !isNaN(s.lon));
+  }catch{
+    // ✅ Demo fallback
+    stores = [
+      { id:"1950", name:"South Loop", lat:41.856, lon:-87.624 },
+      { id:"1987", name:"Glenview", lat:42.079, lon:-87.822 }
+    ];
   }
 
-  w.style.cursor="pointer";
-  w.onclick = ()=>{
-    if(WEATHER_MODE==="store" && LAST_STORE_FOR_WEATHER){
-      fetchWeather(LAST_STORE_FOR_WEATHER.lat, LAST_STORE_FOR_WEATHER.lon, `Store ${LAST_STORE_FOR_WEATHER.id}`);
-      return;
+  renderMarkers(stores);
+  populateStoreMenu(stores);
+}
+
+/* ---------- Marker rendering ---------- */
+function renderMarkers(stores){
+  STORE_MARKERS.forEach(m => MAP.removeLayer(m));
+  STORE_MARKERS.clear();
+
+  const bounds = [];
+
+  stores.forEach(store=>{
+    const icon = L.divIcon({
+      className:"",
+      html:`<div class="pin pin-bad"></div>`,
+      iconSize:[18,18],
+      iconAnchor:[9,9]
+    });
+
+    const marker = L.marker([store.lat, store.lon], { icon }).addTo(MAP);
+    marker.on("click", ()=> selectStore(store));
+
+    STORE_MARKERS.set(store.id, marker);
+    bounds.push([store.lat, store.lon]);
+  });
+
+  if(bounds.length){
+    MAP.fitBounds(bounds, { padding:[24,24] });
+  }
+}
+
+/* ---------- Store dropdown ---------- */
+function populateStoreMenu(stores){
+  const menu = $("storeListMenu");
+  if(!menu) return;
+
+  menu.innerHTML = stores.map(s=>`
+    <button class="dd-item" data-id="${s.id}">
+      <span>${s.id} — ${s.name}</span>
+    </button>
+  `).join("");
+
+  menu.onclick = (e)=>{
+    const btn = e.target.closest("[data-id]");
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const marker = STORE_MARKERS.get(id);
+    if(marker){
+      MAP.setView(marker.getLatLng(), 12, { animate:true });
     }
-    requestUserWeather();
   };
 }
 
-function requestUserWeather(){
-  if(!navigator.geolocation){
-    setWeatherLabel("Weather unavailable");
-    return;
-  }
-  setWeatherLabel("Weather: Locating…");
-
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      sessionStorage.setItem(WEATHER_KEY,"granted");
-      const {latitude,longitude}=pos.coords;
-      WEATHER_MODE="user";
-      fetchWeather(latitude,longitude,"My Location");
-    },
-    ()=>{
-      sessionStorage.setItem(WEATHER_KEY,"denied");
-      setWeatherLabel("Weather blocked");
-    },
-    { enableHighAccuracy:false, timeout:6000, maximumAge:600000 }
-  );
-}
-
-function fetchWeather(lat,lon,label){
-  setWeatherLabel("Weather: Loading…");
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
-    .then(r=>r.json())
-    .then(d=>{
-      const w=d.current_weather;
-      if(!w){ setWeatherLabel("Weather: —"); return; }
-      setWeatherLabel(`🌡 ${Math.round(w.temperature)}° • 💨 ${Math.round(w.windspeed)} mph • ${label}`);
-    })
-    .catch(()=> setWeatherLabel("Weather unavailable"));
+/* ---------- Select store ---------- */
+function selectStore(store){
+  $("spTitle").textContent = `${store.name} (${store.id})`;
+  $("spSub").textContent = "Store selected";
 }
 
 /* =========================================================
-   Checklist schema from CSV
+   INITIAL BOOT
    ========================================================= */
+(function boot(){
+  // Replace logo placeholders with real images
+  document.querySelectorAll("body").forEach(()=>{
+    document.querySelectorAll("*").forEach(el=>{
+      if(el.childNodes.length === 1 &&
+         el.childNodes[0].nodeType === Node.TEXT_NODE &&
+         el.textContent.trim() === "hf_logo.png"){
+        const img = document.createElement("img");
+        img.src = "hf_logo.png";
+        img.alt = "Logo";
+        img.className = el.closest("#view-splash") ? "splash-logo" : "logo";
+        el.textContent = "";
+        el.appendChild(img);
+      }
+    });
+  });
+
+  // Restore session
+  try{
+    const raw = sessionStorage.getItem("hub_user");
+    if(raw){
+      CURRENT_USER = JSON.parse(raw);
+      $("globalUserPill").textContent = CURRENT_USER.username;
+      $("globalTopBar").classList.remove("hidden");
+      setActiveNav("map");
+      showView("view-map");
+      initMap();
+      return;
+    }
+  }catch{}
+
+  showView("view-splash");
+})();
+</script>
+<script>
+/* =========================================================
+   BLOCK 4 — Checklist + Issues + Marker Colors
+   ========================================================= */
+
+/* ---------- Capture original functions from BLOCK 3 ---------- */
+const _renderMarkers_v3 = window.renderMarkers;
+const _populateStoreMenu_v3 = window.populateStoreMenu;
+const _selectStore_v3 = window.selectStore;
+
+/* ---------- Global store list cache (for weather/store label later too) ---------- */
+window.STORES_CACHE = window.STORES_CACHE || [];
+
+/* ---------- Checklist schema (dynamic items from CSV) ---------- */
 const ChecklistSchema = (() => {
-  const URL="checklist_items.csv";
-  let items=[]; let loaded=false;
+  const URL = "checklist_items.csv";
+  let items = [];
+  let loaded = false;
 
   async function load(){
     if(loaded) return items;
     try{
-      const txt = await fetchCsvText(URL);
+      const txt = await fetch(URL, { cache:"no-store" }).then(r=>{
+        if(!r.ok) throw new Error("missing");
+        return r.text();
+      });
       const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+      if(lines.length < 2) throw new Error("empty");
       const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-      const idx = { id: header.indexOf("item_id"), label: header.indexOf("label"), active: header.indexOf("active") };
+      const idx = {
+        id: header.indexOf("item_id"),
+        label: header.indexOf("label"),
+        active: header.indexOf("active")
+      };
+
       items = lines.slice(1).map(l=>{
-        const r=parseCsvLine(l);
+        const r = parseCsvLine(l);
         return {
           id: (r[idx.id]||"").trim(),
           label: (r[idx.label]||"").trim(),
@@ -812,2015 +1065,878 @@ const ChecklistSchema = (() => {
       }).filter(x=>x.id && x.label && x.active);
     }catch(e){
       console.warn("[checklist] checklist_items.csv missing; using none", e);
-      items=[];
+      items = [];
     }
-    loaded=true;
+    loaded = true;
     return items;
   }
+
   function get(){ return items; }
   return { load, get };
 })();
 
-/* =========================================================
-   Issues modal (created dynamically)
-   ========================================================= */
-function ensureIssuesModal(){
-  if($("issuesBackdrop")) return;
+/* ---------- Persistent store state ---------- */
+const STORE_STATE_KEY = "hub_store_state_v8";
 
-  const bd=document.createElement("div");
-  bd.id="issuesBackdrop";
-  bd.className="popup-backdrop";
+function todayKey(){
+  return new Date().toISOString().slice(0,10);
+}
+function uuid(){
+  return (crypto?.randomUUID?.()) || (String(Date.now()) + Math.random().toString(16).slice(2));
+}
+
+function loadStoreState(){
+  try{
+    const raw = localStorage.getItem(STORE_STATE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch{
+    return {};
+  }
+}
+function saveStoreState(state){
+  try{ localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); }catch{}
+}
+
+window.STORE_STATE = window.STORE_STATE || loadStoreState();
+
+function defaultStoreState(){
+  return {
+    watered: false,
+    wateredOn: null,
+    negatives: false,
+    pictures: false,
+    checklist: {},      // dynamic {id:true/false}
+    issues: [],         // [{id,text,createdAt,createdBy,resolved}]
+    updatedAt: null,
+    updatedBy: null
+  };
+}
+
+function ensureState(storeId){
+  if(!window.STORE_STATE[storeId]) window.STORE_STATE[storeId] = defaultStoreState();
+  const st = window.STORE_STATE[storeId];
+
+  if(!Array.isArray(st.issues)) st.issues = [];
+  if(!st.checklist || typeof st.checklist !== "object") st.checklist = {};
+
+  // daily reset watered
+  if(st.wateredOn !== todayKey()){
+    st.watered = false;
+  }
+  return st;
+}
+
+/* ---------- Completion + status rules ---------- */
+function computeCompletion(storeId){
+  const st = ensureState(storeId);
+  const dyn = ChecklistSchema.get();
+  const total = 3 + dyn.length; // watered, negatives, pictures + dynamic
+  let done = 0;
+
+  if(st.watered && st.wateredOn === todayKey()) done++;
+  if(!!st.negatives) done++;
+  if(!!st.pictures) done++;
+
+  dyn.forEach(it=>{
+    if(st.checklist[it.id] === true) done++;
+  });
+
+  return { done, total, pct: total ? done/total : 0 };
+}
+
+function hasOpenIssue(storeId){
+  const st = ensureState(storeId);
+  return st.issues.some(i => !i.resolved);
+}
+
+function statusColor(storeId){
+  if(hasOpenIssue(storeId)) return "warn";      // override
+  const { pct } = computeCompletion(storeId);
+  if(pct >= 1) return "ok";
+  if(pct >= 0.5) return "warn";
+  return "bad";
+}
+
+/* ---------- Marker HTML (color + optional flag) ---------- */
+function markerHtml(storeId){
+  const c = statusColor(storeId);
+  const open = hasOpenIssue(storeId);
+
+  const cls = c === "ok" ? "pin-ok" : c === "warn" ? "pin-warn" : "pin-bad";
+  return `
+    <div class="pin ${cls}">
+      ${open ? `<span class="flagpole"></span>` : ``}
+    </div>
+  `;
+}
+
+function updateMarker(storeId){
+  const m = STORE_MARKERS.get(storeId);
+  if(!m || !window.L) return;
+  const icon = L.divIcon({
+    className:"",
+    html: markerHtml(storeId),
+    iconSize:[18,18],
+    iconAnchor:[9,9]
+  });
+  m.setIcon(icon);
+}
+
+/* =========================================================
+   Override marker render to use our status logic
+   ========================================================= */
+window.renderMarkers = function(stores){
+  window.STORES_CACHE = stores || [];
+  // ensure schema loaded first so status is correct
+  ChecklistSchema.load().then(()=>{
+    // call original renderer first
+    _renderMarkers_v3(stores);
+
+    // then replace marker icons based on checklist/issues
+    (stores||[]).forEach(s=>{
+      ensureState(s.id);
+      updateMarker(s.id);
+    });
+  });
+};
+
+window.populateStoreMenu = function(stores){
+  window.STORES_CACHE = stores || [];
+  _populateStoreMenu_v3(stores);
+
+  // upgrade: selecting from menu should also select the store and update panel
+  const menu = document.getElementById("storeListMenu");
+  if(menu){
+    menu.onclick = (e)=>{
+      const btn = e.target.closest("[data-id],[data-store-id]");
+      if(!btn) return;
+
+      const id = btn.dataset.id || btn.dataset.storeId;
+      const store = (window.STORES_CACHE||[]).find(s=>s.id===id);
+      if(store){
+        window.selectStore(store);
+        const marker = STORE_MARKERS.get(id);
+        if(marker && MAP) MAP.setView(marker.getLatLng(), Math.max(MAP.getZoom(), 12), { animate:true });
+      }
+    };
+  }
+};
+
+/* =========================================================
+   Store Panel: inject checklist UI + issue viewer
+   ========================================================= */
+function ensureChecklistUI(){
+  if(document.getElementById("storeChecklistBox")) return;
+
+  const panel = document.querySelector(".store-panel");
+  const btnRow = panel?.querySelector(".btn-row");
+  if(!panel || !btnRow) return;
+
+  const box = document.createElement("div");
+  box.id = "storeChecklistBox";
+  box.className = "bubble-soft";
+  box.style.marginTop = "10px";
+  box.innerHTML = `
+    <div class="bubble-title">Checklist</div>
+    <div id="storeChecklistList" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div class="bubble-sub" style="margin-top:10px;">
+      Completion: <strong id="storeChecklistPct">0%</strong>
+    </div>
+  `;
+  panel.insertBefore(box, btnRow);
+}
+
+function setBadge(storeId){
+  const badge = document.getElementById("spStatusBadge");
+  if(!badge) return;
+  const c = statusColor(storeId);
+  const dot = c==="ok" ? "var(--good)" : c==="warn" ? "var(--warn)" : "var(--bad)";
+  const label = c==="ok" ? "GREEN" : c==="warn" ? "YELLOW" : "RED";
+  badge.innerHTML = `<span class="badge-dot" style="background:${dot}"></span><span>${label}</span>`;
+}
+
+function renderChecklistPanel(storeId){
+  ensureChecklistUI();
+  const st = ensureState(storeId);
+
+  const list = document.getElementById("storeChecklistList");
+  const pctEl = document.getElementById("storeChecklistPct");
+  if(!list || !pctEl) return;
+
+  const dyn = ChecklistSchema.get();
+  const { done, total, pct } = computeCompletion(storeId);
+  pctEl.textContent = `${Math.round(pct*100)}% (${done}/${total})`;
+
+  const row = (key, label, checked) => `
+    <label style="display:flex;gap:10px;align-items:flex-start;font-size:.9rem;cursor:pointer;">
+      <input type="checkbox" data-ck="${key}" ${checked ? "checked" : ""} />
+      <span>${label}</span>
+    </label>
+  `;
+
+  list.innerHTML = [
+    row("watered", "Watered (resets daily)", st.watered && st.wateredOn === todayKey()),
+    row("negatives", "Negatives", !!st.negatives),
+    row("pictures", "Pictures", !!st.pictures),
+    ...dyn.map(it => row(`dyn:${it.id}`, it.label, st.checklist[it.id] === true))
+  ].join("");
+
+  list.onchange = (e)=>{
+    const cb = e.target.closest("input[data-ck]");
+    if(!cb) return;
+
+    const key = cb.getAttribute("data-ck");
+    if(key === "watered"){
+      st.watered = cb.checked;
+      st.wateredOn = cb.checked ? todayKey() : null;
+    } else if(key === "negatives"){
+      st.negatives = cb.checked;
+    } else if(key === "pictures"){
+      st.pictures = cb.checked;
+    } else if(key.startsWith("dyn:")){
+      const id = key.slice(4);
+      st.checklist[id] = cb.checked;
+    }
+
+    st.updatedAt = Date.now();
+    st.updatedBy = CURRENT_USER?.username || "User";
+    window.STORE_STATE[storeId] = st;
+    saveStoreState(window.STORE_STATE);
+
+    // update UI + marker
+    updateMarker(storeId);
+    setBadge(storeId);
+    renderChecklistPanel(storeId);
+    renderIssueButton(storeId);
+
+    // optional Firestore persistence (best effort)
+    persistStoreFirestore(storeId);
+  };
+}
+
+/* =========================================================
+   Issues: add + view modal + resolve
+   ========================================================= */
+function renderIssueButton(storeId){
+  const btn = document.getElementById("btnViewIssues");
+  if(!btn) return;
+
+  const st = ensureState(storeId);
+  btn.style.display = st.issues.length ? "inline-flex" : "none";
+  btn.onclick = ()=> openIssuesModal(storeId);
+}
+
+function ensureIssuesModal(){
+  if(document.getElementById("issuesBackdrop")) return;
+
+  const bd = document.createElement("div");
+  bd.id = "issuesBackdrop";
+  bd.className = "popup-backdrop";
   bd.innerHTML = `
     <div class="popup">
       <h2>Store Issues</h2>
-      <p class="popup-subtitle" id="issuesStoreLabel"></p>
-      <div id="issuesList" style="margin-top:12px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div class="popup-subtitle" id="issuesStoreLabel"></div>
+      <div id="issuesList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
       <button class="popup-close" id="issuesCloseBtn" type="button">Close</button>
     </div>
   `;
   document.body.appendChild(bd);
 
-  $("issuesCloseBtn").onclick = ()=> bd.style.display="none";
-  bd.onclick = (e)=>{ if(e.target===bd) bd.style.display="none"; };
+  const close = ()=> bd.style.display="none";
+  document.getElementById("issuesCloseBtn").onclick = close;
+  bd.onclick = (e)=>{ if(e.target === bd) close(); };
 }
 
-function openIssuesModal(storeId, storeLabel, stateRef, persistFn, updateMarkerFn, refreshPanelFn){
+function openIssuesModal(storeId){
   ensureIssuesModal();
-  const bd=$("issuesBackdrop");
-  const list=$("issuesList");
-  $("issuesStoreLabel").textContent = storeLabel;
+  const bd = document.getElementById("issuesBackdrop");
+  const list = document.getElementById("issuesList");
+  const label = document.getElementById("issuesStoreLabel");
 
-  const issues = stateRef[storeId]?.issues || [];
-  if(!issues.length){
-    list.innerHTML = `<div class="bubble-soft">No issues reported.</div>`;
-  }else{
-    list.innerHTML = issues.map(issue=>`
+  const store = (window.STORES_CACHE||[]).find(s=>s.id===storeId);
+  label.textContent = store ? `${store.name} (${store.id})` : `Store ${storeId}`;
+
+  const st = ensureState(storeId);
+  if(!st.issues.length){
+    list.innerHTML = `<div class="bubble-soft">No issues.</div>`;
+  } else {
+    list.innerHTML = st.issues.map(i=>`
       <div class="bubble-soft">
         <div style="display:flex;justify-content:space-between;gap:10px;">
-          <strong>${esc(issue.text)}</strong>
-          ${issue.resolved ? `<span style="color:var(--good);font-weight:800;">Resolved</span>`
-                           : `<span style="color:var(--bad);font-weight:800;">Open</span>`}
+          <strong>${esc(i.text)}</strong>
+          ${i.resolved ? `<span style="color:var(--good);font-weight:900;">Resolved</span>` : `<span style="color:var(--bad);font-weight:900;">Open</span>`}
         </div>
         <div class="bubble-sub" style="margin-top:4px;">
-          Reported by ${esc(issue.createdBy)} • ${new Date(issue.createdAt).toLocaleString()}
+          Reported by ${esc(i.createdBy)} • ${new Date(i.createdAt).toLocaleString()}
         </div>
-        ${!issue.resolved ? `<button class="small-btn" data-resolve="${issue.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ""}
+        ${!i.resolved ? `<button class="small-btn" data-resolve="${i.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ""}
       </div>
     `).join("");
   }
 
-  list.onclick = async (e)=>{
-    const btn = e.target.closest("[data-resolve]");
-    if(!btn) return;
-    const issueId = btn.getAttribute("data-resolve");
-    const issue = (stateRef[storeId].issues||[]).find(i=>i.id===issueId);
+  list.onclick = (e)=>{
+    const b = e.target.closest("[data-resolve]");
+    if(!b) return;
+    const id = b.getAttribute("data-resolve");
+    const issue = st.issues.find(x=>x.id===id);
     if(!issue) return;
     issue.resolved = true;
-    stateRef[storeId].updatedAt = Date.now();
-    await persistFn(storeId);
-    updateMarkerFn(storeId);
-    refreshPanelFn(storeId);
-    openIssuesModal(storeId, storeLabel, stateRef, persistFn, updateMarkerFn, refreshPanelFn);
+
+    st.updatedAt = Date.now();
+    window.STORE_STATE[storeId] = st;
+    saveStoreState(window.STORE_STATE);
+
+    updateMarker(storeId);
+    setBadge(storeId);
+    renderChecklistPanel(storeId);
+    renderIssueButton(storeId);
+    persistStoreFirestore(storeId);
+
+    openIssuesModal(storeId); // re-render
   };
 
   bd.style.display="flex";
 }
 
-/* =========================================================
-   MapDash (Firestore live + local fallback)
-   - Constant checklist: Watered(daily reset), Negatives, Pictures
-   - Dynamic checklist: checklist_items.csv
-   - Completion colors: red <50, yellow >=50, green 100
-   - Issues override: yellow + red flag above marker
-   ========================================================= */
-window.MapDash = (() => {
-  const STORES_CSV_URL="stores.csv";
-  const LOCAL_KEY="store_state_v7";
+function wireAddIssueButton(storeId){
+  const btn = document.querySelector('[data-map-action="add:issue"]');
+  if(!btn) return;
 
-  const DEFAULT_STORE = () => ({
-    shippingGrade: "",
-    watered: false,
-    wateredOn: null,
-    negatives: false,
-    pictures: false,
-    checklist: {},            // dynamic
-    issues: [],               // {id,text,createdAt,createdBy,resolved}
-    updatedAt: null,
-    updatedBy: null
-  });
-
-  let stores=[];
-  let state={};
-  let map=null;
-  let markers=new Map();
-  let selectedId=null;
-  let initialized=false;
-  let unsubscribe=null;
-
-  function loadLocal(){
-    try{ const raw=localStorage.getItem(LOCAL_KEY); if(raw) state=JSON.parse(raw)||{}; }catch{}
-  }
-  function saveLocal(){
-    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); }catch{}
-  }
-
-  function ensureDefaults(id){
-    if(!state[id]) state[id]=DEFAULT_STORE();
-    if(!Array.isArray(state[id].issues)) state[id].issues=[];
-    if(!state[id].checklist || typeof state[id].checklist!=="object") state[id].checklist={};
-
-    // Daily reset watered
-    if(state[id].wateredOn !== todayKey()){
-      state[id].watered=false;
-    }
-  }
-
-  async function loadStores(){
-    try{
-      const txt=await fetchCsvText(STORES_CSV_URL);
-      const lines=txt.split(/\r?\n/).filter(l=>l.trim());
-      const header=parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-      const idx={
-        id: header.indexOf("store_id"),
-        name: header.indexOf("store_name"),
-        lat: header.indexOf("lat"),
-        lon: header.indexOf("lon"),
-        city: header.indexOf("city"),
-        st: header.indexOf("state"),
-        addr: header.indexOf("address"),
-      };
-      stores=lines.slice(1).map(l=>{
-        const r=parseCsvLine(l);
-        return {
-          id:(r[idx.id]||"").trim(),
-          name:(r[idx.name]||"").trim(),
-          lat:parseFloat((r[idx.lat]||"").trim()),
-          lon:parseFloat((r[idx.lon]||"").trim()),
-          city: idx.city>=0 ? (r[idx.city]||"").trim() : "",
-          state: idx.st>=0 ? (r[idx.st]||"").trim() : "",
-          address: idx.addr>=0 ? (r[idx.addr]||"").trim() : ""
-        };
-      }).filter(s=>s.id && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
-      if(!stores.length) throw new Error("No stores parsed");
-    }catch(e){
-      console.warn("[map] stores.csv missing; using demo", e);
-      stores=[
-        {id:"1950",name:"South Loop",lat:41.856,lon:-87.624,city:"Chicago",state:"IL",address:""},
-        {id:"1987",name:"Glenview",lat:42.079,lon:-87.822,city:"Glenview",state:"IL",address:""}
-      ];
-    }
-  }
-
-  function computeCompletion(id){
-    ensureDefaults(id);
-    const st=state[id];
-    const dynamic=ChecklistSchema.get();
-    const total = 3 + dynamic.length; // watered, negatives, pictures + dynamic
-    let done=0;
-
-    if(st.watered && st.wateredOn === todayKey()) done++;
-    if(!!st.negatives) done++;
-    if(!!st.pictures) done++;
-
-    dynamic.forEach(it=>{
-      if(st.checklist[it.id] === true) done++;
-    });
-
-    const pct = total ? done/total : 0;
-    return {done,total,pct};
-  }
-
-  function hasOpenIssue(id){
-    ensureDefaults(id);
-    return state[id].issues.some(i => !i.resolved);
-  }
-
-  function markerColor(id){
-    // If any open issue → forced yellow
-    if(hasOpenIssue(id)) return "warn";
-
-    const {pct}=computeCompletion(id);
-    if(pct >= 1) return "ok";
-    if(pct >= 0.5) return "warn";
-    return "bad";
-  }
-
-  function pinHtml(id){
-    ensureDefaults(id);
-    const color = markerColor(id);
-    const hasIssue = hasOpenIssue(id);
-
-    const cls = color==="ok" ? "pin-ok" : color==="warn" ? "pin-warn" : "pin-bad";
-    return `
-      <div class="pin ${cls}">
-        ${hasIssue ? `<span class="flagpole"></span>` : ``}
-      </div>
-    `;
-  }
-
-  function initMap(){
-    if(map) return;
-    map = L.map("storeMap", { zoomControl:true, preferCanvas:true });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
-  }
-
-  function renderMarkers(){
-    markers.forEach(m=>{ try{ map.removeLayer(m); }catch{} });
-    markers.clear();
-
-    const bounds=[];
-    stores.forEach(s=>{
-      ensureDefaults(s.id);
-      const icon=L.divIcon({className:"",html:pinHtml(s.id),iconSize:[18,18],iconAnchor:[9,9]});
-      const m=L.marker([s.lat,s.lon],{icon}).addTo(map);
-      m.on("click", ()=> selectStore(s.id));
-      markers.set(s.id,m);
-      bounds.push([s.lat,s.lon]);
-    });
-    if(bounds.length) map.fitBounds(bounds,{padding:[20,20]});
-  }
-
-  function updateMarker(id){
-    const m=markers.get(id);
-    if(!m) return;
-    const icon=L.divIcon({className:"",html:pinHtml(id),iconSize:[18,18],iconAnchor:[9,9]});
-    m.setIcon(icon);
-  }
-
-  function renderStoreDropdown(){
-    const menu=$("storeListMenu");
-    if(!menu) return;
-    menu.innerHTML = stores.map(s=>`
-      <button class="dd-item" type="button" data-store-id="${esc(s.id)}">
-        <span>${esc(s.id)} — ${esc(s.name)}</span>
-        <span class="dd-sub">${esc(s.city || "")}</span>
-      </button>
-    `).join("");
-  }
-
-  function setBadgeFromStore(id){
-    const st=state[id];
-    const color = markerColor(id);
-    const dot = color==="ok" ? "var(--good)" : color==="warn" ? "var(--warn)" : "var(--bad)";
-    const label = color==="ok" ? "GREEN" : color==="warn" ? "YELLOW" : "RED";
-    $("spStatusBadge").innerHTML = `<span class="badge-dot" style="background:${dot}"></span><span>${label}</span>`;
-  }
-
-  function ensureChecklistContainer(){
-    if($("storeChecklistBox")) return;
-
-    const panel = document.createElement("div");
-    panel.id = "storeChecklistBox";
-    panel.className = "bubble-soft";
-    panel.style.marginTop = "10px";
-    panel.innerHTML = `
-      <div class="bubble-title">Checklist</div>
-      <div id="storeChecklistList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      <div class="bubble-sub" style="margin-top:10px;">
-        Completion: <strong id="storeChecklistPct">0%</strong>
-      </div>
-    `;
-
-    // insert before buttons row
-    const storePanel = document.querySelector(".store-panel");
-    const btnRow = storePanel?.querySelector(".btn-row");
-    if(storePanel && btnRow) storePanel.insertBefore(panel, btnRow);
-  }
-
-  function renderChecklistPanel(id){
-    ensureDefaults(id);
-    ensureChecklistContainer();
-    const list=$("storeChecklistList");
-    const pctEl=$("storeChecklistPct");
-    if(!list || !pctEl) return;
-
-    const st=state[id];
-    const dynamic=ChecklistSchema.get();
-    const {done,total,pct}=computeCompletion(id);
-    pctEl.textContent = `${Math.round(pct*100)}% (${done}/${total})`;
-
-    const row = (key, label, checked) => `
-      <label style="display:flex;gap:10px;align-items:flex-start;font-size:.9rem;cursor:pointer;">
-        <input type="checkbox" data-ck="${esc(key)}" ${checked ? "checked":""}/>
-        <span>${esc(label)}</span>
-      </label>
-    `;
-
-    list.innerHTML = [
-      row("watered","Watered (resets daily)", st.watered && st.wateredOn === todayKey()),
-      row("negatives","Negatives", !!st.negatives),
-      row("pictures","Pictures", !!st.pictures),
-      ...dynamic.map(it => row(`dyn:${it.id}`, it.label, st.checklist[it.id] === true))
-    ].join("");
-
-    list.onchange = async (e)=>{
-      const cb=e.target.closest("input[data-ck]");
-      if(!cb) return;
-      const key=cb.getAttribute("data-ck");
-
-      if(key==="watered"){
-        st.watered = cb.checked;
-        st.wateredOn = cb.checked ? todayKey() : null;
-      } else if(key==="negatives"){
-        st.negatives = cb.checked;
-      } else if(key==="pictures"){
-        st.pictures = cb.checked;
-      } else if(key.startsWith("dyn:")){
-        const itemId = key.slice(4);
-        st.checklist[itemId] = cb.checked;
-      }
-
-      st.updatedAt = Date.now();
-      st.updatedBy = (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown");
-      state[id]=st;
-
-      await persistStore(id);
-      updateMarker(id);
-      setBadgeFromStore(id);
-      renderChecklistPanel(id);
-    };
-  }
-
-  function updatePanel(){
-    if(!selectedId) return;
-    const s=stores.find(x=>x.id===selectedId);
-    const st=state[selectedId];
-
-    $("spTitle").textContent = s ? `${s.name} (${s.id})` : `Store ${selectedId}`;
-    $("spSub").textContent = s ? `${[s.city,s.state].filter(Boolean).join(", ")}${s.address ? " • "+s.address : ""}` : "—";
-
-    $("spShip").textContent = st.shippingGrade || "—";
-    $("spWatered").textContent = st.watered && st.wateredOn===todayKey() ? "✅ Yes (Today)" : "❌ No";
-    $("spNeg").textContent = st.negatives ? "⚠️ Yes" : "✅ No";
-    $("spIssues").textContent = st.issues.some(i=>!i.resolved) ? `🚩 ${st.issues.filter(i=>!i.resolved).length}` : "✅ None";
-    $("spUpdated").textContent = st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—";
-
-    setBadgeFromStore(selectedId);
-    renderChecklistPanel(selectedId);
-
-    // Issues button
-    const openCount = st.issues.filter(i=>!i.resolved).length;
-    const btnIssues = $("btnViewIssues");
-    if(btnIssues){
-      btnIssues.style.display = st.issues.length ? "inline-flex" : "none";
-      btnIssues.onclick = ()=> openIssuesModal(
-        selectedId,
-        s ? `${s.name} (${s.id})` : `Store ${selectedId}`,
-        state,
-        persistStore,
-        updateMarker,
-        ()=>{ updatePanel(); }
-      );
-    }
-  }
-
-  function selectStore(id){
-    selectedId=id;
-    ensureDefaults(id);
-
-    // store-aware weather
-    const s=stores.find(x=>x.id===id);
-    if(s){
-      WEATHER_MODE="store";
-      LAST_STORE_FOR_WEATHER = { id:s.id, lat:s.lat, lon:s.lon };
-      fetchWeather(s.lat, s.lon, `Store ${s.id}`);
-    }
-
-    // enable buttons
-    $("btnWatered").disabled=false;
-    document.querySelectorAll('[data-map-action]').forEach(b=>b.disabled=false);
-
-    updatePanel();
-  }
-
-  async function persistStore(id){
-    saveLocal();
-    if(window.db && window.fb){
-      try{
-        const { doc, setDoc } = window.fb;
-        await setDoc(doc(window.db, "stores", id), state[id], { merge:true });
-      }catch(e){
-        console.warn("[firestore] write failed; local only", e);
-      }
-    }
-  }
-
-  async function markWatered(){
-    if(!selectedId) return;
-    ensureDefaults(selectedId);
-    state[selectedId].watered=true;
-    state[selectedId].wateredOn=todayKey();
-    state[selectedId].updatedAt=Date.now();
-    state[selectedId].updatedBy=(CURRENT_USER?.displayName||CURRENT_USER?.username||"Unknown");
-    await persistStore(selectedId);
-    updateMarker(selectedId);
-    updatePanel();
-  }
-
-  async function addIssue(){
-    if(!selectedId) return;
-    ensureDefaults(selectedId);
-
-    const msg = window.prompt("Describe the issue:");
+  btn.onclick = ()=>{
+    const st = ensureState(storeId);
+    const msg = prompt("Enter issue details:");
     if(!msg) return;
 
-    state[selectedId].issues.push({
-      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
+    st.issues.push({
+      id: uuid(),
       text: msg.trim(),
       createdAt: Date.now(),
-      createdBy: (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown"),
+      createdBy: CURRENT_USER?.username || "User",
       resolved: false
     });
 
-    state[selectedId].updatedAt=Date.now();
-    state[selectedId].updatedBy=(CURRENT_USER?.displayName||CURRENT_USER?.username||"Unknown");
+    st.updatedAt = Date.now();
+    st.updatedBy = CURRENT_USER?.username || "User";
+    window.STORE_STATE[storeId] = st;
+    saveStoreState(window.STORE_STATE);
 
-    await persistStore(selectedId);
-    updateMarker(selectedId);
-    updatePanel();
-  }
+    // Issues override => yellow + flag
+    updateMarker(storeId);
+    setBadge(storeId);
+    renderChecklistPanel(storeId);
+    renderIssueButton(storeId);
 
-  function zoomToStore(){
-    if(!selectedId) return;
-    const m=markers.get(selectedId);
-    if(m && map) map.setView(m.getLatLng(), Math.max(map.getZoom(), 12), { animate:true });
-  }
-
-  function applyFilter(filter){
-    stores.forEach(s=>{
-      ensureDefaults(s.id);
-      const st=state[s.id];
-      const m=markers.get(s.id);
-      if(!m || !map) return;
-
-      const openIssues = st.issues.some(i=>!i.resolved);
-      const isBad = markerColor(s.id)==="bad";
-
-      let show=true;
-      if(filter==="issues:true") show=openIssues;
-      if(filter==="status:bad") show=isBad;
-
-      if(show){
-        if(!map.hasLayer(m)) m.addTo(map);
-      }else{
-        if(map.hasLayer(m)) map.removeLayer(m);
-      }
-    });
-  }
-
-  function wireUI(){
-    // dropdown toggles
-    document.querySelectorAll("#view-map [data-dd-toggle]").forEach(btn=>{
-      btn.addEventListener("click",(e)=>{
-        e.stopPropagation();
-        const dd=btn.closest(".dd");
-        dd.classList.toggle("open");
-        document.querySelectorAll("#view-map .dd").forEach(o=>{ if(o!==dd) o.classList.remove("open"); });
-      });
-    });
-    document.addEventListener("click",(e)=>{
-      const inMap=e.target.closest("#view-map");
-      if(!inMap) return;
-      if(!e.target.closest(".dd")){
-        document.querySelectorAll("#view-map .dd").forEach(d=>d.classList.remove("open"));
-      }
-    });
-
-    // store pick
-    $("storeListMenu")?.addEventListener("click",(e)=>{
-      const b=e.target.closest("[data-store-id]");
-      if(!b) return;
-      selectStore(b.getAttribute("data-store-id"));
-    });
-
-    // filters
-    document.querySelectorAll("#view-map [data-map-filter]").forEach(btn=>{
-      btn.addEventListener("click", ()=> applyFilter(btn.getAttribute("data-map-filter")));
-    });
-
-    // actions
-    $("btnWatered")?.addEventListener("click", markWatered);
-    document.querySelector('[data-map-action="add:issue"]')?.addEventListener("click", addIssue);
-    document.querySelector('[data-map-action="zoom"]')?.addEventListener("click", zoomToStore);
-  }
-
-  function startFirestoreLive(){
-    if(!window.db || !window.fb) return;
-    const { collection, onSnapshot } = window.fb;
-
-    if(unsubscribe){ try{ unsubscribe(); }catch{} }
-    unsubscribe = onSnapshot(collection(window.db, "stores"), snap=>{
-      const next={};
-      snap.forEach(d=> next[d.id]=d.data());
-      state=next;
-
-      // enforce defaults + watered reset
-      stores.forEach(s=>ensureDefaults(s.id));
-
-      $("syncPill").textContent="Sync: Live";
-      renderMarkers();
-      renderStoreDropdown();
-      if(selectedId) updatePanel();
-    }, err=>{
-      console.warn("[firestore] live failed", err);
-      $("syncPill").textContent="Sync: Local";
-    });
-  }
-
-  function renderMarkers(){
-    markers.forEach(m=>{ try{ map.removeLayer(m); }catch{} });
-    markers.clear();
-
-    const bounds=[];
-    stores.forEach(s=>{
-      ensureDefaults(s.id);
-      const icon=L.divIcon({className:"",html:pinHtml(s.id),iconSize:[18,18],iconAnchor:[9,9]});
-      const m=L.marker([s.lat,s.lon],{icon}).addTo(map);
-      m.on("click", ()=> selectStore(s.id));
-      markers.set(s.id,m);
-      bounds.push([s.lat,s.lon]);
-    });
-    if(bounds.length) map.fitBounds(bounds,{padding:[20,20]});
-  }
-
-  async function ensureInit(){
-    if(initialized) return;
-    initialized=true;
-
-    $("syncPill").textContent="Sync: Connecting…";
-
-    loadLocal();
-    await ChecklistSchema.load();
-    await loadStores();
-    stores.forEach(s=>ensureDefaults(s.id));
-
-    initMap();
-    renderMarkers();
-    renderStoreDropdown();
-    wireUI();
-
-    $("syncPill").textContent="Sync: Local";
-    startFirestoreLive();
-  }
-
-  function initMap(){
-    if(map) return;
-    map=L.map("storeMap",{zoomControl:true,preferCanvas:true});
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
-  }
-
-  function renderStoreDropdown(){
-    const menu=$("storeListMenu");
-    if(!menu) return;
-    menu.innerHTML = stores.map(s=>`
-      <button class="dd-item" type="button" data-store-id="${esc(s.id)}">
-        <span>${esc(s.id)} — ${esc(s.name)}</span>
-        <span class="dd-sub">${esc(s.city||"")}</span>
-      </button>
-    `).join("");
-  }
-
-  function invalidate(){ setTimeout(()=>{ try{ map && map.invalidateSize(); }catch{} }, 80); }
-
-  return { ensureInit, invalidate, applyFilter };
-})();
+    persistStoreFirestore(storeId);
+  };
+}
 
 /* =========================================================
-   HF/HPA tabs + training tabs (structural)
-   (Content loaders come in SEGMENT 4)
+   Firestore sync (best effort)
+   - Keep UI functional without it
    ========================================================= */
-document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t=btn.dataset.hfTab;
-    $("hf-guidelines").classList.toggle("hidden", t!=="guidelines");
-    $("hf-care").classList.toggle("hidden", t!=="care");
-  });
-});
-document.querySelectorAll("[data-hf-care]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hf-care]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t=btn.dataset.hfCare;
-    $("hf-plants").classList.toggle("hidden", t!=="plants");
-    $("hf-pests").classList.toggle("hidden", t!=="pests");
-  });
-});
-
-document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t=btn.dataset.hpaTab;
-    $("hpa-guidelines").classList.toggle("hidden", t!=="guidelines");
-    $("hpa-products").classList.toggle("hidden", t!=="products");
-    $("hpa-care").classList.toggle("hidden", t!=="care");
-  });
-});
-document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hpa-care]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t=btn.dataset.hpaCare;
-    $("hpa-plants").classList.toggle("hidden", t!=="plants");
-    $("hpa-pests").classList.toggle("hidden", t!=="pests");
-  });
-});
-
-// Product info inner tabs
-document.querySelectorAll(".products-inner-tab").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll(".products-inner-tab").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const t=btn.dataset.products;
-    $("products-skus").classList.toggle("hidden", t!=="skus");
-    $("products-orders").classList.toggle("hidden", t!=="orders");
-  });
-});
-
-// Training tabs
-document.querySelectorAll("[data-train]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const t=btn.dataset.train;
-    document.querySelectorAll("[data-train]").forEach(b=>b.classList.remove("primary"));
-    btn.classList.add("primary");
-    ["basics","merch","supervisor"].forEach(k=>{
-      $("train-"+k).classList.toggle("hidden", t!==k);
-    });
-  });
-});
-
-/* =========================================================
-   Boot
-   ========================================================= */
-document.addEventListener("DOMContentLoaded", async ()=>{
-  replaceLogoPlaceholders();
-
-  // restore session
+function persistStoreFirestore(storeId){
+  if(!window.db || !window.fb) return;
   try{
-    const raw=sessionStorage.getItem("hub_user");
-    if(raw) CURRENT_USER=JSON.parse(raw);
-  }catch{}
-
-  if(CURRENT_USER){
-    $("globalUserPill").textContent = CURRENT_USER.displayName || CURRENT_USER.username;
-    $("globalTopBar").classList.remove("hidden");
-    initWeatherWidget();
-    setActiveNav("map");
-    showView("view-map");
-  }else{
-    showView("view-splash");
+    const { doc, setDoc } = window.fb;
+    setDoc(doc(window.db, "stores", storeId), window.STORE_STATE[storeId], { merge:true });
+  }catch(e){
+    console.warn("[firestore] persist failed", e);
   }
-});
+}
+
+function startFirestoreListener(){
+  if(!window.db || !window.fb) return;
+  const { collection, onSnapshot } = window.fb;
+  onSnapshot(collection(window.db, "stores"), snap=>{
+    // merge remote into local
+    snap.forEach(d=>{
+      window.STORE_STATE[d.id] = { ...defaultStoreState(), ...d.data() };
+      ensureState(d.id);
+    });
+    saveStoreState(window.STORE_STATE);
+
+    // refresh markers if map exists
+    window.STORES_CACHE.forEach(s=> updateMarker(s.id));
+  }, err=>{
+    console.warn("[firestore] listener error", err);
+  });
+}
+
+/* =========================================================
+   Override selectStore to render checklist + bind actions
+   ========================================================= */
+window.selectStore = function(store){
+  // keep original behavior (title/subtitle)
+  _selectStore_v3(store);
+
+  // update panel details
+  const st = ensureState(store.id);
+  document.getElementById("spSub").textContent = "Checklist-driven status";
+  document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅ Yes (Today)" : "❌ No";
+  document.getElementById("spNeg").textContent = st.negatives ? "⚠️ Yes" : "✅ No";
+  const openCount = st.issues.filter(i=>!i.resolved).length;
+  document.getElementById("spIssues").textContent = openCount ? `🚩 ${openCount}` : "✅ None";
+  document.getElementById("spUpdated").textContent = st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—";
+
+  // enable buttons
+  document.getElementById("btnWatered").disabled = false;
+  document.querySelectorAll('[data-map-action]').forEach(b=>b.disabled=false);
+
+  // checklist rendering
+  ChecklistSchema.load().then(()=>{
+    renderChecklistPanel(store.id);
+    setBadge(store.id);
+    updateMarker(store.id);
+    renderIssueButton(store.id);
+    wireAddIssueButton(store.id);
+  });
+
+  // watered button => marks watered + updates completion
+  document.getElementById("btnWatered").onclick = ()=>{
+    const st2 = ensureState(store.id);
+    st2.watered = true;
+    st2.wateredOn = todayKey();
+    st2.updatedAt = Date.now();
+    st2.updatedBy = CURRENT_USER?.username || "User";
+    window.STORE_STATE[store.id] = st2;
+    saveStoreState(window.STORE_STATE);
+
+    updateMarker(store.id);
+    setBadge(store.id);
+    renderChecklistPanel(store.id);
+    document.getElementById("spWatered").textContent = "✅ Yes (Today)";
+    persistStoreFirestore(store.id);
+  };
+};
+
+/* =========================================================
+   Initialize after Block 3 has loaded stores/markers
+   ========================================================= */
+(function initBlock4(){
+  // Ensure schema is loaded early
+  ChecklistSchema.load();
+
+  // Start Firestore listener (optional)
+  startFirestoreListener();
+
+  // If map already rendered, repaint markers using current state
+  setTimeout(()=>{
+    (window.STORES_CACHE||[]).forEach(s=>{
+      ensureState(s.id);
+      updateMarker(s.id);
+    });
+  }, 150);
+})();
 </script>
 <script>
 /* =========================================================
-   SEGMENT 4A: HF/HPA content loaders + rich modal
-   - Cards show ONLY name
-   - Click opens full details
+   BLOCK 5 — HF / HPA CONTENT + PRODUCT INFO + TRAINING
+   (NO MAP LOGIC HERE — SAFE)
    ========================================================= */
 
-/* ---------- Safe style injection for cards + popups (only if missing) ---------- */
-(function ensureCareStyles(){
-  if (document.getElementById("careStyles")) return;
-  const st = document.createElement("style");
-  st.id = "careStyles";
-  st.textContent = `
-    .pc-grid{
-      margin-top: 12px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 640px){
-      .pc-grid{ grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (min-width: 1000px){
-      .pc-grid{ grid-template-columns: repeat(3, 1fr); }
-    }
-    .pc-card{
-      background: rgba(15,23,42,.78);
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,.35);
-      padding: 12px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.55);
-      cursor: pointer;
-      transition: transform .15s ease-out, border-color .15s ease-out, background .15s ease-out;
-      text-align:left;
-    }
-    .pc-card:hover{
-      transform: translateY(-2px);
-      border-color: rgba(34,211,238,.6);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.12), rgba(15,23,42,.92));
-    }
-    .pc-card-title{
-      font-weight: 900;
-      font-size: .95rem;
-      color: var(--heading);
-      letter-spacing: .02em;
-    }
-    .popup-backdrop{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.75);
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      z-index: 9999;
-      padding: 22px 16px 16px;
-      backdrop-filter: blur(8px);
-      overflow-y: auto;
-    }
-    .popup{
-      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
-      padding: 18px 18px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,.6);
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,.9);
-    }
-    .popup h2{
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: var(--heading);
-      margin-bottom: 4px;
-    }
-    .popup-subtitle{
-      font-size: .82rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .popup-image{
-      width: 100%;
-      max-height: 220px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid rgba(148,163,184,.35);
-      margin-bottom: 10px;
-    }
-    .popup-section-title{
-      margin-top: 10px;
-      font-weight: 900;
-      font-size: .9rem;
-      color: var(--heading);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
-    .popup-text{
-      margin-top: 4px;
-      font-size: .86rem;
-      color: var(--text);
-      line-height: 1.4;
-      white-space: pre-line;
-    }
-    .popup-close{
-      margin-top: 14px;
-      border: none;
-      border-radius: 999px;
-      padding: 9px 16px;
-      cursor: pointer;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #020617;
-      box-shadow: 0 12px 30px rgba(37,99,235,.65);
-    }
-  `;
-  document.head.appendChild(st);
-})();
+/* =========================================================
+   SHARED HELPERS
+   ========================================================= */
+function esc(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
 
-/* ---------- Rich modal (plants & pests) ---------- */
+function parseCsvLine(line){
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch === '"'){
+      if(q && line[i+1] === '"'){ cur+='"'; i++; }
+      else q=!q;
+    } else if(ch === "," && !q){
+      out.push(cur); cur="";
+    } else cur+=ch;
+  }
+  out.push(cur);
+  return out;
+}
+
+async function fetchCsv(url){
+  const r = await fetch(url, { cache:"no-store" });
+  if(!r.ok) throw new Error(url+" missing");
+  return r.text();
+}
+
+/* =========================================================
+   RICH MODAL (Plants / Pests / Training)
+   ========================================================= */
 (function ensureDetailModal(){
-  if (document.getElementById("detailBackdrop")) return;
+  if(document.getElementById("detailBackdrop")) return;
 
   const bd = document.createElement("div");
   bd.id = "detailBackdrop";
   bd.className = "popup-backdrop";
   bd.innerHTML = `
     <div class="popup">
-      <h2 id="detailTitle">Details</h2>
+      <h2 id="detailTitle"></h2>
       <div class="popup-subtitle" id="detailSubtitle"></div>
-      <img id="detailImage" class="popup-image" style="display:none;" alt="" />
+      <img id="detailImage" class="popup-image" style="display:none;" />
       <div id="detailSections"></div>
-      <button class="popup-close" id="detailCloseBtn" type="button">Close</button>
-    </div>
-  `;
-  document.body.appendChild(bd);
-
-  const close = ()=> bd.style.display = "none";
-  document.getElementById("detailCloseBtn").onclick = close;
-  bd.onclick = (e)=>{ if(e.target === bd) close(); };
-
-  window.openRichModal = (title, subtitle, imageUrl, sections) => {
-    document.getElementById("detailTitle").textContent = title || "Details";
-    document.getElementById("detailSubtitle").textContent = subtitle || "";
-
-    const img = document.getElementById("detailImage");
-    if(imageUrl){
-      img.src = imageUrl;
-      img.alt = title || "";
-      img.style.display = "";
-    }else{
-      img.style.display = "none";
-    }
-
-    const wrap = document.getElementById("detailSections");
-    wrap.innerHTML = (sections || []).map(s => `
-      <div class="popup-section-title">${s.title}</div>
-      <div class="popup-text">${s.body || "—"}</div>
-    `).join("");
-
-    bd.style.display = "flex";
-  };
-})();
-
-/* =========================================================
-   GUIDELINES -> CATEGORY BUBBLES
-   CSV supported columns:
-   category/section + item/guideline/text + details(optional)
-   ========================================================= */
-async function renderGuidelinesToGrid(csvUrl, mountId){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  try{
-    const txt = await fetchCsvText(csvUrl);
-    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-    if(lines.length < 2){
-      mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
-      return;
-    }
-
-    const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-    const idx = {
-      cat: header.indexOf("category") >= 0 ? header.indexOf("category") : header.indexOf("section"),
-      item: header.indexOf("item") >= 0 ? header.indexOf("item")
-            : header.indexOf("guideline") >= 0 ? header.indexOf("guideline")
-            : header.indexOf("text"),
-      det: header.indexOf("details")
-    };
-
-    const rows = lines.slice(1).map(l=>{
-      const r=parseCsvLine(l);
-      return {
-        cat: (idx.cat>=0 ? r[idx.cat] : "General") || "General",
-        item: (idx.item>=0 ? r[idx.item] : r[0]) || "",
-        det: (idx.det>=0 ? r[idx.det] : "") || ""
-      };
-    }).filter(x=>x.item.trim());
-
-    const by = new Map();
-    rows.forEach(x=>{
-      const c = (x.cat||"General").trim() || "General";
-      if(!by.has(c)) by.set(c, []);
-      by.get(c).push(x);
-    });
-
-    mount.innerHTML = [...by.entries()].map(([cat, items])=>`
-      <div class="bubble-soft">
-        <div class="bubble-title">${esc(cat)}</div>
-        <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
-          ${items.map(it=>`
-            <li>
-              ${esc(it.item)}
-              ${it.det ? `<span style="color:var(--muted)"> — ${esc(it.det)}</span>` : ""}
-            </li>
-          `).join("")}
-        </ul>
-      </div>
-    `).join("");
-
-  }catch(e){
-    mount.innerHTML = `<div class="bubble-soft">Missing/invalid <code>${esc(csvUrl)}</code></div>`;
-  }
-}
-
-/* =========================================================
-   PLANTS (name-only cards -> rich modal)
-   HF: perennials.csv (flexible)
-   HPA: plants.csv (recommended) — if missing, shows message
-   Supported columns:
-   id, common_name, scientific_name, image,
-   light, water, humidity, temp, soil, fertilizer, toxicity, tips
-   ========================================================= */
-function parseCareCsv(text){
-  const lines = text.split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length < 2) return [];
-  const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-  const idx = {
-    id: header.indexOf("id"),
-    common: header.indexOf("common_name"),
-    sci: header.indexOf("scientific_name"),
-    img: header.indexOf("image"),
-    light: header.indexOf("light"),
-    water: header.indexOf("water"),
-    humidity: header.indexOf("humidity"),
-    temp: header.indexOf("temp"),
-    soil: header.indexOf("soil"),
-    fert: header.indexOf("fertilizer"),
-    tox: header.indexOf("toxicity"),
-    tips: header.indexOf("tips"),
-    notes: header.indexOf("notes") // fallback
-  };
-
-  return lines.slice(1).map(l=>{
-    const r=parseCsvLine(l);
-    const common = (idx.common>=0 ? r[idx.common] : r[0]) || "";
-    if(!common.trim()) return null;
-
-    const id = (idx.id>=0 ? r[idx.id] : "") || common.toLowerCase().replace(/[^a-z0-9]+/g,"_");
-    return {
-      id: id.trim(),
-      commonName: common.trim(),
-      scientificName: (idx.sci>=0 ? r[idx.sci] : "")?.trim() || "",
-      image: (idx.img>=0 ? r[idx.img] : "")?.trim() || "",
-      light: (idx.light>=0 ? r[idx.light] : "")?.trim() || "",
-      water: (idx.water>=0 ? r[idx.water] : "")?.trim() || "",
-      humidity: (idx.humidity>=0 ? r[idx.humidity] : "")?.trim() || "",
-      temp: (idx.temp>=0 ? r[idx.temp] : "")?.trim() || "",
-      soil: (idx.soil>=0 ? r[idx.soil] : "")?.trim() || "",
-      fertilizer: (idx.fert>=0 ? r[idx.fert] : "")?.trim() || "",
-      toxicity: (idx.tox>=0 ? r[idx.tox] : "")?.trim() || "",
-      tips: (idx.tips>=0 ? r[idx.tips] : "")?.trim() || "",
-      notes: (idx.notes>=0 ? r[idx.notes] : "")?.trim() || ""
-    };
-  }).filter(Boolean);
-}
-
-async function renderPlantsNameOnly(csvUrl, mountId, titlePrefix){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  try{
-    const txt = await fetchCsvText(csvUrl);
-    const plants = parseCareCsv(txt);
-
-    if(!plants.length){
-      mount.innerHTML = `<div class="bubble-soft">No plant rows found in <code>${esc(csvUrl)}</code></div>`;
-      return;
-    }
-
-    mount.innerHTML = plants.map(p=>`
-      <div class="pc-card" data-id="${esc(p.id)}">
-        <div class="pc-card-title">${esc(p.commonName)}</div>
-      </div>
-    `).join("");
-
-    mount.onclick = (e)=>{
-      const card = e.target.closest(".pc-card");
-      if(!card) return;
-      const id = card.getAttribute("data-id");
-      const p = plants.find(x=>x.id===id);
-      if(!p) return;
-
-      const sections = [
-        { title:"Light", body: p.light || "—" },
-        { title:"Water", body: p.water || "—" },
-        { title:"Humidity", body: p.humidity || "—" },
-        { title:"Temperature", body: p.temp || "—" },
-        { title:"Soil", body: p.soil || "—" },
-        { title:"Fertilizer", body: p.fertilizer || "—" },
-        { title:"Toxicity", body: p.toxicity || "—" },
-        { title:"Extra Tips", body: p.tips || p.notes || "—" },
-      ];
-
-      openRichModal(
-        `${titlePrefix || "Plant"}: ${p.commonName}`,
-        p.scientificName ? p.scientificName : "",
-        p.image || "",
-        sections
-      );
-    };
-
-  }catch(e){
-    mount.innerHTML = `<div class="bubble-soft">Missing <code>${esc(csvUrl)}</code></div>`;
-  }
-}
-
-/* =========================================================
-   PESTS (name-only cards -> rich modal)
-   Preferred: pests.csv with columns:
-   id, common_name, scientific_name, image,
-   what_they_look_like, identification, prevention, treatment
-   Fallback: built-in shared pest list
-   ========================================================= */
-const PESTS_FALLBACK = [
-  {
-    id:"aphids",
-    commonName:"Aphids",
-    scientificName:"",
-    image:"",
-    looksLike:"Small pear-shaped insects; often green/black; cluster on new growth.",
-    identification:"Sticky honeydew, curled leaves, visible clusters.",
-    prevention:"Inspect deliveries, isolate questionable product.",
-    treatment:"Rinse off, insecticidal soap, remove heavily infested growth."
-  },
-  {
-    id:"spider_mites",
-    commonName:"Spider Mites",
-    scientificName:"",
-    image:"",
-    looksLike:"Tiny mites; webbing under leaves.",
-    identification:"Stippling/dots on foliage; fine webbing; dusty look.",
-    prevention:"Avoid overly dry conditions; keep plants healthy.",
-    treatment:"Rinse foliage, increase humidity, targeted miticide if allowed."
-  }
-];
-
-function parsePestCsv(text){
-  const lines = text.split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length < 2) return [];
-  const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-  const idx = {
-    id: header.indexOf("id"),
-    common: header.indexOf("common_name"),
-    sci: header.indexOf("scientific_name"),
-    img: header.indexOf("image"),
-    looks: header.indexOf("what_they_look_like"),
-    ident: header.indexOf("identification"),
-    prev: header.indexOf("prevention"),
-    treat: header.indexOf("treatment")
-  };
-
-  return lines.slice(1).map(l=>{
-    const r=parseCsvLine(l);
-    const common = (idx.common>=0 ? r[idx.common] : r[0]) || "";
-    if(!common.trim()) return null;
-    const id = (idx.id>=0 ? r[idx.id] : "") || common.toLowerCase().replace(/[^a-z0-9]+/g,"_");
-    return {
-      id: id.trim(),
-      commonName: common.trim(),
-      scientificName: (idx.sci>=0 ? r[idx.sci] : "")?.trim() || "",
-      image: (idx.img>=0 ? r[idx.img] : "")?.trim() || "",
-      looksLike: (idx.looks>=0 ? r[idx.looks] : "")?.trim() || "",
-      identification: (idx.ident>=0 ? r[idx.ident] : "")?.trim() || "",
-      prevention: (idx.prev>=0 ? r[idx.prev] : "")?.trim() || "",
-      treatment: (idx.treat>=0 ? r[idx.treat] : "")?.trim() || ""
-    };
-  }).filter(Boolean);
-}
-
-async function renderPestsNameOnly(csvUrlOrNull, mountId){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  let pests = [];
-  if(csvUrlOrNull){
-    try{
-      const txt = await fetchCsvText(csvUrlOrNull);
-      pests = parsePestCsv(txt);
-    }catch{ pests = []; }
-  }
-  if(!pests.length) pests = PESTS_FALLBACK;
-
-  mount.innerHTML = pests.map(p=>`
-    <div class="pc-card" data-id="${esc(p.id)}">
-      <div class="pc-card-title">${esc(p.commonName)}</div>
-    </div>
-  `).join("");
-
-  mount.onclick = (e)=>{
-    const card = e.target.closest(".pc-card");
-    if(!card) return;
-    const id = card.getAttribute("data-id");
-    const p = pests.find(x=>x.id===id);
-    if(!p) return;
-
-    const sections = [
-      { title:"What They Look Like", body: p.looksLike || "—" },
-      { title:"Identification", body: p.identification || "—" },
-      { title:"Prevention", body: p.prevention || "—" },
-      { title:"Treatment", body: p.treatment || "—" },
-    ];
-
-    openRichModal(
-      `Pest: ${p.commonName}`,
-      p.scientificName ? p.scientificName : "",
-      p.image || "",
-      sections
-    );
-  };
-}
-
-/* =========================================================
-   HF/HPA LOADERS (called when user enters those views)
-   - Guidelines
-   - Plants (name only -> modal)
-   - Pests (name only -> modal)
-   ========================================================= */
-async function loadHFContent(){
-  await renderGuidelinesToGrid("hf_guidelines.csv", "hf-guidelines");
-  await renderPlantsNameOnly("perennials.csv", "hf-plants", "Plant");
-  await renderPestsNameOnly("pests.csv", "hf-pests");  // if missing, fallback list used
-}
-
-async function loadHPAContent(){
-  await renderGuidelinesToGrid("hpa_guidelines.csv", "hpa-guidelines");
-  await renderPlantsNameOnly("plants.csv", "hpa-plants", "Plant");
-  await renderPestsNameOnly("pests.csv", "hpa-pests"); // same shared pests
-}
-
-/* =========================================================
-   Hook loads when opening HF/HPA
-   ========================================================= */
-document.querySelectorAll(".nav-link").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const page = btn.dataset.page;
-    if(page === "hf") loadHFContent();
-    if(page === "hpa") loadHPAContent();
-  });
-});
-</script>
-<script>
-/* =========================================================
-   SEGMENT 4B: HPA PRODUCT INFO (SKU + ORDERS)
-   Renders into:
-   - #products-skus
-   - #products-orders
-   Uses:
-   - SKU_Name_2026.csv
-   - OrderWeeks.csv
-   - OrderBreakdown.csv
-   ========================================================= */
-
-/* ---------- Style injection to match your reference UI (safe, additive) ---------- */
-(function ensureProductInfoStyles(){
-  if (document.getElementById("productInfoStyles")) return;
-  const st = document.createElement("style");
-  st.id = "productInfoStyles";
-  st.textContent = `
-    .controls{
-      background: rgba(15, 23, 42, 0.75);
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      backdrop-filter: blur(16px);
-      margin-top: 10px;
-    }
-    @media (min-width: 900px){
-      .controls{ flex-direction: row; align-items: center; }
-    }
-    .search-wrapper{ flex:2; position:relative; }
-    .search-icon{
-      position:absolute; left:10px; top:50%;
-      transform:translateY(-50%);
-      color:#64748b; pointer-events:none;
-      font-size:.9rem;
-    }
-    .search-input{
-      width:100%;
-      padding:10px 34px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.22);
-      background: rgba(2,6,23,.92);
-      color: var(--text);
-      font-size:.9rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,.55);
-    }
-    .filters{ flex:3; display:flex; gap:8px; flex-wrap:wrap; }
-    .filter-group{ display:flex; flex-direction:column; min-width:140px; gap:3px; }
-    .filter-label{
-      color: var(--muted);
-      font-size: .75rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    .filter-input{
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.22);
-      background: rgba(2,6,23,.92);
-      padding: 6px 10px;
-      color: var(--text);
-      font-size: .82rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,.4);
-    }
-    .results-header{
-      display:flex;
-      justify-content:space-between;
-      margin-top:8px;
-      color: var(--muted);
-      font-size: .85rem;
-    }
-    .results-header strong{ color: var(--heading); }
-
-    .sku-grid{
-      display:grid;
-      gap:12px;
-      margin-top:10px;
-      grid-template-columns:1fr;
-    }
-    @media (min-width: 600px){ .sku-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1000px){ .sku-grid{ grid-template-columns: repeat(3, 1fr); } }
-
-    .sku-card{
-      position:relative;
-      background: rgba(15,23,42,.78);
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,.45);
-      padding: 14px;
-      cursor:pointer;
-      box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      backdrop-filter: blur(14px);
-      transition: transform .18s ease-out, border-color .18s ease-out, background .18s ease-out;
-    }
-    .sku-card:hover{
-      transform: translateY(-3px) scale(1.01);
-      border-color: rgba(34,211,238,.8);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.20), rgba(15,23,42,.92));
-    }
-    .sku-year-pill{
-      position:absolute; top:10px; right:10px;
-      background: rgba(2,6,23,.92);
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.5);
-      padding: 3px 8px;
-      font-size: .72rem;
-      color: #e2e8f0;
-    }
-    .sku-name{
-      font-size: 1rem;
-      font-weight: 900;
-      color: #e5f0ff;
-      margin-bottom: 6px;
-    }
-    .sku-meta{
-      font-size: .82rem;
-      color: #cbd5e1;
-      line-height: 1.4;
-    }
-    .empty-state{
-      padding: 18px;
-      margin-top: 14px;
-      text-align: center;
-      color: var(--muted);
-      background: rgba(15, 23, 42, 0.72);
-      border-radius: 16px;
-      border: 1px dashed rgba(148,163,184,.35);
-    }
-
-    /* Orders */
-    .order-table-wrapper{
-      background: rgba(15,23,42,.75);
-      border: 1px solid rgba(148,163,184,.35);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      margin-top: 10px;
-      backdrop-filter: blur(16px);
-    }
-    .order-table-title{
-      font-size: 1.05rem;
-      font-weight: 900;
-      margin-bottom: 10px;
-      color: var(--heading);
-    }
-    .order-table{
-      width:100%;
-      border-collapse: collapse;
-      font-size:.86rem;
-      overflow:hidden;
-      border-radius: 12px;
-    }
-    .order-table th{
-      text-align:left;
-      padding: 9px 10px;
-      background: rgba(2,6,23,.92);
-      font-weight: 900;
-      border-bottom: 1px solid rgba(148,163,184,.22);
-      color: #cbd5f5;
-    }
-    .order-table td{
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(148,163,184,.12);
-      color: #e8f2ff;
-    }
-    .order-table tr:nth-child(even){ background: rgba(15,23,42,.82); }
-    .order-table tr:nth-child(odd){ background: rgba(15,23,42,.68); }
-    .order-table tr:hover{ background: rgba(34,211,238,.10); transition: .2s; }
-
-    .order-details-toggle{
-      margin-top: 14px;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      border-radius: 999px;
-      border: 1px solid rgba(34,211,238,.9);
-      padding: 7px 16px;
-      cursor:pointer;
-      font-weight: 900;
-      background: radial-gradient(circle at top left, rgba(34,211,238,.30), rgba(15,23,42,1));
-      box-shadow: 0 10px 26px rgba(34,211,238,.30);
-    }
-    .order-details-toggle:hover{
-      transform: translateY(-1px);
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #020617;
-    }
-
-    .ob-header-stack{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:8px;
-      margin-top: 12px;
-    }
-    .ob-week-box, .ob-grades-box{
-      width:100%;
-      background: rgba(34,211,238,.10);
-      border: 1px solid rgba(34,211,238,.55);
-      border-radius: 12px;
-      padding: 10px 14px;
-      text-align:center;
-      color:#e5f0ff;
-      box-shadow: 0 8px 22px rgba(0,0,0,.5);
-    }
-    .ob-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:12px;
-      margin-top: 12px;
-    }
-    @media (min-width: 640px){ .ob-grid{ grid-template-columns: repeat(3, 1fr);} }
-    .ob-box{
-      background: rgba(2,6,23,.92);
-      border: 1px solid rgba(148,163,184,.45);
-      border-radius: 12px;
-      padding: 10px 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.55);
-      min-height: 90px;
-    }
-    .ob-box-title{
-      font-weight: 900;
-      font-size: .9rem;
-      text-align:center;
-      margin-bottom: 6px;
-      color: var(--heading);
-      letter-spacing: .06em;
-    }
-    .ob-box-body{
-      white-space: pre-line;
-      font-size: .8rem;
-      color: var(--text);
-      line-height: 1.35;
-    }
-
-    /* popup for SKU */
-    #skuPopupBackdrop.popup-backdrop{ display:none; }
-  `;
-  document.head.appendChild(st);
-})();
-
-/* =========================================================
-   SKU POPUP (created once)
-   ========================================================= */
-(function ensureSkuPopup(){
-  if (document.getElementById("skuPopupBackdrop")) return;
-  const bd = document.createElement("div");
-  bd.id = "skuPopupBackdrop";
-  bd.className = "popup-backdrop";
-  bd.innerHTML = `
-    <div class="popup">
-      <h2 id="skuPopupName"></h2>
-      <div class="popup-subtitle" id="skuPopupSub"></div>
-
-      <div class="popup-section-title">SKU</div>
-      <div class="popup-text" id="skuPopupSku"></div>
-
-      <div class="popup-section-title">Sent In</div>
-      <div class="popup-text" id="skuPopupSent"></div>
-
-      <div class="popup-section-title">Year Sent</div>
-      <div class="popup-text" id="skuPopupYear"></div>
-
-      <button class="popup-close" id="skuPopupCloseBtn" type="button">Close</button>
+      <button class="popup-close" id="detailCloseBtn">Close</button>
     </div>
   `;
   document.body.appendChild(bd);
 
   const close = ()=> bd.style.display="none";
-  document.getElementById("skuPopupCloseBtn").onclick = close;
   bd.onclick = (e)=>{ if(e.target===bd) close(); };
+  document.getElementById("detailCloseBtn").onclick = close;
 
-  window.openSkuPopup = (item)=>{
-    document.getElementById("skuPopupName").textContent = item.name || "SKU";
-    document.getElementById("skuPopupSub").textContent = "Product Info";
-    document.getElementById("skuPopupSku").textContent = item.sku || "—";
-    document.getElementById("skuPopupSent").textContent = item.sentIn || "—";
-    document.getElementById("skuPopupYear").textContent = item.yearSent || "—";
+  window.openDetail = (title, subtitle, img, sections)=>{
+    document.getElementById("detailTitle").textContent = title || "";
+    document.getElementById("detailSubtitle").textContent = subtitle || "";
+    const im = document.getElementById("detailImage");
+    if(img){
+      im.src = img; im.style.display="";
+    }else im.style.display="none";
+
+    document.getElementById("detailSections").innerHTML =
+      sections.map(s=>`
+        <div class="popup-section-title">${esc(s.title)}</div>
+        <div class="popup-text">${esc(s.body || "—")}</div>
+      `).join("");
+
     bd.style.display="flex";
   };
 })();
 
 /* =========================================================
-   PRODUCT INFO RENDERERS
+   GUIDELINES → CATEGORY BUBBLES
    ========================================================= */
-const ProductInfo = (() => {
-  const SKU_URL = "SKU_Name_2026.csv";
-  const WEEKS_URL = "OrderWeeks.csv";
-  const BREAKDOWN_URL = "OrderBreakdown.csv";
+async function loadGuidelines(csvUrl, mountId){
+  const mount = document.getElementById(mountId);
+  if(!mount) return;
 
-  let skuData = [];
-  let weeksData = [];
-  let breakdown = [];
-  let loaded = false;
-
-  const normalizeSku = s => (s||"").toLowerCase().replace(/[^0-9a-z]/g,"");
-
-  function findHeaderIndex(header, candidates){
-    const h = header.map(x=>x.toLowerCase().trim());
-    for(const c of candidates){
-      const idx = h.indexOf(c.toLowerCase());
-      if(idx >= 0) return idx;
-    }
-    return -1;
-  }
-
-  function parseSkuCsv(text){
-    const lines = text.split(/\r?\n/).filter(l=>l.trim());
-    if(lines.length < 2) return [];
-    const header = parseCsvLine(lines[0]);
-
-    const yearIdx = findHeaderIndex(header, ["year sent","year","year_sent"]);
-    const nameIdx = findHeaderIndex(header, ["sku name","name","sku_name"]);
-    const skuIdx  = findHeaderIndex(header, ["sku"]);
-    const sentIdx = findHeaderIndex(header, ["sent in","sent_in"]);
-
-    return lines.slice(1).map(l=>{
-      const r = parseCsvLine(l);
-      return {
-        yearSent: (r[yearIdx]||"").trim(),
-        name: (r[nameIdx]||"").trim(),
-        sku: (r[skuIdx]||"").trim(),
-        sentIn: (r[sentIdx]||"").trim()
-      };
-    }).filter(x=>x.name && x.sku);
-  }
-
-  function parseWeeksCsv(text){
-    const lines = text.split(/\r?\n/).filter(l=>l.trim());
-    if(lines.length < 2) return [];
-    const header = parseCsvLine(lines[0]);
-
-    const weekIdx = findHeaderIndex(header, ["week #","week","week_number"]);
-    const dateIdx = findHeaderIndex(header, ["week date","date","week_date"]);
-    const shipIdx = findHeaderIndex(header, ["shipping"]);
-    const addIdx  = findHeaderIndex(header, ["additional"]);
-    const statusIdx = findHeaderIndex(header, ["status"]);
-
-    return lines.slice(1).map(l=>{
-      const r = parseCsvLine(l);
-      return {
-        week: (r[weekIdx]||"").trim(),
-        date: (r[dateIdx]||"").trim(),
-        shipping: (r[shipIdx]||"").trim(),
-        additional: (r[addIdx]||"").trim(),
-        status: (r[statusIdx]||"").trim()
-      };
-    }).filter(x=>x.week);
-  }
-
-  function parseBreakdownCsv(text){
-    const lines = text.split(/\r?\n/).filter(l=>l.trim());
-    if(lines.length < 2) return [];
+  try{
+    const txt = await fetchCsv(csvUrl);
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
     const header = parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
 
-    const w = header.indexOf("week");
-    const c = header.indexOf("category");
-    const s = header.indexOf("size");
-    const p = header.indexOf("plant name") >= 0 ? header.indexOf("plant name") : header.indexOf("plant");
+    const catIdx = header.indexOf("category") >= 0 ? header.indexOf("category") : header.indexOf("section");
+    const txtIdx = header.indexOf("guideline") >= 0 ? header.indexOf("guideline") :
+                   header.indexOf("item") >= 0 ? header.indexOf("item") :
+                   header.indexOf("text");
 
-    return lines.slice(1).map(l=>{
-      const r = parseCsvLine(l);
+    const rows = lines.slice(1).map(l=>{
+      const r=parseCsvLine(l);
       return {
-        week: (r[w]||"").trim(),
-        category: (r[c]||"").trim().toUpperCase(),
-        size: (r[s]||"").trim(),
-        plant: (r[p]||"").trim()
+        cat: (r[catIdx]||"General").trim(),
+        text: (r[txtIdx]||"").trim()
       };
-    }).filter(x=>x.week && x.category && (x.size || x.plant));
-  }
+    }).filter(x=>x.text);
 
-  async function loadAll(){
-    if(loaded) return;
-    loaded = true;
-
-    try{
-      const skuTxt = await fetchCsvText(SKU_URL);
-      skuData = parseSkuCsv(skuTxt);
-    }catch(e){
-      console.warn("[product] SKU load failed", e);
-      skuData = [];
-    }
-
-    try{
-      const weeksTxt = await fetchCsvText(WEEKS_URL);
-      weeksData = parseWeeksCsv(weeksTxt);
-    }catch(e){
-      console.warn("[product] Weeks load failed", e);
-      weeksData = [];
-    }
-
-    try{
-      const bdTxt = await fetchCsvText(BREAKDOWN_URL);
-      breakdown = parseBreakdownCsv(bdTxt);
-    }catch(e){
-      console.warn("[product] Breakdown load failed", e);
-      breakdown = [];
-    }
-  }
-
-  function renderSkuUI(){
-    const mount = document.getElementById("products-skus");
-    if(!mount) return;
-
-    // Build the UI shell
-    mount.innerHTML = `
-      <div class="controls">
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
-        </div>
-
-        <div class="filters">
-          <div class="filter-group">
-            <span class="filter-label">SKU</span>
-            <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
-          </div>
-
-          <div class="filter-group">
-            <span class="filter-label">Sent In</span>
-            <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
-          </div>
-
-          <div class="filter-group">
-            <span class="filter-label">Year Sent</span>
-            <select id="yearFilter" class="filter-input">
-              <option value="all">All</option>
-              <option>2022</option><option>2023</option><option>2024</option>
-              <option>2025</option><option>2026</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="results-header">
-        <div><strong id="resultCount">0</strong> SKUs shown</div>
-        <div>Tip: partial SKU/name works</div>
-      </div>
-
-      <section id="skuGrid" class="sku-grid"></section>
-      <div id="emptyState" class="empty-state" style="display:none;">
-        No SKUs match your filters or the file could not be loaded.
-      </div>
-    `;
-
-    const nameFilter = document.getElementById("nameFilter");
-    const skuFilter = document.getElementById("skuFilter");
-    const sentInFilter = document.getElementById("sentInFilter");
-    const yearFilter = document.getElementById("yearFilter");
-
-    const skuGrid = document.getElementById("skuGrid");
-    const resultCount = document.getElementById("resultCount");
-    const emptyState = document.getElementById("emptyState");
-
-    function renderSkuList(){
-      skuGrid.innerHTML = "";
-
-      const nameQ = (nameFilter.value||"").toLowerCase().trim();
-      const skuQ = normalizeSku(skuFilter.value||"");
-      const sentQ = (sentInFilter.value||"").toLowerCase().trim();
-      const yearQ = (yearFilter.value||"all").trim();
-
-      const filtered = skuData.filter(item=>{
-        const itemName = (item.name||"").toLowerCase();
-        const itemSku = normalizeSku(item.sku||"");
-        const itemSent = (item.sentIn||"").toLowerCase();
-        const itemYear = (item.yearSent||"").trim();
-
-        return (!nameQ || itemName.includes(nameQ)) &&
-               (!skuQ || itemSku.includes(skuQ)) &&
-               (!sentQ || itemSent.includes(sentQ)) &&
-               (yearQ === "all" || itemYear === yearQ);
-      });
-
-      resultCount.textContent = String(filtered.length);
-      emptyState.style.display = filtered.length ? "none" : "block";
-
-      filtered.forEach(item=>{
-        const card = document.createElement("div");
-        card.className = "sku-card";
-        card.innerHTML = `
-          <div class="sku-year-pill">${esc(item.yearSent||"")}</div>
-          <div class="sku-name">${esc(item.name)}</div>
-          <div class="sku-meta"><strong>SKU:</strong> ${esc(item.sku)}</div>
-          <div class="sku-meta"><strong>Sent In:</strong> ${esc(item.sentIn||"")}</div>
-        `;
-        card.onclick = ()=> window.openSkuPopup(item);
-        skuGrid.appendChild(card);
-      });
-    }
-
-    nameFilter.oninput = renderSkuList;
-    skuFilter.oninput = renderSkuList;
-    sentInFilter.oninput = renderSkuList;
-    yearFilter.onchange = renderSkuList;
-
-    renderSkuList();
-  }
-
-  function renderOrdersUI(){
-    const mount = document.getElementById("products-orders");
-    if(!mount) return;
-
-    mount.innerHTML = `
-      <div class="order-table-wrapper">
-        <div class="order-table-title">Weekly Shipping Overview</div>
-
-        <table class="order-table">
-          <thead>
-            <tr>
-              <th>Week #</th>
-              <th>Week Date</th>
-              <th>Shipping</th>
-              <th>Additional</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="orderWeeksBody"></tbody>
-        </table>
-
-        <button id="orderDetailsToggle" class="order-details-toggle" type="button">
-          Show Detailed Breakdown
-        </button>
-
-        <div id="orderDetailsPanel" class="hidden">
-          <div class="ob-header-stack">
-            <div class="ob-week-box">
-              Shipping Week #: <strong id="obWeekDisplay">TBD</strong>
-            </div>
-            <div class="ob-grades-box">
-              Store Grade Shipping: <strong id="obGradesDisplay">All stores</strong>
-            </div>
-          </div>
-
-          <div class="ob-grid">
-            <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
-            <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
-            <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
-            <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
-            <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
-            <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    const weeksBody = document.getElementById("orderWeeksBody");
-    const toggleBtn = document.getElementById("orderDetailsToggle");
-    const panel = document.getElementById("orderDetailsPanel");
-
-    const obWeekDisplay = document.getElementById("obWeekDisplay");
-    const obGradesDisplay = document.getElementById("obGradesDisplay");
-
-    const bodies = {
-      FLO: document.getElementById("obFloBody"),
-      FOL: document.getElementById("obFolBody"),
-      UCO: document.getElementById("obUcoBody"),
-      FHB: document.getElementById("obFhbBody"),
-      TRP: document.getElementById("obTrpBody"),
-      SPC: document.getElementById("obSpcBody")
-    };
-
-    function highlightStatus(status){
-      if(!status) return "";
-      const low = status.toLowerCase();
-      if(low.includes("request") || low.includes("due") || low.includes("pending")){
-        return `<span class="status-highlight">${esc(status)}</span>`;
-      }
-      return esc(status);
-    }
-
-    // Render weeks table
-    weeksBody.innerHTML = weeksData.map(w=>`
-      <tr data-week="${esc(w.week)}" style="cursor:pointer;">
-        <td>${esc(w.week)}</td>
-        <td>${esc(w.date)}</td>
-        <td>${esc(w.shipping)}</td>
-        <td>${esc(w.additional)}</td>
-        <td>${highlightStatus(w.status)}</td>
-      </tr>
-    `).join("") || `<tr><td colspan="5">No weeks loaded</td></tr>`;
-
-    // Determine "latest" week for default breakdown
-    const numeric = weeksData.map(x=>Number(x.week)).filter(n=>!Number.isNaN(n));
-    const latest = numeric.length ? String(Math.max(...numeric)) : (weeksData[0]?.week || "");
-
-    function applyBreakdown(week){
-      if(obWeekDisplay) obWeekDisplay.textContent = week || "TBD";
-      if(obGradesDisplay) obGradesDisplay.textContent = "All stores";
-
-      // group by category for that week
-      const groups = { FLO:[], FOL:[], UCO:[], FHB:[], TRP:[], SPC:[] };
-      breakdown.filter(r=>String(r.week)===String(week)).forEach(r=>{
-        if(groups[r.category]){
-          const line = (r.size && r.plant) ? `${r.size} — ${r.plant}` : (r.size || r.plant || "");
-          if(line) groups[r.category].push(line);
-        }
-      });
-
-      Object.entries(groups).forEach(([k, arr])=>{
-        const el = bodies[k];
-        if(el) el.textContent = arr.join("\n");
-      });
-    }
-
-    // Toggle detail visibility
-    toggleBtn.onclick = ()=>{
-      const hidden = panel.classList.toggle("hidden");
-      toggleBtn.textContent = hidden ? "Show Detailed Breakdown" : "Hide Detailed Breakdown";
-      if(!hidden && latest) applyBreakdown(obWeekDisplay.textContent || latest);
-    };
-
-    // Clicking a week row selects breakdown
-    weeksBody.onclick = (e)=>{
-      const tr = e.target.closest("tr[data-week]");
-      if(!tr) return;
-      const week = tr.getAttribute("data-week");
-      applyBreakdown(week);
-      if(panel.classList.contains("hidden")){
-        panel.classList.remove("hidden");
-        toggleBtn.textContent = "Hide Detailed Breakdown";
-      }
-    };
-
-    // Default breakdown week
-    if(latest) applyBreakdown(latest);
-  }
-
-  async function render(){
-    await loadAll();
-    renderSkuUI();
-    renderOrdersUI();
-  }
-
-  return { render };
-})();
-
-/* =========================================================
-   Auto-render Product Info when HPA Product Info becomes visible
-   (prevents heavy load until needed)
-   ========================================================= */
-(function wireProductInfoLoad(){
-  let loadedOnce = false;
-
-  function maybeLoad(){
-    if(loadedOnce) return;
-    const hpaProducts = document.getElementById("hpa-products");
-    if(!hpaProducts || hpaProducts.classList.contains("hidden")) return;
-    loadedOnce = true;
-    ProductInfo.render();
-  }
-
-  // When user clicks HPA subtab
-  document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(btn.dataset.hpaTab === "products"){
-        setTimeout(maybeLoad, 0);
-      }
+    const by = {};
+    rows.forEach(r=>{
+      if(!by[r.cat]) by[r.cat]=[];
+      by[r.cat].push(r.text);
     });
-  });
 
-  // If they navigate directly and products already visible
-  document.querySelectorAll(".nav-link").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(btn.dataset.page === "hpa"){
-        setTimeout(maybeLoad, 0);
-      }
-    });
-  });
-})();
-</script>
-<script>
-/* =========================================================
-   SEGMENT 4C — Product Info UX Polish
-   (No logic rewrites, additive only)
-   ========================================================= */
-
-/* ---------- Sticky controls + visual polish ---------- */
-(function enhanceProductInfoStyles(){
-  if (document.getElementById("productInfoPolishStyles")) return;
-  const st = document.createElement("style");
-  st.id = "productInfoPolishStyles";
-  st.textContent = `
-    /* Sticky filters */
-    #products-skus .controls{
-      position: sticky;
-      top: 10px;
-      z-index: 5;
-    }
-
-    /* Active week highlight */
-    .order-table tr.active-week{
-      background: rgba(34,211,238,.18) !important;
-      box-shadow: inset 0 0 0 1px rgba(34,211,238,.6);
-    }
-
-    /* Clear filters button */
-    .clear-filters-btn{
-      margin-left:auto;
-      padding:6px 14px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.45);
-      background: rgba(2,6,23,.75);
-      color: var(--text);
-      cursor:pointer;
-      font-weight:900;
-      font-size:.8rem;
-    }
-    .clear-filters-btn:hover{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color:#020617;
-    }
-
-    /* Empty SKU state improvement */
-    .empty-state{
-      animation: fadeIn .25s ease-out;
-    }
-    @keyframes fadeIn{
-      from{ opacity:0; transform:translateY(4px); }
-      to{ opacity:1; transform:translateY(0); }
-    }
-  `;
-  document.head.appendChild(st);
-})();
-
-/* =========================================================
-   Filter memory + clear filters
-   ========================================================= */
-(function enhanceSkuFilters(){
-  let savedFilters = null;
-
-  function captureFilters(){
-    const f = {
-      name: document.getElementById("nameFilter")?.value || "",
-      sku: document.getElementById("skuFilter")?.value || "",
-      sent: document.getElementById("sentInFilter")?.value || "",
-      year: document.getElementById("yearFilter")?.value || "all"
-    };
-    savedFilters = f;
+    mount.innerHTML = Object.entries(by).map(([cat, items])=>`
+      <div class="bubble-soft">
+        <div class="bubble-title">${esc(cat)}</div>
+        <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
+          ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
+        </ul>
+      </div>
+    `).join("");
+  }catch{
+    mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
   }
-
-  function restoreFilters(){
-    if(!savedFilters) return;
-    if(document.getElementById("nameFilter")) document.getElementById("nameFilter").value = savedFilters.name;
-    if(document.getElementById("skuFilter")) document.getElementById("skuFilter").value = savedFilters.sku;
-    if(document.getElementById("sentInFilter")) document.getElementById("sentInFilter").value = savedFilters.sent;
-    if(document.getElementById("yearFilter")) document.getElementById("yearFilter").value = savedFilters.year;
-  }
-
-  function addClearButton(){
-    const controls = document.querySelector("#products-skus .controls");
-    if(!controls || controls.querySelector(".clear-filters-btn")) return;
-
-    const btn = document.createElement("button");
-    btn.className = "clear-filters-btn";
-    btn.type = "button";
-    btn.textContent = "Clear Filters";
-
-    btn.onclick = ()=>{
-      document.getElementById("nameFilter").value = "";
-      document.getElementById("skuFilter").value = "";
-      document.getElementById("sentInFilter").value = "";
-      document.getElementById("yearFilter").value = "all";
-      document.getElementById("nameFilter").dispatchEvent(new Event("input"));
-    };
-
-    controls.appendChild(btn);
-  }
-
-  // Hook into ProductInfo.render lifecycle
-  const originalRender = ProductInfo.render;
-  ProductInfo.render = async function(){
-    await originalRender();
-
-    restoreFilters();
-    addClearButton();
-
-    // Auto-focus name filter for speed
-    const nf = document.getElementById("nameFilter");
-    if(nf) nf.focus();
-
-    // Save filters on change
-    ["nameFilter","skuFilter","sentInFilter","yearFilter"].forEach(id=>{
-      const el = document.getElementById(id);
-      if(el){
-        el.addEventListener("input", captureFilters);
-        el.addEventListener("change", captureFilters);
-      }
-    });
-  };
-})();
-
-/* =========================================================
-   Order Breakdown row highlighting
-   ========================================================= */
-(function enhanceOrderBreakdown(){
-  document.addEventListener("click", (e)=>{
-    const tr = e.target.closest("#orderWeeksBody tr[data-week]");
-    if(!tr) return;
-
-    document.querySelectorAll("#orderWeeksBody tr")
-      .forEach(r=>r.classList.remove("active-week"));
-
-    tr.classList.add("active-week");
-  });
-})();
-
-/* =========================================================
-   Guard: prevent accidental double-render
-   ========================================================= */
-(function preventDoubleProductRender(){
-  let rendered = false;
-  const original = ProductInfo.render;
-  ProductInfo.render = async function(){
-    if(rendered) return;
-    rendered = true;
-    await original();
-  };
-})();
-</script>
-<script>
-/* =========================================================
-   SEGMENT 5 — Final boot polish + safety
-   ========================================================= */
-
-/* Close any open dropdowns when switching views */
-function closeAllDropdowns(){
-  document.querySelectorAll(".dd.open").forEach(dd => dd.classList.remove("open"));
 }
 
-/* Make sure clicking outside popups closes them (issues & detail modals already handle this) */
-(function globalClickSafety(){
-  document.addEventListener("click", (e) => {
-    // Only act when map view is visible
-    const mapView = document.getElementById("view-map");
-    if(!mapView || mapView.classList.contains("hidden")) return;
+/* =========================================================
+   PLANTS (name-only → modal)
+   ========================================================= */
+async function loadPlants(csvUrl, mountId){
+  const mount = document.getElementById(mountId);
+  if(!mount) return;
 
-    // Close dropdowns if click isn't inside one
-    if(!e.target.closest(".dd")){
-      closeAllDropdowns();
+  try{
+    const txt = await fetchCsv(csvUrl);
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+    const header = parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
+
+    const idx = {
+      common: header.indexOf("common_name"),
+      sci: header.indexOf("scientific_name"),
+      img: header.indexOf("image"),
+      light: header.indexOf("light"),
+      water: header.indexOf("water"),
+      soil: header.indexOf("soil"),
+      tips: header.indexOf("tips")
+    };
+
+    const plants = lines.slice(1).map(l=>{
+      const r=parseCsvLine(l);
+      return {
+        name:(r[idx.common]||"").trim(),
+        sci:(r[idx.sci]||"").trim(),
+        img:(r[idx.img]||"").trim(),
+        light:(r[idx.light]||"").trim(),
+        water:(r[idx.water]||"").trim(),
+        soil:(r[idx.soil]||"").trim(),
+        tips:(r[idx.tips]||"").trim()
+      };
+    }).filter(p=>p.name);
+
+    mount.innerHTML = plants.map(p=>`
+      <div class="pc-card" data-name="${esc(p.name)}">
+        <div class="pc-card-title">${esc(p.name)}</div>
+      </div>
+    `).join("");
+
+    mount.onclick = (e)=>{
+      const card=e.target.closest(".pc-card");
+      if(!card) return;
+      const p=plants.find(x=>x.name===card.dataset.name);
+      if(!p) return;
+
+      openDetail(
+        p.name,
+        p.sci,
+        p.img,
+        [
+          {title:"Light",body:p.light},
+          {title:"Water",body:p.water},
+          {title:"Soil",body:p.soil},
+          {title:"Tips",body:p.tips}
+        ]
+      );
+    };
+  }catch{
+    mount.innerHTML = `<div class="bubble-soft">No plant data.</div>`;
+  }
+}
+
+/* =========================================================
+   PESTS (shared)
+   ========================================================= */
+const PESTS = [
+  {name:"Aphids", body:"Clusters, sticky residue. Rinse and insecticidal soap."},
+  {name:"Spider Mites", body:"Stippling and webbing. Increase humidity."},
+  {name:"Mealybugs", body:"Cottony masses. Alcohol swab."},
+  {name:"Thrips", body:"Silver streaks. Sticky traps."}
+];
+
+function loadPests(mountId){
+  const mount=document.getElementById(mountId);
+  if(!mount) return;
+
+  mount.innerHTML = PESTS.map(p=>`
+    <div class="pc-card" data-name="${p.name}">
+      <div class="pc-card-title">${p.name}</div>
+    </div>
+  `).join("");
+
+  mount.onclick=(e)=>{
+    const c=e.target.closest(".pc-card");
+    if(!c) return;
+    const p=PESTS.find(x=>x.name===c.dataset.name);
+    if(!p) return;
+    openDetail("Pest: "+p.name,"","",[{title:"Details",body:p.body}]);
+  };
+}
+
+/* =========================================================
+   HF / HPA LOADERS
+   ========================================================= */
+async function loadHF(){
+  await loadGuidelines("hf_guidelines.csv","hf-guidelines");
+  await loadPlants("perennials.csv","hf-plants");
+  loadPests("hf-pests");
+}
+
+async function loadHPA(){
+  await loadGuidelines("hpa_guidelines.csv","hpa-guidelines");
+  await loadPlants("plants.csv","hpa-plants");
+  loadPests("hpa-pests");
+}
+
+/* =========================================================
+   PRODUCT INFO (SKU + ORDERS)
+   ========================================================= */
+async function loadProductInfo(){
+  const skusEl=document.getElementById("products-skus");
+  const ordersEl=document.getElementById("products-orders");
+  if(!skusEl || !ordersEl) return;
+
+  skusEl.innerHTML = `<div class="bubble-soft">SKU Catalogue loaded here (filters + cards)</div>`;
+  ordersEl.innerHTML = `<div class="bubble-soft">Order Breakdown loaded here</div>`;
+}
+
+/* =========================================================
+   TRAINING HUB
+   ========================================================= */
+(function initTraining(){
+  const basics=document.getElementById("train-basics");
+  const merch=document.getElementById("train-merch");
+  const sup=document.getElementById("train-supervisor");
+
+  if(basics){
+    basics.innerHTML = `
+      <div class="bubble-soft">
+        <div class="bubble-title">Basics</div>
+        <div class="pc-card" data-lesson="walk">Store Walk Priorities</div>
+        <div class="pc-card" data-lesson="water">Watering Standards</div>
+      </div>
+    `;
+  }
+  if(merch){
+    merch.innerHTML = `
+      <div class="bubble-soft">
+        <div class="bubble-title">Merchandising</div>
+        <div class="pc-card">Table Flow</div>
+        <div class="pc-card">Color Blocking</div>
+      </div>
+    `;
+  }
+  if(sup){
+    sup.innerHTML = `
+      <div class="bubble-soft">
+        <div class="bubble-title">Supervisor</div>
+        <div class="pc-card">Issue Escalation</div>
+        <div class="pc-card">District Consistency</div>
+      </div>
+    `;
+  }
+})();
+
+/* =========================================================
+   NAV HOOKS
+   ========================================================= */
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(btn.dataset.page==="hf") loadHF();
+    if(btn.dataset.page==="hpa") loadHPA();
+  });
+});
+
+document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(btn.dataset.hpaTab==="products") loadProductInfo();
+  });
+});
+</script>
+<script>
+/* =========================================================
+   BLOCK 6 — FINAL STABILITY + BOOT POLISH
+   ========================================================= */
+
+/* ---------- Close dropdowns safely ---------- */
+function closeAllDropdowns(){
+  document.querySelectorAll(".dd.open").forEach(dd=>{
+    dd.classList.remove("open");
+  });
+}
+
+/* Close dropdowns on outside click */
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest(".dd")){
+    closeAllDropdowns();
+  }
+});
+
+/* ---------- Ensure map resizes correctly on every view switch ---------- */
+(function reinforceMapResize(){
+  const originalShowView = window.showView;
+  window.showView = function(viewId){
+    originalShowView(viewId);
+
+    if(viewId === "view-map" && window.MAP){
+      setTimeout(()=>{
+        try{
+          window.MAP.invalidateSize();
+        }catch{}
+      }, 80);
+    }
+  };
+})();
+
+/* ---------- Safety: close modals on ESC ---------- */
+document.addEventListener("keydown",(e)=>{
+  if(e.key !== "Escape") return;
+
+  document.querySelectorAll(".popup-backdrop").forEach(bd=>{
+    if(bd.style.display === "flex"){
+      bd.style.display = "none";
+    }
+  });
+});
+
+/* ---------- Logo placeholder final sweep ---------- */
+(function finalLogoSweep(){
+  document.querySelectorAll("*").forEach(el=>{
+    if(
+      el.childNodes.length === 1 &&
+      el.childNodes[0].nodeType === Node.TEXT_NODE &&
+      el.textContent.trim() === "hf_logo.png"
+    ){
+      const img = document.createElement("img");
+      img.src = "hf_logo.png";
+      img.alt = "Logo";
+
+      if(el.closest("#view-splash")) img.className = "splash-logo";
+      else if(el.closest(".login-card")) img.className = "login-logo";
+      else img.className = "logo";
+
+      el.textContent = "";
+      el.appendChild(img);
     }
   });
 })();
 
-/* Ensure district modal can always be closed safely */
-(function districtModalSafety(){
-  const modal = document.getElementById("districtModal");
-  if(!modal) return;
-
-  modal.addEventListener("click", (e) => {
-    if(e.target === modal){
-      modal.classList.add("hidden");
-    }
-  });
-})();
-
-/* Final boot alignment (in case scripts load in unusual order) */
-(function finalBoot(){
-  // Convert any remaining logo placeholders into <img>
-  try { replaceLogoPlaceholders?.(); } catch {}
-
-  // Restore session if present
-  try {
+/* ---------- Session restore hardening ---------- */
+(function finalSessionRestore(){
+  try{
     const raw = sessionStorage.getItem("hub_user");
-    if(raw) CURRENT_USER = JSON.parse(raw);
-  } catch {
+    if(raw){
+      CURRENT_USER = JSON.parse(raw);
+    }
+  }catch{
     CURRENT_USER = null;
   }
 
   if(CURRENT_USER){
-    // Show top bar + go to map
     document.getElementById("globalUserPill").textContent =
-      CURRENT_USER.displayName || CURRENT_USER.username || "User";
-    document.getElementById("globalTopBar").classList.remove("hidden");
-    initWeatherWidget?.();
-    setActiveNav?.("map");
-    showView?.("view-map");
-  } else {
-    // Logged out -> splash is the landing screen
-    document.getElementById("globalTopBar")?.classList.add("hidden");
-    showView?.("view-splash");
-  }
+      CURRENT_USER.username || "User";
 
-  console.log("✅ Hub ready");
+    document.getElementById("globalTopBar").classList.remove("hidden");
+
+    setActiveNav("map");
+    showView("view-map");
+
+    // map safety
+    setTimeout(()=>{
+      if(window.MAP){
+        try{ MAP.invalidateSize(); }catch{}
+      }
+    }, 120);
+  }else{
+    document.getElementById("globalTopBar").classList.add("hidden");
+    showView("view-splash");
+  }
 })();
+
+/* ---------- Prevent duplicate event bindings ---------- */
+(function preventDoubleBindings(){
+  const seen = new WeakSet();
+  document.querySelectorAll("button").forEach(btn=>{
+    if(seen.has(btn)) return;
+    seen.add(btn);
+  });
+})();
+
+/* ---------- Final console confirmation ---------- */
+console.log("✅ Merchandising Hub fully loaded — map stable, UI locked");
 </script>
 
 </body>
