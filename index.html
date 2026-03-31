@@ -5,38 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Merchandising Hub</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="hf_logo.png" />
+  <!-- Icons -->
+  <link rel="icon" href="hf_logo.png" />
   <link rel="apple-touch-icon" href="hf_logo.png" />
 
-  <!-- ✅ Leaflet (CORRECT includes — this is what fixes the missing map) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- ✅ Leaflet (correct + minimal) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    defer
+  ></script>
 
   <style>
-    /* =========================================================
-       THEME / TOKENS
-       ========================================================= */
     :root{
       --bg:#020617;
-      --bg2:#030a1a;
-      --panel: rgba(15,23,42,.92);
-      --glass: rgba(15,23,42,.78);
+      --panel:rgba(15,23,42,.92);
+      --glass:rgba(15,23,42,.78);
 
       --text:#e5e7eb;
       --heading:#f9fafb;
       --muted:#9ca3af;
-
-      --border: rgba(148,163,184,.40);
-      --borderSoft: rgba(148,163,184,.22);
-
-      --shadow: 0 20px 70px rgba(0,0,0,.75);
-      --shadowSoft: 0 14px 40px rgba(0,0,0,.55);
-
-      --radiusXL: 26px;
-      --radius: 18px;
-      --radiusSm: 12px;
-      --pill: 999px;
 
       --accent:#22d3ee;
       --accent2:#3b82f6;
@@ -45,763 +36,289 @@
       --warn:#facc15;
       --bad:#ef4444;
 
-      /* Chalkboard */
-      --chalk:#f8fafc;
-      --chalkDim: rgba(248,250,252,.68);
-      --board:#1b2b34;
-      --boardBorder:#8b5a2b;
-      --boardGlow: rgba(254,240,138,.25);
+      --radius:18px;
+      --radiusXL:26px;
+      --pill:999px;
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
-    html, body { height: 100%; }
+    html,body{ height:100%; }
+
     body{
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
       background:
-        linear-gradient(rgba(0,0,0,.60), rgba(0,0,0,.82)),
-        url("philo.jpg") no-repeat center center fixed;
-      background-size: cover;
-    }
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(34,211,238,.12), transparent 60%),
-        radial-gradient(circle at 80% 70%, rgba(34,211,238,.10), transparent 70%);
-      pointer-events:none;
-      z-index:0;
+        linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.85)),
+        url("philo.jpg") center/cover fixed;
+      color:var(--text);
     }
 
     .hidden{ display:none !important; }
 
-    /* =========================================================
-       APP SHELL
-       ========================================================= */
+    /* App shell */
     .app-shell{
       min-height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:16px;
-      position:relative;
-      z-index:1;
     }
     .app-inner{
       width:100%;
       max-width:1200px;
-      background: linear-gradient(135deg, rgba(15,23,42,.98), rgba(15,23,42,.90));
-      border-radius: var(--radiusXL);
-      border: 1px solid rgba(148,163,184,.35);
-      box-shadow: var(--shadow);
-      padding: 18px 18px 14px;
+      background:var(--panel);
+      border-radius:var(--radiusXL);
+      padding:16px;
       display:flex;
       flex-direction:column;
-      gap: 14px;
-      backdrop-filter: blur(18px);
-      overflow:hidden;
+      gap:14px;
     }
 
-    /* =========================================================
-       TOP BAR
-       ========================================================= */
-    .topbar{
+    /* Splash */
+    .splash{
+      min-height:80vh;
       display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:10px;
-      padding:10px 12px;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: var(--panel);
-      box-shadow: var(--shadowSoft);
-    }
-    .topbar-left{ display:flex; flex-direction:column; gap:2px; }
-    .topbar-title{
-      font-weight:900;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      color: var(--heading);
-      font-size: .95rem;
-    }
-    .topbar-sub{
-      color: var(--muted);
-      font-size: .82rem;
-    }
-    .nav-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-
-    .pill{
-      padding:6px 12px;
-      border-radius: var(--pill);
-      border:1px solid rgba(148,163,184,.38);
-      background: rgba(2,6,23,.65);
-      color: var(--muted);
-      font-size:.82rem;
-      white-space:nowrap;
-    }
-
-    .btn{
-      padding:8px 14px;
-      border-radius: var(--pill);
-      border:1px solid rgba(148,163,184,.38);
-      background: rgba(2,6,23,.75);
-      color: var(--text);
-      cursor:pointer;
-      font-weight:900;
-      font-size:.86rem;
-      transition: transform .14s ease-out, border-color .14s ease-out, background .14s ease-out;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      user-select:none;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,.7);
-      background: rgba(2,6,23,.92);
-    }
-    .btn.primary{
-      border-color: rgba(34,211,238,.85);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
-      box-shadow: 0 12px 28px rgba(34,211,238,.18);
-      color: var(--heading);
-    }
-    .btn.danger{
-      border-color: rgba(239,68,68,.65);
-      background: rgba(239,68,68,.12);
-    }
-    .btn.active{
-      border-color: rgba(34,211,238,.85);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
-      color: var(--heading);
-    }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
-
-    /* =========================================================
-       SPLASH (logo-only, pulsing underglow)
-       ========================================================= */
-    .splash-screen{
-      min-height: 78vh;
-      display:flex;
+      flex-direction:column;
       align-items:center;
       justify-content:center;
-      flex-direction:column;
-      gap: 14px;
-    }
-    .splash-logo-wrap{
-      position:relative;
+      gap:14px;
       cursor:pointer;
-      user-select:none;
-    }
-    .splash-glow{
-      position:absolute;
-      inset:-30px;
-      border-radius: 44px;
-      background:
-        radial-gradient(circle at center,
-          rgba(34,211,238,.58),
-          rgba(34,211,238,.14) 48%,
-          rgba(34,211,238,0) 72%
-        );
-      filter: blur(20px);
-      animation: glowPulse 2.6s ease-in-out infinite;
-      z-index:1;
     }
     .splash-logo{
-      width: 160px;
-      height: 160px;
-      border-radius: 30px;
-      object-fit: cover;
-      border: 1px solid rgba(148,163,184,.6);
-      box-shadow:
-        0 18px 60px rgba(0,0,0,.88),
-        0 0 38px rgba(34,211,238,.18);
-      position:relative;
-      z-index:2;
-      animation: logoFloat 4s ease-in-out infinite;
+      width:160px;
+      height:160px;
+      border-radius:30px;
+      object-fit:cover;
+      box-shadow:0 0 40px rgba(34,211,238,.6);
+      animation:pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%{ box-shadow:0 0 30px rgba(34,211,238,.4); }
+      50%{ box-shadow:0 0 55px rgba(34,211,238,.9); }
+      100%{ box-shadow:0 0 30px rgba(34,211,238,.4); }
     }
     .splash-hint{
-      font-size:.82rem;
-      color: var(--muted);
-      letter-spacing:.18em;
+      font-size:.8rem;
+      letter-spacing:.2em;
       text-transform:uppercase;
-    }
-    @keyframes glowPulse{
-      0%{ opacity:.55; transform:scale(.95); }
-      50%{ opacity:.90; transform:scale(1.06); }
-      100%{ opacity:.55; transform:scale(.95); }
-    }
-    @keyframes logoFloat{
-      0%{ transform:translateY(0); }
-      50%{ transform:translateY(-7px); }
-      100%{ transform:translateY(0); }
+      color:var(--muted);
     }
 
-    /* =========================================================
-       CARDS / BUBBLES
-       ========================================================= */
-    .bubble{
-      border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,.38);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
-      box-shadow: var(--shadowSoft);
-      padding: 14px;
-      backdrop-filter: blur(16px);
-    }
-    .bubble-soft{
-      border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,.22);
-      background: rgba(15,23,42,.78);
-      box-shadow: var(--shadowSoft);
-      padding: 14px;
-      backdrop-filter: blur(14px);
-    }
-    .bubble-grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .bubble-title{
-      font-size:.92rem;
-      font-weight:900;
-      color: var(--heading);
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      margin-bottom: 6px;
-    }
-    .bubble-sub{
-      color: var(--muted);
-      font-size:.84rem;
-      line-height:1.35;
-    }
-
-    /* =========================================================
-       MAP LAYOUT (✅ ensures map stays visible)
-       ========================================================= */
-    #view-map{ display:flex; flex-direction:column; gap:12px; }
-    .map-topbar{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px; flex-wrap:wrap;
-      padding:10px 12px;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: var(--panel);
-      box-shadow: var(--shadowSoft);
-    }
-    .map-brand{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
-      border-radius: var(--pill);
-      border:1px solid rgba(34,211,238,.55);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(15,23,42,.92));
-      font-weight:900;
-      color: var(--heading);
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      font-size:.85rem;
-    }
-
-    .map-layout{
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap: 12px;
-    }
-    @media (max-width: 900px){
-      .map-layout{ grid-template-columns: 1fr; }
-    }
-
-    /* ✅ This is critical: fixed height so Leaflet can render */
+    /* Map container (defined early, JS later) */
     #storeMap{
       width:100%;
-      height: 62vh;             /* <— the map will not render without a height */
-      min-height: 520px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,.35);
-      overflow:hidden;
-      box-shadow: 0 18px 42px rgba(0,0,0,.85);
-      background: rgba(2,6,23,.55);
-    }
-
-    .store-panel{
-      border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,.35);
-      background: rgba(15,23,42,.90);
-      box-shadow: 0 18px 42px rgba(0,0,0,.85);
-      padding: 12px;
-      min-height: 62vh;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .sp-title{ font-size:1rem; font-weight:900; color:var(--heading); }
-    .sp-sub{ font-size:.8rem; color:var(--muted); }
-
-    .kv{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      font-size:.86rem;
-      padding:6px 0;
-      border-bottom: 1px solid rgba(148,163,184,.12);
-    }
-    .kv span:first-child{ color:#cbd5e1; }
-    .kv span:last-child{ color:var(--heading); font-weight:800; text-align:right; }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:4px 8px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(148,163,184,.35);
-      background: rgba(2,6,23,.6);
-      font-size:.75rem;
-    }
-    .badge-dot{ width:9px; height:9px; border-radius:999px; background:#94a3b8; }
-
-    .btn-row{ display:flex; flex-wrap:wrap; gap:8px; }
-    .small-btn{
-      padding:8px 10px;
-      border-radius: var(--pill);
-      border:1px solid rgba(148,163,184,.35);
-      background: rgba(2,6,23,.75);
-      color: var(--text);
-      cursor:pointer;
-      font-weight:900;
-      font-size:.82rem;
-    }
-    .small-btn.primary{
-      border-color: rgba(34,211,238,.85);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
-    }
-    .small-btn:disabled{ opacity:.5; cursor:not-allowed; }
-
-    /* Dropdowns */
-    .dd{ position:relative; }
-    .dd-menu{
-      position:absolute;
-      top: calc(100% + 8px);
-      left:0;
-      min-width: 280px;
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,.35);
-      background: rgba(15,23,42,.98);
-      box-shadow: 0 22px 55px rgba(0,0,0,.9);
-      padding: 8px;
-      display:none;
-      z-index: 1000;
-    }
-    .dd.open .dd-menu{ display:block; }
-    .dd-item{
-      width:100%;
-      text-align:left;
-      padding:10px;
-      border-radius: 12px;
-      border:1px solid transparent;
-      background: transparent;
-      color: var(--text);
-      cursor:pointer;
-      font-size:.86rem;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .dd-item:hover{
-      border-color: rgba(34,211,238,.55);
-      background: rgba(34,211,238,.08);
-    }
-    .dd-sub{ font-size:.75rem; color:var(--muted); }
-
-    /* =========================================================
-       MARKERS (completion colors) + issue flag
-       ========================================================= */
-    .pin{
-      width:18px;height:18px;border-radius:999px;
-      border:2px solid rgba(255,255,255,.85);
-      box-shadow:0 6px 18px rgba(0,0,0,.7);
-      position:relative;
-    }
-    .pin-ok{ background: var(--good); }
-    .pin-warn{ background: var(--warn); }
-    .pin-bad{ background: var(--bad); }
-    .pin::after{
-      content:"";
-      position:absolute;
-      inset:-5px;
-      border-radius:999px;
-      border:3px solid rgba(148,163,184,.9);
-      opacity:.9;
-    }
-    /* red flag above pin when issues exist */
-    .pin .flagpole{
-      position:absolute;
-      left:8px;
-      top:-14px;
-      width:2px;
-      height:14px;
-      background: rgba(255,255,255,.85);
-      border-radius: 2px;
-      box-shadow: 0 6px 14px rgba(0,0,0,.5);
-    }
-    .pin .flagpole::after{
-      content:"";
-      position:absolute;
-      top:2px;
-      left:2px;
-      width:12px;
-      height:8px;
-      background: var(--bad);
-      clip-path: polygon(0 0, 100% 18%, 0 50%, 100% 82%, 0 100%);
-      border-radius:2px;
-      box-shadow: 0 6px 14px rgba(0,0,0,.55);
-    }
-
-    /* Leaflet control styling */
-    .leaflet-control-zoom a{
-      background: rgba(2,6,23,.85) !important;
-      color: #e5e7eb !important;
-      border: 1px solid rgba(148,163,184,.35) !important;
-    }
-
-    /* =========================================================
-       TRAINING (chalkboard)
-       ========================================================= */
-    .training-chalkboard{
-      padding:14px;
-      border-radius: var(--radius);
-      background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.07), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(15,23,42,0.7), transparent 60%),
-        repeating-linear-gradient(0deg,#1b2b34,#1b2b34 2px,#18252d 2px,#18252d 4px);
-      border: 3px solid var(--boardBorder);
-      box-shadow: 0 0 28px var(--boardGlow);
-    }
-    .chalk-title{
-      font-family:"Courier New", monospace;
-      color: var(--chalk);
-      font-size: 1.8rem;
-      letter-spacing:.04em;
-      margin-bottom: 6px;
-      font-weight:900;
-    }
-    .chalk-sub{
-      font-family:"Courier New", monospace;
-      color: var(--chalkDim);
-      letter-spacing:.22em;
-      font-size:.8rem;
-      text-transform:uppercase;
-      margin-bottom: 14px;
-    }
-
-    /* Footer */
-    .footer{
-      margin-top: 10px;
-      font-size:.75rem;
-      color:#6b7280;
-      text-align:right;
-      border-top:1px solid rgba(15,23,42,.95);
-      padding-top:6px;
+      height:60vh;
+      min-height:500px;
+      border-radius:var(--radius);
     }
   </style>
 </head>
 <body>
-  <main class="app-shell">
-    <div class="app-inner">
+<main class="app-shell">
+  <div class="app-inner">
 
-      <!-- =====================================================
-           SPLASH / ENTRY (DEFAULT LANDING)
-           ===================================================== -->
-      <section id="view-splash" class="splash-screen">
-        <div class="splash-logo-wrap" id="splashEnter">
-          <div class="splash-glow"></div>
-          <img src="hf_logo.png" alt="HF Logo" class="splash-logo" />
-        </div>
-        <div class="splash-hint">Tap to continue</div>
-      </section>
+    <!-- ================= SPLASH ================= -->
+    <section id="view-splash" class="splash">
+      <img src="hf_logo.png" alt="HF Logo" class="splash-logo" />
+      <div class="splash-hint">Tap to continue</div>
+    </section>
 
-      <!-- =====================================================
-           LOGIN
-           ===================================================== -->
-      <section id="view-login" class="hidden login-root">
-        <div class="login-card">
-          <img src="hf_logo.png" alt="HF Logo" class="login-logo" />
+    <!-- ================= LOGIN ================= -->
+    <section id="view-login" class="hidden">
+      <div class="bubble-soft" style="max-width:360px;margin:auto;">
+        <img src="hf_logo.png" alt="HF Logo" style="width:90px;border-radius:18px;margin-bottom:10px;" />
+        <h2 style="margin-bottom:6px;">Sign In</h2>
+        <p class="bubble-sub">Internal Tool</p>
 
-          <div class="login-title">Sign In</div>
-          <div class="login-subtitle">Internal Tool</div>
-
-          <div class="form-group">
-            <label class="form-label">Username</label>
-            <input id="loginUser" class="form-input" autocomplete="username" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Password</label>
-            <input
-              id="loginPass"
-              type="password"
-              class="form-input"
-              autocomplete="current-password"
-            />
-          </div>
-
-          <button id="loginBtn" class="login-btn">Login</button>
-          <div id="loginError" class="login-error"></div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-           TOP BAR (VISIBLE AFTER LOGIN)
-           ===================================================== -->
-      <header id="globalTopBar" class="topbar hidden">
-        <div class="topbar-left">
-          <div class="topbar-title">Merchandising Hub</div>
-          <div class="topbar-sub">Live Map • HF • HPA • Training</div>
+        <div style="margin-top:12px;">
+          <label class="bubble-sub">Username</label>
+          <input id="loginUser" type="text" style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
         </div>
 
-        <nav class="nav-row">
-          <button class="btn active nav-link" data-page="map">MAP</button>
-          <button class="btn nav-link" data-page="hf">HF</button>
-          <button class="btn nav-link" data-page="hpa">HPA</button>
-          <button class="btn nav-link" data-page="admin">ADMIN</button>
-          <button class="btn nav-link" data-page="training">TRAINING</button>
-
-          <span class="pill" id="weatherWidget">Weather: —</span>
-          <span class="pill" id="globalUserPill">User</span>
-          <button class="btn danger" id="globalLogoutBtn">Logout</button>
-        </nav>
-      </header>
-
-      <!-- =====================================================
-           MAP VIEW (HOME)
-           ===================================================== -->
-      <section id="view-map" class="hidden">
-        <div class="map-topbar">
-          <div class="map-brand">
-            <img src="hf_logo.png" alt="HF Logo" class="logo" />
-            Store Map
-          </div>
-
-          <div class="nav-row">
-            <div class="dd">
-              <button class="btn" data-dd-toggle>Store ▾</button>
-              <div class="dd-menu" id="storeListMenu"></div>
-            </div>
-
-            <div class="dd">
-              <button class="btn" data-dd-toggle>Filter ▾</button>
-              <div class="dd-menu">
-                <button class="dd-item" data-map-filter="issues:true">🚩 Has Issues</button>
-                <button class="dd-item" data-map-filter="status:bad">🔴 Needs Attention</button>
-              </div>
-            </div>
-
-            <span class="pill" id="syncPill">Sync: —</span>
-          </div>
+        <div style="margin-top:10px;">
+          <label class="bubble-sub">Password</label>
+          <input id="loginPass" type="password" style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
         </div>
 
-        <div class="map-layout">
-          <!-- ✅ THIS IS THE ACTUAL MAP CONTAINER -->
-          <div id="storeMap"></div>
+        <button id="loginBtn" class="btn primary" style="width:100%;margin-top:14px;">
+          Login
+        </button>
 
-          <!-- STORE DETAIL PANEL -->
-          <aside class="store-panel">
-            <div>
-              <div class="sp-title" id="spTitle">Select a store</div>
-              <div class="sp-sub" id="spSub">Click a pin on the map</div>
-            </div>
+        <div id="loginError" style="margin-top:8px;color:#ef4444;font-size:.85rem;"></div>
+      </div>
+    </section>
 
-            <div class="badge" id="spStatusBadge">
-              <span class="badge-dot"></span>
-              <span>Status</span>
-            </div>
+    <!-- ================= TOP BAR ================= -->
+    <header id="topbar" class="hidden bubble-soft" style="display:flex;justify-content:space-between;align-items:center;">
+      <strong>Merchandising Hub</strong>
+      <nav style="display:flex;gap:8px;">
+        <button class="btn nav-link active" data-view="map">Map</button>
+        <button class="btn nav-link" data-view="hf">HF</button>
+        <button class="btn nav-link" data-view="hpa">HPA</button>
+        <button class="btn nav-link" data-view="admin">Admin</button>
+        <button class="btn nav-link" data-view="training">Training</button>
+        <button class="btn danger" id="logoutBtn">Logout</button>
+      </nav>
+    </header>
 
-            <div class="kv"><span>Shipping</span><span id="spShip">—</span></div>
-            <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
-            <div class="kv"><span>Negatives</span><span id="spNeg">—</span></div>
-            <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
-            <div class="kv"><span>Updated</span><span id="spUpdated">—</span></div>
+    <!-- ================= MAP ================= -->
+    <section id="view-map" class="hidden">
+      <div class="bubble-soft">
+        <strong>Store Map</strong>
+      </div>
 
-            <!-- CHECKLIST & ISSUES injected by JS -->
+      <div class="map-layout">
+        <div id="storeMap"></div>
 
-            <div class="btn-row">
-              <button id="btnWatered" class="small-btn primary" disabled>
-                Mark Watered
-              </button>
-              <button class="small-btn" data-map-action="add:issue" disabled>
-                Add Issue
-              </button>
-              <button id="btnViewIssues" class="small-btn" style="display:none;">
-                🚩 View Issues
-              </button>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <!-- =====================================================
-           HF
-           ===================================================== -->
-      <section id="view-hf" class="hidden">
-        <div class="bubble">
-          <div class="bubble-title">HF</div>
-
-          <div class="nav-row">
-            <button class="btn active" data-hf-tab="guidelines">Guidelines</button>
-            <button class="btn" data-hf-tab="care">Care & Identification</button>
+        <aside class="store-panel">
+          <div>
+            <div class="sp-title" id="spTitle">Select a store</div>
+            <div class="sp-sub" id="spSub">Click a pin</div>
           </div>
 
-          <div id="hf-guidelines" class="bubble-grid"></div>
+          <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
+          <div class="kv"><span>Negatives</span><span id="spNegatives">—</span></div>
+          <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
 
-          <div id="hf-care" class="hidden">
-            <div class="nav-row">
-              <button class="btn active" data-hf-care="plants">Plants</button>
-              <button class="btn" data-hf-care="pests">Pests</button>
-            </div>
+          <!-- checklist injected later -->
 
-            <div id="hf-plants" class="pc-grid"></div>
-            <div id="hf-pests" class="pc-grid hidden"></div>
-          </div>
-        </div>
-      </section>
+          <button id="btnAddIssue" class="small-btn" disabled>Add Issue</button>
+        </aside>
+      </div>
+    </section>
 
-      <!-- =====================================================
-           HPA
-           ===================================================== -->
-      <section id="view-hpa" class="hidden">
-        <div class="bubble">
-          <div class="bubble-title">HPA</div>
+    <!-- ================= HF ================= -->
+    <section id="view-hf" class="hidden">
+      <div class="bubble">
+        <div class="bubble-title">HF</div>
+        <div id="hf-guidelines" class="bubble-grid"></div>
+      </div>
+    </section>
 
-          <div class="nav-row">
-            <button class="btn active" data-hpa-tab="guidelines">Guidelines</button>
-            <button class="btn" data-hpa-tab="products">Product Info</button>
-            <button class="btn" data-hpa-tab="care">Care & Identification</button>
-          </div>
+    <!-- ================= HPA ================= -->
+    <section id="view-hpa" class="hidden">
+      <div class="bubble">
+        <div class="bubble-title">HPA</div>
+        <div id="hpa-guidelines" class="bubble-grid"></div>
+      </div>
+    </section>
 
-          <div id="hpa-guidelines" class="bubble-grid"></div>
+    <!-- ================= ADMIN ================= -->
+    <section id="view-admin" class="hidden">
+      <div class="bubble">
+        <div class="bubble-title">Admin</div>
+        <p class="bubble-sub">Admin tools will appear here.</p>
+      </div>
+    </section>
 
-          <div id="hpa-products" class="hidden">
-            <div class="nav-row">
-              <button class="btn active products-inner-tab" data-products="skus">
-                SKU Catalogue
-              </button>
-              <button class="btn products-inner-tab" data-products="orders">
-                Order Breakdown
-              </button>
-            </div>
+    <!-- ================= TRAINING ================= -->
+    <section id="view-training" class="hidden">
+      <div class="bubble">
+        <div class="bubble-title">Training</div>
+        <p class="bubble-sub">Training modules will appear here.</p>
+      </div>
+    </section>
 
-            <div id="products-skus"></div>
-            <div id="products-orders" class="hidden"></div>
-          </div>
-
-          <div id="hpa-care" class="hidden">
-            <div class="nav-row">
-              <button class="btn active" data-hpa-care="plants">Plants</button>
-              <button class="btn" data-hpa-care="pests">Pests</button>
-            </div>
-
-            <div id="hpa-plants" class="pc-grid"></div>
-            <div id="hpa-pests" class="pc-grid hidden"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-           ADMIN
-           ===================================================== -->
-      <section id="view-admin" class="hidden">
-        <div class="bubble">
-          <div class="bubble-title">Admin Tools</div>
-
-          <div class="bubble-grid">
-            <button class="btn primary">AIR Uploads</button>
-            <button class="btn">Store Audit</button>
-            <button class="btn">Rack Counts</button>
-            <button class="btn danger">District Checklist</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-           TRAINING
-           ===================================================== -->
-      <section id="view-training" class="hidden training-chalkboard">
-        <div class="chalk-title">📚 Training Hub</div>
-        <div class="chalk-sub">Choose a Track</div>
-
-        <div class="map-layout">
-          <div class="bubble-soft">
-            <button class="btn primary" data-train="basics">Basics</button>
-            <button class="btn" data-train="merch">Merchandising</button>
-            <button class="btn" data-train="supervisor">Supervisor</button>
-          </div>
-
-          <div class="bubble-soft">
-            <div id="train-basics">Loading…</div>
-            <div id="train-merch" class="hidden">Loading…</div>
-            <div id="train-supervisor" class="hidden">Loading…</div>
-          </div>
-        </div>
-      </section>
-
-      <footer class="footer">
-        Internal Tool • GitHub Pages • Firebase
-      </footer>
-
-    </div>
-  </main>
+  </div>
+</main>
   <script>
-/* =========================================================
-   BLOCK 3 — CORE APP LOGIC (MAP FIXED)
-   ========================================================= */
+/* ======================================================
+   BLOCK 3 — APP STATE, LOGIN, ROUTING
+   ====================================================== */
 
-/* ---------- Utilities ---------- */
-const $ = (id) => document.getElementById(id);
-const VIEWS = [
-  "view-splash",
-  "view-login",
-  "view-map",
-  "view-hf",
-  "view-hpa",
-  "view-admin",
-  "view-training"
+/* ------------------ App State ------------------ */
+const App = {
+  user: null,
+  view: "splash"
+};
+
+const views = [
+  "splash",
+  "login",
+  "map",
+  "hf",
+  "hpa",
+  "admin",
+  "training"
 ];
 
-let CURRENT_USER = null;
-let MAP = null;
-let MAP_READY = false;
-let STORE_MARKERS = new Map();
+/* ------------------ Helpers ------------------ */
+const $ = (id) => document.getElementById(id);
 
-/* ---------- View control ---------- */
-function showView(viewId){
-  VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== viewId));
+function show(view){
+  views.forEach(v=>{
+    const el = $("view-" + v);
+    if(el) el.classList.toggle("hidden", v !== view);
+  });
 
-  // ✅ CRITICAL: Leaflet must be invalidated AFTER map is visible
-  if(viewId === "view-map" && MAP){
-    setTimeout(() => {
-      MAP.invalidateSize();
-    }, 60);
-  }
+  App.view = view;
 }
 
-function setActiveNav(page){
+function setActiveNav(view){
   document.querySelectorAll(".nav-link").forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.page === page);
+    btn.classList.toggle("active", btn.dataset.view === view);
   });
 }
 
-/* ---------- Splash → Login ---------- */
-$("splashEnter")?.addEventListener("click", ()=>{
-  showView("view-login");
+/* ------------------ CSV Parser (REAL) ------------------ */
+function parseCSV(text){
+  const rows = [];
+  let row = [], val = "", inQuotes = false;
+
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    const n = text[i+1];
+
+    if(c === '"' && inQuotes && n === '"'){
+      val += '"'; i++;
+    } else if(c === '"'){
+      inQuotes = !inQuotes;
+    } else if(c === "," && !inQuotes){
+      row.push(val); val="";
+    } else if((c === "\n" || c === "\r") && !inQuotes){
+      if(val || row.length){
+        row.push(val);
+        rows.push(row);
+        row=[]; val="";
+      }
+    } else {
+      val += c;
+    }
+  }
+  if(val || row.length){
+    row.push(val);
+    rows.push(row);
+  }
+  return rows;
+}
+
+/* ------------------ Splash ------------------ */
+$("view-splash").addEventListener("click", ()=>{
+  show("login");
 });
 
-/* ---------- Login ---------- */
-async function doLogin(){
-  const user = ($("loginUser").value || "").trim().toLowerCase();
-  const pass = ($("loginPass").value || "").trim();
+/* ------------------ Login ------------------ */
+async function loadUsers(){
+  try{
+    const txt = await fetch("users.csv", { cache:"no-store" }).then(r=>r.text());
+    const rows = parseCSV(txt);
+    const header = rows[0].map(h=>h.toLowerCase());
+
+    const uIdx = header.indexOf("username");
+    const pIdx = header.indexOf("password");
+
+    return rows.slice(1).map(r=>({
+      username: (r[uIdx]||"").trim().toLowerCase(),
+      password: (r[pIdx]||"").trim()
+    })).filter(u=>u.username && u.password);
+  }catch{
+    // Safe fallback
+    return [{ username:"demo", password:"demo" }];
+  }
+}
+
+async function login(){
+  const user = $("loginUser").value.trim().toLowerCase();
+  const pass = $("loginPass").value.trim();
   const err = $("loginError");
   err.textContent = "";
 
@@ -810,482 +327,663 @@ async function doLogin(){
     return;
   }
 
-  // ✅ Simple CSV-safe login (users.csv optional)
-  let users = [];
-  try{
-    const txt = await fetch("users.csv", { cache:"no-store" }).then(r=>r.text());
-    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-    const header = lines[0].toLowerCase();
-    const uIdx = header.indexOf("username");
-    const pIdx = header.indexOf("password");
+  const users = await loadUsers();
+  const match = users.find(u=>u.username===user && u.password===pass);
 
-    users = lines.slice(1).map(l=>{
-      const parts = l.split(",");
-      return {
-        u: (parts[uIdx]||"").trim().toLowerCase(),
-        p: (parts[pIdx]||"").trim()
-      };
-    });
-  }catch{
-    // fallback demo
-    users = [{u:"demo",p:"demo"}];
-  }
-
-  const match = users.find(x => x.u === user && x.p === pass);
   if(!match){
     err.textContent = "Invalid credentials.";
     return;
   }
 
-  CURRENT_USER = { username:user };
-  sessionStorage.setItem("hub_user", JSON.stringify(CURRENT_USER));
+  App.user = { username:user };
+  sessionStorage.setItem("hub_user", JSON.stringify(App.user));
 
-  $("globalUserPill").textContent = user;
-  $("globalTopBar").classList.remove("hidden");
+  $("topbar").classList.remove("hidden");
+  $("globalUserPill")?.textContent = user;
 
   setActiveNav("map");
-  showView("view-map");
-  initMap(); // ✅ initialize only after login
+  show("map");
 }
 
-$("loginBtn")?.addEventListener("click", doLogin);
-$("loginPass")?.addEventListener("keydown", e=>{
-  if(e.key === "Enter") doLogin();
+$("loginBtn").addEventListener("click", login);
+$("loginPass").addEventListener("keydown", e=>{
+  if(e.key === "Enter") login();
 });
 
-$("globalLogoutBtn")?.addEventListener("click", ()=>{
-  CURRENT_USER = null;
+/* ------------------ Logout ------------------ */
+$("logoutBtn").addEventListener("click", ()=>{
+  App.user = null;
   sessionStorage.removeItem("hub_user");
-  $("globalTopBar").classList.add("hidden");
-  showView("view-splash");
+  $("topbar").classList.add("hidden");
+  show("splash");
 });
 
-/* ---------- Navigation ---------- */
+/* ------------------ Navigation ------------------ */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    const page = btn.dataset.page;
-    setActiveNav(page);
-    showView("view-" + page);
+    const view = btn.dataset.view;
+    setActiveNav(view);
+    show(view);
   });
 });
 
-/* =========================================================
-   ✅ LEAFLET MAP (CORRECT + GUARANTEED TO RENDER)
-   ========================================================= */
-function initMap(){
-  if(MAP_READY) return;
-  const mapEl = $("storeMap");
-  if(!mapEl) return;
-
-  // ✅ Ensure container has size before init
-  MAP = L.map(mapEl, {
-    zoomControl: true,
-    preferCanvas: true
-  });
-
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    { maxZoom: 19 }
-  ).addTo(MAP);
-
-  MAP_READY = true;
-
-  loadStores();
-}
-
-/* ---------- Load stores & markers ---------- */
-async function loadStores(){
-  let stores = [];
-
-  try{
-    const txt = await fetch("stores.csv", { cache:"no-store" }).then(r=>r.text());
-    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-    const header = lines[0].toLowerCase();
-
-    const idIdx = header.indexOf("store_id");
-    const nameIdx = header.indexOf("store_name");
-    const latIdx = header.indexOf("lat");
-    const lonIdx = header.indexOf("lon");
-
-    stores = lines.slice(1).map(l=>{
-      const p = l.split(",");
-      return {
-        id: p[idIdx],
-        name: p[nameIdx],
-        lat: parseFloat(p[latIdx]),
-        lon: parseFloat(p[lonIdx])
-      };
-    }).filter(s => s.id && !isNaN(s.lat) && !isNaN(s.lon));
-  }catch{
-    // ✅ Demo fallback
-    stores = [
-      { id:"1950", name:"South Loop", lat:41.856, lon:-87.624 },
-      { id:"1987", name:"Glenview", lat:42.079, lon:-87.822 }
-    ];
-  }
-
-  renderMarkers(stores);
-  populateStoreMenu(stores);
-}
-
-/* ---------- Marker rendering ---------- */
-function renderMarkers(stores){
-  STORE_MARKERS.forEach(m => MAP.removeLayer(m));
-  STORE_MARKERS.clear();
-
-  const bounds = [];
-
-  stores.forEach(store=>{
-    const icon = L.divIcon({
-      className:"",
-      html:`<div class="pin pin-bad"></div>`,
-      iconSize:[18,18],
-      iconAnchor:[9,9]
-    });
-
-    const marker = L.marker([store.lat, store.lon], { icon }).addTo(MAP);
-    marker.on("click", ()=> selectStore(store));
-
-    STORE_MARKERS.set(store.id, marker);
-    bounds.push([store.lat, store.lon]);
-  });
-
-  if(bounds.length){
-    MAP.fitBounds(bounds, { padding:[24,24] });
-  }
-}
-
-/* ---------- Store dropdown ---------- */
-function populateStoreMenu(stores){
-  const menu = $("storeListMenu");
-  if(!menu) return;
-
-  menu.innerHTML = stores.map(s=>`
-    <button class="dd-item" data-id="${s.id}">
-      <span>${s.id} — ${s.name}</span>
-    </button>
-  `).join("");
-
-  menu.onclick = (e)=>{
-    const btn = e.target.closest("[data-id]");
-    if(!btn) return;
-    const id = btn.dataset.id;
-    const marker = STORE_MARKERS.get(id);
-    if(marker){
-      MAP.setView(marker.getLatLng(), 12, { animate:true });
-    }
-  };
-}
-
-/* ---------- Select store ---------- */
-function selectStore(store){
-  $("spTitle").textContent = `${store.name} (${store.id})`;
-  $("spSub").textContent = "Store selected";
-}
-
-/* =========================================================
-   INITIAL BOOT
-   ========================================================= */
-(function boot(){
-  // Replace logo placeholders with real images
-  document.querySelectorAll("body").forEach(()=>{
-    document.querySelectorAll("*").forEach(el=>{
-      if(el.childNodes.length === 1 &&
-         el.childNodes[0].nodeType === Node.TEXT_NODE &&
-         el.textContent.trim() === "hf_logo.png"){
-        const img = document.createElement("img");
-        img.src = "hf_logo.png";
-        img.alt = "Logo";
-        img.className = el.closest("#view-splash") ? "splash-logo" : "logo";
-        el.textContent = "";
-        el.appendChild(img);
-      }
-    });
-  });
-
-  // Restore session
+/* ------------------ Session Restore ------------------ */
+(function restore(){
   try{
     const raw = sessionStorage.getItem("hub_user");
     if(raw){
-      CURRENT_USER = JSON.parse(raw);
-      $("globalUserPill").textContent = CURRENT_USER.username;
-      $("globalTopBar").classList.remove("hidden");
+      App.user = JSON.parse(raw);
+      $("topbar").classList.remove("hidden");
       setActiveNav("map");
-      showView("view-map");
-      initMap();
+      show("map");
       return;
     }
   }catch{}
-
-  showView("view-splash");
+  show("splash");
 })();
 </script>
-<script>
-/* =========================================================
-   BLOCK 4 — Checklist + Issues + Marker Colors
-   ========================================================= */
+  <script>
+/* ======================================================
+   BLOCK 4 — LEAFLET MAP (stable init) + stores.csv markers
+   Depends on BLOCK 3: parseCSV(), show(), App, etc.
+   ====================================================== */
 
-/* ---------- Capture original functions from BLOCK 3 ---------- */
-const _renderMarkers_v3 = window.renderMarkers;
-const _populateStoreMenu_v3 = window.populateStoreMenu;
-const _selectStore_v3 = window.selectStore;
-
-/* ---------- Global store list cache (for weather/store label later too) ---------- */
-window.STORES_CACHE = window.STORES_CACHE || [];
-
-/* ---------- Checklist schema (dynamic items from CSV) ---------- */
-const ChecklistSchema = (() => {
-  const URL = "checklist_items.csv";
-  let items = [];
-  let loaded = false;
-
-  async function load(){
-    if(loaded) return items;
-    try{
-      const txt = await fetch(URL, { cache:"no-store" }).then(r=>{
-        if(!r.ok) throw new Error("missing");
-        return r.text();
-      });
-      const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-      if(lines.length < 2) throw new Error("empty");
-      const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-      const idx = {
-        id: header.indexOf("item_id"),
-        label: header.indexOf("label"),
-        active: header.indexOf("active")
-      };
-
-      items = lines.slice(1).map(l=>{
-        const r = parseCsvLine(l);
-        return {
-          id: (r[idx.id]||"").trim(),
-          label: (r[idx.label]||"").trim(),
-          active: ((r[idx.active]||"true").trim().toLowerCase() !== "false")
-        };
-      }).filter(x=>x.id && x.label && x.active);
-    }catch(e){
-      console.warn("[checklist] checklist_items.csv missing; using none", e);
-      items = [];
-    }
-    loaded = true;
-    return items;
-  }
-
-  function get(){ return items; }
-  return { load, get };
+/* ---------- Add missing UI styles used in BLOCK 2 (safe, additive) ---------- */
+(function injectNiceUIStyles(){
+  if (document.getElementById("niceUIStyles")) return;
+  const st = document.createElement("style");
+  st.id = "niceUIStyles";
+  st.textContent = `
+    .bubble{ background: rgba(15,23,42,.55); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:14px; box-shadow:0 14px 40px rgba(0,0,0,.45); backdrop-filter:blur(14px); }
+    .bubble-soft{ background: rgba(15,23,42,.75); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:14px; box-shadow:0 14px 40px rgba(0,0,0,.55); backdrop-filter:blur(16px); }
+    .bubble-title{ font-weight:900; letter-spacing:.10em; text-transform:uppercase; color:#f9fafb; margin-bottom:8px; font-size:.9rem; }
+    .bubble-sub{ color:#9ca3af; font-size:.85rem; line-height:1.35; }
+    .btn.primary{ background: linear-gradient(135deg,#22d3ee,#3b82f6); color:#020617; border:none; }
+    .btn.danger{ border-color: rgba(239,68,68,.65) !important; }
+    .map-layout{ display:grid; grid-template-columns: 1fr 360px; gap:12px; margin-top:10px; }
+    @media (max-width: 900px){ .map-layout{ grid-template-columns: 1fr; } }
+    .store-panel{ background: rgba(15,23,42,.8); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:12px; box-shadow:0 14px 40px rgba(0,0,0,.55); }
+    .sp-title{ font-weight:900; font-size:1rem; color:#f9fafb; }
+    .sp-sub{ color:#9ca3af; font-size:.82rem; margin-top:2px; }
+    .kv{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid rgba(148,163,184,.12); font-size:.86rem; }
+    .kv span:first-child{ color:#cbd5e1; }
+    .kv span:last-child{ color:#f9fafb; font-weight:800; text-align:right; }
+    .small-btn{ padding:8px 10px; border-radius:999px; border:1px solid rgba(148,163,184,.25); background: rgba(2,6,23,.75); color:#e5e7eb; cursor:pointer; font-weight:900; }
+    .small-btn:disabled{ opacity:.55; cursor:not-allowed; }
+    /* marker */
+    .pin{ width:18px;height:18px;border-radius:999px;border:2px solid rgba(255,255,255,.85); box-shadow:0 6px 18px rgba(0,0,0,.7); background:#ef4444; }
+  `;
+  document.head.appendChild(st);
 })();
 
-/* ---------- Persistent store state ---------- */
-const STORE_STATE_KEY = "hub_store_state_v8";
+/* ---------- Map module ---------- */
+const MapModule = (() => {
+  let map = null;
+  let markers = new Map();
+  let stores = [];
+  let initialized = false;
 
-function todayKey(){
-  return new Date().toISOString().slice(0,10);
-}
-function uuid(){
-  return (crypto?.randomUUID?.()) || (String(Date.now()) + Math.random().toString(16).slice(2));
-}
+  function isVisible(el){
+    return el && !el.classList.contains("hidden");
+  }
 
-function loadStoreState(){
+  function waitForLeafletReady(cb){
+    const tryNow = () => {
+      if (window.L && typeof window.L.map === "function") cb();
+      else setTimeout(tryNow, 50);
+    };
+    tryNow();
+  }
+
+  function ensurePickerUI(){
+    // Insert a store picker above the map container (BLOCK 2 didn't include it)
+    const mapView = document.getElementById("view-map");
+    if (!mapView) return;
+    if (document.getElementById("storePickerBox")) return;
+
+    const header = document.createElement("div");
+    header.id = "storePickerBox";
+    header.className = "bubble-soft";
+    header.innerHTML = `
+      <div class="bubble-title">Store Picker</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <input id="storeSearch" placeholder="Search store name or #…" style="flex:1;min-width:220px;padding:10px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(2,6,23,.85);color:#e5e7eb;" />
+        <select id="storeSelect" style="flex:1;min-width:220px;padding:10px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(2,6,23,.85);color:#e5e7eb;"></select>
+        <button id="storeFocusBtn" class="btn primary" type="button">Focus</button>
+      </div>
+      <div class="bubble-sub" style="margin-top:8px;">
+        Tip: Click a pin or use the dropdown to jump to a store.
+      </div>
+    `;
+
+    // place at top of map view
+    mapView.insertBefore(header, mapView.firstChild);
+  }
+
+  async function loadStores(){
+    try{
+      const txt = await fetch("stores.csv", { cache:"no-store" }).then(r=>{
+        if(!r.ok) throw new Error("stores.csv missing");
+        return r.text();
+      });
+      const rows = parseCSV(txt);
+      const header = rows[0].map(h => h.toLowerCase().trim());
+
+      const idIdx   = header.indexOf("store_id");
+      const nameIdx = header.indexOf("store_name");
+      const latIdx  = header.indexOf("lat");
+      const lonIdx  = header.indexOf("lon");
+      const cityIdx = header.indexOf("city");
+      const stIdx   = header.indexOf("state");
+
+      stores = rows.slice(1).map(r=>({
+        id: (r[idIdx]||"").trim(),
+        name: (r[nameIdx]||"").trim(),
+        lat: parseFloat((r[latIdx]||"").trim()),
+        lon: parseFloat((r[lonIdx]||"").trim()),
+        city: (r[cityIdx]||"").trim(),
+        state: (r[stIdx]||"").trim()
+      })).filter(s => s.id && s.name && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
+    }catch(e){
+      console.warn("[map] using demo stores:", e);
+      stores = [
+        { id:"1950", name:"South Loop", lat:41.856, lon:-87.624, city:"Chicago", state:"IL" },
+        { id:"1987", name:"Glenview", lat:42.079, lon:-87.822, city:"Glenview", state:"IL" }
+      ];
+    }
+
+    window.AppStores = stores;
+  }
+
+  function buildSelectOptions(){
+    const sel = document.getElementById("storeSelect");
+    if(!sel) return;
+
+    const sorted = [...stores].sort((a,b) => (Number(a.id)||0) - (Number(b.id)||0));
+    sel.innerHTML = sorted.map(s => `<option value="${s.id}">${s.id} — ${s.name}</option>`).join("");
+
+    const search = document.getElementById("storeSearch");
+    if(search){
+      search.oninput = () => {
+        const q = search.value.toLowerCase().trim();
+        const match = sorted.find(s => (s.id+" "+s.name).toLowerCase().includes(q));
+        if(match) sel.value = match.id;
+      };
+    }
+
+    document.getElementById("storeFocusBtn").onclick = () => {
+      const id = sel.value;
+      const s = stores.find(x=>x.id===id);
+      if(s) focusStore(s);
+    };
+  }
+
+  function initLeaflet(){
+    if(map) return;
+
+    const mapEl = document.getElementById("storeMap");
+    if(!mapEl) return;
+
+    map = L.map(mapEl, { zoomControl:true, preferCanvas:true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19 }).addTo(map);
+  }
+
+  function clearMarkers(){
+    markers.forEach(m => map.removeLayer(m));
+    markers.clear();
+  }
+
+  function renderMarkers(){
+    clearMarkers();
+    const bounds = [];
+
+    stores.forEach(s=>{
+      const icon = L.divIcon({
+        className:"",
+        html:`<div class="pin"></div>`,
+        iconSize:[18,18],
+        iconAnchor:[9,9]
+      });
+
+      const m = L.marker([s.lat, s.lon], { icon }).addTo(map);
+      m.on("click", () => selectStore(s));
+      markers.set(s.id, m);
+      bounds.push([s.lat,s.lon]);
+    });
+
+    if(bounds.length) map.fitBounds(bounds, { padding:[24,24] });
+  }
+
+  function focusStore(store){
+    const m = markers.get(store.id);
+    if(m) map.setView(m.getLatLng(), 12, { animate:true });
+    selectStore(store);
+  }
+
+  function selectStore(store){
+    // Update panel fields
+    document.getElementById("spTitle").textContent = `${store.name} (${store.id})`;
+    document.getElementById("spSub").textContent = [store.city, store.state].filter(Boolean).join(", ") || "—";
+
+    // placeholders (Block 5 will wire real values)
+    document.getElementById("spWatered").textContent = "—";
+    document.getElementById("spNegatives").textContent = "—";
+    document.getElementById("spIssues").textContent = "—";
+
+    // enable issue button later, but enable now to show UI responsiveness
+    const addIssue = document.getElementById("btnAddIssue");
+    if(addIssue) addIssue.disabled = false;
+
+    // expose selection globally for checklist/issue system in Block 5
+    window.SelectedStore = store;
+  }
+
+  function invalidate(){
+    if(!map) return;
+    setTimeout(()=> map.invalidateSize(), 80);
+  }
+
+  async function ensureInit(){
+    if(initialized) return;
+    initialized = true;
+
+    ensurePickerUI();
+
+    await loadStores();
+
+    waitForLeafletReady(() => {
+      initLeaflet();
+      renderMarkers();
+      buildSelectOptions();
+      invalidate();
+    });
+  }
+
+  /* Observe visibility of view-map so we only init when map is visible */
+  function observeMapView(){
+    const mapView = document.getElementById("view-map");
+    if(!mapView) return;
+
+    const obs = new MutationObserver(() => {
+      if(isVisible(mapView)) {
+        ensureInit();
+        invalidate();
+      }
+    });
+
+    obs.observe(mapView, { attributes:true, attributeFilter:["class"] });
+  }
+
+  return { ensureInit, observeMapView, invalidate };
+})();
+
+/* Start observing map view visibility right away */
+MapModule.observeMapView();
+
+/* If user lands on map via session restore, init immediately */
+if(!document.getElementById("view-map")?.classList.contains("hidden")){
+  MapModule.ensureInit();
+}
+</script>
+<script>
+/* ======================================================
+   BLOCK 5 — CHECKLIST + ISSUES + MARKER STATUS LOGIC
+   Works with BLOCK 4 MapModule + window.AppStores + window.SelectedStore
+   ====================================================== */
+
+/* ------------------ Styles (safe, additive) ------------------ */
+(function injectChecklistStyles(){
+  if (document.getElementById("checklistStyles")) return;
+  const st = document.createElement("style");
+  st.id = "checklistStyles";
+  st.textContent = `
+    .checklist-box{
+      margin-top: 10px;
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55);
+    }
+    .checklist-title{
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: #f9fafb;
+      font-size: .85rem;
+      margin-bottom: 8px;
+    }
+    .checklist-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(148,163,184,.10);
+      font-size: .9rem;
+      cursor:pointer;
+    }
+    .checklist-row:last-child{ border-bottom: none; }
+    .checklist-row input{ margin-top: 2px; accent-color: #22d3ee; }
+    .checklist-meta{
+      margin-top:10px;
+      font-size:.82rem;
+      color:#9ca3af;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    /* Issues modal */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.75);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      padding: 22px 16px;
+      backdrop-filter: blur(8px);
+      z-index:9999;
+      overflow-y:auto;
+    }
+    .modal{
+      width: min(560px, 100%);
+      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
+      border: 1px solid rgba(148,163,184,.55);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.9);
+      padding: 16px;
+    }
+    .modal h2{
+      font-size: 1.1rem;
+      font-weight: 900;
+      color:#f9fafb;
+      margin-bottom: 2px;
+    }
+    .modal .sub{
+      color:#9ca3af;
+      font-size:.82rem;
+      margin-bottom: 12px;
+    }
+    .issue-card{
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .issue-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      font-weight: 900;
+    }
+    .issue-meta{
+      margin-top:4px;
+      color:#9ca3af;
+      font-size:.8rem;
+    }
+    .issue-status-open{ color:#ef4444; font-weight:900; }
+    .issue-status-done{ color:#22c55e; font-weight:900; }
+
+    .modal-actions{
+      margin-top: 10px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+    }
+  `;
+  document.head.appendChild(st);
+})();
+
+/* ------------------ Data + persistence ------------------ */
+const STORE_STATE_KEY = "hub_store_state_v9";
+const todayKey = () => new Date().toISOString().slice(0,10);
+const uuid = () => (crypto?.randomUUID?.()) || (String(Date.now()) + Math.random().toString(16).slice(2));
+
+function loadState(){
   try{
     const raw = localStorage.getItem(STORE_STATE_KEY);
     return raw ? JSON.parse(raw) : {};
-  }catch{
-    return {};
-  }
+  }catch{ return {}; }
 }
-function saveStoreState(state){
-  try{ localStorage.setItem(STORE_STATE_KEY, JSON.stringify(state)); }catch{}
+function saveState(){
+  try{ localStorage.setItem(STORE_STATE_KEY, JSON.stringify(StoreState)); }catch{}
 }
 
-window.STORE_STATE = window.STORE_STATE || loadStoreState();
+const StoreState = loadState();
 
+/* Default per store */
 function defaultStoreState(){
   return {
     watered: false,
-    wateredOn: null,
+    wateredOn: null,      // YYYY-MM-DD
     negatives: false,
     pictures: false,
-    checklist: {},      // dynamic {id:true/false}
-    issues: [],         // [{id,text,createdAt,createdBy,resolved}]
-    updatedAt: null,
-    updatedBy: null
+    checklist: {},        // dynamic item_id: bool
+    issues: [],           // {id,text,createdAt,createdBy,resolved}
+    updatedAt: null
   };
 }
 
-function ensureState(storeId){
-  if(!window.STORE_STATE[storeId]) window.STORE_STATE[storeId] = defaultStoreState();
-  const st = window.STORE_STATE[storeId];
-
-  if(!Array.isArray(st.issues)) st.issues = [];
+function ensureStore(id){
+  if(!StoreState[id]) StoreState[id] = defaultStoreState();
+  const st = StoreState[id];
   if(!st.checklist || typeof st.checklist !== "object") st.checklist = {};
+  if(!Array.isArray(st.issues)) st.issues = [];
 
-  // daily reset watered
+  // daily reset for watered
   if(st.wateredOn !== todayKey()){
     st.watered = false;
   }
   return st;
 }
 
-/* ---------- Completion + status rules ---------- */
-function computeCompletion(storeId){
-  const st = ensureState(storeId);
-  const dyn = ChecklistSchema.get();
-  const total = 3 + dyn.length; // watered, negatives, pictures + dynamic
+/* ------------------ Checklist schema (CSV) ------------------ */
+/* checklist_items.csv format:
+   item_id,label,active
+*/
+const ChecklistSchema = {
+  loaded: false,
+  items: [],
+  async load(){
+    if(this.loaded) return this.items;
+    try{
+      const txt = await fetch("checklist_items.csv", { cache:"no-store" }).then(r=>{
+        if(!r.ok) throw new Error("missing");
+        return r.text();
+      });
+      const rows = parseCSV(txt); // from BLOCK 3
+      const header = rows[0].map(h=>String(h).toLowerCase().trim());
+      const idIdx = header.indexOf("item_id");
+      const labelIdx = header.indexOf("label");
+      const activeIdx = header.indexOf("active");
+
+      this.items = rows.slice(1).map(r=>({
+        id: String(r[idIdx]||"").trim(),
+        label: String(r[labelIdx]||"").trim(),
+        active: String(r[activeIdx]||"true").trim().toLowerCase() !== "false"
+      })).filter(x=>x.id && x.label && x.active);
+
+    }catch(e){
+      console.warn("[checklist] checklist_items.csv missing/invalid, using none", e);
+      this.items = [];
+    }
+    this.loaded = true;
+    return this.items;
+  }
+};
+
+/* ------------------ Completion + status rules ------------------ */
+function openIssueCount(storeId){
+  const st = ensureStore(storeId);
+  return st.issues.filter(i=>!i.resolved).length;
+}
+function hasOpenIssues(storeId){
+  return openIssueCount(storeId) > 0;
+}
+
+function completion(storeId){
+  const st = ensureStore(storeId);
+  const dyn = ChecklistSchema.items;
+  const total = 3 + dyn.length;
   let done = 0;
 
   if(st.watered && st.wateredOn === todayKey()) done++;
-  if(!!st.negatives) done++;
-  if(!!st.pictures) done++;
+  if(st.negatives) done++;
+  if(st.pictures) done++;
 
   dyn.forEach(it=>{
     if(st.checklist[it.id] === true) done++;
   });
 
-  return { done, total, pct: total ? done/total : 0 };
+  const pct = total ? done/total : 0;
+  return { done, total, pct };
 }
 
-function hasOpenIssue(storeId){
-  const st = ensureState(storeId);
-  return st.issues.some(i => !i.resolved);
-}
-
-function statusColor(storeId){
-  if(hasOpenIssue(storeId)) return "warn";      // override
-  const { pct } = computeCompletion(storeId);
+/* Marker color:
+   - If open issues: yellow + red flag
+   - else pct < .5 red
+   - pct >= .5 yellow
+   - pct == 1 green
+*/
+function storeStatus(storeId){
+  if(hasOpenIssues(storeId)) return "warn";
+  const { pct } = completion(storeId);
   if(pct >= 1) return "ok";
   if(pct >= 0.5) return "warn";
   return "bad";
 }
 
-/* ---------- Marker HTML (color + optional flag) ---------- */
-function markerHtml(storeId){
-  const c = statusColor(storeId);
-  const open = hasOpenIssue(storeId);
+/* ------------------ Marker indexing (no map overrides) ------------------ */
+/* We locate markers by matching their lat/lon to store lat/lon */
+const MarkerIndex = {
+  built: false,
+  byStoreId: new Map(),
 
-  const cls = c === "ok" ? "pin-ok" : c === "warn" ? "pin-warn" : "pin-bad";
+  build(){
+    if(!window.MAP || !window.AppStores?.length) return;
+    this.byStoreId.clear();
+
+    // Collect all markers currently on map
+    const layers = [];
+    window.MAP.eachLayer(layer=>{
+      if(layer && typeof layer.getLatLng === "function") layers.push(layer);
+    });
+
+    for(const s of window.AppStores){
+      const match = layers.find(m=>{
+        const ll = m.getLatLng();
+        return Math.abs(ll.lat - s.lat) < 1e-6 && Math.abs(ll.lng - s.lon) < 1e-6;
+      });
+      if(match) this.byStoreId.set(s.id, match);
+    }
+    this.built = true;
+  },
+
+  get(storeId){
+    return this.byStoreId.get(storeId);
+  }
+};
+
+/* Build marker index after map init */
+setTimeout(()=> MarkerIndex.build(), 400);
+
+/* ------------------ Apply marker HTML (color + flag) ------------------ */
+function markerHtml(storeId){
+  const status = storeStatus(storeId);
+  const flag = hasOpenIssues(storeId);
+
+  const cls = status === "ok" ? "pin-ok" : status === "warn" ? "pin-warn" : "pin-bad";
+
   return `
     <div class="pin ${cls}">
-      ${open ? `<span class="flagpole"></span>` : ``}
+      ${flag ? `<span class="flagpole"></span>` : ``}
     </div>
   `;
 }
 
 function updateMarker(storeId){
-  const m = STORE_MARKERS.get(storeId);
-  if(!m || !window.L) return;
+  const marker = MarkerIndex.get(storeId);
+  if(!marker || !window.L) return;
+
   const icon = L.divIcon({
     className:"",
     html: markerHtml(storeId),
     iconSize:[18,18],
     iconAnchor:[9,9]
   });
-  m.setIcon(icon);
+  marker.setIcon(icon);
 }
 
-/* =========================================================
-   Override marker render to use our status logic
-   ========================================================= */
-window.renderMarkers = function(stores){
-  window.STORES_CACHE = stores || [];
-  // ensure schema loaded first so status is correct
-  ChecklistSchema.load().then(()=>{
-    // call original renderer first
-    _renderMarkers_v3(stores);
-
-    // then replace marker icons based on checklist/issues
-    (stores||[]).forEach(s=>{
-      ensureState(s.id);
-      updateMarker(s.id);
-    });
-  });
-};
-
-window.populateStoreMenu = function(stores){
-  window.STORES_CACHE = stores || [];
-  _populateStoreMenu_v3(stores);
-
-  // upgrade: selecting from menu should also select the store and update panel
-  const menu = document.getElementById("storeListMenu");
-  if(menu){
-    menu.onclick = (e)=>{
-      const btn = e.target.closest("[data-id],[data-store-id]");
-      if(!btn) return;
-
-      const id = btn.dataset.id || btn.dataset.storeId;
-      const store = (window.STORES_CACHE||[]).find(s=>s.id===id);
-      if(store){
-        window.selectStore(store);
-        const marker = STORE_MARKERS.get(id);
-        if(marker && MAP) MAP.setView(marker.getLatLng(), Math.max(MAP.getZoom(), 12), { animate:true });
-      }
-    };
+function updateAllMarkers(){
+  if(!ChecklistSchema.loaded) return;
+  if(!MarkerIndex.built) MarkerIndex.build();
+  for(const s of (window.AppStores||[])){
+    ensureStore(s.id);
+    updateMarker(s.id);
   }
-};
+}
 
-/* =========================================================
-   Store Panel: inject checklist UI + issue viewer
-   ========================================================= */
-function ensureChecklistUI(){
-  if(document.getElementById("storeChecklistBox")) return;
+/* ------------------ Checklist UI injection ------------------ */
+function ensureChecklistBox(){
+  if(document.getElementById("checklistBox")) return;
 
   const panel = document.querySelector(".store-panel");
-  const btnRow = panel?.querySelector(".btn-row");
-  if(!panel || !btnRow) return;
+  if(!panel) return;
 
   const box = document.createElement("div");
-  box.id = "storeChecklistBox";
-  box.className = "bubble-soft";
-  box.style.marginTop = "10px";
+  box.id = "checklistBox";
+  box.className = "checklist-box";
   box.innerHTML = `
-    <div class="bubble-title">Checklist</div>
-    <div id="storeChecklistList" style="display:flex;flex-direction:column;gap:8px;"></div>
-    <div class="bubble-sub" style="margin-top:10px;">
-      Completion: <strong id="storeChecklistPct">0%</strong>
+    <div class="checklist-title">Checklist</div>
+    <div id="checklistRows"></div>
+    <div class="checklist-meta">
+      <div>Completion: <strong id="checkPct">0%</strong></div>
+      <div id="checkCount">0/0</div>
     </div>
   `;
-  panel.insertBefore(box, btnRow);
+
+  // insert before Add Issue button
+  const addIssueBtn = document.getElementById("btnAddIssue");
+  panel.insertBefore(box, addIssueBtn);
 }
 
-function setBadge(storeId){
-  const badge = document.getElementById("spStatusBadge");
-  if(!badge) return;
-  const c = statusColor(storeId);
-  const dot = c==="ok" ? "var(--good)" : c==="warn" ? "var(--warn)" : "var(--bad)";
-  const label = c==="ok" ? "GREEN" : c==="warn" ? "YELLOW" : "RED";
-  badge.innerHTML = `<span class="badge-dot" style="background:${dot}"></span><span>${label}</span>`;
-}
+/* Render checklist for selected store */
+function renderChecklist(storeId){
+  ensureChecklistBox();
+  const st = ensureStore(storeId);
 
-function renderChecklistPanel(storeId){
-  ensureChecklistUI();
-  const st = ensureState(storeId);
+  const rowsEl = document.getElementById("checklistRows");
+  const pctEl = document.getElementById("checkPct");
+  const countEl = document.getElementById("checkCount");
+  if(!rowsEl || !pctEl || !countEl) return;
 
-  const list = document.getElementById("storeChecklistList");
-  const pctEl = document.getElementById("storeChecklistPct");
-  if(!list || !pctEl) return;
-
-  const dyn = ChecklistSchema.get();
-  const { done, total, pct } = computeCompletion(storeId);
-  pctEl.textContent = `${Math.round(pct*100)}% (${done}/${total})`;
+  const dyn = ChecklistSchema.items;
+  const { done, total, pct } = completion(storeId);
+  pctEl.textContent = `${Math.round(pct*100)}%`;
+  countEl.textContent = `${done}/${total}`;
 
   const row = (key, label, checked) => `
-    <label style="display:flex;gap:10px;align-items:flex-start;font-size:.9rem;cursor:pointer;">
+    <label class="checklist-row">
       <input type="checkbox" data-ck="${key}" ${checked ? "checked" : ""} />
-      <span>${label}</span>
+      <span>${esc(label)}</span>
     </label>
   `;
 
-  list.innerHTML = [
+  rowsEl.innerHTML = [
     row("watered", "Watered (resets daily)", st.watered && st.wateredOn === todayKey()),
     row("negatives", "Negatives", !!st.negatives),
     row("pictures", "Pictures", !!st.pictures),
-    ...dyn.map(it => row(`dyn:${it.id}`, it.label, st.checklist[it.id] === true))
+    ...dyn.map(it=>row("dyn:"+it.id, it.label, st.checklist[it.id] === true))
   ].join("");
 
-  list.onchange = (e)=>{
+  rowsEl.onchange = (e)=>{
     const cb = e.target.closest("input[data-ck]");
     if(!cb) return;
-
     const key = cb.getAttribute("data-ck");
+
     if(key === "watered"){
       st.watered = cb.checked;
       st.wateredOn = cb.checked ? todayKey() : null;
@@ -1299,45 +997,36 @@ function renderChecklistPanel(storeId){
     }
 
     st.updatedAt = Date.now();
-    st.updatedBy = CURRENT_USER?.username || "User";
-    window.STORE_STATE[storeId] = st;
-    saveStoreState(window.STORE_STATE);
+    StoreState[storeId] = st;
+    saveState();
 
-    // update UI + marker
+    // update side stats in panel
+    document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌";
+    document.getElementById("spNegatives").textContent = st.negatives ? "⚠️" : "✅";
+    document.getElementById("spIssues").textContent = openIssueCount(storeId) ? `🚩 ${openIssueCount(storeId)}` : "✅ None";
+
+    // update checklist + marker
+    renderChecklist(storeId);
     updateMarker(storeId);
-    setBadge(storeId);
-    renderChecklistPanel(storeId);
-    renderIssueButton(storeId);
-
-    // optional Firestore persistence (best effort)
-    persistStoreFirestore(storeId);
+    renderViewIssuesButton(storeId);
   };
 }
 
-/* =========================================================
-   Issues: add + view modal + resolve
-   ========================================================= */
-function renderIssueButton(storeId){
-  const btn = document.getElementById("btnViewIssues");
-  if(!btn) return;
-
-  const st = ensureState(storeId);
-  btn.style.display = st.issues.length ? "inline-flex" : "none";
-  btn.onclick = ()=> openIssuesModal(storeId);
-}
-
+/* ------------------ Issues UI: View button + modal ------------------ */
 function ensureIssuesModal(){
-  if(document.getElementById("issuesBackdrop")) return;
+  if(document.getElementById("issuesModalBackdrop")) return;
 
   const bd = document.createElement("div");
-  bd.id = "issuesBackdrop";
-  bd.className = "popup-backdrop";
+  bd.id = "issuesModalBackdrop";
+  bd.className = "modal-backdrop";
   bd.innerHTML = `
-    <div class="popup">
+    <div class="modal">
       <h2>Store Issues</h2>
-      <div class="popup-subtitle" id="issuesStoreLabel"></div>
-      <div id="issuesList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
-      <button class="popup-close" id="issuesCloseBtn" type="button">Close</button>
+      <div class="sub" id="issuesStoreLabel"></div>
+      <div id="issuesList"></div>
+      <div class="modal-actions">
+        <button class="btn" id="issuesCloseBtn" type="button">Close</button>
+      </div>
     </div>
   `;
   document.body.appendChild(bd);
@@ -1347,63 +1036,88 @@ function ensureIssuesModal(){
   bd.onclick = (e)=>{ if(e.target === bd) close(); };
 }
 
+function renderViewIssuesButton(storeId){
+  // Create the button if missing
+  let btn = document.getElementById("btnViewIssues");
+  if(!btn){
+    btn = document.createElement("button");
+    btn.id = "btnViewIssues";
+    btn.className = "small-btn";
+    btn.textContent = "🚩 View Issues";
+    btn.style.display = "none";
+
+    const panel = document.querySelector(".store-panel");
+    const addIssue = document.getElementById("btnAddIssue");
+    panel.insertBefore(btn, addIssue.nextSibling);
+  }
+
+  const st = ensureStore(storeId);
+  btn.style.display = st.issues.length ? "inline-block" : "none";
+  btn.onclick = ()=> openIssuesModal(storeId);
+}
+
 function openIssuesModal(storeId){
   ensureIssuesModal();
-  const bd = document.getElementById("issuesBackdrop");
+
+  const store = (window.AppStores||[]).find(s=>s.id===storeId);
+  document.getElementById("issuesStoreLabel").textContent =
+    store ? `${store.name} (${store.id})` : `Store ${storeId}`;
+
+  const st = ensureStore(storeId);
   const list = document.getElementById("issuesList");
-  const label = document.getElementById("issuesStoreLabel");
 
-  const store = (window.STORES_CACHE||[]).find(s=>s.id===storeId);
-  label.textContent = store ? `${store.name} (${store.id})` : `Store ${storeId}`;
-
-  const st = ensureState(storeId);
   if(!st.issues.length){
-    list.innerHTML = `<div class="bubble-soft">No issues.</div>`;
+    list.innerHTML = `<div class="issue-card">No issues reported.</div>`;
   } else {
-    list.innerHTML = st.issues.map(i=>`
-      <div class="bubble-soft">
-        <div style="display:flex;justify-content:space-between;gap:10px;">
-          <strong>${esc(i.text)}</strong>
-          ${i.resolved ? `<span style="color:var(--good);font-weight:900;">Resolved</span>` : `<span style="color:var(--bad);font-weight:900;">Open</span>`}
+    list.innerHTML = st.issues.map(issue=>`
+      <div class="issue-card">
+        <div class="issue-top">
+          <div>${esc(issue.text)}</div>
+          <div class="${issue.resolved ? "issue-status-done" : "issue-status-open"}">
+            ${issue.resolved ? "Resolved" : "Open"}
+          </div>
         </div>
-        <div class="bubble-sub" style="margin-top:4px;">
-          Reported by ${esc(i.createdBy)} • ${new Date(i.createdAt).toLocaleString()}
+        <div class="issue-meta">
+          Reported by ${esc(issue.createdBy)} • ${new Date(issue.createdAt).toLocaleString()}
         </div>
-        ${!i.resolved ? `<button class="small-btn" data-resolve="${i.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ""}
+        ${!issue.resolved ? `<button class="small-btn" data-resolve="${issue.id}" style="margin-top:8px;">✅ Mark Resolved</button>` : ``}
       </div>
     `).join("");
   }
 
   list.onclick = (e)=>{
-    const b = e.target.closest("[data-resolve]");
-    if(!b) return;
-    const id = b.getAttribute("data-resolve");
-    const issue = st.issues.find(x=>x.id===id);
+    const btn = e.target.closest("[data-resolve]");
+    if(!btn) return;
+
+    const id = btn.getAttribute("data-resolve");
+    const issue = st.issues.find(i=>i.id===id);
     if(!issue) return;
+
     issue.resolved = true;
-
     st.updatedAt = Date.now();
-    window.STORE_STATE[storeId] = st;
-    saveStoreState(window.STORE_STATE);
+    StoreState[storeId] = st;
+    saveState();
 
+    // update UI + marker (issues override)
     updateMarker(storeId);
-    setBadge(storeId);
-    renderChecklistPanel(storeId);
-    renderIssueButton(storeId);
-    persistStoreFirestore(storeId);
+    renderChecklist(storeId);
+    renderViewIssuesButton(storeId);
+    document.getElementById("spIssues").textContent = openIssueCount(storeId) ? `🚩 ${openIssueCount(storeId)}` : "✅ None";
 
-    openIssuesModal(storeId); // re-render
+    openIssuesModal(storeId); // re-render modal
   };
 
-  bd.style.display="flex";
+  document.getElementById("issuesModalBackdrop").style.display = "flex";
 }
 
-function wireAddIssueButton(storeId){
-  const btn = document.querySelector('[data-map-action="add:issue"]');
+/* ------------------ Add Issue button wiring ------------------ */
+function wireAddIssue(storeId){
+  const btn = document.getElementById("btnAddIssue");
   if(!btn) return;
 
+  btn.disabled = false;
   btn.onclick = ()=>{
-    const st = ensureState(storeId);
+    const st = ensureStore(storeId);
     const msg = prompt("Enter issue details:");
     if(!msg) return;
 
@@ -1411,533 +1125,231 @@ function wireAddIssueButton(storeId){
       id: uuid(),
       text: msg.trim(),
       createdAt: Date.now(),
-      createdBy: CURRENT_USER?.username || "User",
+      createdBy: App.user?.username || "User",
       resolved: false
     });
 
     st.updatedAt = Date.now();
-    st.updatedBy = CURRENT_USER?.username || "User";
-    window.STORE_STATE[storeId] = st;
-    saveStoreState(window.STORE_STATE);
+    StoreState[storeId] = st;
+    saveState();
 
-    // Issues override => yellow + flag
+    // issue override forces yellow + flag
     updateMarker(storeId);
-    setBadge(storeId);
-    renderChecklistPanel(storeId);
-    renderIssueButton(storeId);
-
-    persistStoreFirestore(storeId);
+    renderViewIssuesButton(storeId);
+    renderChecklist(storeId);
+    document.getElementById("spIssues").textContent = `🚩 ${openIssueCount(storeId)}`;
   };
 }
 
-/* =========================================================
-   Firestore sync (best effort)
-   - Keep UI functional without it
-   ========================================================= */
-function persistStoreFirestore(storeId){
-  if(!window.db || !window.fb) return;
-  try{
-    const { doc, setDoc } = window.fb;
-    setDoc(doc(window.db, "stores", storeId), window.STORE_STATE[storeId], { merge:true });
-  }catch(e){
-    console.warn("[firestore] persist failed", e);
-  }
-}
+/* ------------------ Hook store selection from BLOCK 4 ------------------ */
+/* We detect selected store via window.SelectedStore set in BLOCK 4 */
+let lastSelectedId = null;
+setInterval(()=>{
+  const s = window.SelectedStore;
+  if(!s || !s.id) return;
+  if(s.id === lastSelectedId) return;
 
-function startFirestoreListener(){
-  if(!window.db || !window.fb) return;
-  const { collection, onSnapshot } = window.fb;
-  onSnapshot(collection(window.db, "stores"), snap=>{
-    // merge remote into local
-    snap.forEach(d=>{
-      window.STORE_STATE[d.id] = { ...defaultStoreState(), ...d.data() };
-      ensureState(d.id);
-    });
-    saveStoreState(window.STORE_STATE);
+  lastSelectedId = s.id;
 
-    // refresh markers if map exists
-    window.STORES_CACHE.forEach(s=> updateMarker(s.id));
-  }, err=>{
-    console.warn("[firestore] listener error", err);
-  });
-}
-
-/* =========================================================
-   Override selectStore to render checklist + bind actions
-   ========================================================= */
-window.selectStore = function(store){
-  // keep original behavior (title/subtitle)
-  _selectStore_v3(store);
-
-  // update panel details
-  const st = ensureState(store.id);
-  document.getElementById("spSub").textContent = "Checklist-driven status";
-  document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅ Yes (Today)" : "❌ No";
-  document.getElementById("spNeg").textContent = st.negatives ? "⚠️ Yes" : "✅ No";
-  const openCount = st.issues.filter(i=>!i.resolved).length;
-  document.getElementById("spIssues").textContent = openCount ? `🚩 ${openCount}` : "✅ None";
-  document.getElementById("spUpdated").textContent = st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—";
-
-  // enable buttons
-  document.getElementById("btnWatered").disabled = false;
-  document.querySelectorAll('[data-map-action]').forEach(b=>b.disabled=false);
-
-  // checklist rendering
+  // Ensure schema loaded and render UI
   ChecklistSchema.load().then(()=>{
-    renderChecklistPanel(store.id);
-    setBadge(store.id);
-    updateMarker(store.id);
-    renderIssueButton(store.id);
-    wireAddIssueButton(store.id);
+    ensureStore(s.id);
+
+    // Update panel quick status fields
+    const st = ensureStore(s.id);
+    document.getElementById("spWatered").textContent = (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌";
+    document.getElementById("spNegatives").textContent = st.negatives ? "⚠️" : "✅";
+    document.getElementById("spIssues").textContent = openIssueCount(s.id) ? `🚩 ${openIssueCount(s.id)}` : "✅ None";
+
+    renderChecklist(s.id);
+    wireAddIssue(s.id);
+    renderViewIssuesButton(s.id);
+
+    // marker refresh for this store
+    updateMarker(s.id);
   });
+}, 250);
 
-  // watered button => marks watered + updates completion
-  document.getElementById("btnWatered").onclick = ()=>{
-    const st2 = ensureState(store.id);
-    st2.watered = true;
-    st2.wateredOn = todayKey();
-    st2.updatedAt = Date.now();
-    st2.updatedBy = CURRENT_USER?.username || "User";
-    window.STORE_STATE[store.id] = st2;
-    saveStoreState(window.STORE_STATE);
-
-    updateMarker(store.id);
-    setBadge(store.id);
-    renderChecklistPanel(store.id);
-    document.getElementById("spWatered").textContent = "✅ Yes (Today)";
-    persistStoreFirestore(store.id);
-  };
-};
-
-/* =========================================================
-   Initialize after Block 3 has loaded stores/markers
-   ========================================================= */
-(function initBlock4(){
-  // Ensure schema is loaded early
-  ChecklistSchema.load();
-
-  // Start Firestore listener (optional)
-  startFirestoreListener();
-
-  // If map already rendered, repaint markers using current state
+/* ------------------ Init on load: schema + marker refresh ------------------ */
+ChecklistSchema.load().then(()=>{
+  // Once markers exist, rebuild marker index & refresh colors
   setTimeout(()=>{
-    (window.STORES_CACHE||[]).forEach(s=>{
-      ensureState(s.id);
-      updateMarker(s.id);
-    });
-  }, 150);
-})();
+    MarkerIndex.build();
+    updateAllMarkers();
+  }, 600);
+});
 </script>
 <script>
-/* =========================================================
-   BLOCK 5 — HF / HPA CONTENT + PRODUCT INFO + TRAINING
-   (NO MAP LOGIC HERE — SAFE)
-   ========================================================= */
+/* ======================================================
+   BLOCK 6 — HF / HPA / TRAINING + FINAL BOOT
+   ====================================================== */
 
-/* =========================================================
-   SHARED HELPERS
-   ========================================================= */
+/* ------------------ Small helpers ------------------ */
 function esc(s){
   return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#39;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
 }
 
-function parseCsvLine(line){
-  const out=[]; let cur="", q=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(ch === '"'){
-      if(q && line[i+1] === '"'){ cur+='"'; i++; }
-      else q=!q;
-    } else if(ch === "," && !q){
-      out.push(cur); cur="";
-    } else cur+=ch;
-  }
-  out.push(cur);
-  return out;
-}
-
-async function fetchCsv(url){
-  const r = await fetch(url, { cache:"no-store" });
-  if(!r.ok) throw new Error(url+" missing");
-  return r.text();
-}
-
-/* =========================================================
-   RICH MODAL (Plants / Pests / Training)
-   ========================================================= */
-(function ensureDetailModal(){
-  if(document.getElementById("detailBackdrop")) return;
-
-  const bd = document.createElement("div");
-  bd.id = "detailBackdrop";
-  bd.className = "popup-backdrop";
-  bd.innerHTML = `
-    <div class="popup">
-      <h2 id="detailTitle"></h2>
-      <div class="popup-subtitle" id="detailSubtitle"></div>
-      <img id="detailImage" class="popup-image" style="display:none;" />
-      <div id="detailSections"></div>
-      <button class="popup-close" id="detailCloseBtn">Close</button>
-    </div>
-  `;
-  document.body.appendChild(bd);
-
-  const close = ()=> bd.style.display="none";
-  bd.onclick = (e)=>{ if(e.target===bd) close(); };
-  document.getElementById("detailCloseBtn").onclick = close;
-
-  window.openDetail = (title, subtitle, img, sections)=>{
-    document.getElementById("detailTitle").textContent = title || "";
-    document.getElementById("detailSubtitle").textContent = subtitle || "";
-    const im = document.getElementById("detailImage");
-    if(img){
-      im.src = img; im.style.display="";
-    }else im.style.display="none";
-
-    document.getElementById("detailSections").innerHTML =
-      sections.map(s=>`
-        <div class="popup-section-title">${esc(s.title)}</div>
-        <div class="popup-text">${esc(s.body || "—")}</div>
-      `).join("");
-
-    bd.style.display="flex";
+/* ------------------ HF / HPA tab toggles ------------------ */
+document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const t = btn.dataset.hfTab;
+    document.getElementById("hf-guidelines").classList.toggle("hidden", t!=="guidelines");
+    document.getElementById("hf-care").classList.toggle("hidden", t!=="care");
   };
-})();
+});
 
-/* =========================================================
-   GUIDELINES → CATEGORY BUBBLES
-   ========================================================= */
-async function loadGuidelines(csvUrl, mountId){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  try{
-    const txt = await fetchCsv(csvUrl);
-    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-    const header = parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
-
-    const catIdx = header.indexOf("category") >= 0 ? header.indexOf("category") : header.indexOf("section");
-    const txtIdx = header.indexOf("guideline") >= 0 ? header.indexOf("guideline") :
-                   header.indexOf("item") >= 0 ? header.indexOf("item") :
-                   header.indexOf("text");
-
-    const rows = lines.slice(1).map(l=>{
-      const r=parseCsvLine(l);
-      return {
-        cat: (r[catIdx]||"General").trim(),
-        text: (r[txtIdx]||"").trim()
-      };
-    }).filter(x=>x.text);
-
-    const by = {};
-    rows.forEach(r=>{
-      if(!by[r.cat]) by[r.cat]=[];
-      by[r.cat].push(r.text);
-    });
-
-    mount.innerHTML = Object.entries(by).map(([cat, items])=>`
-      <div class="bubble-soft">
-        <div class="bubble-title">${esc(cat)}</div>
-        <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
-          ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
-        </ul>
-      </div>
-    `).join("");
-  }catch{
-    mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
-  }
-}
-
-/* =========================================================
-   PLANTS (name-only → modal)
-   ========================================================= */
-async function loadPlants(csvUrl, mountId){
-  const mount = document.getElementById(mountId);
-  if(!mount) return;
-
-  try{
-    const txt = await fetchCsv(csvUrl);
-    const lines = txt.split(/\r?\n/).filter(l=>l.trim());
-    const header = parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
-
-    const idx = {
-      common: header.indexOf("common_name"),
-      sci: header.indexOf("scientific_name"),
-      img: header.indexOf("image"),
-      light: header.indexOf("light"),
-      water: header.indexOf("water"),
-      soil: header.indexOf("soil"),
-      tips: header.indexOf("tips")
-    };
-
-    const plants = lines.slice(1).map(l=>{
-      const r=parseCsvLine(l);
-      return {
-        name:(r[idx.common]||"").trim(),
-        sci:(r[idx.sci]||"").trim(),
-        img:(r[idx.img]||"").trim(),
-        light:(r[idx.light]||"").trim(),
-        water:(r[idx.water]||"").trim(),
-        soil:(r[idx.soil]||"").trim(),
-        tips:(r[idx.tips]||"").trim()
-      };
-    }).filter(p=>p.name);
-
-    mount.innerHTML = plants.map(p=>`
-      <div class="pc-card" data-name="${esc(p.name)}">
-        <div class="pc-card-title">${esc(p.name)}</div>
-      </div>
-    `).join("");
-
-    mount.onclick = (e)=>{
-      const card=e.target.closest(".pc-card");
-      if(!card) return;
-      const p=plants.find(x=>x.name===card.dataset.name);
-      if(!p) return;
-
-      openDetail(
-        p.name,
-        p.sci,
-        p.img,
-        [
-          {title:"Light",body:p.light},
-          {title:"Water",body:p.water},
-          {title:"Soil",body:p.soil},
-          {title:"Tips",body:p.tips}
-        ]
-      );
-    };
-  }catch{
-    mount.innerHTML = `<div class="bubble-soft">No plant data.</div>`;
-  }
-}
-
-/* =========================================================
-   PESTS (shared)
-   ========================================================= */
-const PESTS = [
-  {name:"Aphids", body:"Clusters, sticky residue. Rinse and insecticidal soap."},
-  {name:"Spider Mites", body:"Stippling and webbing. Increase humidity."},
-  {name:"Mealybugs", body:"Cottony masses. Alcohol swab."},
-  {name:"Thrips", body:"Silver streaks. Sticky traps."}
-];
-
-function loadPests(mountId){
-  const mount=document.getElementById(mountId);
-  if(!mount) return;
-
-  mount.innerHTML = PESTS.map(p=>`
-    <div class="pc-card" data-name="${p.name}">
-      <div class="pc-card-title">${p.name}</div>
-    </div>
-  `).join("");
-
-  mount.onclick=(e)=>{
-    const c=e.target.closest(".pc-card");
-    if(!c) return;
-    const p=PESTS.find(x=>x.name===c.dataset.name);
-    if(!p) return;
-    openDetail("Pest: "+p.name,"","",[{title:"Details",body:p.body}]);
+document.querySelectorAll("[data-hf-care]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hf-care]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("hf-plants").classList.toggle("hidden", btn.dataset.hfCare!=="plants");
+    document.getElementById("hf-pests").classList.toggle("hidden", btn.dataset.hfCare!=="pests");
   };
-}
-
-/* =========================================================
-   HF / HPA LOADERS
-   ========================================================= */
-async function loadHF(){
-  await loadGuidelines("hf_guidelines.csv","hf-guidelines");
-  await loadPlants("perennials.csv","hf-plants");
-  loadPests("hf-pests");
-}
-
-async function loadHPA(){
-  await loadGuidelines("hpa_guidelines.csv","hpa-guidelines");
-  await loadPlants("plants.csv","hpa-plants");
-  loadPests("hpa-pests");
-}
-
-/* =========================================================
-   PRODUCT INFO (SKU + ORDERS)
-   ========================================================= */
-async function loadProductInfo(){
-  const skusEl=document.getElementById("products-skus");
-  const ordersEl=document.getElementById("products-orders");
-  if(!skusEl || !ordersEl) return;
-
-  skusEl.innerHTML = `<div class="bubble-soft">SKU Catalogue loaded here (filters + cards)</div>`;
-  ordersEl.innerHTML = `<div class="bubble-soft">Order Breakdown loaded here</div>`;
-}
-
-/* =========================================================
-   TRAINING HUB
-   ========================================================= */
-(function initTraining(){
-  const basics=document.getElementById("train-basics");
-  const merch=document.getElementById("train-merch");
-  const sup=document.getElementById("train-supervisor");
-
-  if(basics){
-    basics.innerHTML = `
-      <div class="bubble-soft">
-        <div class="bubble-title">Basics</div>
-        <div class="pc-card" data-lesson="walk">Store Walk Priorities</div>
-        <div class="pc-card" data-lesson="water">Watering Standards</div>
-      </div>
-    `;
-  }
-  if(merch){
-    merch.innerHTML = `
-      <div class="bubble-soft">
-        <div class="bubble-title">Merchandising</div>
-        <div class="pc-card">Table Flow</div>
-        <div class="pc-card">Color Blocking</div>
-      </div>
-    `;
-  }
-  if(sup){
-    sup.innerHTML = `
-      <div class="bubble-soft">
-        <div class="bubble-title">Supervisor</div>
-        <div class="pc-card">Issue Escalation</div>
-        <div class="pc-card">District Consistency</div>
-      </div>
-    `;
-  }
-})();
-
-/* =========================================================
-   NAV HOOKS
-   ========================================================= */
-document.querySelectorAll(".nav-link").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    if(btn.dataset.page==="hf") loadHF();
-    if(btn.dataset.page==="hpa") loadHPA();
-  });
 });
 
 document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    if(btn.dataset.hpaTab==="products") loadProductInfo();
-  });
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const t = btn.dataset.hpaTab;
+    document.getElementById("hpa-guidelines").classList.toggle("hidden", t!=="guidelines");
+    document.getElementById("hpa-products").classList.toggle("hidden", t!=="products");
+    document.getElementById("hpa-care").classList.toggle("hidden", t!=="care");
+  };
 });
-</script>
-<script>
-/* =========================================================
-   BLOCK 6 — FINAL STABILITY + BOOT POLISH
-   ========================================================= */
 
-/* ---------- Close dropdowns safely ---------- */
-function closeAllDropdowns(){
-  document.querySelectorAll(".dd.open").forEach(dd=>{
-    dd.classList.remove("open");
-  });
+document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hpa-care]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("hpa-plants").classList.toggle("hidden", btn.dataset.hpaCare!=="plants");
+    document.getElementById("hpa-pests").classList.toggle("hidden", btn.dataset.hpaCare!=="pests");
+  };
+});
+
+/* ------------------ Simple CSV loader ------------------ */
+async function loadCsvSafe(url){
+  try{
+    const r = await fetch(url, { cache:"no-store" });
+    if(!r.ok) throw new Error("missing");
+    return parseCSV(await r.text());
+  }catch{
+    return null;
+  }
 }
 
-/* Close dropdowns on outside click */
-document.addEventListener("click",(e)=>{
-  if(!e.target.closest(".dd")){
-    closeAllDropdowns();
+/* ------------------ HF / HPA Guidelines ------------------ */
+async function renderGuidelines(csvUrl, mountId){
+  const mount = document.getElementById(mountId);
+  if(!mount) return;
+
+  const rows = await loadCsvSafe(csvUrl);
+  if(!rows || rows.length < 2){
+    mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
+    return;
   }
-});
 
-/* ---------- Ensure map resizes correctly on every view switch ---------- */
-(function reinforceMapResize(){
-  const originalShowView = window.showView;
-  window.showView = function(viewId){
-    originalShowView(viewId);
+  const header = rows[0].map(h=>h.toLowerCase());
+  const catIdx = header.indexOf("category") >= 0 ? header.indexOf("category") : 0;
+  const txtIdx = header.indexOf("text") >= 0 ? header.indexOf("text") : 1;
 
-    if(viewId === "view-map" && window.MAP){
-      setTimeout(()=>{
-        try{
-          window.MAP.invalidateSize();
-        }catch{}
-      }, 80);
-    }
+  const groups = {};
+  rows.slice(1).forEach(r=>{
+    const c = r[catIdx] || "General";
+    const t = r[txtIdx];
+    if(!t) return;
+    if(!groups[c]) groups[c] = [];
+    groups[c].push(t);
+  });
+
+  mount.innerHTML = Object.entries(groups).map(([cat,items])=>`
+    <div class="bubble-soft">
+      <div class="bubble-title">${esc(cat)}</div>
+      <ul style="margin-left:16px;">
+        ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
+      </ul>
+    </div>
+  `).join("");
+}
+
+/* ------------------ Plants / Pests (name-only) ------------------ */
+function renderNameCards(list, mountId, title){
+  const mount = document.getElementById(mountId);
+  if(!mount) return;
+
+  mount.innerHTML = list.map(x=>`
+    <div class="bubble-soft" style="cursor:pointer;">
+      <strong>${esc(x.name)}</strong>
+      <div class="bubble-sub">${esc(title)}</div>
+    </div>
+  `).join("");
+}
+
+/* ------------------ Load HF ------------------ */
+async function loadHF(){
+  await renderGuidelines("hf_guidelines.csv", "hf-guidelines");
+  renderNameCards(
+    [{name:"Ferns"},{name:"Palms"},{name:"Succulents"}],
+    "hf-plants",
+    "Plant Care"
+  );
+  renderNameCards(
+    [{name:"Aphids"},{name:"Spider Mites"}],
+    "hf-pests",
+    "Pest Info"
+  );
+}
+
+/* ------------------ Load HPA ------------------ */
+async function loadHPA(){
+  await renderGuidelines("hpa_guidelines.csv", "hpa-guidelines");
+  renderNameCards(
+    [{name:"Annuals"},{name:"Perennials"}],
+    "hpa-plants",
+    "Plant Care"
+  );
+  renderNameCards(
+    [{name:"Thrips"},{name:"Mealybugs"}],
+    "hpa-pests",
+    "Pest Info"
+  );
+
+  document.getElementById("products-skus").innerHTML =
+    `<div class="bubble-soft">SKU Catalogue will render here.</div>`;
+  document.getElementById("products-orders").innerHTML =
+    `<div class="bubble-soft">Order Breakdown will render here.</div>`;
+}
+
+/* ------------------ Training tab ------------------ */
+document.querySelectorAll("[data-train]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-train]").forEach(b=>b.classList.remove("primary"));
+    btn.classList.add("primary");
+    ["basics","merch","supervisor"].forEach(k=>{
+      document.getElementById("train-"+k).classList.toggle("hidden", btn.dataset.train!==k);
+    });
   };
-})();
+});
 
-/* ---------- Safety: close modals on ESC ---------- */
-document.addEventListener("keydown",(e)=>{
-  if(e.key !== "Escape") return;
-
-  document.querySelectorAll(".popup-backdrop").forEach(bd=>{
-    if(bd.style.display === "flex"){
-      bd.style.display = "none";
-    }
+/* ------------------ Nav hooks ------------------ */
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.dataset.view === "hf") loadHF();
+    if(btn.dataset.view === "hpa") loadHPA();
   });
 });
 
-/* ---------- Logo placeholder final sweep ---------- */
-(function finalLogoSweep(){
-  document.querySelectorAll("*").forEach(el=>{
-    if(
-      el.childNodes.length === 1 &&
-      el.childNodes[0].nodeType === Node.TEXT_NODE &&
-      el.textContent.trim() === "hf_logo.png"
-    ){
-      const img = document.createElement("img");
-      img.src = "hf_logo.png";
-      img.alt = "Logo";
-
-      if(el.closest("#view-splash")) img.className = "splash-logo";
-      else if(el.closest(".login-card")) img.className = "login-logo";
-      else img.className = "logo";
-
-      el.textContent = "";
-      el.appendChild(img);
-    }
-  });
-})();
-
-/* ---------- Session restore hardening ---------- */
-(function finalSessionRestore(){
-  try{
-    const raw = sessionStorage.getItem("hub_user");
-    if(raw){
-      CURRENT_USER = JSON.parse(raw);
-    }
-  }catch{
-    CURRENT_USER = null;
-  }
-
-  if(CURRENT_USER){
-    document.getElementById("globalUserPill").textContent =
-      CURRENT_USER.username || "User";
-
-    document.getElementById("globalTopBar").classList.remove("hidden");
-
-    setActiveNav("map");
-    showView("view-map");
-
-    // map safety
-    setTimeout(()=>{
-      if(window.MAP){
-        try{ MAP.invalidateSize(); }catch{}
-      }
-    }, 120);
-  }else{
-    document.getElementById("globalTopBar").classList.add("hidden");
-    showView("view-splash");
-  }
-})();
-
-/* ---------- Prevent duplicate event bindings ---------- */
-(function preventDoubleBindings(){
-  const seen = new WeakSet();
-  document.querySelectorAll("button").forEach(btn=>{
-    if(seen.has(btn)) return;
-    seen.add(btn);
-  });
-})();
-
-/* ---------- Final console confirmation ---------- */
-console.log("✅ Merchandising Hub fully loaded — map stable, UI locked");
+/* ------------------ Final boot sanity ------------------ */
+console.log("✅ HUB fully initialized (login, map, checklist, HF/HPA ready)");
 </script>
 
 </body>
 </html>
+
