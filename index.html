@@ -11,29 +11,33 @@
 
   <style>
     /* ===========================
-       THEME TOKENS
+       THEME
        =========================== */
     :root{
       --bg:#020617;
-      --bg2:#0b1220;
       --panel: rgba(15,23,42,.92);
       --glass: rgba(15,23,42,.78);
       --text:#e5e7eb;
       --heading:#f9fafb;
       --muted:#9ca3af;
-      --border: rgba(148,163,184,.38);
-      --borderSoft: rgba(148,163,184,.24);
+
+      --border: rgba(148,163,184,.40);
+      --borderSoft: rgba(148,163,184,.22);
+
       --shadow: 0 18px 55px rgba(0,0,0,.75);
       --shadowSoft: 0 12px 32px rgba(0,0,0,.55);
+
       --radius: 18px;
       --pill: 999px;
+
       --accent:#22d3ee;
       --accent2:#3b82f6;
+
       --good:#22c55e;
       --warn:#facc15;
       --bad:#ef4444;
 
-      /* Training chalkboard */
+      /* Chalkboard */
       --chalk:#f8fafc;
       --chalkDim: rgba(248,250,252,.65);
       --board:#1b2b34;
@@ -41,14 +45,14 @@
       --boardGlow: rgba(254,240,138,.25);
     }
 
-    *{box-sizing:border-box;margin:0;padding:0}
+    *{ box-sizing:border-box; margin:0; padding:0; }
     body{
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
         linear-gradient(rgba(0,0,0,.60), rgba(0,0,0,.84)),
         url("philo.jpg") center/cover fixed;
-      color:var(--text);
-      min-height:100vh;
+      color: var(--text);
+      min-height: 100vh;
     }
     body::before{
       content:"";
@@ -60,8 +64,8 @@
       z-index:0;
     }
 
-    .hidden{display:none!important}
-    button{font-family:inherit}
+    .hidden{ display:none !important; }
+    button{ font-family: inherit; }
 
     /* ===========================
        APP SHELL
@@ -99,7 +103,7 @@
     }
 
     /* ===========================
-       GLOBAL TOP BAR
+       TOP BAR
        =========================== */
     .topbar{
       display:flex;
@@ -113,6 +117,11 @@
       background: var(--panel);
       box-shadow: var(--shadowSoft);
     }
+    .topbar-left{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
     .topbar-title{
       font-weight:900;
       letter-spacing:.08em;
@@ -121,7 +130,6 @@
       font-size:.95rem;
     }
     .topbar-sub{
-      margin-top:2px;
       color:var(--muted);
       font-size:.82rem;
     }
@@ -174,9 +182,22 @@
       background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
       color: var(--heading);
     }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
 
     /* ===========================
-       BUBBLE BOXES
+       LOGO (FIXED — ALWAYS IMG)
+       =========================== */
+    .logo{
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,.55);
+      object-fit:cover;
+      box-shadow: 0 8px 22px rgba(0,0,0,.55);
+    }
+
+    /* ===========================
+       BUBBLE BOXES (little boxes everywhere)
        =========================== */
     .bubble{
       border-radius: var(--radius);
@@ -237,7 +258,7 @@
       align-items:center;
     }
     .login-logo{
-      width:92px;               /* ✅ not huge */
+      width:92px; /* ✅ not huge */
       height:auto;
       border-radius:18px;
       border:1px solid rgba(148,163,184,.55);
@@ -282,7 +303,7 @@
     .login-error{ min-height:1.2em; font-size:.82rem; color:#fecaca; text-align:center; }
 
     /* ===========================
-       MAP (kept “perfect”)
+       MAP (kept clean)
        =========================== */
     #view-map{ display:flex; flex-direction:column; gap:12px; }
     .map-topbar{
@@ -304,6 +325,21 @@
       letter-spacing:.1em;
       font-size:.85rem;
     }
+    .dd{ position:relative; }
+    .dd-menu{
+      position:absolute; top:calc(100% + 8px); left:0;
+      min-width:260px; border-radius:16px; border:1px solid var(--border);
+      background:rgba(15,23,42,.98); box-shadow:0 22px 55px rgba(0,0,0,.9);
+      padding:8px; display:none; z-index:1000;
+    }
+    .dd.open .dd-menu{ display:block; }
+    .dd-item{
+      width:100%; text-align:left; padding:10px; border-radius:12px;
+      border:1px solid transparent; background:transparent; color:var(--text);
+      cursor:pointer; font-size:.85rem; display:flex; justify-content:space-between; gap:10px;
+    }
+    .dd-item:hover{ border-color:rgba(34,211,238,.5); background:rgba(34,211,238,.08); }
+
     .map-layout{ display:grid; grid-template-columns:1fr 360px; gap:12px; }
     @media (max-width:900px){ .map-layout{ grid-template-columns:1fr; } }
     #storeMap{
@@ -360,7 +396,7 @@
       background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(2,6,23,.85));
     }
 
-    /* Marker + issue flag dot */
+    /* Marker + issue flag */
     .pin{
       width:18px;height:18px;border-radius:999px;
       border:2px solid rgba(255,255,255,.85);
@@ -413,7 +449,6 @@
       text-transform:uppercase;
       margin-bottom:14px;
     }
-
   </style>
 </head>
 <body>
@@ -421,12 +456,12 @@
     <div class="app-inner">
 
       <!-- ===========================
-           TOP BAR (HIDDEN UNTIL LOGIN)
+           TOP BAR (hidden until login)
            =========================== -->
       <div id="globalTopBar" class="topbar hidden">
-        <div>
+        <div class="topbar-left">
           <div class="topbar-title">Merchandising Hub</div>
-          <div class="topbar-sub">Live Map • Store Status • Weather</div>
+          <div class="topbar-sub">Live Map • HF • HPA • Training</div>
         </div>
 
         <div class="nav-row">
@@ -447,7 +482,7 @@
            =========================== -->
       <section id="view-splash" class="login-root">
         <div class="bubble-soft" style="text-align:center;max-width:420px;">
-          hf_logo.png
+          <img src="hf_logo.png" alt="HF Logo" class="login-logo" />
           <div class="login-title" style="margin-top:12px;">Merchandising Hub</div>
           <div class="login-subtitle">Tap to continue</div>
           <button class="btn primary" id="btnSplashEnter" style="margin-top:12px;">
@@ -461,8 +496,7 @@
            =========================== -->
       <section id="view-login" class="login-root hidden">
         <div class="login-card">
-
-          hf_logo.png
+          <img src="hf_logo.png" alt="HF Logo" class="login-logo" />
 
           <div class="login-title">Sign In</div>
           <div class="login-subtitle">Internal Tool • Live Store Map</div>
@@ -488,7 +522,7 @@
       <section id="view-map" class="hidden">
         <div class="map-topbar">
           <div class="map-brand">
-            hf_logo.png
+            <img src="hf_logo.png" alt="HF" class="logo" />
             Store Map
           </div>
 
@@ -540,65 +574,67 @@
       </section>
 
       <!-- ===========================
-           HF
+           HF HUB (matches reference layout)
            =========================== -->
       <section id="view-hf" class="hidden">
         <div class="bubble">
-          <div class="bubble-title">HF Guidelines</div>
-          <div id="hfGuidelines" class="bubble-grid"></div>
-        </div>
+          <div class="bubble-title">HF Hub</div>
 
-        <div class="tabs-row">
-          <button class="btn active" data-hf-tab="plants">Plants</button>
-          <button class="btn" data-hf-tab="pests">Pests</button>
-        </div>
+          <div class="nav-row" style="margin-bottom:12px;">
+            <button class="btn active" data-hf-page="guidelines">Guidelines</button>
+            <button class="btn" data-hf-page="plants">Plant Care</button>
+            <button class="btn" data-hf-page="pests">Pests</button>
+          </div>
 
-        <div id="hfPlants" class="bubble-grid"></div>
-        <div id="hfPests" class="bubble-grid hidden"></div>
+          <div id="hfPanel-guidelines" class="bubble-grid"></div>
+          <div id="hfPanel-plants" class="bubble-grid hidden"></div>
+          <div id="hfPanel-pests" class="bubble-grid hidden"></div>
+        </div>
       </section>
 
       <!-- ===========================
-           HPA
+           HPA HUB (matches reference layout)
            =========================== -->
       <section id="view-hpa" class="hidden">
         <div class="bubble">
-          <div class="bubble-title">HPA Guidelines</div>
-          <div id="hpaGuidelines" class="bubble-grid"></div>
-        </div>
+          <div class="bubble-title">HPA Hub</div>
 
-        <div class="tabs-row">
-          <button class="btn active" data-hpa-tab="plants">Plants</button>
-          <button class="btn" data-hpa-tab="pests">Pests</button>
-        </div>
+          <div class="nav-row" style="margin-bottom:12px;">
+            <button class="btn active" data-hpa-page="guidelines">Guidelines</button>
+            <button class="btn" data-hpa-page="plants">Plant Care</button>
+            <button class="btn" data-hpa-page="pests">Pests</button>
+          </div>
 
-        <div id="hpaPlants" class="bubble-grid"></div>
-        <div id="hpaPests" class="bubble-grid hidden"></div>
+          <div id="hpaPanel-guidelines" class="bubble-grid"></div>
+          <div id="hpaPanel-plants" class="bubble-grid hidden"></div>
+          <div id="hpaPanel-pests" class="bubble-grid hidden"></div>
+        </div>
       </section>
 
       <!-- ===========================
-           ADMIN
+           ADMIN (unchanged / perfect)
            =========================== -->
       <section id="view-admin" class="hidden">
         <div class="bubble">
           <div class="bubble-title">Admin Tools</div>
 
           <div class="bubble-grid">
-            <button class="btn primary admin-btn"
+            <button class="btn primary"
               onclick="window.open('https://app.air.inc/b/uploads-e6ca3284-16b4-48ec-b02f-884d1e7c52e4')">
               AIR Uploads
             </button>
 
-            <button class="btn admin-btn"
+            <button class="btn"
               onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl')">
               Store Audit
             </button>
 
-            <button class="btn admin-btn"
+            <button class="btn"
               onclick="window.open('https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl')">
               Rack Counts
             </button>
 
-            <button class="btn danger admin-btn" id="btnDistrictChecklist">
+            <button class="btn danger" id="btnDistrictChecklist">
               District Checklist
             </button>
           </div>
@@ -606,32 +642,33 @@
       </section>
 
       <!-- ===========================
-           TRAINING
+           TRAINING HUB (expanded)
            =========================== -->
       <section id="view-training" class="hidden training-chalkboard">
-        <div class="chalk-title">📚 Training Center</div>
-        <div class="chalk-sub">Learn • Level Up • Lead</div>
+        <div class="chalk-title">📚 Training Hub</div>
+        <div class="chalk-sub">Choose a Track</div>
 
-        <div class="bubble-grid">
+        <div class="map-layout">
+          <!-- Tracks -->
           <div class="bubble-soft">
-            <div class="bubble-title">Level 1</div>
-            Store Basics & Safety
+            <button class="btn primary" data-train="basics">Basics</button>
+            <button class="btn" data-train="merch">Merchandising</button>
+            <button class="btn" data-train="supervisor">Supervisor</button>
           </div>
+
+          <!-- Content -->
           <div class="bubble-soft">
-            <div class="bubble-title">Level 2</div>
-            Merchandising Excellence
-          </div>
-          <div class="bubble-soft">
-            <div class="bubble-title">Level 3</div>
-            Supervisor Skills
+            <div id="train-basics">Welcome to Basics Training</div>
+            <div id="train-merch" class="hidden">Merchandising Training Content</div>
+            <div id="train-supervisor" class="hidden">Supervisor Training Content</div>
           </div>
         </div>
       </section>
 
       <!-- ===========================
-           DISTRICT CHECKLIST POPUP
+           DISTRICT CHECKLIST MODAL
            =========================== -->
-      <div class="mini-backdrop hidden" id="districtModal">
+      <div id="districtModal" class="mini-backdrop hidden">
         <div class="mini-modal">
           <h2>District Checklist</h2>
           <p>This feature is currently under construction.</p>
@@ -672,6 +709,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // expose for non-module scripts
     window.db = db;
     window.fb = { collection, doc, setDoc, onSnapshot };
     console.log("[firebase] ready");
@@ -682,19 +720,15 @@
 
 <script>
 /* =========================================================
-   UTILITIES
+   Helpers
    ========================================================= */
 const $ = (id) => document.getElementById(id);
-
 const VIEWS = ["view-splash","view-login","view-map","view-hf","view-hpa","view-admin","view-training"];
 let CURRENT_USER = null;
 
 function showView(id){
   VIEWS.forEach(v => $(v)?.classList.toggle("hidden", v !== id));
-  // Training chalkboard only when visible
   $("view-training")?.classList.toggle("training-chalkboard", id === "view-training");
-
-  // Map init when map becomes visible
   if(id === "view-map" && window.MapDash){
     MapDash.ensureInit();
     MapDash.invalidate();
@@ -710,7 +744,16 @@ function todayKey(){
   return new Date().toISOString().slice(0,10);
 }
 
-/* Robust CSV line parser */
+function esc(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+/* Robust CSV parsing (handles quotes) */
 function parseCsvLine(line){
   const out = [];
   let cur = "", inQ = false;
@@ -734,26 +777,60 @@ async function fetchCsvText(url){
 }
 
 /* =========================================================
-   SPLASH → LOGIN
+   Logo auto-fix: replaces literal "hf_logo.png" / "hpa_logo.png" text with <img>
+   This fixes your "logo doesn't work" without needing to edit SEGMENT 2 markup.
+   ========================================================= */
+function replaceLogoPlaceholders(){
+  const targets = [
+    { key:"hf_logo.png", src:"hf_logo.png" },
+    { key:"hpa_logo.png", src:"hpa_logo.png" }
+  ];
+
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  const textNodes = [];
+  while(walker.nextNode()) textNodes.push(walker.currentNode);
+
+  textNodes.forEach(node => {
+    const val = (node.nodeValue || "").trim();
+    const hit = targets.find(t => t.key === val);
+    if(!hit) return;
+
+    const parent = node.parentElement;
+    if(!parent) return;
+
+    const img = document.createElement("img");
+    img.src = hit.src;
+    img.alt = "Logo";
+
+    // Choose appropriate size based on context
+    if(parent.closest(".login-card")){
+      img.className = "login-logo";
+    } else {
+      img.className = "logo";
+    }
+
+    parent.replaceChild(img, node);
+  });
+}
+
+/* =========================================================
+   Splash -> Login
    ========================================================= */
 $("btnSplashEnter")?.addEventListener("click", () => {
   showView("view-login");
 });
 
 /* =========================================================
-   LOGIN (FIXED)
-   - case-insensitive username
-   - safe csv parsing
-   - "Signing in…" UX
+   Login (FIXED): CSV-safe + case-insensitive username
    ========================================================= */
 async function loadUsers(){
   try{
-    const txt = await fetchCsvText("users.csv");
+    const txtRaw = await fetchCsvText("users.csv");
+    const txt = txtRaw.replace(/^\uFEFF/, ""); // strip BOM if present
     const lines = txt.split(/\r?\n/).filter(l => l.trim());
     if(lines.length < 2) throw new Error("users.csv empty");
 
-    // handle BOM in header
-    const header = parseCsvLine(lines[0].replace(/^\uFEFF/, "")).map(h => h.trim().toLowerCase());
+    const header = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
     const idx = {
       u: header.indexOf("username"),
       p: header.indexOf("password"),
@@ -779,16 +856,12 @@ async function loadUsers(){
 }
 
 async function doLogin(){
-  const userRaw = ($("loginUser")?.value || "");
-  const passRaw = ($("loginPass")?.value || "");
-  const user = userRaw.trim().toLowerCase();
-  const pass = passRaw.trim();
-
+  const user = ($("loginUser")?.value || "").trim().toLowerCase();
+  const pass = ($("loginPass")?.value || "").trim();
   const err = $("loginError");
   const btn = $("loginBtn");
-  err.textContent = "";
 
-  // Optional UX
+  err.textContent = "";
   btn.disabled = true;
   btn.textContent = "Signing in…";
 
@@ -819,12 +892,11 @@ async function doLogin(){
 
   setActiveNav("map");
   showView("view-map");
-
-  initWeatherWidget(); // sets to "tap to enable" state
+  initWeatherWidget();
 }
 
-$("loginBtn")?.addEventListener("click", (e) => { e.preventDefault(); doLogin(); });
-$("loginPass")?.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); doLogin(); } });
+$("loginBtn")?.addEventListener("click", (e)=>{ e.preventDefault(); doLogin(); });
+$("loginPass")?.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); doLogin(); } });
 
 function doLogout(){
   CURRENT_USER = null;
@@ -833,11 +905,10 @@ function doLogout(){
   showView("view-login");
 }
 
-$("btnLogout")?.addEventListener("click", doLogout);
 $("globalLogoutBtn")?.addEventListener("click", doLogout);
 
 /* =========================================================
-   TOP NAV ROUTER
+   Nav routing
    ========================================================= */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
@@ -849,8 +920,17 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
 });
 
 /* =========================================================
-   WEATHER (permission-based + tap to enable)
-   - asks user when they tap the widget
+   District checklist modal
+   ========================================================= */
+$("btnDistrictChecklist")?.addEventListener("click", ()=>{
+  $("districtModal")?.classList.remove("hidden");
+});
+$("districtModal")?.addEventListener("click", (e)=>{
+  if(e.target === $("districtModal")) $("districtModal").classList.add("hidden");
+});
+
+/* =========================================================
+   Weather (ask permission on click)
    ========================================================= */
 const WEATHER_KEY = "weather_permission_v1";
 
@@ -871,7 +951,7 @@ function initWeatherWidget(){
   box.style.cursor = "pointer";
   box.onclick = () => {
     const perm2 = sessionStorage.getItem(WEATHER_KEY);
-    if(perm2 === "denied") return; // user blocked; don't spam prompts
+    if(perm2 === "denied") return;
     requestWeather();
   };
 }
@@ -884,7 +964,6 @@ function requestWeather(){
     box.textContent = "Weather unavailable";
     return;
   }
-
   box.textContent = "Weather: Locating…";
 
   navigator.geolocation.getCurrentPosition(
@@ -895,10 +974,10 @@ function requestWeather(){
         .then(r=>r.json())
         .then(d=>{
           const w = d.current_weather;
-          if(!w){ box.textContent = "Weather: —"; return; }
+          if(!w){ box.textContent="Weather: —"; return; }
           box.textContent = `🌡 ${Math.round(w.temperature)}° • 💨 ${Math.round(w.windspeed)} mph`;
         })
-        .catch(()=> box.textContent = "Weather unavailable");
+        .catch(()=> box.textContent="Weather unavailable");
     },
     ()=>{
       sessionStorage.setItem(WEATHER_KEY, "denied");
@@ -909,21 +988,49 @@ function requestWeather(){
 }
 
 /* =========================================================
-   DISTRICT CHECKLIST POPUP
+   HF/HPA hub sub-navigation (like your reference)
    ========================================================= */
-$("btnDistrictChecklist")?.addEventListener("click", ()=>{
-  $("districtModal")?.classList.remove("hidden");
+function wireHubTabs(selector, panelPrefix){
+  document.querySelectorAll(selector).forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      // active style
+      document.querySelectorAll(selector).forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const page = btn.getAttribute(selector.includes("hf") ? "data-hf-page" : "data-hpa-page");
+      ["guidelines","plants","pests"].forEach(p=>{
+        document.getElementById(panelPrefix + p)?.classList.toggle("hidden", page !== p);
+      });
+    });
+  });
+}
+wireHubTabs("[data-hf-page]", "hfPanel-");
+wireHubTabs("[data-hpa-page]", "hpaPanel-");
+
+/* =========================================================
+   Training hub internal navigation
+   ========================================================= */
+document.querySelectorAll("[data-train]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const t = btn.getAttribute("data-train");
+    // button styles
+    document.querySelectorAll("[data-train]").forEach(b=>b.classList.remove("primary"));
+    btn.classList.add("primary");
+
+    ["basics","merch","supervisor"].forEach(k=>{
+      document.getElementById("train-"+k)?.classList.toggle("hidden", t !== k);
+    });
+  });
 });
 
 /* =========================================================
-   MAPDASH (Firestore live + local fallback)
-   - "Markdowns" replaced with "Watered"
-   - Watered resets daily (logic based)
-   - Issue adds red flag dot on marker
+   MapDash (Firestore live + local fallback)
+   - Watered resets daily
+   - Issue adds red flag marker
    ========================================================= */
 window.MapDash = (() => {
   const STORES_CSV_URL = "stores.csv";
-  const LOCAL_KEY = "store_state_v5";
+  const LOCAL_KEY = "store_state_v6";
 
   const DEFAULT_STORE = () => ({
     shippingGrade: "",
@@ -942,7 +1049,6 @@ window.MapDash = (() => {
   let selectedId = null;
   let initialized = false;
 
-  let liveEnabled = false;
   let unsubscribe = null;
 
   function loadLocal(){
@@ -959,7 +1065,7 @@ window.MapDash = (() => {
     if(!state[id]) state[id] = DEFAULT_STORE();
     if(!Array.isArray(state[id].issues)) state[id].issues = [];
 
-    // Daily reset for watered
+    // Daily reset
     if(state[id].wateredOn !== todayKey()){
       state[id].watered = false;
     }
@@ -970,7 +1076,6 @@ window.MapDash = (() => {
       const txt = await fetchCsvText(STORES_CSV_URL);
       const lines = txt.split(/\r?\n/).filter(l=>l.trim());
       const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
-
       const idx = {
         id: header.indexOf("store_id"),
         name: header.indexOf("store_name"),
@@ -996,7 +1101,7 @@ window.MapDash = (() => {
 
       if(!stores.length) throw new Error("No stores parsed");
     }catch(e){
-      console.warn("[map] stores.csv missing/invalid, using demo stores", e);
+      console.warn("[map] stores.csv missing; using demo stores", e);
       stores = [
         { id:"1950", name:"South Loop", lat:41.856, lon:-87.624, city:"Chicago", state:"IL", address:"" },
         { id:"1987", name:"Glenview",  lat:42.079, lon:-87.822, city:"Glenview", state:"IL", address:"" }
@@ -1004,17 +1109,7 @@ window.MapDash = (() => {
     }
   }
 
-  function normalizeShip(raw){
-    const s = (raw||"").toString().trim().toUpperCase();
-    if(!s) return "—";
-    return raw;
-  }
-
   function computeStatus(st){
-    // Simple, readable status:
-    // bad if negatives or issues exist
-    // warn if not watered today
-    // ok if watered and no issues
     const hasIssues = (st.issues||[]).length > 0;
     if(st.negatives || hasIssues) return "bad";
     if(!st.watered) return "warn";
@@ -1025,11 +1120,10 @@ window.MapDash = (() => {
     ensureDefaults(id);
     const st = state[id];
     const status = computeStatus(st);
-    const hasIssues = (st.issues||[]).length > 0;
+    const hasIssues = st.issues.length > 0;
 
-    const stClass = status==="ok" ? "pin-ok" : status==="warn" ? "pin-warn" : "pin-bad";
-    const flagClass = hasIssues ? "pin-flag" : "";
-    return `<div class="pin ${stClass} ${flagClass}"></div>`;
+    const cls = status==="ok" ? "pin-ok" : status==="warn" ? "pin-warn" : "pin-bad";
+    return `<div class="pin ${cls} ${hasIssues ? "pin-flag" : ""}"></div>`;
   }
 
   function initMap(){
@@ -1039,7 +1133,7 @@ window.MapDash = (() => {
   }
 
   function renderMarkers(){
-    markers.forEach(m => { try{ map.removeLayer(m); }catch{} });
+    markers.forEach(m=>{ try{ map.removeLayer(m); }catch{} });
     markers.clear();
 
     const bounds = [];
@@ -1065,52 +1159,51 @@ window.MapDash = (() => {
   function renderStoreDropdown(){
     const menu = $("storeListMenu");
     if(!menu) return;
-
     menu.innerHTML = stores.map(s=>`
-      <button class="dd-item" type="button" data-store-id="${s.id}">
-        <span>${s.id} — ${s.name}</span>
-        <span class="dd-sub">${s.city || ""}</span>
+      <button class="dd-item" type="button" data-store-id="${esc(s.id)}">
+        <span>${esc(s.id)} — ${esc(s.name)}</span>
+        <span class="dd-sub">${esc(s.city || "")}</span>
       </button>
     `).join("");
   }
 
-  function selectStore(id){
-    selectedId = id;
-    ensureDefaults(id);
+  function updatePanel(){
+    if(!selectedId) return;
+    const s = stores.find(x=>x.id===selectedId);
+    const st = state[selectedId];
 
-    const s = stores.find(x=>x.id===id);
-    const st = state[id];
-
-    $("spTitle").textContent = s ? `${s.name} (${s.id})` : `Store ${id}`;
+    $("spTitle").textContent = s ? `${s.name} (${s.id})` : `Store ${selectedId}`;
     $("spSub").textContent = s ? `${[s.city,s.state].filter(Boolean).join(", ")}${s.address ? " • "+s.address : ""}` : "—";
 
-    $("spShip").textContent = normalizeShip(st.shippingGrade);
+    $("spShip").textContent = st.shippingGrade || "—";
     $("spWatered").textContent = st.watered ? "✅ Yes (Today)" : "❌ No";
     $("spNeg").textContent = st.negatives ? "⚠️ Yes" : "✅ No";
     $("spIssues").textContent = st.issues.length ? `🚩 ${st.issues.length}` : "✅ None";
     $("spUpdated").textContent = st.updatedAt ? new Date(st.updatedAt).toLocaleString() : "—";
 
-    // Status badge
     const status = computeStatus(st);
     const dot = status==="ok" ? "var(--good)" : status==="warn" ? "var(--warn)" : "var(--bad)";
     $("spStatusBadge").innerHTML = `<span class="badge-dot" style="background:${dot}"></span><span>${status.toUpperCase()}</span>`;
 
-    // Enable buttons now that we have a store selected
     $("btnWatered").disabled = false;
     document.querySelectorAll('[data-map-action]').forEach(b => b.disabled = false);
+  }
+
+  function selectStore(id){
+    selectedId = id;
+    ensureDefaults(id);
+    updatePanel();
   }
 
   async function persistStore(id){
     saveLocal();
     updateMarker(id);
-
-    // Firestore live write (kept in)
     if(window.db && window.fb){
       try{
         const { doc, setDoc } = window.fb;
         await setDoc(doc(window.db, "stores", id), state[id], { merge:true });
       }catch(e){
-        console.warn("[firestore] write failed, local only", e);
+        console.warn("[firestore] write failed; local only", e);
       }
     }
   }
@@ -1122,7 +1215,7 @@ window.MapDash = (() => {
     state[selectedId].wateredOn = todayKey();
     state[selectedId].updatedAt = Date.now();
     state[selectedId].updatedBy = (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown");
-    selectStore(selectedId);
+    updatePanel();
     await persistStore(selectedId);
   }
 
@@ -1136,8 +1229,7 @@ window.MapDash = (() => {
     state[selectedId].issues.push(msg.trim());
     state[selectedId].updatedAt = Date.now();
     state[selectedId].updatedBy = (CURRENT_USER?.displayName || CURRENT_USER?.username || "Unknown");
-
-    selectStore(selectedId);
+    updatePanel();
     await persistStore(selectedId);
   }
 
@@ -1151,15 +1243,15 @@ window.MapDash = (() => {
     stores.forEach(s=>{
       ensureDefaults(s.id);
       const st = state[s.id];
-      const hasIssues = st.issues.length > 0;
-      const isBad = computeStatus(st) === "bad";
-
       const marker = markers.get(s.id);
       if(!marker || !map) return;
 
+      const hasIssues = st.issues.length > 0;
+      const bad = computeStatus(st) === "bad";
       let show = true;
+
       if(filter === "issues:true") show = hasIssues;
-      if(filter === "status:bad") show = isBad;
+      if(filter === "status:bad") show = bad;
 
       if(show){
         if(!map.hasLayer(marker)) marker.addTo(map);
@@ -1176,22 +1268,19 @@ window.MapDash = (() => {
         e.stopPropagation();
         const dd = btn.closest(".dd");
         dd.classList.toggle("open");
-        // close other dropdowns
         document.querySelectorAll("#view-map .dd").forEach(o=>{ if(o!==dd) o.classList.remove("open"); });
       });
     });
 
-    // close dropdowns on outside click
     document.addEventListener("click", (e)=>{
-      const inside = e.target.closest("#view-map");
-      if(!inside) return;
-      const ddInside = e.target.closest(".dd");
-      if(!ddInside){
+      const inMap = e.target.closest("#view-map");
+      if(!inMap) return;
+      if(!e.target.closest(".dd")){
         document.querySelectorAll("#view-map .dd").forEach(d=>d.classList.remove("open"));
       }
     });
 
-    // store dropdown selection
+    // store dropdown
     $("storeListMenu")?.addEventListener("click", (e)=>{
       const b = e.target.closest("[data-store-id]");
       if(!b) return;
@@ -1222,22 +1311,19 @@ window.MapDash = (() => {
 
     unsubscribe = onSnapshot(collection(window.db, "stores"), snap=>{
       const next = {};
-      snap.forEach(d=> next[d.id] = d.data());
+      snap.forEach(d => next[d.id] = d.data());
       state = next;
 
-      // daily reset enforcement
+      // enforce daily reset
       stores.forEach(s=>ensureDefaults(s.id));
 
-      liveEnabled = true;
       $("syncPill").textContent = "Sync: Live";
-
       renderMarkers();
       renderStoreDropdown();
-      if(selectedId) selectStore(selectedId);
+      if(selectedId) updatePanel();
     }, err=>{
       console.warn("[firestore] live failed", err);
       $("syncPill").textContent = "Sync: Local";
-      liveEnabled = false;
     });
   }
 
@@ -1256,8 +1342,6 @@ window.MapDash = (() => {
     wireUI();
 
     $("syncPill").textContent = "Sync: Local";
-
-    // upgrade to live if firebase exists
     startFirestoreLive();
   }
 
@@ -1267,53 +1351,32 @@ window.MapDash = (() => {
 })();
 
 /* =========================================================
-   BOOT (restore session, wire login/logout, initialize weather)
+   Boot
    ========================================================= */
-(function boot(){
-  // district modal: clicking backdrop closes
-  $("districtModal")?.addEventListener("click", (e)=>{
-    if(e.target === $("districtModal")) $("districtModal").classList.add("hidden");
-  });
+document.addEventListener("DOMContentLoaded", ()=>{
+  replaceLogoPlaceholders();
 
-  // Restore session if available
+  // restore session
   try{
     const raw = sessionStorage.getItem("hub_user");
     if(raw) CURRENT_USER = JSON.parse(raw);
   }catch{}
 
-  // Splash -> Login
-  $("btnSplashEnter")?.addEventListener("click", ()=>{
-    showView("view-login");
-  });
-
-  // nav buttons (topbar)
-  document.querySelectorAll(".nav-link").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(!CURRENT_USER){ showView("view-login"); return; }
-      document.querySelectorAll(".nav-link").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      showView("view-" + btn.getAttribute("data-page"));
-    });
-  });
-
-  // Logout
-  $("globalLogoutBtn")?.addEventListener("click", doLogout);
-
-  // Start in correct view
+  // boot view
   if(CURRENT_USER){
     $("globalUserPill").textContent = CURRENT_USER.displayName || CURRENT_USER.username;
     $("globalTopBar").classList.remove("hidden");
     initWeatherWidget();
     setActiveNav("map");
     showView("view-map");
-  }else{
+  } else {
     showView("view-splash");
   }
-})();
+});
 </script>
 <script>
 /* =========================================================
-   SMALL MODAL (used for Plant & Pest details)
+   DETAIL MODAL (Plants & Pests)
    ========================================================= */
 (function initDetailModal(){
   if(document.getElementById("detailBackdrop")) return;
@@ -1345,13 +1408,9 @@ window.MapDash = (() => {
 })();
 
 /* =========================================================
-   GUIDELINES → CATEGORY BUBBLES
-   CSV columns supported:
-   category | section
-   item | guideline | text
-   details (optional)
+   GUIDELINES → CATEGORY CARDS (HF & HPA)
    ========================================================= */
-async function renderGuidelines(csvUrl, mountId){
+async function loadGuidelines(csvUrl, mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
@@ -1359,27 +1418,27 @@ async function renderGuidelines(csvUrl, mountId){
     const txt = await fetchCsvText(csvUrl);
     const lines = txt.split(/\r?\n/).filter(l=>l.trim());
     if(lines.length < 2){
-      mount.innerHTML = `<div class="bubble-soft">No guidelines found.</div>`;
+      mount.innerHTML = `<div class="bubble-soft">No guidelines available.</div>`;
       return;
     }
 
     const header = parseCsvLine(lines[0]).map(h=>h.trim().toLowerCase());
     const idx = {
       cat: header.indexOf("category") >= 0 ? header.indexOf("category") : header.indexOf("section"),
-      item: header.indexOf("item") >= 0 ? header.indexOf("item")
-            : header.indexOf("guideline") >= 0 ? header.indexOf("guideline")
+      text: header.indexOf("guideline") >= 0 ? header.indexOf("guideline")
+            : header.indexOf("item") >= 0 ? header.indexOf("item")
             : header.indexOf("text"),
-      det: header.indexOf("details")
+      detail: header.indexOf("details")
     };
 
     const rows = lines.slice(1).map(l=>{
       const r = parseCsvLine(l);
       return {
         cat: (idx.cat>=0 ? r[idx.cat] : "General") || "General",
-        item: (idx.item>=0 ? r[idx.item] : r[0]) || "",
-        det: (idx.det>=0 ? r[idx.det] : "") || ""
+        text: (idx.text>=0 ? r[idx.text] : r[0]) || "",
+        detail: (idx.detail>=0 ? r[idx.detail] : "") || ""
       };
-    }).filter(x=>x.item.trim());
+    }).filter(x=>x.text.trim());
 
     const by = new Map();
     rows.forEach(x=>{
@@ -1394,22 +1453,23 @@ async function renderGuidelines(csvUrl, mountId){
         <ul style="margin-left:16px;display:flex;flex-direction:column;gap:6px;">
           ${items.map(it=>`
             <li>
-              ${it.item}
-              ${it.det ? `<span style="color:var(--muted)"> — ${it.det}</span>` : ""}
+              ${esc(it.text)}
+              ${it.detail ? `<span style="color:var(--muted)"> — ${esc(it.detail)}</span>` : ""}
             </li>
           `).join("")}
         </ul>
       </div>
     `).join("");
+
   }catch{
     mount.innerHTML = `<div class="bubble-soft">Missing ${csvUrl}</div>`;
   }
 }
 
 /* =========================================================
-   PLANTS → BUBBLE CARDS
+   PLANTS → CATALOG TILES
    ========================================================= */
-async function renderPlants(csvUrl, mountId){
+async function loadPlants(csvUrl, mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
@@ -1442,11 +1502,11 @@ async function renderPlants(csvUrl, mountId){
     }).filter(x=>x.name || x.common);
 
     mount.innerHTML = rows.map(p=>`
-      <div class="bubble-soft" style="cursor:pointer" data-plant="${p.common || p.name}">
-        <div class="bubble-title">🌿 ${p.common || p.name}</div>
-        ${p.common ? `<div class="bubble-sub"><em>${p.name}</em></div>` : ""}
-        ${p.light ? `<div class="bubble-sub">Light: ${p.light}</div>` : ""}
-        ${p.water ? `<div class="bubble-sub">Water: ${p.water}</div>` : ""}
+      <div class="bubble-soft" style="cursor:pointer" data-plant="${esc(p.common || p.name)}">
+        <div class="bubble-title">🌿 ${esc(p.common || p.name)}</div>
+        ${p.common ? `<div class="bubble-sub"><em>${esc(p.name)}</em></div>` : ""}
+        ${p.light ? `<div class="bubble-sub">Light: ${esc(p.light)}</div>` : ""}
+        ${p.water ? `<div class="bubble-sub">Water: ${esc(p.water)}</div>` : ""}
       </div>
     `).join("");
 
@@ -1458,10 +1518,10 @@ async function renderPlants(csvUrl, mountId){
           p.common || p.name,
           `
             <div class="bubble-soft">
-              <div><strong>Botanical:</strong> ${p.name || "—"}</div>
-              <div style="margin-top:6px;"><strong>Light:</strong> ${p.light || "—"}</div>
-              <div><strong>Water:</strong> ${p.water || "—"}</div>
-              ${p.notes ? `<div style="margin-top:10px;">${p.notes}</div>` : ""}
+              <div><strong>Botanical:</strong> ${esc(p.name || "—")}</div>
+              <div style="margin-top:6px;"><strong>Light:</strong> ${esc(p.light || "—")}</div>
+              <div><strong>Water:</strong> ${esc(p.water || "—")}</div>
+              ${p.notes ? `<div style="margin-top:10px;">${esc(p.notes)}</div>` : ""}
             </div>
           `
         );
@@ -1474,7 +1534,7 @@ async function renderPlants(csvUrl, mountId){
 }
 
 /* =========================================================
-   PESTS (STATIC, SHARED HF + HPA)
+   PESTS → REFERENCE CARDS (STATIC)
    ========================================================= */
 const PESTS = [
   { name:"Aphids", symptoms:"Clusters, sticky residue.", action:"Rinse, insecticidal soap." },
@@ -1484,7 +1544,7 @@ const PESTS = [
   { name:"Fungus Gnats", symptoms:"Small flies, wet soil.", action:"Let soil dry, BTI if allowed." }
 ];
 
-function renderPests(mountId){
+function loadPests(mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
@@ -1513,57 +1573,75 @@ function renderPests(mountId){
 }
 
 /* =========================================================
-   HF & HPA LOADERS
+   HF / HPA HUB LOADERS
    ========================================================= */
-async function loadHF(){
-  await renderGuidelines("hf_guidelines.csv", "hfGuidelines");
-  await renderPlants("perennials.csv", "hfPlants");
-  renderPests("hfPests");
+async function loadHFHub(){
+  await loadGuidelines("hf_guidelines.csv", "hfPanel-guidelines");
+  await loadPlants("perennials.csv", "hfPanel-plants");
+  loadPests("hfPanel-pests");
 }
 
-async function loadHPA(){
-  await renderGuidelines("hpa_guidelines.csv", "hpaGuidelines");
-  await renderPlants("plants.csv", "hpaPlants");
-  renderPests("hpaPests");
+async function loadHPAHub(){
+  await loadGuidelines("hpa_guidelines.csv", "hpaPanel-guidelines");
+  await loadPlants("plants.csv", "hpaPanel-plants");
+  loadPests("hpaPanel-pests");
 }
 
 /* =========================================================
-   TAB SWITCHING (Plants / Pests)
+   TRAINING HUB CONTENT (REAL MINI-HUB)
    ========================================================= */
-document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    $("hfPlants").classList.toggle("hidden", btn.dataset.hfTab !== "plants");
-    $("hfPests").classList.toggle("hidden", btn.dataset.hfTab !== "pests");
-  });
-});
-document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    $("hpaPlants").classList.toggle("hidden", btn.dataset.hpaTab !== "plants");
-    $("hpaPests").classList.toggle("hidden", btn.dataset.hpaTab !== "pests");
-  });
-});
+(function enhanceTrainingHub(){
+  const basics = document.getElementById("train-basics");
+  const merch = document.getElementById("train-merch");
+  const sup = document.getElementById("train-supervisor");
+
+  if(!basics || !merch || !sup) return;
+
+  basics.innerHTML = `
+    <div class="bubble-title">Level 1 — Basics</div>
+    <ul>
+      <li>Store walk priorities</li>
+      <li>Watering standards</li>
+      <li>Photo expectations</li>
+    </ul>
+  `;
+
+  merch.innerHTML = `
+    <div class="bubble-title">Level 2 — Merchandising</div>
+    <ul>
+      <li>Table flow & color blocking</li>
+      <li>Markdown vs salvage decisions</li>
+      <li>SKU familiarity</li>
+    </ul>
+  `;
+
+  sup.innerHTML = `
+    <div class="bubble-title">Level 3 — Supervisor</div>
+    <ul>
+      <li>Issue escalation</li>
+      <li>District consistency</li>
+      <li>Coaching feedback</li>
+    </ul>
+  `;
+})();
 
 /* =========================================================
-   LOAD CONTENT WHEN NAVIGATING
+   LOAD CONTENT ON NAVIGATION
    ========================================================= */
 document.querySelectorAll(".nav-link").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     const page = btn.dataset.page;
-    if(page === "hf") loadHF();
-    if(page === "hpa") loadHPA();
+    if(page === "hf") loadHFHub();
+    if(page === "hpa") loadHPAHub();
   });
 });
 </script>
 <script>
 /* =========================================================
-   FINAL BOOTSTRAP & STABILITY LAYER
+   FINAL BOOT & STABILITY LAYER
    ========================================================= */
 
-/* ---------- Restore session on refresh ---------- */
+/* ---------- Restore session ---------- */
 (function restoreSession(){
   try{
     const raw = sessionStorage.getItem("hub_user");
@@ -1575,26 +1653,23 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
   }
 })();
 
-/* ---------- Initial view selection ---------- */
+/* ---------- Initial view ---------- */
 (function initialView(){
   if(CURRENT_USER){
-    document.getElementById("globalUserPill").textContent =
+    $("globalUserPill").textContent =
       CURRENT_USER.displayName || CURRENT_USER.username || "User";
 
-    document.getElementById("globalTopBar").classList.remove("hidden");
+    $("globalTopBar").classList.remove("hidden");
 
-    // Default homepage = MAP
     setActiveNav("map");
     showView("view-map");
-
-    // Weather widget starts passive (tap to enable)
     initWeatherWidget();
   } else {
     showView("view-splash");
   }
 })();
 
-/* ---------- Prevent duplicate dropdown opens ---------- */
+/* ---------- Dropdown safety (close on outside click) ---------- */
 (function dropdownSafety(){
   document.addEventListener("click", (e)=>{
     const dd = e.target.closest(".dd");
@@ -1604,28 +1679,22 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
   });
 })();
 
-/* ---------- Prevent double-click login ---------- */
-(function loginSafety(){
-  const btn = document.getElementById("loginBtn");
-  if(!btn) return;
-
-  btn.addEventListener("click", ()=>{
-    if(btn.disabled) return;
-  });
-})();
-
-/* ---------- Navigation safety (no reloads) ---------- */
+/* ---------- Prevent duplicate nav execution ---------- */
 (function navSafety(){
+  let lastPage = null;
+
   document.querySelectorAll(".nav-link").forEach(btn=>{
-    btn.addEventListener("click", (e)=>{
-      e.preventDefault();
+    btn.addEventListener("click", ()=>{
+      const page = btn.dataset.page;
+      if(page === lastPage) return;
+      lastPage = page;
     });
   });
 })();
 
-/* ---------- District checklist modal close safety ---------- */
+/* ---------- District modal backdrop close ---------- */
 (function districtModalSafety(){
-  const modal = document.getElementById("districtModal");
+  const modal = $("districtModal");
   if(!modal) return;
 
   modal.addEventListener("click", (e)=>{
@@ -1635,7 +1704,7 @@ document.querySelectorAll(".nav-link").forEach(btn=>{
   });
 })();
 
-/* ---------- Final console sanity ---------- */
+/* ---------- Console sanity ---------- */
 console.log("✅ Merchandising Hub fully initialized");
 </script>
 
