@@ -1,0 +1,25 @@
+week,section,order,item_id,label,details,requires_notes,requires_photo
+2026-W14,Weekly Check-In,1,checkin_staff,Checked in with store personnel,,false,false
+2026-W14,Weekly Check-In,2,checkin_water,Water hookup & equipment confirmed,,false,false
+2026-W14,Weekly Check-In,3,checkin_shade,Shade cloth confirmed,,false,false
+2026-W14,Weekly Check-In,4,checkin_signage,Signage location confirmed,,false,false
+
+2026-W14,Store Walk,1,walk_perennials,Located all Perennial tables,,false,false
+2026-W14,Store Walk,2,walk_hpa,Located HPA racks,,false,false
+2026-W14,Store Walk,3,walk_thirdparty,Located 3rd Party racks,,false,false
+2026-W14,Store Walk,4,walk_shoppable,Tables/pods shoppable,,false,false
+
+2026-W14,Red Flags,1,redflag_empty,Empty endcaps detected,Explain issue,true,false
+2026-W14,Red Flags,2,redflag_water,Immediate watering needed,Explain urgency,true,false
+2026-W14,Red Flags,3,redflag_other,Other emergency situation,Details required,true,false
+
+2026-W14,Merchandising,1,merch_guidelines,Set per Guidelines / HF App,,false,false
+2026-W14,Merchandising,2,merch_pics,Photos submitted to Air,,false,true
+
+2026-W14,HF Ads,1,hf_ad_quart,Quart 4/$12 live,,false,true
+2026-W14,HF Ads,2,hf_ad_palms,Palms $10 live,,false,true
+2026-W14,HF Ads,3,hf_ad_signage,HF signage secured,,false,true
+2026-W14,HPA Ads,1,hpa_ad_foliage,6\" Foliage live,,false,true
+2026-W14,HPA Ads,2,hpa_ad_palms,Palms live,,false,true
+2026-W14,HPA Ads,3,hpa_ad_brom,4\" Brom live,,false,true
+2026-W14,HPA Ads,4,hpa_ad_cleanup,Signage secured after ad ends,,false,true
