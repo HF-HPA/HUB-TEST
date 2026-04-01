@@ -2,389 +2,218 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Merchandising Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Icons -->
-  <link rel="icon" type="image/png" href="hf_logo.png" />
-  <link rel="apple-touch-icon" href="hf_logo.png" />
+  <!-- App Icon -->
+  <link rel="icon" href="hf_logo.png" />
 
-  <!-- ✅ Leaflet (correct includes) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <!-- =====================================================
+       GLOBAL THEME & DESIGN SYSTEM
+       ===================================================== -->
   <style>
-    /* =========================================================
-       MATCH REFERENCE LOOK (HPA-SKU-CATALOGUE vibe)
-       ========================================================= */
     :root{
-      --bg: #020617;
-      --bg-alt: #030a1a;
-      --card-bg: rgba(15, 23, 42, 0.85);
-      --card-glass: rgba(15, 23, 42, 0.75);
-      --text: #e5e7eb;
-      --heading: #f9fafb;
-      --muted: #9ca3af;
+      --bg:#020617;
+      --bg-alt:#02040a;
+      --card-bg:rgba(15,23,42,.85);
+      --card-glass:rgba(15,23,42,.75);
+      --text:#e5e7eb;
+      --heading:#f9fafb;
+      --muted:#9ca3af;
 
-      --border-subtle: rgba(148, 163, 184, 0.45);
-      --border-soft: rgba(148, 163, 184, 0.25);
-
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --radius-pill: 999px;
-
-      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
-      --transition-fast: 0.18s ease-out;
-
-      --accent: #22d3ee;
-      --accent-soft: rgba(34, 211, 238, 0.15);
-      --accent-strong: #06b6d4;
+      --accent:#22d3ee;
+      --accent-strong:#06b6d4;
 
       --good:#22c55e;
       --warn:#facc15;
       --bad:#ef4444;
+
+      --border-soft:rgba(148,163,184,.25);
+      --border-subtle:rgba(148,163,184,.4);
+
+      --radius-sm:8px;
+      --radius-md:12px;
+      --radius-lg:18px;
+      --radius-pill:999px;
+
+      --shadow-soft:0 18px 48px rgba(0,0,0,.6);
+      --transition-fast:.18s ease;
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
-    html, body{ height:100%; }
+    html,body{ height:100%; }
 
     body{
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
       background:
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
-        url("philo.jpg") no-repeat center center fixed;
-      background-size: cover;
-      backdrop-filter: blur(6px);
-      color: var(--text);
-      min-height: 100vh;
+        linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)),
+        url("philo.jpg") center/cover fixed;
+      color:var(--text);
+      min-height:100vh;
     }
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
-        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.1), transparent 70%);
-      pointer-events:none;
-      z-index:0;
+    /* =====================================================
+       LAYOUT SHELL
+       ===================================================== */
+    .app-shell{
+      padding:16px;
+      display:flex;
+      justify-content:center;
     }
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background: radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%);
-      z-index:0;
+
+    .app-inner{
+      width:100%;
+      max-width:1280px;
+      background:linear-gradient(135deg, rgba(15,23,42,.95), rgba(15,23,42,.85));
+      border-radius:24px;
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft);
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
 
     .hidden{ display:none !important; }
 
-    /* =========================================================
-       SHELL
-       ========================================================= */
-    .app-shell{
-      width:100%;
-      padding:16px;
-      display:flex;
-      justify-content:center;
-      position:relative;
-      z-index:1;
-    }
-    .app-inner{
-      width:100%;
-      max-width:1200px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      padding:18px 18px 14px;
-      margin:0 auto;
-      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.90));
-      border-radius:24px;
-      box-shadow: var(--shadow-soft);
-      border:1px solid rgba(148,163,184,0.35);
-      backdrop-filter: blur(18px);
-      position:relative;
-      z-index:1;
-    }
-
-    .footer{
-      margin-top:14px;
-      font-size:0.75rem;
-      color:#6b7280;
-      text-align:right;
-    }
-
-    /* =========================================================
-       SPLASH (logo-only + PERFECT CIRCLE GLOW UNDER)
-       ========================================================= */
-    .splash{
-      min-height:80vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      user-select:none;
-    }
-    .splash-logo-wrap{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-    }
-    .splash-glow{
-      position:absolute;
-      width:220px;
-      height:220px;
-      border-radius:50%;
-      background: radial-gradient(circle,
-        rgba(34,211,238,.55) 0%,
-        rgba(34,211,238,.35) 35%,
-        rgba(34,211,238,.15) 55%,
-        rgba(34,211,238,0) 72%
-      );
-      filter: blur(14px);
-      animation: glowPulse 2.6s ease-in-out infinite;
-      z-index:1;
-    }
-    @keyframes glowPulse{
-      0%{ transform:scale(.85); opacity:.55; }
-      50%{ transform:scale(1.05); opacity:.9; }
-      100%{ transform:scale(.85); opacity:.55; }
-    }
-    .splash-logo{
-      width:170px;
-      height:170px;
-      border-radius:32px;
-      object-fit:cover;
-      border:1px solid rgba(148,163,184,0.6);
-      box-shadow: 0 18px 55px rgba(0,0,0,0.9);
-      position:relative;
-      z-index:2;
-    }
-    .splash-hint{
-      font-size:.8rem;
-      color:var(--muted);
-      letter-spacing:.2em;
-      text-transform:uppercase;
-    }
-
-    /* =========================================================
-       HEADER / TOPBAR (reference style)
-       ========================================================= */
-    .header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-    }
-    .header-left{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .logo{
-      width:52px;
-      height:52px;
-      border-radius:16px;
-      object-fit:cover;
-      border:1px solid rgba(148,163,184,0.6);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.7);
-    }
-    .title-block{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .title-block h1{
-      font-size:1.35rem;
-      font-weight:800;
-      letter-spacing:0.08em;
-      text-transform:uppercase;
+    /* =====================================================
+       TYPOGRAPHY
+       ===================================================== */
+    h1,h2,h3{
       color:var(--heading);
-    }
-    .subtitle{
-      font-size:0.9rem;
-      color:var(--muted);
-    }
-    .header-pill{
-      padding:6px 12px;
-      border-radius: var(--radius-pill);
-      border:1px solid rgba(148,163,184,0.4);
-      font-size:0.75rem;
-      color:var(--muted);
-      background: radial-gradient(circle at top left, rgba(34,211,238,0.08), transparent 55%);
-      white-space:nowrap;
+      font-weight:800;
+      letter-spacing:.04em;
     }
 
-    /* =========================================================
-       TOP NAV TABS (global)
-       ========================================================= */
+    .subtitle{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    /* =====================================================
+       GLASS PANELS
+       ===================================================== */
+    .glass-panel{
+      background:var(--card-glass);
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border-soft);
+      box-shadow:var(--shadow-soft);
+      padding:14px;
+      backdrop-filter: blur(14px);
+    }
+
+    /* =====================================================
+       TABS & BUTTONS
+       ===================================================== */
     .tabs{
       display:flex;
       gap:8px;
-      border-bottom:1px solid rgba(15,23,42,0.9);
-      padding-bottom:4px;
       overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
       scrollbar-width:none;
     }
     .tabs::-webkit-scrollbar{ display:none; }
 
     .tab{
-      position:relative;
       padding:8px 16px;
-      font-size:0.9rem;
-      border-radius:999px;
-      background: rgba(15,23,42,0.6);
+      border-radius:var(--radius-pill);
+      background:rgba(15,23,42,.6);
       border:1px solid transparent;
       color:var(--muted);
       cursor:pointer;
+      transition:all var(--transition-fast);
       white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      transition:
-        color var(--transition-fast),
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
+      font-size:.85rem;
+      font-weight:700;
     }
     .tab:hover{
+      background:rgba(15,23,42,.9);
       color:var(--heading);
-      background: rgba(15,23,42,0.9);
-      border-color: rgba(148,163,184,0.4);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
-      transform: translateY(-1px);
+      transform:translateY(-1px);
     }
     .tab.active{
-      color:var(--heading);
-      background: radial-gradient(circle at top left, rgba(34,211,238,0.32), rgba(15,23,42,0.98));
-      border-color: rgba(34,211,238,0.8);
-      box-shadow: 0 10px 32px rgba(15,23,42,0.9);
+      background:linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color:#020617;
+      box-shadow:0 10px 28px rgba(34,211,238,.45);
     }
 
-    /* =========================================================
-       GLASS PANEL + GRID
-       ========================================================= */
-    .glass-panel{
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-      padding: 14px;
-    }
-
-    /* =========================================================
-       MAP (kept beautiful, Leaflet needs height)
-       ========================================================= */
-    #storeMap{
-      width:100%;
-      height: 62vh;
-      min-height:520px;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148,163,184,0.35);
-      overflow:hidden;
-      box-shadow: 0 18px 42px rgba(0,0,0,0.85);
-    }
-    .map-layout{
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:12px;
-      margin-top: 10px;
-    }
-    @media (max-width: 900px){
-      .map-layout{ grid-template-columns: 1fr; }
-    }
-    .store-panel{
-      background: var(--card-glass);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      padding: 14px;
-      backdrop-filter: blur(16px);
-    }
-
-    /* markers */
-    .pin{
-      width:18px;height:18px;border-radius:999px;
-      border:2px solid rgba(255,255,255,.85);
-      box-shadow:0 6px 18px rgba(0,0,0,.7);
-      position:relative;
-      background: var(--bad);
-    }
-    .pin-ok{ background: var(--good); }
-    .pin-warn{ background: var(--warn); }
-    .pin-bad{ background: var(--bad); }
-    .pin .flagpole{
-      position:absolute; left:8px; top:-14px;
-      width:2px; height:14px;
-      background: rgba(255,255,255,.85);
-      border-radius:2px;
-      box-shadow:0 6px 14px rgba(0,0,0,.5);
-    }
-    .pin .flagpole::after{
-      content:"";
-      position:absolute; top:2px; left:2px;
-      width:12px; height:8px;
-      background: var(--bad);
-      clip-path: polygon(0 0, 100% 18%, 0 50%, 100% 82%, 0 100%);
-      border-radius:2px;
-      box-shadow:0 6px 14px rgba(0,0,0,.55);
-    }
-
-    /* popups (for SKU/Plant/Pest/Issues) */
-    .popup-backdrop{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,0.75);
-      display:none;
-      align-items:flex-start;
-      justify-content:center;
-      z-index:9999;
-      padding:24px 16px;
-      backdrop-filter: blur(8px);
-      overflow-y:auto;
-    }
-    .popup{
-      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
-      padding: 20px 20px 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.6);
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y:auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-    }
-    .popup h2{
-      font-size:1.1rem;
-      font-weight:800;
-      margin-bottom:4px;
-      color:var(--heading);
-    }
-    .popup-subtitle{
-      font-size:0.8rem;
-      color:var(--muted);
-      margin-bottom:10px;
-      font-style:italic;
-    }
     .popup-close{
-      margin-top:14px;
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      background:linear-gradient(135deg, var(--accent-strong), #3b82f6);
       color:#020617;
       border:none;
-      border-radius: var(--radius-pill);
-      padding: 9px 16px;
+      border-radius:var(--radius-pill);
+      padding:8px 14px;
+      font-weight:800;
       cursor:pointer;
-      font-size:0.85rem;
-      font-weight:700;
-      box-shadow: 0 12px 30px rgba(37,99,235,0.7);
+    }
+
+    /* =====================================================
+       CARD GRID (HF, Pests, Perennials)
+       ===================================================== */
+    .card-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+    @media(max-width:900px){
+      .card-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media(max-width:520px){
+      .card-grid{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      background:var(--card-glass);
+      border:1px solid var(--border-soft);
+      border-radius:var(--radius-md);
+      padding:12px;
+      cursor:pointer;
+      transition:all var(--transition-fast);
+    }
+    .card:hover{
+      border-color:rgba(34,211,238,.6);
+      transform:translateY(-2px);
+    }
+
+    .card-title{
+      font-weight:900;
+      color:var(--heading);
+    }
+    .card-sub{
+      color:var(--muted);
+      font-size:.85rem;
+      margin-top:4px;
+    }
+
+    /* =====================================================
+       FILTER CHIPS
+       ===================================================== */
+    .filter-bar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .filter-chip{
+      padding:6px 12px;
+      border-radius:var(--radius-pill);
+      border:1px solid var(--border-soft);
+      background:rgba(15,23,42,.55);
+      color:var(--muted);
+      cursor:pointer;
+      font-size:.78rem;
+    }
+    .filter-chip.active{
+      background:linear-gradient(135deg, var(--accent-strong), #3b82f6);
+      color:#020617;
+      border-color:transparent;
+    }
+
+    /* =====================================================
+       PRINT MODE (CARE CARDS)
+       ===================================================== */
+    @media print{
+      body{ background:#fff !important; color:#000 !important; }
+      .tabs, .filter-bar, header, nav, footer{ display:none !important; }
+      .glass-panel, .card{ box-shadow:none !important; }
     }
   </style>
 </head>
@@ -392,233 +221,203 @@
 
 <div class="app-shell">
   <div class="app-inner">
-
-    <!-- =====================================================
-         SPLASH
+<!-- =====================================================
+         SPLASH VIEW
          ===================================================== -->
-    <section id="view-splash" class="splash">
-      <div class="splash-logo-wrap" id="splashEnter" role="button" aria-label="Enter Hub">
-        <div class="splash-glow"></div>
-        <img src="hf_logo.png" alt="HF Logo" class="splash-logo" />
+    <section id="view-splash">
+      <div class="glass-panel" style="text-align:center; padding:40px;">
+        <div style="font-size:1.4rem; font-weight:900; letter-spacing:.08em;">
+          Merchandising Hub
+        </div>
+        <div class="subtitle" style="margin-top:6px;">
+          Tap to enter
+        </div>
+
+        <div style="margin-top:30px; display:flex; justify-content:center;">
+          <img
+            src="hf_logo.png"
+            alt="HF Logo"
+            style="
+              width:180px;
+              height:180px;
+              object-fit:cover;
+              border-radius:28px;
+              box-shadow:0 20px 60px rgba(0,0,0,.85);
+              cursor:pointer;
+            "
+            id="splashEnter"
+          />
+        </div>
       </div>
-      <div class="splash-hint">Tap to continue</div>
     </section>
 
     <!-- =====================================================
-         LOGIN
+         LOGIN VIEW
          ===================================================== -->
     <section id="view-login" class="hidden">
-      <div class="glass-panel" style="max-width:380px;margin:0 auto;">
-        <img src="hf_logo.png" alt="HF Logo" class="logo" style="margin-bottom:10px;" />
-
+      <div class="glass-panel" style="max-width:360px; margin:0 auto;">
         <h2>Sign In</h2>
-        <div class="popup-subtitle">Internal Tool</div>
+        <div class="subtitle">Internal Tool</div>
 
-        <div style="margin-top:12px;">
-          <label class="popup-subtitle">Username</label>
-          <input id="loginUser"
-                 type="text"
-                 autocomplete="username"
-                 style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
+        <div style="margin-top:14px;">
+          <label class="subtitle">Username</label>
+          <input id="loginUser" type="text" style="width:100%; padding:10px; border-radius:12px;" />
         </div>
 
         <div style="margin-top:10px;">
-          <label class="popup-subtitle">Password</label>
-          <input id="loginPass"
-                 type="password"
-                 autocomplete="current-password"
-                 style="width:100%;padding:10px;border-radius:12px;margin-top:4px;" />
+          <label class="subtitle">Password</label>
+          <input id="loginPass" type="password" style="width:100%; padding:10px; border-radius:12px;" />
         </div>
 
-        <button id="loginBtn"
-                class="popup-close"
-                style="width:100%;margin-top:14px;">
+        <button id="loginBtn" class="popup-close" style="width:100%; margin-top:14px;">
           Login
         </button>
 
-        <div id="loginError"
-             style="margin-top:8px;color:#ef4444;font-size:.85rem;"></div>
+        <div id="loginError" style="margin-top:8px; color:var(--bad); font-size:.85rem;"></div>
       </div>
     </section>
 
     <!-- =====================================================
-         HEADER / NAV
+         HEADER / TOP BAR
          ===================================================== -->
-    <header id="topbar" class="hidden header">
-      <div class="header-left">
-        <img src="hf_logo.png" alt="HF Logo" class="logo" />
-        <div class="title-block">
-          <h1>Merchandising Hub</h1>
-          <div class="subtitle">Live Map • HF • HPA • Training</div>
+    <header id="topbar" class="hidden glass-panel" style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <img
+          src="hf_logo.png"
+          alt="HF Logo"
+          style="
+            width:56px;
+            height:56px;
+            border-radius:16px;
+            object-fit:cover;
+            box-shadow:0 12px 32px rgba(0,0,0,.7);
+          "
+        />
+        <div>
+          <h1 style="font-size:1.2rem;">Merchandising Hub</h1>
+          <div class="subtitle">HF • Live Map • Care & Training</div>
         </div>
       </div>
 
-      <div class="header-pill" id="userPill">User</div>
+      <div id="userPill" class="tab">
+        User
+      </div>
     </header>
 
     <!-- =====================================================
-         GLOBAL TABS
+         GLOBAL NAVIGATION
          ===================================================== -->
     <nav id="globalTabs" class="tabs hidden">
-      <button class="tab active" data-view="map">MAP</button>
+      <button class="tab active" data-view="map">Map</button>
       <button class="tab" data-view="hf">HF</button>
       <button class="tab" data-view="hpa">HPA</button>
-      <button class="tab" data-view="admin">ADMIN</button>
-      <button class="tab" data-view="training">TRAINING</button>
-      <button class="tab" id="logoutBtn">LOGOUT</button>
+      <button class="tab" data-view="training">Training</button>
+      <button class="tab" data-view="admin">Admin</button>
+      <button class="tab" id="logoutBtn">Logout</button>
     </nav>
 
     <!-- =====================================================
-         MAP VIEW (LIVE MAP RESTORED)
+         MAP VIEW
          ===================================================== -->
     <section id="view-map" class="hidden">
       <div class="glass-panel">
         <strong>Store Map</strong>
       </div>
 
-      <div class="map-layout">
-        <div id="storeMap"></div>
-
-        <aside class="store-panel">
-          <div>
-            <div class="popup-subtitle" id="spSub">Select a store</div>
-            <h2 id="spTitle">—</h2>
-          </div>
-
-          <div class="popup-subtitle">Status</div>
-
-          <div class="kv">
-            <span>Watered</span>
-            <span id="spWatered">—</span>
-          </div>
-          <div class="kv">
-            <span>Negatives</span>
-            <span id="spNegatives">—</span>
-          </div>
-          <div class="kv">
-            <span>Issues</span>
-            <span id="spIssues">—</span>
-          </div>
-
-          <!-- Checklist + Issues injected later -->
-          <button id="btnAddIssue" class="popup-close" style="margin-top:10px;" disabled>
-            Add Issue
-          </button>
-        </aside>
+      <div class="glass-panel" style="margin-top:10px;">
+        <div id="storeMap" style="height:60vh; border-radius:16px;"></div>
       </div>
     </section>
 
     <!-- =====================================================
-         HF
+         HF VIEW
          ===================================================== -->
     <section id="view-hf" class="hidden">
+      <!-- Seasonal banner injected here -->
+
       <div class="tabs">
         <button class="tab active" data-hf-tab="guidelines">Guidelines</button>
         <button class="tab" data-hf-tab="care">Care & Identification</button>
       </div>
 
-      <div id="hf-guidelines" class="glass-panel"></div>
+      <div id="hf-guidelines" class="glass-panel" style="margin-top:10px;">
+        <!-- Guidelines content -->
+      </div>
 
-      <div id="hf-care" class="glass-panel hidden">
+      <div id="hf-care" class="hidden" style="margin-top:10px;">
         <div class="tabs">
-          <button class="tab active" data-hf-care="plants">Plants</button>
+          <button class="tab active" data-hf-care="plants">Perennials</button>
           <button class="tab" data-hf-care="pests">Pests</button>
         </div>
 
-        <div id="hf-plants"></div>
-        <div id="hf-pests" class="hidden"></div>
+        <div id="hf-plants" class="glass-panel" style="margin-top:10px;"></div>
+        <div id="hf-pests" class="glass-panel hidden" style="margin-top:10px;"></div>
       </div>
     </section>
 
     <!-- =====================================================
-         HPA
+         HPA VIEW
          ===================================================== -->
     <section id="view-hpa" class="hidden">
       <div class="tabs">
         <button class="tab active" data-hpa-tab="guidelines">Guidelines</button>
-        <button class="tab" data-hpa-tab="products">Product Info</button>
         <button class="tab" data-hpa-tab="care">Care & Identification</button>
       </div>
 
-      <div id="hpa-guidelines" class="glass-panel"></div>
+      <div id="hpa-guidelines" class="glass-panel" style="margin-top:10px;"></div>
 
-      <div id="hpa-products" class="glass-panel hidden">
-        <div class="tabs">
-          <button class="tab active" data-products="skus">SKU Catalogue</button>
-          <button class="tab" data-products="orders">Order Breakdown</button>
-        </div>
-
-        <div id="products-skus"></div>
-        <div id="products-orders" class="hidden"></div>
-      </div>
-
-      <div id="hpa-care" class="glass-panel hidden">
+      <div id="hpa-care" class="hidden" style="margin-top:10px;">
         <div class="tabs">
           <button class="tab active" data-hpa-care="plants">Plants</button>
           <button class="tab" data-hpa-care="pests">Pests</button>
         </div>
 
-        <div id="hpa-plants"></div>
-        <div id="hpa-pests" class="hidden"></div>
+        <div id="hpa-plants" class="glass-panel" style="margin-top:10px;"></div>
+        <div id="hpa-pests" class="glass-panel hidden" style="margin-top:10px;"></div>
       </div>
     </section>
 
     <!-- =====================================================
-         ADMIN
-         ===================================================== -->
-    <section id="view-admin" class="hidden glass-panel">
-      <h2>Admin Tools</h2>
-      <div class="tabs">
-        <button class="tab">AIR Uploads</button>
-        <button class="tab">Store Audit</button>
-        <button class="tab">Rack Counts</button>
-        <button class="tab">District Checklist</button>
-      </div>
-    </section>
-
-    <!-- =====================================================
-         TRAINING
+         TRAINING VIEW
          ===================================================== -->
     <section id="view-training" class="hidden glass-panel">
       <h2>Training Hub</h2>
-      <div class="tabs">
-        <button class="tab" data-train="basics">Basics</button>
-        <button class="tab" data-train="merch">Merchandising</button>
-        <button class="tab" data-train="supervisor">Supervisor</button>
-      </div>
-
-      <div id="train-basics">Loading…</div>
-      <div id="train-merch" class="hidden">Loading…</div>
-      <div id="train-supervisor" class="hidden">Loading…</div>
+      <div class="subtitle">Coming soon</div>
     </section>
 
-    <div class="footer">
-      Internal Tool • GitHub Pages • Firebase
-    </div>
+    <!-- =====================================================
+         ADMIN VIEW
+         ===================================================== -->
+    <section id="view-admin" class="hidden glass-panel">
+      <h2>Admin Tools</h2>
+      <div class="subtitle">Restricted access</div>
+    </section>
 
-  </div>
-</div>
-<script>
-/* =========================================================
-   SEGMENT 3 — APP BOOT + LOGIN + NAV + FIREBASE (RESTORED)
-   ========================================================= */
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+    <footer class="subtitle" style="text-align:right;">
+      Internal Tool • HF Merchandising
+    </footer>
+    <script>
+/* =====================================================
+   SEGMENT 3 — APP STATE + AUTH + NAVIGATION
+   ===================================================== */
 
-/* ---------------------------------------------------------
-   GLOBAL APP STATE
-   --------------------------------------------------------- */
+/* -----------------------------
+   GLOBAL STATE
+   ----------------------------- */
 const App = {
   user: null,
-  view: "splash",
-  firebaseReady: false,
-  firestoreReady: false
+  view: "splash"
 };
 
-const VIEWS = ["splash","login","map","hf","hpa","admin","training"];
+const VIEWS = ["splash","login","map","hf","hpa","training","admin"];
 
-/* ---------------------------------------------------------
+/* -----------------------------
    HELPERS
-   --------------------------------------------------------- */
-const $ = (id) => document.getElementById(id);
+   ----------------------------- */
+const $ = (id)=> document.getElementById(id);
 
 function showView(view){
   VIEWS.forEach(v=>{
@@ -631,6 +430,7 @@ function showView(view){
   });
 
   App.view = view;
+  try{ sessionStorage.setItem("hub_view", view); }catch{}
 }
 
 function setUserPill(name){
@@ -638,87 +438,58 @@ function setUserPill(name){
   if(pill) pill.textContent = name || "User";
 }
 
-/* ---------------------------------------------------------
-   SPLASH → LOGIN (FIXED + ACCESSIBLE)
-   --------------------------------------------------------- */
+/* -----------------------------
+   SPLASH → LOGIN
+   ----------------------------- */
 (function wireSplash(){
-  const splash = $("splashEnter");
-  if(!splash) return;
+  const btn = $("splashEnter");
+  if(!btn) return;
 
-  splash.addEventListener("click", (e)=>{
-    e.preventDefault();
+  btn.addEventListener("click", ()=>{
     showView("login");
   });
 
-  splash.style.cursor = "pointer";
-  splash.setAttribute("role","button");
-  splash.setAttribute("aria-label","Enter login");
+  btn.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      showView("login");
+    }
+  });
+
+  btn.setAttribute("tabindex","0");
 })();
 
-/* ---------------------------------------------------------
-   CSV PARSER (USED BY LOGIN + MAP + SKU LATER)
-   --------------------------------------------------------- */
-function parseCSV(text){
-  const rows = [];
-  let row = [], val = "", inQuotes = false;
-
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    const n = text[i+1];
-
-    if(c === '"' && inQuotes && n === '"'){
-      val += '"'; i++;
-    } else if(c === '"'){
-      inQuotes = !inQuotes;
-    } else if(c === "," && !inQuotes){
-      row.push(val); val="";
-    } else if((c === "\n" || c === "\r") && !inQuotes){
-      if(val || row.length){
-        row.push(val);
-        rows.push(row);
-        row=[]; val="";
-      }
-    } else {
-      val += c;
-    }
-  }
-  if(val || row.length){
-    row.push(val);
-    rows.push(row);
-  }
-  return rows;
-}
-
-/* ---------------------------------------------------------
-   LOGIN (CSV + FALLBACK, FIREBASE‑SAFE)
-   --------------------------------------------------------- */
+/* -----------------------------
+   LOGIN (SIMPLE, CSV‑READY)
+   ----------------------------- */
 async function loadUsers(){
   try{
-    const txt = await fetch("users.csv", { cache:"no-store" }).then(r=>r.text());
-    const rows = parseCSV(txt);
-    const header = rows[0].map(h=>String(h).toLowerCase());
-
+    const res = await fetch("users.csv", { cache:"no-store" });
+    if(!res.ok) throw new Error("no csv");
+    const txt = await res.text();
+    const rows = txt.split("\n").map(r=>r.split(","));
+    const header = rows[0].map(h=>h.trim().toLowerCase());
     const uIdx = header.indexOf("username");
     const pIdx = header.indexOf("password");
 
     return rows.slice(1).map(r=>({
-      username: (r[uIdx]||"").trim().toLowerCase(),
-      password: (r[pIdx]||"").trim()
+      username:(r[uIdx]||"").trim().toLowerCase(),
+      password:(r[pIdx]||"").trim()
     })).filter(u=>u.username && u.password);
   }catch{
-    /* ✅ HARD FALLBACK so login never blocks */
+    // fallback demo user
     return [{ username:"demo", password:"demo" }];
   }
 }
 
 async function doLogin(){
-  const user = $("loginUser").value.trim().toLowerCase();
-  const pass = $("loginPass").value.trim();
-  const err = $("loginError");
-  err.textContent = "";
+  const user = $("loginUser")?.value.trim().toLowerCase();
+  const pass = $("loginPass")?.value.trim();
+  const err  = $("loginError");
+  if(err) err.textContent = "";
 
   if(!user || !pass){
-    err.textContent = "Enter username and password.";
+    if(err) err.textContent = "Enter username and password.";
     return;
   }
 
@@ -726,85 +497,114 @@ async function doLogin(){
   const match = users.find(u=>u.username===user && u.password===pass);
 
   if(!match){
-    err.textContent = "Invalid credentials.";
+    if(err) err.textContent = "Invalid credentials.";
     return;
   }
 
   App.user = { username:user };
-  sessionStorage.setItem("hub_user", JSON.stringify(App.user));
+  try{ sessionStorage.setItem("hub_user", JSON.stringify(App.user)); }catch{}
 
-  $("topbar").classList.remove("hidden");
-  $("globalTabs").classList.remove("hidden");
+  $("topbar")?.classList.remove("hidden");
+  $("globalTabs")?.classList.remove("hidden");
   setUserPill(user);
 
-  showView("map");
+  const lastView = sessionStorage.getItem("hub_view");
+  showView(VIEWS.includes(lastView) ? lastView : "map");
 }
 
 $("loginBtn")?.addEventListener("click", doLogin);
 $("loginPass")?.addEventListener("keydown", e=>{
-  if(e.key === "Enter") doLogin();
+  if(e.key==="Enter") doLogin();
 });
 
-/* ---------------------------------------------------------
+/* -----------------------------
    LOGOUT
-   --------------------------------------------------------- */
+   ----------------------------- */
 $("logoutBtn")?.addEventListener("click", ()=>{
   App.user = null;
-  sessionStorage.removeItem("hub_user");
+  try{
+    sessionStorage.removeItem("hub_user");
+    sessionStorage.removeItem("hub_view");
+  }catch{}
 
-  $("topbar").classList.add("hidden");
-  $("globalTabs").classList.add("hidden");
+  $("topbar")?.classList.add("hidden");
+  $("globalTabs")?.classList.add("hidden");
 
   showView("splash");
 });
 
-/* ---------------------------------------------------------
-   GLOBAL TAB NAVIGATION
-   --------------------------------------------------------- */
+/* -----------------------------
+   GLOBAL NAVIGATION
+   ----------------------------- */
 document.querySelectorAll(".tab[data-view]").forEach(btn=>{
+  if(btn.dataset.bound==="1") return;
+  btn.dataset.bound="1";
+
   btn.addEventListener("click", ()=>{
-    const view = btn.dataset.view;
-    showView(view);
+    showView(btn.dataset.view);
   });
 });
 
-/* ---------------------------------------------------------
-   FIREBASE BOOTSTRAP (RESTORED)
-   - This does NOT init the map yet
-   - It only prepares Firestore for live sync
-   --------------------------------------------------------- */
-(function initFirebase(){
-  if(!window.firebaseConfig){
-    console.warn("⚠️ firebaseConfig not found — running in local-only mode");
-    return;
-  }
+/* -----------------------------
+   HF TAB SWITCHING
+   ----------------------------- */
+document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 
-  try{
-    const app = firebase.initializeApp(window.firebaseConfig);
-    const db = firebase.firestore();
+    $("hf-guidelines")?.classList.toggle("hidden", btn.dataset.hfTab!=="guidelines");
+    $("hf-care")?.classList.toggle("hidden", btn.dataset.hfTab!=="care");
+  };
+});
 
-    App.firebaseReady = true;
-    App.firestoreReady = true;
+document.querySelectorAll("[data-hf-care]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hf-care]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 
-    window.db = db;
-    console.log("✅ Firebase initialized");
-  }catch(e){
-    console.warn("⚠️ Firebase init failed, continuing offline", e);
-  }
-})();
+    $("hf-plants")?.classList.toggle("hidden", btn.dataset.hfCare!=="plants");
+    $("hf-pests")?.classList.toggle("hidden", btn.dataset.hfCare!=="pests");
+  };
+});
 
-/* ---------------------------------------------------------
+/* -----------------------------
+   HPA TAB SWITCHING
+   ----------------------------- */
+document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    $("hpa-guidelines")?.classList.toggle("hidden", btn.dataset.hpaTab!=="guidelines");
+    $("hpa-care")?.classList.toggle("hidden", btn.dataset.hpaTab!=="care");
+  };
+});
+
+document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-hpa-care]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    $("hpa-plants")?.classList.toggle("hidden", btn.dataset.hpaCare!=="plants");
+    $("hpa-pests")?.classList.toggle("hidden", btn.dataset.hpaCare!=="pests");
+  };
+});
+
+/* -----------------------------
    SESSION RESTORE
-   --------------------------------------------------------- */
+   ----------------------------- */
 (function restoreSession(){
   try{
     const raw = sessionStorage.getItem("hub_user");
     if(raw){
       App.user = JSON.parse(raw);
-      $("topbar").classList.remove("hidden");
-      $("globalTabs").classList.remove("hidden");
+      $("topbar")?.classList.remove("hidden");
+      $("globalTabs")?.classList.remove("hidden");
       setUserPill(App.user.username);
-      showView("map");
+
+      const v = sessionStorage.getItem("hub_view");
+      showView(VIEWS.includes(v) ? v : "map");
       return;
     }
   }catch{}
@@ -812,272 +612,130 @@ document.querySelectorAll(".tab[data-view]").forEach(btn=>{
   showView("splash");
 })();
 </script>
+  <!-- =====================================================
+     SEGMENT 4 — LIVE MAP + WEEKLY RESET
+     ===================================================== -->
+
+<!-- Leaflet -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-/* =========================================================
-   SEGMENT 4 — LIVE MAP RESTORED (Leaflet + Firestore Live)
-   Works with SEGMENT 1–3 markup:
-   - #view-map, #storeMap
-   - #spTitle #spSub #spWatered #spNegatives #spIssues
-   - #btnAddIssue
-   - parseCSV() from SEGMENT 3
-   ========================================================= */
+/* =====================================================
+   WEEKLY RESET (EVERY MONDAY)
+   ===================================================== */
 
-/* -----------------------------
-   0) CONFIG (Firestore project)
-   ----------------------------- */
-window.firebaseConfig = window.firebaseConfig || {
-  apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
-  authDomain: "live-map-82f69.firebaseapp.com",
-  databaseURL: "https://live-map-82f69-default-rtdb.firebaseio.com",
-  projectId: "live-map-82f69",
-  storageBucket: "live-map-82f69.firebasestorage.app",
-  messagingSenderId: "138303920091",
-  appId: "1:138303920091:web:87065d8dae4dadd72a79fe"
-};
-
-/* -----------------------------
-   1) Small helpers
-   ----------------------------- */
-const $$ = (id) => document.getElementById(id);
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const todayKey = () => new Date().toISOString().slice(0,10);
-const uid = () => (crypto?.randomUUID?.()) || (String(Date.now()) + Math.random().toString(16).slice(2));
-
-function safeText(el, text){
-  if(el) el.textContent = text ?? "";
+// Returns YYYY-MM-DD for most recent Monday
+function mondayKey(d = new Date()){
+  const date = new Date(d);
+  const day = date.getDay(); // 0=Sun,1=Mon
+  const diff = (day === 0 ? -6 : 1) - day;
+  date.setDate(date.getDate() + diff);
+  return date.toISOString().slice(0,10);
 }
 
-/* -----------------------------
-   2) Load external libs safely (Leaflet + Firebase compat)
-   ----------------------------- */
-function loadCssOnce(href){
-  return new Promise(resolve=>{
-    if([...document.querySelectorAll('link[rel="stylesheet"]')].some(l=>l.href===href)) return resolve();
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = href;
-    link.onload = resolve;
-    link.onerror = resolve;
-    document.head.appendChild(link);
-  });
-}
-function loadScriptOnce(src){
-  return new Promise(resolve=>{
-    if([...document.scripts].some(s=>s.src===src)) return resolve();
-    const s = document.createElement("script");
-    s.src = src;
-    s.defer = true;
-    s.onload = resolve;
-    s.onerror = resolve;
-    document.head.appendChild(s);
-  });
-}
+const WEEK_KEY_STORAGE = "hub_last_week_key_v1";
+const STORE_STATE_KEY  = "hub_store_state_v1";
 
-async function ensureLeaflet(){
-  await loadCssOnce("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
-  await loadScriptOnce("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
-  for(let i=0;i<80;i++){
-    if(window.L && typeof L.map === "function") return true;
-    await sleep(50);
-  }
-  console.warn("[leaflet] failed to load");
-  return false;
-}
-
-async function ensureFirestore(){
-  await loadScriptOnce("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
-  await loadScriptOnce("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js");
-
-  for(let i=0;i<80;i++){
-    if(window.firebase && firebase.initializeApp && firebase.firestore) break;
-    await sleep(50);
-  }
-  if(!window.firebase || !firebase.initializeApp || !firebase.firestore){
-    console.warn("[firebase] compat libs not available; local-only mode");
-    return false;
-  }
-
+// Reset local map state once per new week
+(function weeklyMapReset(){
   try{
-    if(!firebase.apps?.length) firebase.initializeApp(window.firebaseConfig);
-    window.db = firebase.firestore();
-    App.firebaseReady = true;
-    App.firestoreReady = true;
-    return true;
+    const currentWeek = mondayKey();
+    const lastWeek = localStorage.getItem(WEEK_KEY_STORAGE);
+
+    if(lastWeek !== currentWeek){
+      console.log("🔄 Weekly reset — clearing map state");
+      localStorage.removeItem(STORE_STATE_KEY);
+      localStorage.setItem(WEEK_KEY_STORAGE, currentWeek);
+    }
   }catch(e){
-    console.warn("[firebase] init failed; local-only mode", e);
-    return false;
+    console.warn("Weekly reset failed", e);
   }
-}
+})();
+</script>
 
-/* -----------------------------
-   3) Live store state (Firestore + local fallback)
-   ----------------------------- */
-const LOCAL_STATE_KEY = "hub_store_live_state_v1";
+<script>
+/* =====================================================
+   LIVE MAP MODULE
+   ===================================================== */
 
-const LiveState = {
-  local: (()=>{ try{return JSON.parse(localStorage.getItem(LOCAL_STATE_KEY)||"{}");}catch{return {}; } })(),
-  remote: {},
-
-  defaults(){
-    return {
-      watered:false,
-      wateredOn:null,    // YYYY-MM-DD
-      negatives:false,
-      pictures:false,
-      checklist:{},      // optional until Segment 5
-      issues:[],         // [{id,text,createdAt,createdBy,resolved}]
-      updatedAt:null,
-      updatedBy:null
-    };
-  },
-
-  saveLocal(){
-    try{ localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(this.local)); }catch{}
-  },
-
-  ensure(id){
-    if(!this.local[id]) this.local[id] = this.defaults();
-    const st = this.local[id];
-    if(!st.checklist || typeof st.checklist !== "object") st.checklist = {};
-    if(!Array.isArray(st.issues)) st.issues = [];
-
-    // daily reset watered
-    if(st.wateredOn !== todayKey()) st.watered = false;
-    return st;
-  },
-
-  get(id){
-    const r = this.remote[id];
-    if(r){
-      const merged = { ...this.defaults(), ...r };
-      if(merged.wateredOn !== todayKey()) merged.watered = false;
-      if(!merged.checklist || typeof merged.checklist !== "object") merged.checklist = {};
-      if(!Array.isArray(merged.issues)) merged.issues = [];
-      return merged;
-    }
-    return this.ensure(id);
-  },
-
-  async set(id, patch){
-    const cur = this.get(id);
-    const next = {
-      ...cur,
-      ...patch,
-      updatedAt: Date.now(),
-      updatedBy: App.user?.username || "User"
-    };
-
-    this.local[id] = next;
-    this.saveLocal();
-
-    if(App.firestoreReady && window.db){
-      try{
-        await db.collection("stores").doc(id).set(next, { merge:true });
-      }catch(e){
-        console.warn("[firestore] write failed; kept local", e);
-      }
-    }
-    return next;
-  }
-};
-
-/* -----------------------------
-   4) Marker scoring (interim; Segment 5 adds schema scoring)
-   Rules:
-   - Any OPEN issue => Yellow + Red flag
-   - Else completion estimate => red/yellow/green
-   ----------------------------- */
-function openIssuesCount(st){
-  return (st.issues||[]).filter(i=>!i.resolved).length;
-}
-function completionEstimate(st){
-  // constants + any checklist keys if present
-  let done = 0;
-  let total = 3;
-
-  if(st.watered && st.wateredOn === todayKey()) done++;
-  if(!!st.negatives) done++;
-  if(!!st.pictures) done++;
-
-  const ckVals = st.checklist && typeof st.checklist === "object" ? Object.values(st.checklist) : [];
-  if(ckVals.length){
-    total += ckVals.length;
-    ckVals.forEach(v=>{ if(v===true) done++; });
-  }
-  return total ? done/total : 0;
-}
-function markerStyleFor(st){
-  if(openIssuesCount(st) > 0) return { cls:"pin-warn", flag:true };
-  const pct = completionEstimate(st);
-  if(pct >= 1) return { cls:"pin-ok", flag:false };
-  if(pct >= 0.5) return { cls:"pin-warn", flag:false };
-  return { cls:"pin-bad", flag:false };
-}
-
-/* -----------------------------
-   5) Live map module
-   ----------------------------- */
 const LiveMap = (() => {
   let map = null;
-  let stores = [];
   let markers = new Map();
-  let selectedId = null;
+  let stores = [];
   let started = false;
 
+  /* -----------------------------
+     Helpers
+     ----------------------------- */
+  const parseCSV = (text)=>{
+    return text.trim().split("\n").map(r=>r.split(","));
+  };
+
   function mapVisible(){
-    const v = $$("view-map");
+    const v = document.getElementById("view-map");
     return v && !v.classList.contains("hidden");
   }
 
+  /* -----------------------------
+     Load stores.csv
+     Expected columns:
+     store_id,store_name,lat,lon,city,state
+     ----------------------------- */
   async function loadStores(){
     try{
-      const txt = await fetch("stores.csv", { cache:"no-store" }).then(r=>{
-        if(!r.ok) throw new Error("stores.csv missing");
-        return r.text();
-      });
+      const res = await fetch("stores.csv", { cache:"no-store" });
+      if(!res.ok) throw new Error("Missing stores.csv");
+      const rows = parseCSV(await res.text());
 
-      const rows = parseCSV(txt);
-      const header = rows[0].map(h=>String(h).toLowerCase().trim());
-      const idIdx = header.indexOf("store_id");
-      const nameIdx = header.indexOf("store_name");
-      const latIdx = header.indexOf("lat");
-      const lonIdx = header.indexOf("lon");
-      const cityIdx = header.indexOf("city");
-      const stIdx = header.indexOf("state");
+      const header = rows[0].map(h=>h.trim().toLowerCase());
+      const idx = (n)=> header.indexOf(n);
 
       stores = rows.slice(1).map(r=>({
-        id: (r[idIdx]||"").trim(),
-        name: (r[nameIdx]||"").trim(),
-        lat: parseFloat((r[latIdx]||"").trim()),
-        lon: parseFloat((r[lonIdx]||"").trim()),
-        city: (r[cityIdx]||"").trim(),
-        state: (r[stIdx]||"").trim()
-      })).filter(s => s.id && s.name && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
-
-      if(!stores.length) throw new Error("no stores parsed");
+        id: r[idx("store_id")]?.trim(),
+        name: r[idx("store_name")]?.trim(),
+        lat: parseFloat(r[idx("lat")]),
+        lon: parseFloat(r[idx("lon")]),
+        city: r[idx("city")]?.trim(),
+        state: r[idx("state")]?.trim()
+      })).filter(s=>s.id && !isNaN(s.lat) && !isNaN(s.lon));
     }catch(e){
-      console.warn("[stores] fallback demo", e);
+      console.warn("Using fallback stores", e);
       stores = [
-        { id:"1950", name:"South Loop", lat:41.856, lon:-87.624, city:"Chicago", state:"IL" },
-        { id:"1987", name:"Glenview",  lat:42.079, lon:-87.822, city:"Glenview", state:"IL" }
+        { id:"1001", name:"Demo Store", lat:41.88, lon:-87.63, city:"Chicago", state:"IL" }
       ];
     }
-    window.AppStores = stores;
   }
 
+  /* -----------------------------
+     Map init
+     ----------------------------- */
   function ensureMap(){
     if(map) return;
-    const el = $$("storeMap");
+    const el = document.getElementById("storeMap");
     if(!el) return;
 
-    map = L.map(el, { zoomControl:true, preferCanvas:true });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19 }).addTo(map);
+    map = L.map(el, { preferCanvas:true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19
+    }).addTo(map);
   }
 
-  function pinHtml(storeId){
-    const st = LiveState.get(storeId);
-    const m = markerStyleFor(st);
-    return `<div class="pin ${m.cls}">${m.flag ? `<span class="flagpole"></span>` : ""}</div>`;
+  /* -----------------------------
+     Marker rendering
+     ----------------------------- */
+  function markerHTML(){
+    return `<div style="
+      width:16px;
+      height:16px;
+      border-radius:50%;
+      background:#ef4444;
+      border:2px solid #fff;
+      box-shadow:0 6px 16px rgba(0,0,0,.6);
+    "></div>`;
   }
 
   function renderMarkers(){
@@ -1085,418 +743,98 @@ const LiveMap = (() => {
     markers.clear();
 
     const bounds = [];
+
     stores.forEach(s=>{
-      const icon = L.divIcon({ className:"", html: pinHtml(s.id), iconSize:[18,18], iconAnchor:[9,9] });
-      const m = L.marker([s.lat,s.lon], { icon }).addTo(map);
-      m.on("click", ()=> selectStore(s.id));
-      markers.set(s.id, m);
-      bounds.push([s.lat,s.lon]);
-    });
-
-    if(bounds.length) map.fitBounds(bounds, { padding:[22,22] });
-  }
-
-  function updateMarker(storeId){
-    const m = markers.get(storeId);
-    if(!m) return;
-    const icon = L.divIcon({ className:"", html: pinHtml(storeId), iconSize:[18,18], iconAnchor:[9,9] });
-    m.setIcon(icon);
-  }
-
-  function updateAll(){
-    stores.forEach(s=> updateMarker(s.id));
-  }
-
-  function selectStore(storeId){
-    selectedId = storeId;
-    const store = stores.find(s=>s.id===storeId);
-    if(!store) return;
-
-    window.SelectedStore = store;
-
-    const st = LiveState.get(storeId);
-    safeText($$("spTitle"), `${store.name} (${store.id})`);
-    safeText($$("spSub"), [store.city, store.state].filter(Boolean).join(", ") || "—");
-    safeText($$("spWatered"), (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌");
-    safeText($$("spNegatives"), st.negatives ? "⚠️" : "✅");
-
-    const oc = openIssuesCount(st);
-    safeText($$("spIssues"), oc ? `🚩 ${oc}` : "✅ None");
-
-    const btn = $$("btnAddIssue");
-    btn.disabled = false;
-    btn.onclick = async () => {
-      const msg = prompt("Enter issue details:");
-      if(!msg) return;
-
-      const cur = LiveState.get(storeId);
-      const issues = Array.isArray(cur.issues) ? [...cur.issues] : [];
-      issues.push({
-        id: uid(),
-        text: msg.trim(),
-        createdAt: Date.now(),
-        createdBy: App.user?.username || "User",
-        resolved: false
+      const icon = L.divIcon({
+        className:"",
+        html: markerHTML(),
+        iconSize:[16,16],
+        iconAnchor:[8,8]
       });
 
-      await LiveState.set(storeId, { issues });
-      // update UI + markers
-      const after = LiveState.get(storeId);
-      safeText($$("spIssues"), `🚩 ${openIssuesCount(after)}`);
-      updateMarker(storeId);
-    };
+      const m = L.marker([s.lat, s.lon], { icon }).addTo(map);
+      m.bindTooltip(`${s.name} (${s.id})`, { direction:"top" });
+      m.on("click", ()=> selectStore(s));
+      markers.set(s.id, m);
+      bounds.push([s.lat, s.lon]);
+    });
+
+    if(bounds.length){
+      map.fitBounds(bounds, { padding:[20,20] });
+    }
   }
 
+  /* -----------------------------
+     Store selection (placeholder)
+     ----------------------------- */
+  function selectStore(store){
+    console.log("Selected store:", store);
+    // Future: open side panel, load checklist, issues, etc.
+  }
+
+  /* -----------------------------
+     Start map
+     ----------------------------- */
+  async function start(){
+    if(started) return;
+    started = true;
+
+    ensureMap();
+    await loadStores();
+    renderMarkers();
+
+    setTimeout(()=> map.invalidateSize(), 100);
+  }
+
+  /* -----------------------------
+     Hook view visibility
+     ----------------------------- */
   function hookView(){
-    const v = $$("view-map");
+    const v = document.getElementById("view-map");
     if(!v) return;
 
     const obs = new MutationObserver(()=>{
       if(mapVisible()){
-        if(map) setTimeout(()=> map.invalidateSize(), 80);
-        if(!started) start();
+        start();
+        setTimeout(()=> map.invalidateSize(), 80);
       }
     });
+
     obs.observe(v, { attributes:true, attributeFilter:["class"] });
   }
 
-  async function start(){
-    started = true;
-
-    const okL = await ensureLeaflet();
-    if(!okL) return;
-
-    await loadStores();
-    ensureMap();
-    renderMarkers();
-    setTimeout(()=> map.invalidateSize(), 100);
-
-    // Firestore listener
-    if(App.firestoreReady && window.db){
-      db.collection("stores").onSnapshot((snap)=>{
-        snap.forEach(doc=>{
-          LiveState.remote[doc.id] = doc.data();
-        });
-        updateAll();
-
-        // refresh selected store panel
-        if(selectedId){
-          const st = LiveState.get(selectedId);
-          safeText($$("spWatered"), (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌");
-          safeText($$("spNegatives"), st.negatives ? "⚠️" : "✅");
-          const oc = openIssuesCount(st);
-          safeText($$("spIssues"), oc ? `🚩 ${oc}` : "✅ None");
-        }
-      }, (err)=>{
-        console.warn("[firestore] snapshot failed", err);
-      });
-    }
-  }
-
-  return { hookView, start, updateAll };
+  return { start, hookView };
 })();
 
 /* -----------------------------
-   6) Boot Segment 4
+   Boot map module
    ----------------------------- */
-(async function bootSeg4(){
-  await ensureLeaflet();
-  await ensureFirestore();
-
+(function bootMap(){
   LiveMap.hookView();
-
-  // if already on map (session restore), start immediately
-  if(!$$("view-map")?.classList.contains("hidden")){
+  if(!document.getElementById("view-map")?.classList.contains("hidden")){
     LiveMap.start();
   }
 })();
 </script>
-  <script>
-/* =========================================================
-   SEGMENT 5 — CHECKLIST + ISSUES + STATUS SCORING
-   ========================================================= */
+<script>
+/* =====================================================
+   SEGMENT 5 — HF CORE (SEASONAL + GUIDELINES)
+   ===================================================== */
 
 /* -----------------------------
-   Styles (panel + modal)
+   CSV Loader (shared)
    ----------------------------- */
-(function injectSeg5Styles(){
-  if(document.getElementById("seg5-ui")) return;
-  const s = document.createElement("style");
-  s.id = "seg5-ui";
-  s.textContent = `
-    .checklist-box{
-      margin-top:12px;
-      padding:12px;
-      background:var(--card-glass);
-      border-radius:14px;
-      border:1px solid var(--border-soft);
-      box-shadow:var(--shadow-soft);
-    }
-    .checklist-title{
-      font-size:.85rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-weight:800;
-      margin-bottom:8px;
-      color:var(--heading);
-    }
-    .check-row{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding:6px 0;
-      font-size:.9rem;
-      border-bottom:1px solid rgba(148,163,184,.12);
-    }
-    .check-row:last-child{ border-bottom:none; }
-    .check-row input{ accent-color:var(--accent); margin-top:2px; }
-    .check-meta{
-      margin-top:8px;
-      font-size:.8rem;
-      color:var(--muted);
-      display:flex;
-      justify-content:space-between;
-    }
-    .view-issues-btn{
-      margin-top:8px;
-      width:100%;
-    }
-  `;
-  document.head.appendChild(s);
-})();
-
-/* -----------------------------
-   Checklist schema (CSV)
-   ----------------------------- */
-const ChecklistSchema = {
-  loaded:false,
-  items:[],
-  async load(){
-    if(this.loaded) return this.items;
-    try{
-      const txt = await fetch("checklist_items.csv",{cache:"no-store"}).then(r=>r.text());
-      const rows = parseCSV(txt);
-      const header = rows[0].map(h=>String(h).toLowerCase().trim());
-      const idIdx = header.indexOf("item_id");
-      const labelIdx = header.indexOf("label");
-      const activeIdx = header.indexOf("active");
-
-      this.items = rows.slice(1).map(r=>({
-        id:(r[idIdx]||"").trim(),
-        label:(r[labelIdx]||"").trim(),
-        active:(String(r[activeIdx]||"true").toLowerCase()!=="false")
-      })).filter(x=>x.id && x.label && x.active);
-    }catch{
-      this.items = [];
-    }
-    this.loaded = true;
-    return this.items;
+async function loadCsvSafe(url){
+  try{
+    const res = await fetch(url, { cache:"no-store" });
+    if(!res.ok) throw new Error("missing");
+    const text = await res.text();
+    return text.trim().split("\n").map(r=>r.split(","));
+  }catch{
+    return null;
   }
-};
-
-/* -----------------------------
-   Completion + status
-   ----------------------------- */
-function completionScore(st){
-  let done = 0;
-  let total = 3;
-
-  if(st.watered && st.wateredOn===todayKey()) done++;
-  if(st.negatives) done++;
-  if(st.pictures) done++;
-
-  const dyn = Object.values(st.checklist||{});
-  total += dyn.length;
-  dyn.forEach(v=>{ if(v===true) done++; });
-
-  return { done, total, pct: total ? done/total : 0 };
 }
 
-/* -----------------------------
-   Checklist UI
-   ----------------------------- */
-function ensureChecklistUI(){
-  if(document.getElementById("checklistBox")) return;
-  const panel = document.querySelector(".store-panel");
-  if(!panel) return;
-
-  const box = document.createElement("div");
-  box.id = "checklistBox";
-  box.className = "checklist-box";
-  box.innerHTML = `
-    <div class="checklist-title">Checklist</div>
-    <div id="checklistRows"></div>
-    <div class="check-meta">
-      <span id="checkPct">0%</span>
-      <span id="checkCount">0/0</span>
-    </div>
-    <button id="btnViewIssues" class="popup-close view-issues-btn hidden">
-      🚩 View Issues
-    </button>
-  `;
-  panel.insertBefore(box, document.getElementById("btnAddIssue"));
-}
-
-/* -----------------------------
-   Render checklist
-   ----------------------------- */
-async function renderChecklist(storeId){
-  ensureChecklistUI();
-  await ChecklistSchema.load();
-
-  const st = LiveState.get(storeId);
-  const rows = document.getElementById("checklistRows");
-
-  const baseRows = [
-    {key:"watered", label:"Watered (daily)"},
-    {key:"negatives", label:"Negatives"},
-    {key:"pictures", label:"Pictures"}
-  ];
-
-  const dynRows = ChecklistSchema.items.map(it=>({
-    key:"dyn:"+it.id,
-    label:it.label
-  }));
-
-  rows.innerHTML = [...baseRows, ...dynRows].map(r=>{
-    let checked = false;
-    if(r.key==="watered") checked = st.watered && st.wateredOn===todayKey();
-    else if(r.key==="negatives") checked = !!st.negatives;
-    else if(r.key==="pictures") checked = !!st.pictures;
-    else checked = st.checklist[r.key.slice(4)]===true;
-
-    return `
-      <label class="check-row">
-        <input type="checkbox" data-key="${r.key}" ${checked?"checked":""}/>
-        <span>${r.label}</span>
-      </label>
-    `;
-  }).join("");
-
-  rows.onchange = async (e)=>{
-    const cb = e.target.closest("input[data-key]");
-    if(!cb) return;
-
-    const key = cb.dataset.key;
-    if(key==="watered"){
-      st.watered = cb.checked;
-      st.wateredOn = cb.checked ? todayKey() : null;
-    }else if(key==="negatives"){
-      st.negatives = cb.checked;
-    }else if(key==="pictures"){
-      st.pictures = cb.checked;
-    }else if(key.startsWith("dyn:")){
-      st.checklist[key.slice(4)] = cb.checked;
-    }
-
-    await LiveState.set(storeId, st);
-    updateStoreUI(storeId);
-    LiveMap.updateAll();
-  };
-
-  updateChecklistMeta(storeId);
-}
-
-/* -----------------------------
-   Update checklist meta
-   ----------------------------- */
-function updateChecklistMeta(storeId){
-  const st = LiveState.get(storeId);
-  const {done,total,pct} = completionScore(st);
-
-  document.getElementById("checkPct").textContent = `${Math.round(pct*100)}%`;
-  document.getElementById("checkCount").textContent = `${done}/${total}`;
-
-  const hasIssues = (st.issues||[]).some(i=>!i.resolved);
-  const btn = document.getElementById("btnViewIssues");
-  btn.classList.toggle("hidden", !hasIssues);
-  btn.onclick = ()=> openIssuesModal(storeId);
-}
-
-/* -----------------------------
-   Issues modal
-   ----------------------------- */
-function openIssuesModal(storeId){
-  let bd = document.getElementById("issuesBackdrop");
-  if(!bd){
-    bd = document.createElement("div");
-    bd.id = "issuesBackdrop";
-    bd.className = "popup-backdrop";
-    bd.innerHTML = `
-      <div class="popup">
-        <h2>Store Issues</h2>
-        <div id="issuesList"></div>
-        <button class="popup-close" id="closeIssues">Close</button>
-      </div>
-    `;
-    document.body.appendChild(bd);
-    document.getElementById("closeIssues").onclick = ()=> bd.style.display="none";
-    bd.onclick = (e)=>{ if(e.target===bd) bd.style.display="none"; };
-  }
-
-  const st = LiveState.get(storeId);
-  const list = document.getElementById("issuesList");
-
-  list.innerHTML = (st.issues||[]).map(i=>`
-    <div class="glass-panel" style="margin-bottom:8px;">
-      <strong>${i.text}</strong>
-      <div class="popup-subtitle">
-        ${new Date(i.createdAt).toLocaleString()} • ${i.createdBy}
-      </div>
-      ${!i.resolved ? `<button class="popup-close" data-resolve="${i.id}">Resolve</button>` : `<em>Resolved</em>`}
-    </div>
-  `).join("") || "<em>No issues.</em>";
-
-  list.onclick = async (e)=>{
-    const btn = e.target.closest("[data-resolve]");
-    if(!btn) return;
-    const issue = st.issues.find(x=>x.id===btn.dataset.resolve);
-    if(issue){
-      issue.resolved = true;
-      await LiveState.set(storeId, st);
-      openIssuesModal(storeId);
-      updateStoreUI(storeId);
-      LiveMap.updateAll();
-    }
-  };
-
-  bd.style.display="flex";
-}
-
-/* -----------------------------
-   Update store panel + markers
-   ----------------------------- */
-function updateStoreUI(storeId){
-  const st = LiveState.get(storeId);
-  document.getElementById("spWatered").textContent =
-    (st.watered && st.wateredOn===todayKey()) ? "✅" : "❌";
-  document.getElementById("spNegatives").textContent =
-    st.negatives ? "⚠️" : "✅";
-  const open = (st.issues||[]).filter(i=>!i.resolved).length;
-  document.getElementById("spIssues").textContent =
-    open ? `🚩 ${open}` : "✅ None";
-
-  updateChecklistMeta(storeId);
-}
-
-/* -----------------------------
-   Hook selection from map
-   ----------------------------- */
-let lastSelected = null;
-setInterval(()=>{
-  if(!window.SelectedStore || window.SelectedStore.id===lastSelected) return;
-  lastSelected = window.SelectedStore.id;
-  renderChecklist(lastSelected);
-},200);
-</script>
-  <script>
-/* =========================================================
-   SEGMENT 6 — HF / HPA / SKU CATALOGUE / TRAINING
-   ========================================================= */
-
-/* -----------------------------
-   Helpers
-   ----------------------------- */
 function esc(s){
   return String(s ?? "")
     .replace(/&/g,"&amp;")
@@ -1506,198 +844,522 @@ function esc(s){
     .replace(/'/g,"&#39;");
 }
 
-async function loadCsvSafe(url){
-  try{
-    const r = await fetch(url, { cache:"no-store" });
-    if(!r.ok) throw new Error("missing");
-    return parseCSV(await r.text());
-  }catch{
-    return null;
-  }
+/* =====================================================
+   HF SEASONAL CALLOUT BANNER
+   ===================================================== */
+
+const HF_SEASONAL = {
+  1:  "Winter: Inspect overwintered perennials and remove damaged material.",
+  2:  "Late Winter: Prepare racks and plan early spring layouts.",
+  3:  "Early Spring: Watch for cold shock and overwatering issues.",
+  4:  "Spring: Harden off perennials before full sun exposure.",
+  5:  "Late Spring: Scout for aphids and early fungal issues.",
+  6:  "Early Summer: Increase pest checks—thrips and mites become active.",
+  7:  "Summer: Monitor watering closely; heat stress drives pest outbreaks.",
+  8:  "Late Summer: Watch for spider mites and powdery mildew.",
+  9:  "Fall: Reduce watering and prepare perennials for cooler nights.",
+  10: "Late Fall: Remove spent blooms and clean racks to prevent disease.",
+  11: "Cold Prep: Consolidate plants and protect roots from freezes.",
+  12: "Year End: Review seasonal issues and prepare training updates."
+};
+
+function injectHFSeasonalBanner(){
+  const hf = document.getElementById("view-hf");
+  if(!hf || document.getElementById("hfSeasonal")) return;
+
+  const month = new Date().getMonth() + 1;
+  const msg = HF_SEASONAL[month];
+  if(!msg) return;
+
+  const banner = document.createElement("div");
+  banner.id = "hfSeasonal";
+  banner.className = "hf-seasonal";
+  banner.innerHTML = `<strong>Seasonal Focus</strong> — ${msg}`;
+
+  hf.insertBefore(banner, hf.firstChild);
 }
 
-/* =========================================================
-   GUIDELINES (HF / HPA)
-   ========================================================= */
-async function renderGuidelines(csvUrl, mountId){
-  const mount = document.getElementById(mountId);
+/* =====================================================
+   HF GUIDELINES RENDERER
+   ===================================================== */
+/*
+  Expected CSV formats (flexible):
+  category,text
+  OR
+  category,guideline
+*/
+
+async function renderHFGuideLines(){
+  const mount = document.getElementById("hf-guidelines");
   if(!mount) return;
 
-  const rows = await loadCsvSafe(csvUrl);
+  const rows = await loadCsvSafe("hf_guidelines.csv");
   if(!rows || rows.length < 2){
-    mount.innerHTML = `<div class="glass-panel">No guidelines available.</div>`;
+    mount.innerHTML = `
+      <div class="glass-panel">
+        No HF guidelines available.
+      </div>
+    `;
     return;
   }
 
-  const header = rows[0].map(h=>h.toLowerCase());
+  const header = rows[0].map(h=>h.toLowerCase().trim());
   const catIdx = header.indexOf("category") >= 0 ? header.indexOf("category") : 0;
-  const txtIdx = header.indexOf("text") >= 0 ? header.indexOf("text") :
-                 header.indexOf("guideline") >= 0 ? header.indexOf("guideline") : 1;
+  const txtIdx =
+    header.indexOf("text") >= 0 ? header.indexOf("text") :
+    header.indexOf("guideline") >= 0 ? header.indexOf("guideline") : 1;
 
   const groups = {};
   rows.slice(1).forEach(r=>{
-    const cat = r[catIdx] || "General";
-    const txt = r[txtIdx];
+    const cat = (r[catIdx] || "General").trim();
+    const txt = (r[txtIdx] || "").trim();
     if(!txt) return;
     if(!groups[cat]) groups[cat] = [];
     groups[cat].push(txt);
   });
 
-  mount.innerHTML = Object.entries(groups).map(([cat,items])=>`
-    <div class="glass-panel" style="margin-bottom:12px;">
-      <div class="checklist-title">${esc(cat)}</div>
-      <ul style="margin-left:16px;">
-        ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
-      </ul>
-    </div>
-  `).join("");
+  mount.innerHTML = Object.entries(groups).map(([cat,items])=>{
+    return `
+      <div class="glass-panel" style="margin-bottom:12px;">
+        <div class="card-title" style="letter-spacing:.12em; text-transform:uppercase; font-size:.8rem;">
+          ${esc(cat)}
+        </div>
+        <ul style="margin-top:8px; margin-left:16px; line-height:1.5;">
+          ${items.map(i=>`<li>${esc(i)}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }).join("");
 }
 
-/* =========================================================
-   CARE & IDENTIFICATION (PLANTS / PESTS)
-   ========================================================= */
-function renderNameCards(list, mountId){
+/* =====================================================
+   HF TAB HOOKS
+   ===================================================== */
+
+document.querySelectorAll(".tab[data-view]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.dataset.view === "hf"){
+      injectHFSeasonalBanner();
+      renderHFGuideLines();
+    }
+  });
+});
+
+/* =====================================================
+   ENSURE BANNER ON SESSION RESTORE
+   ===================================================== */
+(function(){
+  try{
+    if(sessionStorage.getItem("hub_view") === "hf"){
+      injectHFSeasonalBanner();
+      renderHFGuideLines();
+    }
+  }catch{}
+})();
+</script>
+<script>
+/* =====================================================
+   SEGMENT 6 — HF PERENNIALS (CSV + FILTERS + PRINT)
+   ===================================================== */
+
+/* =====================================================
+   SMART FILTER DEFINITIONS (parsed from care text)
+   ===================================================== */
+const HF_SMART_FILTERS = [
+  { id:"sun", label:"Full Sun",   match:/full sun/i },
+  { id:"shade", label:"Shade",    match:/shade/i },
+  { id:"lowwater", label:"Low Water", match:/low water|drought/i },
+  { id:"moist", label:"Moist Soil", match:/moist|consistent moisture/i },
+  { id:"native", label:"Native",  match:/native/i },
+  { id:"pollinator", label:"Pollinator", match:/pollinator|butterfly|monarch|bee/i }
+];
+
+/* =====================================================
+   PERENNIAL RENDERER
+   ===================================================== */
+async function renderHFPerennials(){
+  const mount = document.getElementById("hf-plants");
+  if(!mount) return;
+
+  const rows = await loadCsvSafe("hf_perennials.csv");
+  if(!rows || rows.length < 2){
+    mount.innerHTML = `<div class="glass-panel">No perennial data available.</div>`;
+    return;
+  }
+
+  const header = rows[0].map(h=>h.toLowerCase().trim());
+  const idx = (n)=>header.indexOf(n);
+
+  const items = rows.slice(1).map((r,i)=>({
+    id: r[idx("id")] || `perennial:${i}`,
+    common: r[idx("common_name")] || "",
+    sci: r[idx("scientific_name")] || "",
+    care: r[idx("care")] || ""
+  })).filter(x=>x.common);
+
+  let activeFilters = new Set();
+
+  /* =====================================================
+     UI SHELL
+     ===================================================== */
+  mount.innerHTML = `
+    <div class="hf-toolbar">
+      <div class="search-wrap">
+        <input id="hfPerennialSearch" type="search" placeholder="Search perennials…" />
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <label class="pill-toggle">
+          <input type="radio" name="hfSearchMode" value="both" checked /> Both
+        </label>
+        <label class="pill-toggle">
+          <input type="radio" name="hfSearchMode" value="common" /> Common
+        </label>
+        <label class="pill-toggle">
+          <input type="radio" name="hfSearchMode" value="scientific" /> Scientific
+        </label>
+      </div>
+
+      <div id="hfPerennialCount" class="hf-count">${items.length} items</div>
+    </div>
+
+    <div class="filter-bar" id="hfPerennialFilters">
+      ${HF_SMART_FILTERS.map(f=>`
+        <div class="filter-chip" data-filter="${f.id}">${f.label}</div>
+      `).join("")}
+    </div>
+
+    <div id="hfPerennialGrid" class="card-grid"></div>
+  `;
+
+  const grid   = document.getElementById("hfPerennialGrid");
+  const search = document.getElementById("hfPerennialSearch");
+  const count  = document.getElementById("hfPerennialCount");
+
+  const searchMode = () =>
+    [...document.querySelectorAll('input[name="hfSearchMode"]')]
+      .find(r=>r.checked)?.value || "both";
+
+  /* =====================================================
+     MODAL (PRINTABLE CARE CARD)
+     ===================================================== */
+  function openPerennialModal(it){
+    const bodyHtml = `
+      <div class="glass-panel">
+        <div style="font-weight:900;margin-bottom:6px;">Care</div>
+        <div style="line-height:1.5;">${esc(it.care)}</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button class="popup-close" onclick="window.print()">🖨 Print Care Card</button>
+      </div>
+    `;
+
+    // Prefer enhanced HF modal if present
+    if(typeof openHFModal === "function"){
+      openHFModal({
+        title: it.common,
+        sub: it.sci,
+        bodyHtml,
+        favId: it.id,
+        footer: "HF • Perennials"
+      });
+      return;
+    }
+
+    // Fallback modal
+    let bd = document.getElementById("hfPerennialModal");
+    if(!bd){
+      bd = document.createElement("div");
+      bd.id = "hfPerennialModal";
+      bd.className = "popup-backdrop";
+      bd.innerHTML = `
+        <div class="popup">
+          <h2 id="hfModalTitle"></h2>
+          <div class="popup-subtitle" id="hfModalSub"></div>
+          <div id="hfModalBody"></div>
+          <button class="popup-close" id="hfModalClose">Close</button>
+        </div>
+      `;
+      document.body.appendChild(bd);
+      document.getElementById("hfModalClose").onclick = ()=> bd.style.display="none";
+      bd.onclick = e=>{ if(e.target===bd) bd.style.display="none"; };
+    }
+
+    document.getElementById("hfModalTitle").textContent = it.common;
+    document.getElementById("hfModalSub").textContent = it.sci;
+    document.getElementById("hfModalBody").innerHTML = bodyHtml;
+    bd.style.display="flex";
+  }
+
+  /* =====================================================
+     RENDER LIST
+     ===================================================== */
+  function renderList(){
+    const q = (search.value || "").toLowerCase();
+    const mode = searchMode();
+
+    const filtered = items.filter(it=>{
+      const common = it.common.toLowerCase();
+      const sci = it.sci.toLowerCase();
+
+      // search logic
+      if(q){
+        if(mode==="common" && !common.includes(q)) return false;
+        if(mode==="scientific" && !sci.includes(q)) return false;
+        if(mode==="both" && !common.includes(q) && !sci.includes(q)) return false;
+      }
+
+      // smart filters
+      for(const f of activeFilters){
+        const def = HF_SMART_FILTERS.find(x=>x.id===f);
+        if(def && !def.match.test(it.care)) return false;
+      }
+
+      return true;
+    });
+
+    count.textContent = `${filtered.length} item${filtered.length===1?"":"s"}`;
+
+    grid.innerHTML = filtered.map(it=>{
+      const preview = it.care.length > 90 ? it.care.slice(0,90) + "…" : it.care;
+      return `
+        <div class="card" data-id="${esc(it.id)}" tabindex="0">
+          <div class="card-title">${esc(it.common)}</div>
+          <div class="card-sub"><em>${esc(it.sci)}</em></div>
+          <div class="card-sub">${esc(preview)}</div>
+          <div class="filter-bar" style="margin-top:8px;">
+            <span class="filter-chip">Perennial</span>
+            <span class="filter-chip">Midwest</span>
+          </div>
+        </div>
+      `;
+    }).join("") || `<div class="glass-panel">No matches.</div>`;
+
+    grid.querySelectorAll(".card").forEach(el=>{
+      const it = items.find(x=>x.id===el.dataset.id);
+      el.onclick = ()=> openPerennialModal(it);
+      el.onkeydown = e=>{
+        if(e.key==="Enter" || e.key===" "){
+          e.preventDefault();
+          openPerennialModal(it);
+        }
+      };
+    });
+  }
+
+  /* =====================================================
+     EVENTS
+     ===================================================== */
+  search.oninput = renderList;
+  document.querySelectorAll('input[name="hfSearchMode"]').forEach(r=>{
+    r.onchange = renderList;
+  });
+
+  document.querySelectorAll("#hfPerennialFilters .filter-chip").forEach(chip=>{
+    chip.onclick = ()=>{
+      const id = chip.dataset.filter;
+      if(activeFilters.has(id)) activeFilters.delete(id);
+      else activeFilters.add(id);
+      chip.classList.toggle("active");
+      renderList();
+    };
+  });
+
+  renderList();
+}
+
+/* =====================================================
+   LOAD PERENNIALS WHEN HF CARE OPENS
+   ===================================================== */
+document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.dataset.hfTab === "care"){
+      renderHFPerennials();
+    }
+  });
+});
+
+// Also handle session restore
+(function(){
+  try{
+    if(sessionStorage.getItem("hub_view")==="hf"){
+      renderHFPerennials();
+    }
+  }catch{}
+})();
+</script>
+    <script>
+/* =====================================================
+   SEGMENT 7 — PESTS (HF + HPA) + FINAL BOOT
+   ===================================================== */
+
+/* =====================================================
+   PEST MODAL (SHARED)
+   ===================================================== */
+function openPestModal(pest){
+  const bodyHtml = `
+    <div class="glass-panel" style="margin-bottom:10px;">
+      <div style="font-weight:900;margin-bottom:6px;">Signs</div>
+      <div>${esc(pest.signs || "—")}</div>
+    </div>
+    <div class="glass-panel" style="margin-bottom:10px;">
+      <div style="font-weight:900;margin-bottom:6px;">Conditions</div>
+      <div>${esc(pest.conditions || "—")}</div>
+    </div>
+    <div class="glass-panel">
+      <div style="font-weight:900;margin-bottom:6px;">Treatment</div>
+      <div>${esc(pest.treatment || "—")}</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+      <button class="popup-close" onclick="window.print()">🖨 Print Pest Card</button>
+    </div>
+  `;
+
+  if(typeof openHFModal === "function"){
+    openHFModal({
+      title: pest.name,
+      sub: pest.tags || "Pest Identification",
+      bodyHtml,
+      favId: pest.id,
+      footer: "HF / HPA • Pests"
+    });
+    return;
+  }
+
+  let bd = document.getElementById("pestModal");
+  if(!bd){
+    bd = document.createElement("div");
+    bd.id = "pestModal";
+    bd.className = "popup-backdrop";
+    bd.innerHTML = `
+      <div class="popup">
+        <h2 id="pestModalTitle"></h2>
+        <div class="popup-subtitle" id="pestModalSub"></div>
+        <div id="pestModalBody"></div>
+        <button class="popup-close" id="pestModalClose">Close</button>
+      </div>
+    `;
+    document.body.appendChild(bd);
+    document.getElementById("pestModalClose").onclick = ()=> bd.style.display="none";
+    bd.onclick = e=>{ if(e.target===bd) bd.style.display="none"; };
+  }
+
+  document.getElementById("pestModalTitle").textContent = pest.name;
+  document.getElementById("pestModalSub").textContent = pest.tags || "";
+  document.getElementById("pestModalBody").innerHTML = bodyHtml;
+  bd.style.display = "flex";
+}
+
+/* =====================================================
+   PEST CSV RENDERER (HF + HPA)
+   ===================================================== */
+async function renderPestsFromCsv(mountId){
   const mount = document.getElementById(mountId);
   if(!mount) return;
 
-  mount.innerHTML = list.map(x=>`
-    <div class="glass-panel" style="cursor:pointer;">
-      <strong>${esc(x.name)}</strong>
-      <div class="popup-subtitle">${esc(x.sub || "")}</div>
-    </div>
-  `).join("");
-}
-
-/* =========================================================
-   HPA SKU CATALOGUE
-   ========================================================= */
-async function loadSkuCatalogue(){
-  const mount = document.getElementById("products-skus");
-  if(!mount) return;
-
-  const rows = await loadCsvSafe("hpa_skus.csv");
+  const rows = await loadCsvSafe("pests.csv");
   if(!rows || rows.length < 2){
-    mount.innerHTML = `<div class="glass-panel">No SKU data available.</div>`;
+    mount.innerHTML = `<div class="glass-panel">No pest data available.</div>`;
     return;
   }
 
-  const header = rows[0].map(h=>h.toLowerCase());
-  const skuIdx = header.indexOf("sku");
-  const nameIdx = header.indexOf("name");
-  const sizeIdx = header.indexOf("size");
-  const colorIdx = header.indexOf("color");
+  const header = rows[0].map(h=>h.toLowerCase().trim());
+  const idx = n => header.indexOf(n);
+
+  const pests = rows.slice(1).map((r,i)=>({
+    id: r[idx("id")] || `pest:${i}`,
+    name: r[idx("name")] || "Unnamed Pest",
+    signs: r[idx("signs")] || "",
+    conditions: r[idx("conditions")] || "",
+    treatment: r[idx("treatment")] || "",
+    tags: r[idx("tags")] || ""
+  }));
 
   mount.innerHTML = `
-    <div class="bubble-grid">
-      ${rows.slice(1).map(r=>`
-        <div class="glass-panel">
-          <strong>${esc(r[skuIdx])}</strong>
-          <div class="popup-subtitle">${esc(r[nameIdx])}</div>
-          <div style="font-size:.85rem;">
-            ${esc(r[sizeIdx] || "")} ${esc(r[colorIdx] || "")}
-          </div>
-        </div>
-      `).join("")}
+    <div class="hf-toolbar">
+      <div class="search-wrap">
+        <input id="${mountId}-search" type="search" placeholder="Search pests…" />
+      </div>
+      <div class="hf-count" id="${mountId}-count">${pests.length} pests</div>
     </div>
+
+    <div class="card-grid" id="${mountId}-grid"></div>
   `;
-}
 
-/* =========================================================
-   ORDER BREAKDOWN
-   ========================================================= */
-async function loadOrderBreakdown(){
-  const mount = document.getElementById("products-orders");
-  if(!mount) return;
+  const grid = document.getElementById(`${mountId}-grid`);
+  const search = document.getElementById(`${mountId}-search`);
+  const count  = document.getElementById(`${mountId}-count`);
 
-  const rows = await loadCsvSafe("orders.csv");
-  if(!rows || rows.length < 2){
-    mount.innerHTML = `<div class="glass-panel">No order data available.</div>`;
-    return;
+  function render(){
+    const q = (search.value || "").toLowerCase();
+    const filtered = pests.filter(p=>{
+      const hay = `${p.name} ${p.signs} ${p.tags}`.toLowerCase();
+      return hay.includes(q);
+    });
+
+    count.textContent = `${filtered.length} pest${filtered.length===1?"":"s"}`;
+
+    grid.innerHTML = filtered.map(p=>`
+      <div class="card" data-id="${esc(p.id)}" tabindex="0">
+        <div class="card-title">${esc(p.name)}</div>
+        <div class="card-sub">${esc(p.signs.slice(0,80))}${p.signs.length>80?"…":""}</div>
+        <div class="filter-bar" style="margin-top:8px;">
+          <span class="filter-chip">Pest</span>
+          ${p.tags.split(",").slice(0,2).map(t=>`<span class="filter-chip">${esc(t.trim())}</span>`).join("")}
+        </div>
+      </div>
+    `).join("") || `<div class="glass-panel">No matches.</div>`;
+
+    grid.querySelectorAll(".card").forEach(el=>{
+      const pest = pests.find(p=>p.id===el.dataset.id);
+      el.onclick = ()=> openPestModal(pest);
+      el.onkeydown = e=>{
+        if(e.key==="Enter" || e.key===" "){
+          e.preventDefault();
+          openPestModal(pest);
+        }
+      };
+    });
   }
 
-  mount.innerHTML = rows.slice(1).map(r=>`
-    <div class="glass-panel" style="margin-bottom:10px;">
-      <strong>Week ${esc(r[0])}</strong>
-      <div class="popup-subtitle">${esc(r[1])}</div>
-    </div>
-  `).join("");
+  search.oninput = render;
+  render();
 }
 
-/* =========================================================
-   TRAINING HUB
-   ========================================================= */
-(function initTraining(){
-  const sections = ["basics","merch","supervisor"];
-  document.querySelectorAll("[data-train]").forEach(btn=>{
-    btn.onclick = ()=>{
-      document.querySelectorAll("[data-train]").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      sections.forEach(k=>{
-        document.getElementById("train-"+k)
-          ?.classList.toggle("hidden", btn.dataset.train !== k);
-      });
-    };
-  });
-})();
-
-/* =========================================================
-   TAB HOOKS (HF / HPA)
-   ========================================================= */
-document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hf-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("hf-guidelines").classList.toggle("hidden", btn.dataset.hfTab!=="guidelines");
-    document.getElementById("hf-care").classList.toggle("hidden", btn.dataset.hfTab!=="care");
-  };
-});
-
-document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.onclick = ()=>{
-    document.querySelectorAll("[data-hpa-tab]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("hpa-guidelines").classList.toggle("hidden", btn.dataset.hpaTab!=="guidelines");
-    document.getElementById("hpa-products").classList.toggle("hidden", btn.dataset.hpaTab!=="products");
-    document.getElementById("hpa-care").classList.toggle("hidden", btn.dataset.hpaTab!=="care");
-
-    if(btn.dataset.hpaTab==="products"){
-      loadSkuCatalogue();
-      loadOrderBreakdown();
-    }
-  };
-});
-
-/* =========================================================
-   LOADERS ON NAV
-   ========================================================= */
-document.querySelectorAll(".tab[data-view]").forEach(btn=>{
+/* =====================================================
+   LOAD PESTS WHEN TABS OPEN
+   ===================================================== */
+document.querySelectorAll("[data-hf-care]").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    if(btn.dataset.view==="hf"){
-      renderGuidelines("hf_guidelines.csv","hf-guidelines");
-      renderNameCards(
-        [{name:"Ferns"},{name:"Palms"},{name:"Succulents"}],
-        "hf-plants"
-      );
-      renderNameCards(
-        [{name:"Aphids"},{name:"Spider Mites"}],
-        "hf-pests"
-      );
-    }
-    if(btn.dataset.view==="hpa"){
-      renderGuidelines("hpa_guidelines.csv","hpa-guidelines");
-      renderNameCards(
-        [{name:"Annuals"},{name:"Perennials"}],
-        "hpa-plants"
-      );
-      renderNameCards(
-        [{name:"Thrips"},{name:"Mealybugs"}],
-        "hpa-pests"
-      );
+    if(btn.dataset.hfCare === "pests"){
+      renderPestsFromCsv("hf-pests");
     }
   });
 });
 
-console.log("✅ SEGMENT 6 loaded — HF, HPA, SKU Catalogue, Training restored");
+document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.dataset.hpaCare === "pests"){
+      renderPestsFromCsv("hpa-pests");
+    }
+  });
+});
+
+/* =====================================================
+   FINAL BOOT POLISH
+   ===================================================== */
+console.log("✅ Merchandising Hub fully loaded");
 </script>
+
+</div> <!-- /.app-inner -->
+</div> <!-- /.app-shell -->
 </body>
 </html>
+
+
+
+
+
+
+
+    
