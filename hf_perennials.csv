@@ -1,0 +1,9 @@
+id,category,name,light,water,notes,tags
+perennial:hosta,Perennial,Hosta,Shade to partial shade,Moderate even moisture,"Avoid full sun; slug damage common. Mulch to retain moisture.","shade,foliage,landscape"
+perennial:daylily,Perennial,Daylily,Full sun to partial,Moderate,"Very hardy; remove spent blooms to encourage rebloom.","sun,flowering,hardy"
+perennial:coneflower,Perennial,Coneflower (Echinacea),Full sun,Low to moderate,"Drought tolerant once established; attracts pollinators.","pollinator,native,sun"
+perennial:blackeyedsusan,Perennial,Black-eyed Susan,Full sun,Low to moderate,"Deadhead to extend bloom time; very heat tolerant.","pollinator,summer,sun"
+perennial:sedum,Perennial,Sedum (Stonecrop),Full sun,Low,"Excellent drainage required; avoid overwatering.","succulent,drought,groundcover"
+perennial:coralbells,Perennial,Coral Bells (Heuchera),Partial shade,Moderate,"Grown for foliage color; avoid soggy soil.","foliage,shade"
+perennial:lavender,Perennial,Lavender,Full sun,Low,"Requires excellent drainage; avoid high humidity areas.","fragrant,drought,sun"
+perennial:peony,Perennial,Peony,Full sun to partial,Moderate,"Long-lived; avoid planting crowns too deep.","spring,flowering"
