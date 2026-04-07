@@ -4605,6 +4605,224 @@ Rule: Fill holes before perfecting labels.`}
 
 }
 </script>
+<!-- =====================================================
+     SEGMENT 8 — MOBILE UX + STORE INTELLIGENCE + ISSUE PHOTOS + TRAINING ACADEMY
+     ===================================================== -->
 
+<style>
+/* =====================================================
+   MOBILE BOTTOM NAV
+   ===================================================== */
+@media (max-width: 900px){
+  #globalTabs{ display:none !important; }
+
+  .mobile-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:64px;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    background: rgba(2,6,23,.95);
+    border-top:1px solid rgba(148,163,184,.25);
+    z-index:9999;
+    backdrop-filter: blur(10px);
+  }
+  .mobile-nav button{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-size:.75rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    cursor:pointer;
+  }
+  .mobile-nav button.active{ color:var(--accent); }
+  body{ padding-bottom:70px; }
+}
+
+/* =====================================================
+   STORE DRAWER (MOBILE)
+   ===================================================== */
+@media (max-width: 900px){
+  #view-map aside.glass-panel{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:64px;
+    max-height:70vh;
+    border-radius:24px 24px 0 0;
+    transform: translateY(65%);
+    transition: transform .25s ease;
+    z-index:5000;
+  }
+  #view-map aside.glass-panel.open{
+    transform: translateY(0);
+  }
+  .drawer-handle{
+    width:48px;
+    height:5px;
+    background:rgba(148,163,184,.4);
+    border-radius:999px;
+    margin:0 auto 10px;
+  }
+}
+
+/* =====================================================
+   HEALTH SCORE BADGE
+   ===================================================== */
+.health-badge{
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:.8rem;
+  display:inline-block;
+}
+.health-good{ background:#22c55e; color:#022c22; }
+.health-warn{ background:#facc15; color:#3a2e00; }
+.health-bad{ background:#ef4444; color:#3a0606; }
+
+/* =====================================================
+   ISSUE PHOTOS
+   ===================================================== */
+.issue-photo{
+  width:100%;
+  border-radius:12px;
+  margin-top:8px;
+  border:1px solid rgba(148,163,184,.3);
+}
+
+/* =====================================================
+   TRAINING CAMPUS MAP
+   ===================================================== */
+.campus-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.campus-card{
+  padding:16px;
+  border-radius:18px;
+  border:1px solid rgba(34,211,238,.35);
+  background: radial-gradient(circle at top left, rgba(34,211,238,.2), rgba(15,23,42,.6));
+  box-shadow:0 16px 40px rgba(0,0,0,.6);
+  cursor:pointer;
+}
+.campus-card h3{ margin-bottom:6px; }
+</style>
+
+<script>
+/* =====================================================
+   SEG8 BOOT
+   ===================================================== */
+(function(){
+  /* ---------- MOBILE NAV ---------- */
+  function mountMobileNav(){
+    if(document.querySelector(".mobile-nav")) return;
+    const nav = document.createElement("div");
+    nav.className = "mobile-nav";
+    nav.innerHTML = `
+      <button data-go="map">🗺️<span>Map</span></button>
+      <button data-go="hf">🌿<span>HF</span></button>
+      <button data-go="hpa">📦<span>HPA</span></button>
+      <button data-go="training">🎓<span>Training</span></button>
+    `;
+    document.body.appendChild(nav);
+
+    nav.querySelectorAll("button").forEach(btn=>{
+      btn.onclick = ()=>{
+        HubUI.showOnlyView(btn.dataset.go);
+        nav.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+      };
+    });
+  }
+
+  if(window.matchMedia("(max-width:900px)").matches){
+    mountMobileNav();
+  }
+
+  /* ---------- STORE DRAWER ---------- */
+  const aside = document.querySelector("#view-map aside.glass-panel");
+  if(aside && window.matchMedia("(max-width:900px)").matches){
+    const handle = document.createElement("div");
+    handle.className = "drawer-handle";
+    aside.prepend(handle);
+    aside.onclick = ()=> aside.classList.toggle("open");
+  }
+
+  /* ---------- STORE HEALTH SCORE ---------- */
+  window.computeHealthScore = function(storeId){
+    const st = LiveState.get(storeId);
+    let score = 50;
+    if(st.watered && st.wateredOn === todayKey()) score += 25;
+    score += Math.min(Object.keys(st.checklist||{}).length * 2, 20);
+    score -= (st.issues||[]).filter(i=>!i.resolved).length * 30;
+    if(st.negatives) score -= 15;
+    return Math.max(0, Math.min(100, score));
+  };
+
+  /* Patch store panel */
+  const origUpdate = window.updateStorePanel;
+  window.updateStorePanel = function(store){
+    origUpdate(store);
+    const score = computeHealthScore(store.id);
+    const badge = document.createElement("div");
+    badge.className = "health-badge " + (score>70?"health-good":score>40?"health-warn":"health-bad");
+    badge.textContent = `Health ${score}`;
+    document.getElementById("spTitle")?.append(" ", badge);
+  };
+
+  /* ---------- ISSUE PHOTOS ---------- */
+  const origAddIssue = window.selectStore;
+  window.selectStore = function(id){
+    origAddIssue(id);
+    const btn = document.getElementById("btnAddIssue");
+    if(!btn) return;
+    btn.onclick = async ()=>{
+      const txt = prompt("Describe issue:");
+      if(!txt) return;
+
+      const file = document.createElement("input");
+      file.type = "file";
+      file.accept = "image/*";
+      file.capture = "environment";
+      file.onchange = async ()=>{
+        const photo = file.files[0]
+          ? await new Promise(r=>{
+              const fr=new FileReader();
+              fr.onload=()=>r(fr.result);
+              fr.readAsDataURL(file.files[0]);
+            })
+          : null;
+
+        const cur = LiveState.get(id);
+        cur.issues.push({ id:safeUUID(), text:txt, resolved:false, photo });
+        await LiveState.set(id,{ issues:cur.issues });
+        updateMarkers();
+        updateStorePanel(stores.find(s=>s.id===id));
+      };
+      file.click();
+    };
+  };
+
+  /* ---------- TRAINING CAMPUS ---------- */
+  const trainBasics = document.getElementById("train-basics");
+  if(trainBasics){
+    trainBasics.innerHTML = `
+      <div class="campus-grid">
+        <div class="campus-card"><h3>🏫 Merch 101</h3><div class="subtitle">Foundations</div></div>
+        <div class="campus-card"><h3>🌿 Plant Lab</h3><div class="subtitle">Care & ID</div></div>
+        <div class="campus-card"><h3>📦 Product Hall</h3><div class="subtitle">Orders</div></div>
+        <div class="campus-card"><h3>🏆 Boss Level</h3><div class="subtitle">Leadership</div></div>
+      </div>
+    `;
+  }
+})();
+</script>
 </body>
 </html>
