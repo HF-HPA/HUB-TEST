@@ -5636,6 +5636,1148 @@ window.celebrate = function(){
   }
 })();
 </script>
+<!-- =====================================================
+     SEGMENT 13 — READ-ONLY CHECKLISTS (UNCHECKABLE)
+     ===================================================== -->
 
+<style>
+/* =====================================================
+   VISUAL CUES FOR READ-ONLY CHECKLIST
+   ===================================================== */
+.checklist-row{
+  opacity: .85;
+  cursor: default;
+}
+
+.checklist-row input[type="checkbox"]{
+  pointer-events: none;        /* blocks clicks */
+  opacity: .6;                 /* visually read-only */
+  filter: grayscale(100%);
+}
+
+.checklist-row::after{
+  content: "Read only";
+  margin-left: auto;
+  font-size: .7rem;
+  color: var(--muted);
+  font-style: italic;
+}
+</style>
+
+<script>
+/* =====================================================
+   DISABLE ALL CHECKLIST INTERACTION
+   ===================================================== */
+(function(){
+  const READ_ONLY = true; // <- flip to false if you ever want checklists editable again
+
+  if(!READ_ONLY) return;
+
+  function lockChecklist(root=document){
+    root.querySelectorAll(".checklist-row input[type='checkbox']").forEach(cb=>{
+      cb.disabled = true;          // native disable
+      cb.tabIndex = -1;            // remove keyboard focus
+      cb.setAttribute("aria-disabled","true");
+    });
+  }
+
+  /* Lock existing checklists */
+  lockChecklist();
+
+  /* Lock future injected checklists */
+  const observer = new MutationObserver(muts=>{
+    muts.forEach(m=>{
+      m.addedNodes.forEach(n=>{
+        if(n.nodeType === 1){
+          lockChecklist(n);
+        }
+      });
+    });
+  });
+
+  observer.observe(document.body,{
+    childList:true,
+    subtree:true
+  });
+
+  /* Extra safety: block any legacy change handlers */
+  document.addEventListener("change", (e)=>{
+    if(e.target.matches(".checklist-row input[type='checkbox']")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  }, true);
+
+  console.log("✅ Checklists are now read-only (uncheckable)");
+})();
+</script>
+<!-- =====================================================
+     SEGMENT 14 — TIER 3/4/5 + TERRITORY BORDERS + HEATMAP
+     ===================================================== -->
+
+<style>
+/* =====================================================
+   FUN UI — Seasonal theme + status stickers + micro motion
+   ===================================================== */
+.theme-sticker{
+  position:absolute;
+  top:10px;
+  left:10px;
+  z-index:650;
+  padding:6px 10px;
+  border-radius:999px;
+  background: rgba(2,6,23,.6);
+  border:1px solid rgba(148,163,184,.25);
+  color: var(--heading);
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  user-select:none;
+  pointer-events:none;
+}
+
+@keyframes floaty{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
+}
+.floaty{ animation: floaty 2.8s ease-in-out infinite; }
+
+/* =====================================================
+   Map controls row (mobile friendly)
+   ===================================================== */
+.map-controls{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.map-chip{
+  padding:7px 12px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  color: var(--heading);
+  cursor:pointer;
+  font-weight:900;
+  font-size:.82rem;
+}
+.map-chip.active{
+  background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
+  border-color: transparent;
+  color:#020617;
+  box-shadow:0 10px 26px rgba(37,99,235,.45);
+}
+
+/* =====================================================
+   Training: Campus expansions (Tier 3/4/5)
+   ===================================================== */
+.campus-wrap{
+  position:relative;
+  border-radius:20px;
+  padding:14px;
+  background:
+    radial-gradient(circle at top left, rgba(34,211,238,.18), rgba(15,23,42,.78) 55%),
+    radial-gradient(circle at bottom right, rgba(59,130,246,.16), rgba(15,23,42,.78) 55%);
+  border:1px solid rgba(34,211,238,.3);
+  box-shadow:0 18px 60px rgba(0,0,0,.7);
+}
+.campus-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.campus-title{
+  font-weight:1000;
+  color:var(--heading);
+  font-size:1.1rem;
+}
+.campus-sub{
+  color:var(--muted);
+  font-size:.9rem;
+}
+.campus-grid2{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:12px;
+}
+@media (max-width:560px){ .campus-grid2{ grid-template-columns:1fr; } }
+
+.building{
+  border-radius:18px;
+  padding:14px;
+  border:1px solid rgba(148,163,184,.22);
+  background: rgba(2,6,23,.32);
+  box-shadow:0 14px 36px rgba(0,0,0,.6);
+  cursor:pointer;
+  transition: transform .15s ease, border-color .15s ease;
+  position:relative;
+  overflow:hidden;
+}
+.building::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: radial-gradient(circle at top left, rgba(34,211,238,.18), transparent 60%);
+  opacity:.9;
+  pointer-events:none;
+}
+.building:hover{
+  transform: translateY(-1px);
+  border-color: rgba(34,211,238,.55);
+}
+.building h3{
+  position:relative;
+  z-index:1;
+  font-weight:1000;
+  color:var(--heading);
+}
+.building .subtitle{ position:relative; z-index:1; }
+
+.course-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  position:relative;
+  z-index:1;
+}
+.course-pill{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(15,23,42,.55);
+  color: var(--heading);
+  font-size:.75rem;
+  font-weight:900;
+}
+.course-pill.xp{ border-color: rgba(34,211,238,.55); color: var(--accent); }
+.course-pill.quiz{ border-color: rgba(250,204,21,.55); color:#fde68a; }
+.course-pill.lock{ opacity:.55; }
+
+/* =====================================================
+   Scenario + Spot-the-issue UI
+   ===================================================== */
+.quiz-card{
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,.22);
+  background: rgba(2,6,23,.35);
+  padding:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.55);
+  margin-top:10px;
+}
+.choice{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px 10px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.2);
+  background: rgba(15,23,42,.35);
+  cursor:pointer;
+  margin-top:8px;
+}
+.choice:hover{ border-color: rgba(34,211,238,.45); background: rgba(15,23,42,.55); }
+.choice.correct{ border-color: rgba(34,197,94,.6); background: rgba(34,197,94,.12); }
+.choice.wrong{ border-color: rgba(239,68,68,.6); background: rgba(239,68,68,.10); }
+
+.spot-wrap{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  margin-top:10px;
+}
+.spot-wrap img{ width:100%; display:block; }
+.spot-dot{
+  position:absolute;
+  width:22px; height:22px;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,.9);
+  background: rgba(239,68,68,.9);
+  transform: translate(-50%,-50%);
+  box-shadow:0 10px 26px rgba(0,0,0,.65);
+}
+
+/* =====================================================
+   Seasonal Event Banner (Tier 4)
+   ===================================================== */
+.event-banner{
+  border-radius:18px;
+  padding:12px 14px;
+  border:1px solid rgba(250,204,21,.45);
+  background: radial-gradient(circle at top left, rgba(250,204,21,.18), rgba(15,23,42,.78));
+  box-shadow:0 16px 40px rgba(0,0,0,.65);
+  margin-top:12px;
+}
+.event-banner strong{ font-weight:1000; }
+.event-progress{
+  height:10px;
+  border-radius:999px;
+  background: rgba(148,163,184,.2);
+  overflow:hidden;
+  margin-top:10px;
+}
+.event-progress > div{
+  height:100%;
+  background: linear-gradient(135deg, #facc15, #fb7185);
+  width:0%;
+}
+
+/* =====================================================
+   Settings toggle UI (Tier 5)
+   ===================================================== */
+.settings-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.settings-row:last-child{ border-bottom:none; }
+.settings-row .subtitle{ margin:0; }
+</style>
+
+<script>
+/* =====================================================
+   SEG14 BOOT (guarded)
+   ===================================================== */
+(function(){
+  if(window.__HUB_SEG14__) return;
+  window.__HUB_SEG14__ = true;
+
+  const SETTINGS_KEY = "hub_settings_v1";
+  const SOCIAL_KEY   = "hub_social_v1";
+  const CERT_KEY     = "hub_certs_v2";
+  const EVENTS_KEY   = "hub_events_v2";
+
+  const $ = (id)=>document.getElementById(id);
+
+  /* =====================================================
+     Tier 5 — Context-aware greeting + Theme + Haptics/Sound
+     ===================================================== */
+  function loadSettings(){
+    try{ return JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}"); }catch{ return {}; }
+  }
+  function saveSettings(s){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+
+  function applyTheme(theme){
+    const root = document.documentElement;
+    const themes = {
+      spring: { "--accent":"#34d399", "--accent-strong":"#10b981" },
+      summer: { "--accent":"#22d3ee", "--accent-strong":"#06b6d4" },
+      fall:   { "--accent":"#fb923c", "--accent-strong":"#f97316" },
+      night:  { "--accent":"#60a5fa", "--accent-strong":"#3b82f6" }
+    };
+    const t = themes[theme] || themes.summer;
+    Object.entries(t).forEach(([k,v])=> root.style.setProperty(k, v));
+  }
+
+  function vibrate(ms=20){
+    const s = loadSettings();
+    if(!s.haptics) return;
+    if(navigator.vibrate) navigator.vibrate(ms);
+  }
+
+  function blip(){
+    const s = loadSettings();
+    if(!s.sounds) return;
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = 660;
+      g.gain.value = 0.02;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(()=>{ o.stop(); ctx.close(); }, 120);
+    }catch{}
+  }
+
+  function greeting(){
+    const h = new Date().getHours();
+    if(h < 12) return "Good morning";
+    if(h < 17) return "Good afternoon";
+    return "Good evening";
+  }
+
+  function mountThemeSticker(){
+    const mapEl = $("storeMap");
+    if(!mapEl || mapEl.querySelector(".theme-sticker")) return;
+    const s = loadSettings();
+    const theme = s.theme || "summer";
+    const tag = document.createElement("div");
+    tag.className = "theme-sticker floaty";
+    tag.textContent = `✨ ${greeting()} • Theme: ${theme.toUpperCase()}`;
+    mapEl.appendChild(tag);
+  }
+
+  /* =====================================================
+     Tier 5 — Settings Modal
+     ===================================================== */
+  function openSettings(){
+    // Reuse detail modal if present
+    const bd = $("detailBackdrop");
+    if(!bd){
+      alert("Settings unavailable (detail modal not found).");
+      return;
+    }
+
+    const s = loadSettings();
+    const theme = s.theme || "summer";
+
+    $("detailTitle").textContent = "⚙️ Settings";
+    $("detailSubtitle").textContent = "Make the app feel like YOUR app";
+    $("detailContent").innerHTML = `
+      <div class="glass-panel">
+        <div class="settings-row">
+          <div>
+            <div style="font-weight:900;color:var(--heading);">Theme</div>
+            <div class="subtitle">Spring / Summer / Fall / Night</div>
+          </div>
+          <select id="setTheme" class="hpa-filter-input" style="max-width:160px;">
+            ${["spring","summer","fall","night"].map(t=>`
+              <option value="${t}" ${t===theme?"selected":""}>${t.toUpperCase()}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div style="font-weight:900;color:var(--heading);">Haptics</div>
+            <div class="subtitle">Tiny vibrations for wins</div>
+          </div>
+          <label class="pill-toggle">
+            <input id="setHaptics" type="checkbox" ${s.haptics ? "checked":""}/>
+            On
+          </label>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div style="font-weight:900;color:var(--heading);">Sounds</div>
+            <div class="subtitle">Soft blips for achievements</div>
+          </div>
+          <label class="pill-toggle">
+            <input id="setSounds" type="checkbox" ${s.sounds ? "checked":""}/>
+            On
+          </label>
+        </div>
+      </div>
+    `;
+
+    bd.style.display = "flex";
+
+    const themeSel = $("setTheme");
+    const hap = $("setHaptics");
+    const snd = $("setSounds");
+
+    themeSel.onchange = ()=>{
+      s.theme = themeSel.value;
+      saveSettings(s);
+      applyTheme(s.theme);
+      mountThemeSticker();
+      blip(); vibrate(20);
+    };
+    hap.onchange = ()=>{ s.haptics = hap.checked; saveSettings(s); vibrate(30); };
+    snd.onchange = ()=>{ s.sounds = snd.checked; saveSettings(s); blip(); };
+  }
+
+  // Add settings button to header (non-admin, global)
+  (function mountSettingsBtn(){
+    const topbar = $("topbar");
+    if(!topbar || topbar.querySelector("#settingsBtn")) return;
+    const btn = document.createElement("button");
+    btn.id = "settingsBtn";
+    btn.className = "tab";
+    btn.type = "button";
+    btn.textContent = "⚙️";
+    btn.title = "Settings";
+    btn.style.marginLeft = "8px";
+    btn.onclick = openSettings;
+    topbar.appendChild(btn);
+  })();
+
+  // Apply saved theme
+  const initial = loadSettings();
+  applyTheme(initial.theme || "summer");
+
+  /* =====================================================
+     Tier 4 — Seasonal Events + Weekly Challenges board (fun)
+     (Uses mondayKey week reset)
+     ===================================================== */
+  function weekKey(){ return mondayKey(); }
+
+  function loadEvents(){
+    const wk = weekKey();
+    let s = {};
+    try{ s = JSON.parse(localStorage.getItem(EVENTS_KEY)||"{}"); }catch{}
+    if(s.week !== wk){
+      // rotate seasonal events based on month (fun)
+      const month = new Date().getMonth(); // 0-11
+      const seasonal = [
+        { id:"spring_sprint", name:"🌷 Spring Sprint", desc:"Perfect 3 stores + upload 2 photos", goals:{ perfect:3, photos:2 } },
+        { id:"summer_showcase", name:"☀️ Summer Showcase", desc:"Resolve 5 issues + complete 5 checklists", goals:{ resolved:5, checklists:5 } },
+        { id:"fall_finish", name:"🍂 Fall Finish Strong", desc:"Visit 10 stores + keep health avg > 70", goals:{ visits:10, avgHealth:70 } },
+        { id:"night_ops", name:"🌙 Night Ops", desc:"Daily drill 5 days + 3 scenario sims", goals:{ drills:5, sims:3 } }
+      ];
+      const event = seasonal[month % seasonal.length];
+      s = { week:wk, event, progress:{} };
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(s));
+    }
+    return s;
+  }
+  function saveEvents(s){ localStorage.setItem(EVENTS_KEY, JSON.stringify(s)); }
+
+  function bumpEvent(key, by=1){
+    const s = loadEvents();
+    s.progress[key] = (s.progress[key]||0) + by;
+    saveEvents(s);
+  }
+
+  function eventCompletion(){
+    const s = loadEvents();
+    const g = s.event?.goals || {};
+    const p = s.progress || {};
+    const keys = Object.keys(g);
+    if(!keys.length) return 0;
+    const ratios = keys.map(k=> Math.min(1, (p[k]||0) / (g[k]||1)));
+    return Math.round((ratios.reduce((a,b)=>a+b,0) / ratios.length) * 100);
+  }
+
+  // Hook into behavior: actions bump event stats (non-destructive)
+  if(!window.__EVENT_HOOKED__){
+    window.__EVENT_HOOKED__ = true;
+    const _set = LiveState.set;
+    LiveState.set = async function(id, patch){
+      const prev = LiveState.get(id);
+      const next = await _set.call(LiveState, id, patch);
+
+      // Checklists
+      if(patch.checklist) bumpEvent("checklists", 1);
+
+      // Resolved issues
+      if(patch.issues){
+        const prevOpen = (prev.issues||[]).filter(i=>!i.resolved).length;
+        const nextOpen = (next.issues||[]).filter(i=>!i.resolved).length;
+        if(nextOpen < prevOpen) bumpEvent("resolved", (prevOpen-nextOpen));
+      }
+
+      // Visits (any meaningful action)
+      if(Object.keys(patch).some(k=>["watered","issues","negatives","checklist"].includes(k))){
+        bumpEvent("visits", 1);
+      }
+
+      return next;
+    };
+  }
+
+  /* =====================================================
+     Tier 3 — Training: Scenarios + Spot-the-Issue + Cert unlocks
+     ===================================================== */
+  function loadCerts(){
+    try{ return JSON.parse(localStorage.getItem(CERT_KEY)||"{}"); }catch{ return {}; }
+  }
+  function saveCerts(s){ localStorage.setItem(CERT_KEY, JSON.stringify(s)); }
+
+  function hasCert(name){
+    const c = loadCerts();
+    return !!c[name];
+  }
+
+  function unlockCert(name){
+    const c = loadCerts();
+    if(c[name]) return;
+    c[name] = true;
+    saveCerts(c);
+    if(window.celebrate) celebrate();
+    blip(); vibrate(30);
+  }
+
+  // Training content packs (you can add more easily)
+  const TRAIN_PACKS = {
+    scenarios: [
+      {
+        id:"scn_display_holes",
+        title:"Scenario: Empty Holes",
+        prompt:"You walk up and see holes in the display. What’s your best first move?",
+        choices:[
+          { t:"Perfect the labels first", ok:false, why:"Labels matter, but holes hurt sales immediately." },
+          { t:"Fill holes with correct product first", ok:true, why:"Always fill holes before fine-tuning details." },
+          { t:"Take a photo and leave", ok:false, why:"Documenting helps, but action is needed." }
+        ],
+        xp: 12
+      },
+      {
+        id:"scn_pricing_missing",
+        title:"Scenario: Missing Pricing",
+        prompt:"A shopper can’t find pricing. What’s the best action?",
+        choices:[
+          { t:"Tell them to ask cashier", ok:false, why:"That adds friction and loses sales." },
+          { t:"Add/repair pricing signage immediately", ok:true, why:"Pricing clarity = conversion." },
+          { t:"Ignore because product looks fine", ok:false, why:"Even beautiful displays don’t sell without pricing." }
+        ],
+        xp: 12
+      }
+    ],
+    spot: [
+      {
+        id:"spot_1",
+        title:"Spot the Issue: Display Scan",
+        // Put an image in your folder, ex: training_photos/spot_display_1.jpg
+        img:"training_photos/spot_display_1.jpg",
+        hint:"Tap where the BIGGEST issue is.",
+        // Hotspots are % positions relative to image (0-100)
+        hotspots:[
+          { x:72, y:58, r:8, label:"Missing price tag" },
+          { x:30, y:70, r:10, label:"Damaged product left out" }
+        ],
+        xp: 15
+      }
+    ]
+  };
+
+  // Social (Tier 4): squads + friendly leaderboards
+  function loadSocial(){
+    try{ return JSON.parse(localStorage.getItem(SOCIAL_KEY)||"{}"); }catch{ return {}; }
+  }
+  function saveSocial(s){ localStorage.setItem(SOCIAL_KEY, JSON.stringify(s)); }
+
+  function getSquad(){
+    const s = loadSocial();
+    return s.squad || "Solo";
+  }
+  function setSquad(name){
+    const s = loadSocial();
+    s.squad = name;
+    saveSocial(s);
+    blip(); vibrate(20);
+  }
+
+  // “XP” source: we reuse your training progress if present, otherwise local
+  function getXP(){
+    try{
+      const t = JSON.parse(localStorage.getItem("hub_training_progress_v1")||"{}");
+      return t.xp || 0;
+    }catch{ return 0; }
+  }
+
+  function renderTrainingCampus(){
+    const mount = $("train-basics");
+    if(!mount) return;
+
+    const ev = loadEvents();
+    const percent = eventCompletion();
+
+    const certs = loadCerts();
+    const plantLocked = !certs.plantCare;
+    const supLocked = !certs.supervisor;
+
+    mount.innerHTML = `
+      <div class="campus-wrap pop">
+        <div class="campus-header">
+          <div>
+            <div class="campus-title">🎓 Field Team Academy</div>
+            <div class="campus-sub">Train smarter. Execute faster. Level up weekly.</div>
+            <div class="subtitle" style="margin-top:6px;">Squad: <strong>${esc(getSquad())}</strong> • XP: <strong>${getXP()}</strong></div>
+          </div>
+
+          <button class="tab" id="btnSquad" type="button">👥 Squad</button>
+        </div>
+
+        <div class="campus-grid2">
+          <div class="building" data-open="scenarios">
+            <h3>🧠 Scenario Sims</h3>
+            <div class="subtitle">Make decisions like a pro</div>
+            <div class="course-row">
+              <span class="course-pill xp">+XP</span>
+              <span class="course-pill quiz">Interactive</span>
+              <span class="course-pill">2 mins</span>
+            </div>
+          </div>
+
+          <div class="building" data-open="spot">
+            <h3>👀 Spot-the-Issue</h3>
+            <div class="subtitle">Train your scanning eyes</div>
+            <div class="course-row">
+              <span class="course-pill xp">+XP</span>
+              <span class="course-pill quiz">Photo</span>
+              <span class="course-pill">1 min</span>
+            </div>
+          </div>
+
+          <div class="building" data-open="certs">
+            <h3>🏅 Certifications</h3>
+            <div class="subtitle">Unlock advanced tools</div>
+            <div class="course-row">
+              <span class="course-pill ${plantLocked?"lock":""}">Plant Care</span>
+              <span class="course-pill ${supLocked?"lock":""}">Supervisor</span>
+              <span class="course-pill">Progress</span>
+            </div>
+          </div>
+
+          <div class="building" data-open="weekly">
+            <h3>🌟 Weekly Event</h3>
+            <div class="subtitle">${esc(ev.event?.name || "Seasonal Event")}</div>
+            <div class="course-row">
+              <span class="course-pill xp">${percent}%</span>
+              <span class="course-pill">Rewards</span>
+              <span class="course-pill">This week</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-banner">
+          <strong>${esc(ev.event?.name || "Weekly Event")}</strong>
+          <div class="subtitle">${esc(ev.event?.desc || "")}</div>
+          <div class="event-progress"><div style="width:${percent}%"></div></div>
+          <div class="subtitle" style="margin-top:8px;">Complete tasks in the app to progress automatically.</div>
+        </div>
+      </div>
+    `;
+
+    // Squad picker
+    $("btnSquad").onclick = ()=>{
+      const name = prompt("Enter squad name (e.g., District A / Team Green):", getSquad());
+      if(!name) return;
+      setSquad(name.trim());
+      renderTrainingCampus();
+    };
+
+    mount.querySelectorAll("[data-open]").forEach(card=>{
+      card.addEventListener("click", ()=>{
+        const key = card.dataset.open;
+        if(key==="scenarios") openScenarioPicker();
+        if(key==="spot") openSpotPicker();
+        if(key==="certs") openCerts();
+        if(key==="weekly") openWeeklyDetails();
+        blip(); vibrate(15);
+      });
+    });
+  }
+
+  function openScenarioPicker(){
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+    $("detailTitle").textContent = "🧠 Scenario Sims";
+    $("detailSubtitle").textContent = "Choose the best action. Learn the why.";
+    $("detailContent").innerHTML = TRAIN_PACKS.scenarios.map(s=>`
+      <div class="card" style="margin-top:10px;" data-scn="${esc(s.id)}">
+        <div class="card-title">${esc(s.title)}</div>
+        <div class="card-sub">+${s.xp} XP • Interactive</div>
+      </div>
+    `).join("");
+    bd.style.display="flex";
+
+    $("detailContent").querySelectorAll("[data-scn]").forEach(el=>{
+      el.onclick = ()=> runScenario(el.dataset.scn);
+    });
+  }
+
+  function runScenario(id){
+    const scn = TRAIN_PACKS.scenarios.find(x=>x.id===id);
+    if(!scn) return;
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+
+    $("detailTitle").textContent = scn.title;
+    $("detailSubtitle").textContent = `+${scn.xp} XP`;
+    $("detailContent").innerHTML = `
+      <div class="quiz-card">
+        <strong>${esc(scn.prompt)}</strong>
+        ${scn.choices.map((c,i)=>`
+          <div class="choice" data-choice="${i}">
+            <div style="font-weight:1000;">${String.fromCharCode(65+i)}.</div>
+            <div>${esc(c.t)}</div>
+          </div>
+        `).join("")}
+        <div id="scnWhy" class="subtitle" style="margin-top:10px;"></div>
+      </div>
+    `;
+    bd.style.display="flex";
+
+    const why = $("scnWhy");
+    $("detailContent").querySelectorAll("[data-choice]").forEach(el=>{
+      el.onclick = ()=>{
+        const c = scn.choices[Number(el.dataset.choice)];
+        // mark styles
+        $("detailContent").querySelectorAll(".choice").forEach(x=>x.classList.remove("correct","wrong"));
+        el.classList.add(c.ok ? "correct":"wrong");
+        why.textContent = c.why;
+
+        if(c.ok){
+          // award XP using your existing training engine if present
+          try{
+            const p = JSON.parse(localStorage.getItem("hub_training_progress_v1")||"{}");
+            p.xp = (p.xp||0) + scn.xp;
+            localStorage.setItem("hub_training_progress_v1", JSON.stringify(p));
+          }catch{}
+          unlockCert("foundations"); // early cert progress marker
+          if(window.celebrate) celebrate();
+          blip(); vibrate(30);
+        }else{
+          vibrate(15);
+        }
+      };
+    });
+  }
+
+  function openSpotPicker(){
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+    $("detailTitle").textContent = "👀 Spot-the-Issue";
+    $("detailSubtitle").textContent = "Tap the problem areas. Train your scan speed.";
+    $("detailContent").innerHTML = TRAIN_PACKS.spot.map(s=>`
+      <div class="card" style="margin-top:10px;" data-spot="${esc(s.id)}">
+        <div class="card-title">${esc(s.title)}</div>
+        <div class="card-sub">+${s.xp} XP • Photo</div>
+      </div>
+    `).join("");
+    bd.style.display="flex";
+
+    $("detailContent").querySelectorAll("[data-spot]").forEach(el=>{
+      el.onclick = ()=> runSpot(el.dataset.spot);
+    });
+  }
+
+  function runSpot(id){
+    const sp = TRAIN_PACKS.spot.find(x=>x.id===id);
+    if(!sp) return;
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+
+    $("detailTitle").textContent = sp.title;
+    $("detailSubtitle").textContent = `+${sp.xp} XP`;
+    $("detailContent").innerHTML = `
+      <div class="quiz-card">
+        <div class="subtitle">${esc(sp.hint || "Tap the issue")}</div>
+        <div class="spot-wrap" id="spotWrap">
+          <img src="${esc(sp.img)}" alt="${esc(sp.title)}">
+        </div>
+        <div id="spotResult" class="subtitle" style="margin-top:10px;"></div>
+      </div>
+    `;
+    bd.style.display="flex";
+
+    const wrap = $("spotWrap");
+    const out = $("spotResult");
+    let found = 0;
+
+    // Click-to-find: if tap is within radius of a hotspot => success
+    wrap.onclick = (e)=>{
+      const rect = wrap.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+      const hit = sp.hotspots.find(h=>{
+        const dx = x - h.x;
+        const dy = y - h.y;
+        return Math.sqrt(dx*dx + dy*dy) <= (h.r || 8);
+      });
+
+      if(hit){
+        // Place dot
+        const dot = document.createElement("div");
+        dot.className = "spot-dot";
+        dot.style.left = hit.x + "%";
+        dot.style.top  = hit.y + "%";
+        wrap.appendChild(dot);
+
+        found++;
+        out.textContent = `✅ Found: ${hit.label} (${found}/${sp.hotspots.length})`;
+        blip(); vibrate(20);
+
+        if(found >= sp.hotspots.length){
+          // Award XP
+          try{
+            const p = JSON.parse(localStorage.getItem("hub_training_progress_v1")||"{}");
+            p.xp = (p.xp||0) + sp.xp;
+            localStorage.setItem("hub_training_progress_v1", JSON.stringify(p));
+          }catch{}
+          unlockCert("plantCare"); // tie into plant cert
+          if(window.celebrate) celebrate();
+          out.textContent = `🎉 Perfect scan! +${sp.xp} XP`;
+        }
+      }else{
+        out.textContent = "❌ Not quite — try scanning again.";
+        vibrate(12);
+      }
+    };
+  }
+
+  function openCerts(){
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+    const c = loadCerts();
+
+    $("detailTitle").textContent = "🏅 Certifications";
+    $("detailSubtitle").textContent = "Earn certs to unlock advanced features.";
+    $("detailContent").innerHTML = `
+      <div class="glass-panel">
+        <div class="kv"><span>Foundations</span><span>${c.foundations ? "✅" : "🔒"}</span></div>
+        <div class="kv"><span>Plant Care</span><span>${c.plantCare ? "✅" : "🔒"}</span></div>
+        <div class="kv"><span>Supervisor</span><span>${c.supervisor ? "✅" : "🔒"}</span></div>
+        <div class="subtitle" style="margin-top:10px;">
+          • Foundations unlocks advanced scenario sims<br>
+          • Plant Care unlocks premium care tips (HF/HPA)<br>
+          • Supervisor unlocks leaderboard views
+        </div>
+
+        <button class="popup-close" id="btnUnlockSup" type="button" style="width:100%;margin-top:12px;">
+          Take Supervisor Challenge
+        </button>
+      </div>
+    `;
+    bd.style.display="flex";
+
+    $("btnUnlockSup").onclick = ()=>{
+      // Simple challenge: a scenario prompt to unlock supervisor
+      const ok = confirm("Supervisor Challenge:\n\nDo you commit to running visits with objective + zones + timebox + QA?\n\nPress OK to accept.");
+      if(ok){
+        unlockCert("supervisor");
+        blip(); vibrate(30);
+        alert("🏆 Supervisor cert unlocked!");
+        openCerts();
+      }
+    };
+  }
+
+  function openWeeklyDetails(){
+    const bd = $("detailBackdrop");
+    if(!bd) return;
+    const s = loadEvents();
+    const pct = eventCompletion();
+    const g = s.event.goals || {};
+    const p = s.progress || {};
+
+    $("detailTitle").textContent = "🌟 Weekly Event";
+    $("detailSubtitle").textContent = `${s.event.name} • ${pct}%`;
+    $("detailContent").innerHTML = `
+      <div class="glass-panel">
+        <strong>${esc(s.event.name)}</strong>
+        <div class="subtitle">${esc(s.event.desc)}</div>
+        <div style="margin-top:10px;">
+          ${Object.keys(g).map(k=>`
+            <div class="kv">
+              <span>${esc(k)}</span>
+              <span>${esc(p[k]||0)} / ${esc(g[k])}</span>
+            </div>
+          `).join("")}
+        </div>
+        <div class="subtitle" style="margin-top:10px;">
+          Progress updates automatically when you do real work (issues, checklists, visits).
+        </div>
+      </div>
+    `;
+    bd.style.display="flex";
+  }
+
+  // Boot campus when training view opens
+  if(window.HubUI){
+    wrapOnce(HubUI, "showOnlyView", "seg14TrainingCampus", (orig)=> (v)=>{
+      orig(v);
+      if(v==="training") renderTrainingCampus();
+      if(v==="map") mountThemeSticker();
+    });
+  }
+  if(sessionStorage.getItem("hub_view")==="training") renderTrainingCampus();
+  if(sessionStorage.getItem("hub_view")==="map") mountThemeSticker();
+
+  /* =====================================================
+     TERRITORY BORDERS + HEATMAP (Leaflet)
+     - Option A: territories.geojson (preferred)
+     - Option B: derive convex hull per territory from stores.csv
+   ===================================================== */
+
+  let territoryLayer = null;
+  let territoryDerivedLayer = null;
+  let territoriesEnabled = false;
+  let heatEnabled = false;
+
+  // Lightweight convex hull (Monotonic chain) for points [lng,lat]
+  function hull(points){
+    if(points.length <= 3) return points;
+    const pts = points.slice().sort((a,b)=> a[0]===b[0] ? a[1]-b[1] : a[0]-b[0]);
+    const cross = (o,a,b)=> (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]);
+
+    const lower=[];
+    for(const p of pts){
+      while(lower.length>=2 && cross(lower[lower.length-2], lower[lower.length-1], p) <= 0) lower.pop();
+      lower.push(p);
+    }
+    const upper=[];
+    for(let i=pts.length-1;i>=0;i--){
+      const p=pts[i];
+      while(upper.length>=2 && cross(upper[upper.length-2], upper[upper.length-1], p) <= 0) upper.pop();
+      upper.push(p);
+    }
+    upper.pop(); lower.pop();
+    return lower.concat(upper);
+  }
+
+  function territoryKeyFromStore(s){
+    // Best-effort: supports CSV columns you might add.
+    // If stores.csv already has "territory" this will work automatically once loadStores includes it.
+    return s.territory || s.district || s.region || s.zone || s.state || "Unassigned";
+  }
+
+  function computeTerritoryStats(){
+    const groups = new Map();
+    (window.stores||[]).forEach(s=>{
+      const key = territoryKeyFromStore(s);
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(s);
+    });
+
+    const stats = new Map();
+    groups.forEach((arr, key)=>{
+      const scores = arr.map(x=> (typeof computeHealthScore==="function" ? computeHealthScore(x.id) : 50));
+      const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 50;
+      stats.set(key, { avg, count: arr.length });
+    });
+    return { groups, stats };
+  }
+
+  function heatColor(avg){
+    if(avg >= 75) return "rgba(34,197,94,.18)";   // green
+    if(avg >= 55) return "rgba(250,204,21,.18)";  // yellow
+    return "rgba(239,68,68,.18)";                 // red
+  }
+
+  async function loadTerritoriesGeoJSON(){
+    try{
+      const r = await fetch("territories.geojson", { cache:"no-store" });
+      if(!r.ok) return null;
+      return await r.json();
+    }catch{ return null; }
+  }
+
+  function ensureTerritoryControls(){
+    const mapTopPanel = document.querySelector("#view-map .glass-panel");
+    if(!mapTopPanel || mapTopPanel.querySelector("#territoryControls")) return;
+
+    const wrap = document.createElement("div");
+    wrap.id = "territoryControls";
+    wrap.className = "map-controls";
+    wrap.innerHTML = `
+      <button class="map-chip" id="btnTerritoryBorders" type="button">🧩 Territories</button>
+      <button class="map-chip" id="btnTerritoryHeat" type="button">🔥 Heat</button>
+      <button class="map-chip" id="btnMapFocus" type="button">🧭 Focus</button>
+    `;
+    mapTopPanel.appendChild(wrap);
+
+    $("btnTerritoryBorders").onclick = async ()=>{
+      territoriesEnabled = !territoriesEnabled;
+      $("btnTerritoryBorders").classList.toggle("active", territoriesEnabled);
+      await redrawTerritories();
+      vibrate(15); blip();
+    };
+    $("btnTerritoryHeat").onclick = async ()=>{
+      heatEnabled = !heatEnabled;
+      $("btnTerritoryHeat").classList.toggle("active", heatEnabled);
+      await redrawTerritories();
+      vibrate(15); blip();
+    };
+    $("btnMapFocus").onclick = ()=>{
+      // Fit map to all stores
+      if(!window.map || !window.stores?.length) return;
+      const bounds = window.stores.map(s=> [s.lat, s.lon]);
+      map.fitBounds(bounds, { padding:[20,20] });
+      vibrate(15); blip();
+    };
+  }
+
+  async function redrawTerritories(){
+    if(!window.map || !window.L) return;
+
+    // Clear old
+    if(territoryLayer){ try{ map.removeLayer(territoryLayer); }catch{} territoryLayer=null; }
+    if(territoryDerivedLayer){ try{ map.removeLayer(territoryDerivedLayer); }catch{} territoryDerivedLayer=null; }
+
+    if(!territoriesEnabled && !heatEnabled) return;
+
+    // Option A: real boundaries via GeoJSON
+    const gj = await loadTerritoriesGeoJSON();
+    if(gj){
+      const { stats } = computeTerritoryStats();
+
+      territoryLayer = L.geoJSON(gj, {
+        style: (feature)=>{
+          const name = feature.properties?.name || feature.properties?.territory || "Territory";
+          const st = stats.get(name);
+          const avg = st?.avg ?? 50;
+          return {
+            color: "rgba(34,211,238,.65)",
+            weight: 2,
+            fillColor: heatEnabled ? heatColor(avg) : "rgba(0,0,0,0)",
+            fillOpacity: heatEnabled ? 1 : 0
+          };
+        },
+        onEachFeature: (feature, layer)=>{
+          const name = feature.properties?.name || feature.properties?.territory || "Territory";
+          const { stats } = computeTerritoryStats();
+          const st = stats.get(name);
+          layer.bindTooltip(`${name}${st ? ` • Avg Health ${st.avg} • Stores ${st.count}` : ""}`, { sticky:true, opacity:.95 });
+        }
+      }).addTo(map);
+
+      return;
+    }
+
+    // Option B: derive borders by convex hull around stores per territory
+    const { groups, stats } = computeTerritoryStats();
+
+    territoryDerivedLayer = L.layerGroup().addTo(map);
+
+    groups.forEach((arr, key)=>{
+      if(arr.length < 3) return; // need 3 points for a polygon
+      const pts = arr.map(s=> [s.lon, s.lat]); // [lng,lat]
+      const h = hull(pts);
+
+      const polyLatLng = h.map(([lng,lat])=> [lat,lng]);
+
+      const avg = stats.get(key)?.avg ?? 50;
+      const poly = L.polygon(polyLatLng, {
+        color: "rgba(34,211,238,.65)",
+        weight: 2,
+        fillColor: heatEnabled ? heatColor(avg) : "rgba(0,0,0,0)",
+        fillOpacity: heatEnabled ? 1 : 0
+      });
+
+      poly.bindTooltip(`${key} • Avg Health ${avg} • Stores ${stats.get(key)?.count ?? arr.length}`, { sticky:true, opacity:.95 });
+      poly.addTo(territoryDerivedLayer);
+    });
+  }
+
+  // Ensure map controls + territories render after map is ready
+  (function hookMap(){
+    // Patch map init to install controls once
+    const _init = window.initMap;
+    window.initMap = async function(){
+      await _init?.();
+      ensureTerritoryControls();
+      mountThemeSticker();
+    };
+
+    // Whenever markers update, refresh heat overlays if enabled
+    const _update = window.updateMarkers;
+    window.updateMarkers = function(){
+      _update?.();
+      if(territoriesEnabled || heatEnabled) redrawTerritories();
+    };
+  })();
+
+})();
+</script>
+
+<!-- =====================================================
+     END SEGMENT 14
+     ===================================================== -->
 </body>
 </html>
