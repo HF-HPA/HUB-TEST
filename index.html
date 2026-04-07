@@ -6621,11 +6621,10 @@ window.celebrate = function(){
     return lower.concat(upper);
   }
 
-  function territoryKeyFromStore(s){
-    // Best-effort: supports CSV columns you might add.
-    // If stores.csv already has "territory" this will work automatically once loadStores includes it.
-    return s.territory || s.district || s.region || s.zone || s.state || "Unassigned";
-  }
+function territoryKeyFromStore(s){
+  if(!s.territory) return "Unassigned";
+  return String(s.territory).trim().toUpperCase();
+}
 
   function computeTerritoryStats(){
     const groups = new Map();
