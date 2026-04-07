@@ -3572,5 +3572,1039 @@ if(window.__HUB_SEG6__.loaded){
   log("Segment 6 loaded ✅  Hub ready");
 }
 </script>
+<!-- =====================================================
+     SEGMENT 7 — MOBILE FRIENDLY + DATA SOURCE PATCHES + ORDER DETAIL + ADMIN LINKS + TRAINING VIBE
+     Paste AFTER Segment 6
+     ===================================================== -->
+
+<style>
+  /* =====================================================
+     0) MOBILE FRIENDLY OVERRIDES (tap targets, spacing, layout)
+     ===================================================== */
+  @media (max-width: 980px){
+    .app-inner{ padding:14px !important; border-radius:20px !important; }
+    .logo{ width:56px; height:56px; border-radius:16px; }
+    .title-block h1{ font-size:1.15rem; }
+    .tab{ padding:10px 16px; font-size:.95rem; }
+    .popup{ max-width: 92vw !important; }
+  }
+
+  /* Map view: stack map + panel on mobile */
+  @media (max-width: 900px){
+    /* Targets the inline-styled grid container inside view-map */
+    #view-map > div[style*="grid-template-columns"]{
+      grid-template-columns: 1fr !important;
+    }
+    #storeMap{ height: 52vh !important; }
+    #view-map aside.glass-panel{ order: 2; }
+    #view-map .store-actions .popup-close{
+      width: 100%;
+      margin-top: 8px;
+      text-align:center;
+    }
+  }
+
+  @media (max-width: 560px){
+    .app-shell{ padding:10px !important; }
+    .app-inner{ padding:12px !important; border-radius:18px !important; }
+    .header{ gap:10px; }
+    .header-pill{ font-size:.72rem; }
+    .tabs{ gap:6px; }
+    .tab{ padding:10px 14px; }
+    .kv{ padding:10px; }
+    #storeMap{ height: 48vh !important; }
+    .map-legend{ display:none; } /* optional: remove clutter on tiny screens */
+  }
+
+  /* =====================================================
+     1) SPLASH LOGO — remove focus outline + pulsing light under logo
+     ===================================================== */
+  #splashEnter{
+    position:relative;
+    display:inline-block;
+    border-radius:28px;
+  }
+  /* Remove the "focus-visible outline" ONLY on splash enter */
+  #splashEnter:focus-visible{
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  /* Pulsing light */
+  #splashEnter::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top: calc(100% - 24px);
+    transform:translateX(-50%);
+    width: 180px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(34,211,238,.55), rgba(34,211,238,0) 70%);
+    filter: blur(6px);
+    opacity: .85;
+    animation: splashPulse 1.8s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes splashPulse{
+    0%{ transform:translateX(-50%) scale(.92); opacity:.55; }
+    50%{ transform:translateX(-50%) scale(1.06); opacity:1; }
+    100%{ transform:translateX(-50%) scale(.92); opacity:.55; }
+  }
+
+  /* =====================================================
+     5) ORDER DETAIL LOOK (match your screenshot vibe)
+     ===================================================== */
+  .order-detail-wrap{
+    margin-top:12px;
+    padding:14px;
+    border-radius:18px;
+    border:1px solid rgba(34,211,238,.45);
+    background: radial-gradient(circle at top left, rgba(34,211,238,.14), rgba(2,6,23,.35) 55%, rgba(2,6,23,.25));
+    box-shadow: 0 18px 50px rgba(0,0,0,.65);
+  }
+  .order-detail-header{
+    display:flex;
+    justify-content:center;
+    margin-bottom:10px;
+  }
+  .order-week-pill{
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid rgba(34,211,238,.65);
+    background: rgba(2,6,23,.55);
+    color: var(--heading);
+    font-weight:900;
+    letter-spacing:.02em;
+    box-shadow: 0 10px 28px rgba(0,0,0,.55);
+  }
+  .order-subpill{
+    margin-top:8px;
+    text-align:center;
+    color:var(--muted);
+    font-size:.85rem;
+  }
+  .order-groups{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+    margin-top:12px;
+  }
+  @media (max-width: 980px){ .order-groups{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px){ .order-groups{ grid-template-columns: 1fr; } }
+
+  .order-group-card{
+    border-radius:16px;
+    border:1px solid rgba(148,163,184,.25);
+    background: rgba(2,6,23,.38);
+    padding:12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.55);
+    min-height: 150px;
+  }
+  .order-group-title{
+    font-weight:1000;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: var(--heading);
+    font-size:.9rem;
+    margin-bottom:8px;
+  }
+  .order-lines{
+    font-size:.86rem;
+    color: var(--text);
+    line-height:1.35;
+    white-space:pre-wrap;
+  }
+
+  .btn-expand{
+    padding:7px 12px;
+    border-radius:999px;
+    border:1px solid rgba(34,211,238,.55);
+    background: rgba(2,6,23,.35);
+    color: var(--heading);
+    cursor:pointer;
+    font-weight:900;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn-expand:hover{ transform: translateY(-1px); background: rgba(15,23,42,.6); }
+
+  /* =====================================================
+     7) TRAINING HUB — "School vibe" theme
+     ===================================================== */
+  .train-campus{
+    border-radius:18px;
+    border:1px solid rgba(34,211,238,.35);
+    background:
+      radial-gradient(circle at top left, rgba(59,130,246,.22), rgba(15,23,42,.72) 50%),
+      radial-gradient(circle at bottom right, rgba(34,211,238,.16), rgba(15,23,42,.72) 55%);
+    box-shadow: 0 18px 60px rgba(0,0,0,.7);
+    padding:14px;
+  }
+  .train-top{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .train-badge-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .train-badge{
+    padding:6px 12px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.28);
+    background: rgba(2,6,23,.35);
+    color: var(--heading);
+    font-size:.78rem;
+    font-weight:900;
+  }
+  .train-badge strong{ color: var(--accent); }
+  .train-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+  }
+  @media (max-width: 980px){ .train-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px){ .train-grid{ grid-template-columns: 1fr; } }
+
+  .lesson-card{
+    border-radius:16px;
+    border:1px solid rgba(148,163,184,.25);
+    background: rgba(2,6,23,.35);
+    padding:12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.55);
+    cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .lesson-card::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    background: radial-gradient(circle at top left, rgba(34,211,238,.18), transparent 60%);
+    opacity:.9;
+    pointer-events:none;
+  }
+  .lesson-card:hover{
+    transform: translateY(-1px);
+    border-color: rgba(34,211,238,.55);
+  }
+  .lesson-title{
+    font-weight:1000;
+    color: var(--heading);
+    position:relative;
+    z-index:1;
+  }
+  .lesson-sub{
+    margin-top:6px;
+    color: var(--muted);
+    font-size:.86rem;
+    position:relative;
+    z-index:1;
+  }
+  .lesson-meta{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:10px;
+    position:relative;
+    z-index:1;
+  }
+  .pill{
+    padding:5px 10px;
+    border-radius:999px;
+    background: rgba(15,23,42,.55);
+    border:1px solid rgba(148,163,184,.25);
+    color: var(--heading);
+    font-size:.75rem;
+    font-weight:900;
+  }
+  .pill.xp{ border-color: rgba(34,211,238,.55); color: var(--accent); }
+  .pill.quiz{ border-color: rgba(250,204,21,.55); color: #fde68a; }
+</style>
+
+<script>
+/* =====================================================
+   SEG7 PATCHES
+   ===================================================== */
+window.__HUB_SEG7__ = window.__HUB_SEG7__ || { loaded:false };
+if(window.__HUB_SEG7__.loaded){
+  console.warn("[hub] Segment 7 already loaded; skipping.");
+} else {
+  window.__HUB_SEG7__.loaded = true;
+
+  const $ = (id)=>document.getElementById(id);
+
+  /* =====================================================
+     2-4) HF/HPA GUIDELINES + CARE DATA SOURCE OVERRIDES
+     ===================================================== */
+
+  async function loadCsvObjects(url){
+    const r = await fetch(url, { cache:"no-store" });
+    if(!r.ok) throw new Error(url + " missing");
+    const text = await r.text();
+    const rows = parseCSV(text);
+    if(!rows || rows.length < 2) throw new Error(url + " empty/invalid");
+
+    const header = rows[0].map(h => String(h).toLowerCase().trim());
+    const data = rows.slice(1);
+
+    return data.map(row=>{
+      const obj = {};
+      header.forEach((h,i)=> obj[h] = (row[i] ?? "").toString().trim());
+      return obj;
+    }).filter(o => Object.values(o).some(v => String(v).trim() !== ""));
+  }
+
+  function renderGuidelinesFromCsv(mountId, rows, label){
+    const mount = $(mountId);
+    if(!mount) return;
+
+    // Flexible columns: title/body OR heading/details OR name/text
+    const pick = (r, keys)=> keys.map(k=> r[k]).find(v=> v && String(v).trim()) || "";
+
+    mount.innerHTML = `
+      <div class="hf-seasonal">
+        <strong>${esc(label)} Guidelines</strong>
+        <div class="subtitle">Loaded from CSV</div>
+      </div>
+      ${rows.map(r=>{
+        const title = pick(r, ["title","heading","name","topic"]) || "Guideline";
+        const body  = pick(r, ["body","details","description","text","notes"]) || "";
+        return `
+          <div class="glass-panel" style="margin-bottom:10px;">
+            <div style="font-weight:900;color:var(--heading);">${esc(title)}</div>
+            <div class="subtitle" style="margin-top:6px;white-space:pre-wrap;">${esc(body)}</div>
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  // Shared renderer for care cards from CSV
+  function renderCareCards(mountId, rows, title, subtitle){
+    const mount = $(mountId);
+    if(!mount) return;
+
+    // Determine best "name" field
+    const getName = (r)=> r.name || r.title || r.common || r.plant || r.pest || r.item || "Item";
+    const getSub  = (r)=> r.category || r.type || r.group || r.symptoms || "";
+
+    mount.innerHTML = `
+      <div class="glass-panel" style="margin-bottom:10px;">
+        <strong>${esc(title)}</strong>
+        <div class="subtitle">${esc(subtitle)}</div>
+      </div>
+      <div class="card-grid">
+        ${rows.map((r, idx)=>{
+          const id = r.id || r.sku || r.code || (title + "-" + idx);
+          return `
+            <div class="card" role="button" tabindex="0" data-id="${esc(id)}" data-json="${esc(JSON.stringify(r))}">
+              <div class="card-title">${esc(getName(r))}</div>
+              ${getSub(r) ? `<div class="card-sub">${esc(getSub(r))}</div>` : ``}
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    // Click -> show detail modal (reuse if Segment 5 created it; else simple modal)
+    mount.querySelectorAll(".card").forEach(card=>{
+      const open = ()=>{
+        let data = {};
+        try{ data = JSON.parse(card.dataset.json || "{}"); }catch{}
+        const name = data.name || data.title || data.common || data.plant || data.pest || "Details";
+        const sub  = data.category || data.type || data.group || "";
+
+        // Build a nice details view from all fields
+        const entries = Object.entries(data).filter(([k,v]) => v && String(v).trim());
+        const bodyHTML = `
+          <div class="detail-body">
+            ${entries.map(([k,v])=>`
+              <div class="kv" style="margin-top:8px;">
+                <span>${esc(k)}</span>
+                <span style="font-weight:800;color:var(--heading);">${esc(v)}</span>
+              </div>
+            `).join("")}
+          </div>
+        `;
+
+        // Prefer Segment 5 modal if present
+        if(document.getElementById("detailBackdrop")){
+          const bd = document.getElementById("detailBackdrop");
+          document.getElementById("detailTitle").textContent = name;
+          document.getElementById("detailSubtitle").textContent = sub;
+          document.getElementById("detailContent").innerHTML = bodyHTML;
+          bd.style.display = "flex";
+        } else {
+          alert(name + (sub ? " — " + sub : ""));
+        }
+
+        // fire for HF recent/favorites patchers
+        card.dispatchEvent(new Event("hub:opened", { bubbles:true }));
+      };
+
+      card.addEventListener("click", open);
+      card.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); }
+      });
+    });
+  }
+
+  // HF loaders: hf_guidelines.csv, hf_perennials.csv, pests.csv
+  async function bootHF_csvOnly(){
+    try{
+      const rows = await loadCsvObjects("hf_guidelines.csv");
+      renderGuidelinesFromCsv("hf-guidelines", rows, "HF");
+    }catch(e){
+      console.warn("[HF] hf_guidelines.csv failed", e);
+      const m = $("hf-guidelines");
+      if(m) m.innerHTML = `<div class="glass-panel"><strong>HF Guidelines unavailable</strong><div class="subtitle">Missing <code>hf_guidelines.csv</code></div></div>`;
+    }
+
+    // Care tabs
+    async function loadPerennials(){
+      try{
+        const rows = await loadCsvObjects("hf_perennials.csv");
+        renderCareCards("hf-plants", rows, "Perennials", "Care & Identification • hf_perennials.csv");
+      }catch(e){
+        console.warn("[HF] hf_perennials.csv failed", e);
+        const m = $("hf-plants");
+        if(m) m.innerHTML = `<div class="glass-panel"><strong>Perennials unavailable</strong><div class="subtitle">Missing <code>hf_perennials.csv</code></div></div>`;
+      }
+    }
+    async function loadPests(){
+      try{
+        const rows = await loadCsvObjects("pests.csv");
+        renderCareCards("hf-pests", rows, "Pests", "Identification & Treatment • pests.csv");
+      }catch(e){
+        console.warn("[HF] pests.csv failed", e);
+        const m = $("hf-pests");
+        if(m) m.innerHTML = `<div class="glass-panel"><strong>Pests unavailable</strong><div class="subtitle">Missing <code>pests.csv</code></div></div>`;
+      }
+    }
+
+    // Wire tab clicks (idempotent)
+    document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+      if(btn.dataset.seg7) return;
+      btn.dataset.seg7 = "1";
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hfTab === "care"){
+          const active = document.querySelector("[data-hf-care].active")?.dataset.hfCare || "plants";
+          if(active === "plants") loadPerennials();
+          else loadPests();
+        }
+      });
+    });
+    document.querySelectorAll("[data-hf-care]").forEach(btn=>{
+      if(btn.dataset.seg7) return;
+      btn.dataset.seg7 = "1";
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hfCare === "plants") loadPerennials();
+        if(btn.dataset.hfCare === "pests") loadPests();
+      });
+    });
+
+    // If already on care tab, load active subtab immediately
+    if(!$("hf-care")?.classList.contains("hidden")){
+      const active = document.querySelector("[data-hf-care].active")?.dataset.hfCare || "plants";
+      if(active === "plants") loadPerennials();
+      else loadPests();
+    }
+  }
+
+  // HPA loaders: hpa_guidelines.csv, plants.csv, pests.csv
+  async function bootHPA_csvOnly(){
+    try{
+      const rows = await loadCsvObjects("hpa_guidelines.csv");
+      renderGuidelinesFromCsv("hpa-guidelines", rows, "HPA");
+    }catch(e){
+      console.warn("[HPA] hpa_guidelines.csv failed", e);
+      const m = $("hpa-guidelines");
+      if(m) m.innerHTML = `<div class="glass-panel"><strong>HPA Guidelines unavailable</strong><div class="subtitle">Missing <code>hpa_guidelines.csv</code></div></div>`;
+    }
+
+    async function loadPlants(){
+      try{
+        const rows = await loadCsvObjects("plants.csv");
+        renderCareCards("hpa-plants", rows, "Plants", "Care & Identification • plants.csv");
+      }catch(e){
+        console.warn("[HPA] plants.csv failed", e);
+        const m = $("hpa-plants");
+        if(m) m.innerHTML = `<div class="glass-panel"><strong>Plants unavailable</strong><div class="subtitle">Missing <code>plants.csv</code></div></div>`;
+      }
+    }
+    async function loadPests(){
+      try{
+        const rows = await loadCsvObjects("pests.csv");
+        renderCareCards("hpa-pests", rows, "Pests", "Identification & Treatment • pests.csv");
+      }catch(e){
+        console.warn("[HPA] pests.csv failed", e);
+        const m = $("hpa-pests");
+        if(m) m.innerHTML = `<div class="glass-panel"><strong>Pests unavailable</strong><div class="subtitle">Missing <code>pests.csv</code></div></div>`;
+      }
+    }
+
+    document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+      if(btn.dataset.seg7) return;
+      btn.dataset.seg7 = "1";
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hpaTab === "care"){
+          const active = document.querySelector("[data-hpa-care].active")?.dataset.hpaCare || "plants";
+          if(active === "plants") loadPlants();
+          else loadPests();
+        }
+      });
+    });
+    document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+      if(btn.dataset.seg7) return;
+      btn.dataset.seg7 = "1";
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hpaCare === "plants") loadPlants();
+        if(btn.dataset.hpaCare === "pests") loadPests();
+      });
+    });
+
+    if(!$("hpa-care")?.classList.contains("hidden")){
+      const active = document.querySelector("[data-hpa-care].active")?.dataset.hpaCare || "plants";
+      if(active === "plants") loadPlants();
+      else loadPests();
+    }
+  }
+
+  /* Hook into view switching */
+  if(window.HubUI){
+    wrapOnce(window.HubUI, "showOnlyView", "seg7CsvSources", (original)=> (name)=>{
+      original(name);
+      if(name === "hf") bootHF_csvOnly();
+      if(name === "hpa") bootHPA_csvOnly();
+    });
+  }
+
+  // Also restore on refresh if already in hf/hpa
+  try{
+    const view = sessionStorage.getItem("hub_view");
+    if(view === "hf") bootHF_csvOnly();
+    if(view === "hpa") bootHPA_csvOnly();
+  }catch{}
+
+  /* =====================================================
+     5) ORDER BREAKDOWN — Expand detailed order from OrderBreakdown.csv
+     ===================================================== */
+  async function loadOrderWeeks(){
+    return await loadCsvObjects("OrderWeeks.csv");
+  }
+  async function loadOrderBreakdown(){
+    return await loadCsvObjects("OrderBreakdown.csv");
+  }
+
+  function normalizeRow(r){
+    // normalize keys (already lowercased by loader), but ensure common variants
+    const get = (...keys)=> keys.map(k=> r[k]).find(v=> v && String(v).trim()) || "";
+    return {
+      week: get("week #","week","week_number","weeknum","shipping week","shipping_week"),
+      weekDate: get("week date","date","week_of"),
+      group: get("group","grade","store grade","region","district","category","bucket") || "ALL",
+      item: get("item","sku name","name","product","description") || "",
+      qty: get("qty","quantity","count","units") || "",
+      size: get("size","pot size","spec") || "",
+      notes: get("notes","detail","details","additional") || ""
+    };
+  }
+
+  function renderOrderDetail(detailMount, weekRow, breakdownRows){
+    const wk = weekRow["week #"] || weekRow.week || weekRow["week_number"] || weekRow.weeknum || "";
+    const wkLabel = wk ? `Shipping Week #: ${wk}` : "Shipping Week";
+
+    // Filter breakdown by week
+    const filtered = breakdownRows
+      .map(normalizeRow)
+      .filter(x => String(x.week).trim() === String(wk).trim());
+
+    // Group into cards (FLO/FOL/UCO etc.)
+    const groups = new Map();
+    filtered.forEach(x=>{
+      const g = (x.group || "ALL").toUpperCase().trim();
+      if(!groups.has(g)) groups.set(g, []);
+      const lineBits = [
+        x.qty ? `${x.qty} —` : "",
+        x.size ? `${x.size}` : "",
+        x.item
+      ].filter(Boolean).join(" ").trim();
+      const line = (lineBits || x.item || "").trim();
+      if(line) groups.get(g).push(line + (x.notes ? ` (${x.notes})` : ""));
+    });
+
+    const groupCards = [...groups.entries()].map(([g, lines])=>`
+      <div class="order-group-card">
+        <div class="order-group-title">${esc(g)}</div>
+        <div class="order-lines">${esc(lines.join("\n"))}</div>
+      </div>
+    `).join("");
+
+    detailMount.innerHTML = `
+      <div class="order-detail-wrap">
+        <div class="order-detail-header">
+          <div class="order-week-pill">${esc(wkLabel)}</div>
+        </div>
+        <div class="order-subpill">
+          Store Grade Shipping: ${esc((weekRow.shipping || weekRow["store grade shipping"] || "ALL stores"))}
+        </div>
+        <div class="order-groups">
+          ${groupCards || `<div class="glass-panel"><strong>No breakdown found</strong><div class="subtitle">No matching rows in <code>OrderBreakdown.csv</code> for week ${esc(wk)}</div></div>`}
+        </div>
+      </div>
+    `;
+  }
+
+  // Override HPA Product Orders renderer if Segment 4 exists
+  window.bootHpaProductInfo = (function wrapBoot(orig){
+    let booted = false;
+    return async function(){
+      if(booted) return;
+      booted = true;
+
+      // Let original boot run (SKU tab UI etc.)
+      if(typeof orig === "function") await orig();
+
+      // Now patch the Orders tab rendering to include expand controls
+      const mount = $("products-orders");
+      if(!mount) return;
+
+      mount.innerHTML = `
+        <div class="hpa-order-wrap">
+          <div class="hpa-order-title">Weekly Shipping Overview</div>
+          <table class="hpa-order-table">
+            <thead>
+              <tr>
+                <th>Week #</th>
+                <th>Week Date</th>
+                <th>Shipping</th>
+                <th>Additional</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="hpaOrderWeeks"></tbody>
+          </table>
+
+          <div id="orderDetailMount"></div>
+        </div>
+      `;
+
+      const body = $("hpaOrderWeeks");
+      const detailMount = $("orderDetailMount");
+
+      let weeks = [];
+      let breakdown = [];
+      try{
+        weeks = await loadOrderWeeks();
+      }catch(e){
+        console.warn("[orders] OrderWeeks.csv failed", e);
+        if(body){
+          body.innerHTML = `<tr><td colspan="6" style="color:var(--muted);">Could not load <code>OrderWeeks.csv</code>.</td></tr>`;
+        }
+        return;
+      }
+
+      try{
+        breakdown = await loadOrderBreakdown();
+      }catch(e){
+        console.warn("[orders] OrderBreakdown.csv failed", e);
+        // Still render week table, but detail will show a message
+        breakdown = [];
+      }
+
+      let expandedWeek = null;
+
+      body.innerHTML = weeks.map((r, idx)=>{
+        const wk = r["week #"] || r.week || "";
+        const expandLabel = (expandedWeek === wk) ? "Hide Detailed Breakdown" : "View Detailed Breakdown";
+        return `
+          <tr data-week="${esc(wk)}">
+            <td>${esc(wk)}</td>
+            <td>${esc(r["week date"] || r.date || "")}</td>
+            <td>${esc(r.shipping || r["store grade shipping"] || "ALL")}</td>
+            <td>${esc(r.additional || "")}</td>
+            <td>${esc(r.status || "")}</td>
+            <td style="text-align:right;">
+              <button class="btn-expand" type="button" data-expand="${esc(wk)}">${esc(expandLabel)}</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      body.addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-expand]");
+        if(!btn) return;
+        const wk = btn.dataset.expand;
+
+        // Toggle
+        if(expandedWeek === wk){
+          expandedWeek = null;
+          detailMount.innerHTML = "";
+          // Update button label
+          btn.textContent = "View Detailed Breakdown";
+          return;
+        }
+
+        expandedWeek = wk;
+
+        // Update all button labels
+        body.querySelectorAll("[data-expand]").forEach(b=>{
+          b.textContent = (b.dataset.expand === wk) ? "Hide Detailed Breakdown" : "View Detailed Breakdown";
+        });
+
+        // Find the week row
+        const weekRow = weeks.find(x => String(x["week #"] || x.week || "").trim() === String(wk).trim()) || {};
+        renderOrderDetail(detailMount, weekRow, breakdown);
+
+        // Scroll into view on mobile
+        detailMount.scrollIntoView({ behavior:"smooth", block:"start" });
+      });
+    };
+  })(window.bootHpaProductInfo);
+
+  /* =====================================================
+     6) ADMIN TAB — open URLs + district checklist under construction
+     ===================================================== */
+  function openUnderConstruction(){
+    if(document.getElementById("detailBackdrop")){
+      const bd = document.getElementById("detailBackdrop");
+      document.getElementById("detailTitle").textContent = "District Checklist";
+      document.getElementById("detailSubtitle").textContent = "Under Construction";
+      document.getElementById("detailContent").innerHTML = `
+        <div class="glass-panel">
+          <strong>🚧 Coming Soon</strong>
+          <div class="subtitle" style="margin-top:6px;">
+            This tool is being built. Check back soon!
+          </div>
+        </div>
+      `;
+      bd.style.display = "flex";
+    } else {
+      alert("District Checklist is under construction 🚧");
+    }
+  }
+
+  function wireAdminLinks(){
+    const adminView = $("view-admin");
+    if(!adminView) return;
+
+    const buttons = [...adminView.querySelectorAll(".tabs .tab")];
+    if(!buttons.length) return;
+
+    const map = new Map([
+      ["AIR Uploads", "https://air.inc/"],
+      ["Store Audit", "https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UOTM5WUNGMDhXMjc5NDAyRkU4OUsxV1RBRy4u&route=shorturl"],
+      ["Rack Counts", "https://forms.office.com/pages/responsepage.aspx?id=aHSUFQv62k2o7bcNg7OOJLKM9yUJbyxMv-ki2k417q1UMUtKREtRSFpMS1ZaQzNYRkJOSjBGOTVMTS4u&route=shorturl"],
+      ["District Checklist", "__UC__"]
+    ]);
+
+    buttons.forEach(btn=>{
+      const label = btn.textContent.trim();
+      const url = map.get(label);
+      if(!url) return;
+
+      btn.type = "button";
+      btn.addEventListener("click", ()=>{
+        if(url === "__UC__") return openUnderConstruction();
+        window.open(url, "_blank", "noopener,noreferrer");
+      }, { once:false });
+    });
+  }
+
+  // Wire now + on entering admin view
+  wireAdminLinks();
+  if(window.HubUI){
+    wrapOnce(window.HubUI, "showOnlyView", "seg7AdminLinks", (original)=> (name)=>{
+      original(name);
+      if(name === "admin") wireAdminLinks();
+    });
+  }
+
+  /* =====================================================
+     7) TRAINING HUB — Fun School Vibe + Gamified Lessons
+     ===================================================== */
+  const TRAIN_KEY = "hub_training_progress_v1";
+
+  function loadProgress(){
+    try{ return JSON.parse(localStorage.getItem(TRAIN_KEY) || "{}"); }
+    catch{ return {}; }
+  }
+  function saveProgress(p){
+    try{ localStorage.setItem(TRAIN_KEY, JSON.stringify(p)); }catch{}
+  }
+
+  function awardXP(track, amount){
+    const p = loadProgress();
+    p.xp = p.xp || 0;
+    p.xp += amount;
+    p.tracks = p.tracks || {};
+    p.tracks[track] = p.tracks[track] || { completed:{} };
+    saveProgress(p);
+    return p;
+  }
+
+  function markComplete(track, lessonId){
+    const p = loadProgress();
+    p.tracks = p.tracks || {};
+    p.tracks[track] = p.tracks[track] || { completed:{} };
+    p.tracks[track].completed[lessonId] = true;
+    saveProgress(p);
+  }
+
+  function isComplete(track, lessonId){
+    const p = loadProgress();
+    return !!p?.tracks?.[track]?.completed?.[lessonId];
+  }
+
+  function trainingUI(mountId, track, lessons){
+    const mount = $(mountId);
+    if(!mount) return;
+
+    const p = loadProgress();
+    const xp = p.xp || 0;
+    const completedCount = lessons.filter(l => isComplete(track, l.id)).length;
+
+    mount.innerHTML = `
+      <div class="train-campus">
+        <div class="train-top">
+          <div>
+            <div style="font-weight:1000;color:var(--heading);font-size:1.05rem;">🎓 Field Team Academy</div>
+            <div class="subtitle">Complete lessons, earn XP, and level up your merch skills.</div>
+          </div>
+          <div class="train-badge-row">
+            <div class="train-badge">XP: <strong>${xp}</strong></div>
+            <div class="train-badge">${esc(track.toUpperCase())}: <strong>${completedCount}/${lessons.length}</strong> Complete</div>
+            <div class="train-badge">Streak: <strong>${p.streak || 0}</strong> 🔥</div>
+          </div>
+        </div>
+
+        <div class="train-grid">
+          ${lessons.map(l=>{
+            const done = isComplete(track, l.id);
+            return `
+              <div class="lesson-card" role="button" tabindex="0" data-lesson="${esc(l.id)}">
+                <div class="lesson-title">${done ? "✅ " : ""}${esc(l.title)}</div>
+                <div class="lesson-sub">${esc(l.subtitle)}</div>
+                <div class="lesson-meta">
+                  <span class="pill xp">+${l.xp} XP</span>
+                  ${l.quiz ? `<span class="pill quiz">Quiz</span>` : ``}
+                  <span class="pill">${esc(l.time)}</span>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+
+    // Open lesson in detail modal
+    mount.querySelectorAll("[data-lesson]").forEach(card=>{
+      const open = ()=>{
+        const id = card.dataset.lesson;
+        const lesson = lessons.find(x=> x.id === id);
+        if(!lesson) return;
+
+        const body = `
+          <div class="glass-panel">
+            <strong>${esc(lesson.title)}</strong>
+            <div class="subtitle">${esc(lesson.subtitle)}</div>
+            <div class="detail-body" style="margin-top:10px;white-space:pre-wrap;">${esc(lesson.content)}</div>
+          </div>
+          ${lesson.quiz ? renderQuizHTML(track, lesson) : ""}
+        `;
+
+        if(document.getElementById("detailBackdrop")){
+          const bd = document.getElementById("detailBackdrop");
+          document.getElementById("detailTitle").textContent = lesson.title;
+          document.getElementById("detailSubtitle").textContent = lesson.time + " • +" + lesson.xp + " XP";
+          document.getElementById("detailContent").innerHTML = body;
+          bd.style.display = "flex";
+
+          wireQuiz(track, lesson);
+          wireCompleteButton(track, lesson);
+        } else {
+          alert(lesson.title);
+        }
+      };
+
+      card.addEventListener("click", open);
+      card.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); }});
+    });
+  }
+
+  function renderQuizHTML(track, lesson){
+    return `
+      <div class="glass-panel" style="margin-top:12px;">
+        <strong>📝 Quick Quiz</strong>
+        <div class="subtitle">Get 100% to earn a bonus badge.</div>
+        <div id="quizMount" style="margin-top:10px;">
+          ${lesson.quiz.map((q, idx)=>`
+            <div class="glass-panel" style="margin-bottom:10px;">
+              <div style="font-weight:900;">${idx+1}. ${esc(q.q)}</div>
+              <div style="margin-top:8px;display:grid;gap:8px;">
+                ${q.a.map((ans,i)=>`
+                  <label class="pill-toggle" style="justify-content:flex-start;">
+                    <input type="radio" name="q${idx}" value="${i}">
+                    ${esc(ans)}
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+          `).join("")}
+          <button class="popup-close" id="quizSubmitBtn" type="button">Submit Quiz</button>
+          <div id="quizResult" class="subtitle" style="margin-top:8px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function wireQuiz(track, lesson){
+    const btn = $("quizSubmitBtn");
+    const result = $("quizResult");
+    if(!btn || !result) return;
+
+    btn.onclick = ()=>{
+      let correct = 0;
+      lesson.quiz.forEach((q, idx)=>{
+        const chosen = document.querySelector(`input[name="q${idx}"]:checked`);
+        if(chosen && Number(chosen.value) === q.correct) correct++;
+      });
+      const score = Math.round((correct / lesson.quiz.length) * 100);
+      result.textContent = `Score: ${score}% (${correct}/${lesson.quiz.length})`;
+
+      if(score === 100){
+        const p = awardXP(track, 10); // bonus XP
+        result.textContent += " • Perfect! +10 bonus XP ⭐";
+      }
+    };
+  }
+
+  function wireCompleteButton(track, lesson){
+    // Add a completion button at the bottom of modal content
+    const content = $("detailContent");
+    if(!content || content.querySelector("#lessonCompleteBtn")) return;
+
+    const btn = document.createElement("button");
+    btn.id = "lessonCompleteBtn";
+    btn.className = "popup-close";
+    btn.type = "button";
+    btn.textContent = isComplete(track, lesson.id) ? "✅ Completed" : "Mark Complete (+XP)";
+    btn.style.marginTop = "12px";
+
+    btn.onclick = ()=>{
+      if(isComplete(track, lesson.id)) return;
+      markComplete(track, lesson.id);
+      awardXP(track, lesson.xp);
+      btn.textContent = "✅ Completed";
+
+      // Refresh track UI so checkmarks update
+      bootTrainingFun();
+    };
+
+    content.appendChild(btn);
+  }
+
+  function bootTrainingFun(){
+    const lessonsBasics = [
+      { id:"b1", title:"Welcome to Merchandising 101", subtitle:"Your mission, your route, your wins", time:"5 min", xp:15, content:
+`Welcome aboard! 🎉
+
+✅ What “great” looks like:
+• Full, faced, clean, and shoppable
+• Clear signage + correct pricing
+• Healthy product presentation (no dead/damaged left out)
+
+💡 Pro tip: Take a quick “before” photo and a “done” photo for confidence + proof.` ,
+        quiz:[
+          { q:"What’s the fastest way to show your work?", a:["Write a long note","Before/after photos","Wait for someone to check"], correct:1 },
+          { q:"What is 'facing'?", a:["Turning all labels forward","Counting racks","Watering everything"], correct:0 }
+        ]
+      },
+      { id:"b2", title:"Speed Walk: 7-Minute Store Scan", subtitle:"Spot issues fast without missing details", time:"7 min", xp:20, content:
+`Do this scan every visit:
+1) Entrance: first impression (signage + hero items)
+2) Endcaps: full + correct placement
+3) Quality: remove damaged, rotate product
+4) Water check: only where needed, avoid overwatering
+5) Photo log: quick proof points` ,
+        quiz:[
+          { q:"What should you do with damaged product?", a:["Hide it behind good items","Remove/flag it","Ignore it"], correct:1 }
+        ]
+      },
+      { id:"b3", title:"Customer-Ready Displays", subtitle:"Make it easy to buy", time:"6 min", xp:18, content:
+`A customer-ready display:
+• Visible pricing
+• Grouped by type/need
+• Easy reach + safe stacking
+• “Best sellers” at eye level
+
+Goal: Reduce friction → increase conversion.` }
+    ];
+
+    const lessonsMerch = [
+      { id:"m1", title:"Power Merch: Color Blocks & Story", subtitle:"Make displays pop like a pro", time:"8 min", xp:22, content:
+`Try these layouts:
+🎨 Color block (reds together, purples together)
+📈 Price ladder (good/better/best)
+🌿 Story set (soil + plant + pot = one solution)
+
+Tiny tweaks → huge impact.` ,
+        quiz:[
+          { q:"What’s a 'story set'?", a:["A sales pitch", "A grouped solution display", "A training video"], correct:1 }
+        ]
+      },
+      { id:"m2", title:"Restock Strategy", subtitle:"Prioritize the money zones", time:"6 min", xp:18, content:
+`Hit these first:
+1) Top sellers
+2) Front tables / entrance
+3) Empty gaps (look bad, sell worse)
+4) Broken facings
+
+Rule: Fill holes before perfecting labels.`}
+    ];
+
+    const lessonsSup = [
+      { id:"s1", title:"Lead Like a Field Captain", subtitle:"Run a great visit with a simple plan", time:"9 min", xp:25, content:
+`Field Captain checklist:
+• Set the objective (what “done” means)
+• Assign zones (who owns what)
+• Timebox tasks (20 min blocks)
+• Quick QA pass
+• Celebrate the win (seriously)` ,
+        quiz:[
+          { q:"Best way to keep teams moving?", a:["No plan, just hustle", "Timeboxed zones + objective", "Only fix one thing"], correct:1 }
+        ]
+      },
+      { id:"s2", title:"Coaching in 60 Seconds", subtitle:"Correct without killing morale", time:"5 min", xp:15, content:
+`Try: Praise → Pointer → Praise
+“Nice job facing the front table. Let’s tighten the pricing tags. This will look amazing once that’s done.”` }
+    ];
+
+    trainingUI("train-basics", "basics", lessonsBasics);
+    trainingUI("train-merch", "merchandising", lessonsMerch);
+    trainingUI("train-supervisor", "supervisor", lessonsSup);
+  }
+
+  // Boot training on entering view-training and on refresh
+  if(window.HubUI){
+    wrapOnce(window.HubUI, "showOnlyView", "seg7TrainingFun", (original)=> (name)=>{
+      original(name);
+      if(name === "training") bootTrainingFun();
+    });
+  }
+  try{
+    if(sessionStorage.getItem("hub_view") === "training") bootTrainingFun();
+  }catch{}
+
+}
+</script>
+
 </body>
 </html>
