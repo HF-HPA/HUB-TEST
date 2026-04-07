@@ -6774,9 +6774,348 @@ function territoryKeyFromStore(s){
 
 })();
 </script>
+<!-- =====================================================
+     SEGMENT 15 — TERRITORY BORDERS ALWAYS + TERRITORY LEADERBOARD
+     ===================================================== -->
+
+<style>
+/* Territory label tooltip styling (Leaflet) */
+.territory-tooltip{
+  background: rgba(2,6,23,.92) !important;
+  border: 1px solid rgba(34,211,238,.55) !important;
+  color: #f9fafb !important;
+  border-radius: 12px !important;
+  padding: 8px 10px !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.65) !important;
+  font-weight: 800;
+}
+
+/* Leaderboard table */
+.terr-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  overflow:hidden;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.22);
+  background: rgba(2,6,23,.25);
+}
+.terr-table th, .terr-table td{
+  padding:10px 12px;
+  border-bottom:1px solid rgba(148,163,184,.14);
+  font-size:.9rem;
+}
+.terr-table thead th{
+  text-align:left;
+  font-size:.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  background: rgba(2,6,23,.45);
+}
+.terr-pill{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(34,211,238,.35);
+  background: rgba(2,6,23,.35);
+  color:var(--heading);
+  font-weight:900;
+  font-size:.78rem;
+}
+.terr-score.good{ border-color: rgba(34,197,94,.55); color:#86efac; }
+.terr-score.warn{ border-color: rgba(250,204,21,.55); color:#fde68a; }
+.terr-score.bad{  border-color: rgba(239,68,68,.55); color:#fecaca; }
+</style>
+
+<script>
+/* =====================================================
+   TERRITORY ENGINE (ALWAYS ON) + LEADERBOARD
+   ===================================================== */
+(function(){
+  if(window.__HUB_SEG15__) return;
+  window.__HUB_SEG15__ = true;
+
+  const TERR_COL = "territory"; // confirmed exact header
+
+  /* -----------------------------------------------------
+     1) PATCH loadStores() to include territory (safe override)
+     ----------------------------------------------------- */
+  const _loadStores = window.loadStores;
+  window.loadStores = async function(){
+    const result = await _loadStores?.();
+
+    // If territory already exists, we're done
+    if(Array.isArray(window.stores) && window.stores.length && "territory" in window.stores[0]){
+      return result || window.stores;
+    }
+
+    // Otherwise, re-read stores.csv and add territory field
+    // (keeps same filtering rules; just adds territory)
+    try{
+      const res = await fetch("stores.csv", { cache:"no-store" });
+      if(!res.ok) return result || window.stores;
+
+      const rows = parseCSV(await res.text());
+      if(!rows || rows.length < 2) return result || window.stores;
+
+      const h = rows[0].map(x=>String(x).toLowerCase().trim());
+      const idx = (name)=> h.indexOf(name);
+
+      const idI = idx("store_id");
+      const nI  = idx("store_name");
+      const laI = idx("lat");
+      const loI = idx("lon");
+      const cI  = idx("city");
+      const sI  = idx("state");
+      const tI  = idx(TERR_COL);
+
+      window.stores = rows.slice(1).map(r=>({
+        id:   String(r[idI] ?? "").trim(),
+        name: String(r[nI]  ?? "").trim(),
+        lat:  parseFloat(String(r[laI] ?? "").trim()),
+        lon:  parseFloat(String(r[loI] ?? "").trim()),
+        city: String(r[cI]  ?? "").trim(),
+        state:String(r[sI]  ?? "").trim(),
+        territory: String(r[tI] ?? "").trim()
+      })).filter(s =>
+        s.id && s.name && Number.isFinite(s.lat) && Number.isFinite(s.lon)
+      );
+
+    }catch(e){
+      console.warn("[territory] could not patch loadStores territory", e);
+    }
+
+    return result || window.stores;
+  };
+
+  /* -----------------------------------------------------
+     2) Convex hull (monotonic chain) for derived territory borders
+     ----------------------------------------------------- */
+  function hull(points){
+    if(points.length <= 3) return points;
+    const pts = points.slice().sort((a,b)=> a[0]===b[0] ? a[1]-b[1] : a[0]-b[0]);
+    const cross = (o,a,b)=> (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]);
+
+    const lower=[];
+    for(const p of pts){
+      while(lower.length>=2 && cross(lower[lower.length-2], lower[lower.length-1], p) <= 0) lower.pop();
+      lower.push(p);
+    }
+    const upper=[];
+    for(let i=pts.length-1;i>=0;i--){
+      const p=pts[i];
+      while(upper.length>=2 && cross(upper[upper.length-2], upper[upper.length-1], p) <= 0) upper.pop();
+      upper.push(p);
+    }
+    upper.pop(); lower.pop();
+    return lower.concat(upper);
+  }
+
+  function territoryKeyFromStore(s){
+    return (s.territory && String(s.territory).trim())
+      ? String(s.territory).trim()
+      : "Unassigned";
+  }
+
+  function heatColor(avg){
+    if(avg >= 75) return "rgba(34,197,94,.18)";
+    if(avg >= 55) return "rgba(250,204,21,.18)";
+    return "rgba(239,68,68,.18)";
+  }
+  function scoreClass(avg){
+    if(avg >= 75) return "good";
+    if(avg >= 55) return "warn";
+    return "bad";
+  }
+
+  function computeTerritoryStats(){
+    const groups = new Map();
+    (window.stores||[]).forEach(s=>{
+      const key = territoryKeyFromStore(s);
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(s);
+    });
+
+    const stats = new Map();
+    groups.forEach((arr, key)=>{
+      let openIssues = 0;
+      const scores = arr.map(x=>{
+        const st = LiveState.get(x.id);
+        openIssues += (st.issues||[]).filter(i=>!i.resolved).length;
+        return (typeof computeHealthScore === "function") ? computeHealthScore(x.id) : 50;
+      });
+      const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 50;
+      stats.set(key, { avg, count: arr.length, openIssues });
+    });
+
+    return { groups, stats };
+  }
+
+  /* -----------------------------------------------------
+     3) TERRITORY LAYER (ALWAYS ON)
+     ----------------------------------------------------- */
+  let territoryLayerGroup = null;
+
+  async function drawTerritoryBorders({ heat=false } = {}){
+    if(!window.map || !window.L) return;
+    if(!Array.isArray(window.stores) || !window.stores.length) return;
+
+    // Remove old
+    if(territoryLayerGroup){
+      try{ map.removeLayer(territoryLayerGroup); }catch{}
+      territoryLayerGroup = null;
+    }
+
+    const { groups, stats } = computeTerritoryStats();
+    territoryLayerGroup = L.layerGroup().addTo(map);
+
+    groups.forEach((arr, key)=>{
+      // need at least 3 stores for polygon border
+      if(arr.length < 3) return;
+
+      const pts = arr.map(s=> [s.lon, s.lat]); // [lng,lat]
+      const h = hull(pts);
+      const polyLatLng = h.map(([lng,lat])=> [lat,lng]);
+
+      const avg = stats.get(key)?.avg ?? 50;
+      const poly = L.polygon(polyLatLng, {
+        // ✅ border always visible
+        color: "rgba(34,211,238,.85)",
+        weight: 3,
+        opacity: 0.95,
+        // optional heat fill
+        fillColor: heat ? heatColor(avg) : "rgba(0,0,0,0)",
+        fillOpacity: heat ? 1 : 0
+      });
+
+      const meta = stats.get(key);
+      poly.bindTooltip(
+        `${key} • Avg Health ${meta.avg} • Stores ${meta.count} • Open Issues ${meta.openIssues}`,
+        { sticky:true, opacity:.96, className:"territory-tooltip" }
+      );
+
+      poly.addTo(territoryLayerGroup);
+    });
+  }
+
+  /* Ensure borders draw after map is initialized & stores loaded */
+  async function ensureTerritories(){
+    await window.loadStores?.();
+    await window.initMap?.();
+    await drawTerritoryBorders({ heat: true }); // heat fill ON by default (optional)
+  }
+
+  // Hook: once map view is shown, ensure territories are drawn
+  if(window.HubUI){
+    wrapOnce(HubUI, "showOnlyView", "seg15TerritoryAlways", (orig)=> async (v)=>{
+      orig(v);
+      if(v === "map"){
+        await ensureTerritories();
+      }
+      if(v === "training"){
+        renderTerritoryLeaderboard();
+      }
+    });
+  }
+
+  // Also redraw when markers update (health/issues changes)
+  const _updateMarkers = window.updateMarkers;
+  window.updateMarkers = function(){
+    _updateMarkers?.();
+    // keep borders synced
+    drawTerritoryBorders({ heat:true });
+    // keep leaderboard synced
+    renderTerritoryLeaderboard(true);
+  };
+
+  /* -----------------------------------------------------
+     4) TERRITORY LEADERBOARD
+     - Renders inside Training -> Supervisor tab
+     ----------------------------------------------------- */
+  function renderTerritoryLeaderboard(silent=false){
+    const mount = document.getElementById("train-supervisor");
+    if(!mount) return;
+
+    const { stats } = computeTerritoryStats();
+    const rows = [...stats.entries()].map(([name, v])=>({
+      name,
+      avg: v.avg,
+      stores: v.count,
+      openIssues: v.openIssues
+    }))
+    .sort((a,b)=> b.avg - a.avg || a.openIssues - b.openIssues);
+
+    const title = "🏆 Territory Leaderboard";
+    const subtitle = "Ranked by average Health Score (ties: fewer open issues)";
+
+    // If Training UI already has content, we append; otherwise we render.
+    const html = `
+      <div class="glass-panel" id="territoryLeaderboardPanel">
+        <strong>${title}</strong>
+        <div class="subtitle">${subtitle}</div>
+
+        <table class="terr-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Territory</th>
+              <th>Avg Health</th>
+              <th>Stores</th>
+              <th>Open Issues</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((r,i)=>`
+              <tr>
+                <td>${i+1}</td>
+                <td><span class="terr-pill">${esc(r.name)}</span></td>
+                <td>
+                  <span class="terr-pill terr-score ${scoreClass(r.avg)}">${r.avg}</span>
+                </td>
+                <td>${r.stores}</td>
+                <td>${r.openIssues}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+
+        <div class="subtitle" style="margin-top:10px;">
+          Tip: Improve a territory score by resolving issues and completing actions that boost store health.
+        </div>
+      </div>
+    `;
+
+    // If it exists, update it, else insert at top
+    const existing = document.getElementById("territoryLeaderboardPanel");
+    if(existing){
+      existing.outerHTML = html;
+      return;
+    }
+
+    // Insert without wiping other supervisor content
+    if(!silent){
+      mount.innerHTML = html + mount.innerHTML;
+    }else{
+      // If silent refresh, only prepend if empty
+      if(!mount.innerHTML.trim()) mount.innerHTML = html;
+    }
+  }
+
+  // If training view already active, render now
+  try{
+    if(sessionStorage.getItem("hub_view") === "training"){
+      renderTerritoryLeaderboard();
+    }
+    if(sessionStorage.getItem("hub_view") === "map"){
+      ensureTerritories();
+    }
+  }catch{}
+})();
+</script>
 
 <!-- =====================================================
-     END SEGMENT 14
+     END SEGMENT 15
      ===================================================== -->
 </body>
 </html>
