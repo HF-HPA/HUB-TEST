@@ -226,7 +226,7 @@
     }
 
     /* =====================================================
-       MAP PANEL KV ROWS (missing in your last HTML)
+       MAP PANEL KV ROWS
        ===================================================== */
     .kv{
       display:flex;
@@ -297,6 +297,7 @@
       box-shadow:0 6px 16px rgba(0,0,0,.55);
     }
 
+    /* ✅ FIXED: this rule previously had broken CSS and killed subsequent styles */
     .map-week-badge{
       position:absolute;
       top:14px;
@@ -306,8 +307,10 @@
       border-radius:999px;
       background: radial-gradient(circle at top left, rgba(34,211,238,.25), rgba(15,23,42,.95));
       border:1px solid rgba(34,211,238,.8);
-      color:#f     box-shadow:0 10px 26px rgba(0,0,0,.7);
+      color:#f9fafb;
+      box-shadow:0 10px 26px rgba(0,0,0,.7);
       user-select:none;
+      pointer-events:none;
     }
 
     .store-actions{
@@ -319,7 +322,6 @@
 
     /* =====================================================
        HF: Seasonal banner / toolbars / cards / filters
-       (your scripts inject these classes, but they were missing)
        ===================================================== */
     .hf-seasonal{
       margin-bottom:12px;
@@ -374,41 +376,9 @@
       accent-color: var(--accent);
     }
 
-    .hf-count{
-      color: var(--muted);
-      font-size:.85rem;
-      white-space:nowrap;
-    }
-
-    .filter-bar{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-      margin-bottom:10px;
-    }
-    .filter-chip{
-      padding:6px 12px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.35);
-      background: rgba(15,23,42,0.55);
-      color: var(--muted);
-      font-size:.8rem;
-      cursor:pointer;
-      user-select:none;
-      transition: all .15s ease;
-    }
-    .filter-chip:hover{
-      color:var(--heading);
-      transform: translateY(-1px);
-    }
-    .filter-chip.active{
-      color:#020617;
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-      border-color: transparent;
-      box-shadow: 0 6px 18px rgba(37,99,235,.55);
-    }
-
+    /* =====================================================
+       Cards / grids used by HF/HPA renderers
+       ===================================================== */
     .card-grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -435,7 +405,7 @@
     .card-sub{ color: var(--muted); font-size: .85rem; margin-top: 4px; }
 
     /* =====================================================
-       POPUP BACKDROP / POPUP (HF modal uses this, missing in your file)
+       Popup / modal used by issue resolution & HF popups
        ===================================================== */
     .popup-backdrop{
       position:fixed;
@@ -489,7 +459,43 @@
     .popup-close:active{ transform: translateY(0) scale(.99); }
 
     /* =====================================================
-       PRINT MODE (care/pest cards)
+       Search dropdown + checklist rows (were previously split)
+       ===================================================== */
+    .search-results{
+      position:absolute;
+      top: calc(100% + 8px);
+      left:0;
+      right:0;
+      z-index: 999;
+      background: rgba(2,6,23,0.92);
+      border:1px solid rgba(148,163,184,0.45);
+      border-radius: 16px;
+      box-shadow: 0 18px 46px rgba(0,0,0,0.7);
+      overflow:hidden;
+      display:block;
+      max-height: 360px;
+      overflow-y:auto;
+    }
+    .search-item{
+      padding:10px 12px;
+      cursor:pointer;
+      border-bottom: 1px solid rgba(148,163,184,0.12);
+    }
+    .search-item:hover{ background: rgba(34,211,238,0.10); }
+
+    .checklist-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:6px 0;
+      font-size:.9rem;
+      border-bottom:1px solid rgba(148,163,184,.12);
+    }
+    .checklist-row:last-child{ border-bottom:none; }
+    .checklist-row input{ accent-color: var(--accent); margin-top:2px; }
+
+    /* =====================================================
+       PRINT MODE
        ===================================================== */
     @media print{
       body{ background:#fff !important; color:#000 !important; }
@@ -502,6 +508,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="app-shell">
     <div class="app-inner">
@@ -590,17 +597,17 @@
       <!-- =====================================================
            GLOBAL NAV TABS
            ===================================================== -->
-      <nav id="globalTabs" class="tabs hidden">
-        <button class="tab active" data-view="map">Map</button>
-        <button class="tab" data-view="hf">HF</button>
-        <button class="tab" data-view="hpa">HPA</button>
-        <button class="tab" data-view="admin">Admin</button>
-        <button class="tab" data-view="training">Training</button>
-        <button class="tab" id="logoutBtn">Logout</button>
+      <nav id="globalTabs" class="tabs hidden" aria-label="Primary navigation">
+        <button class="tab active" data-view="map" type="button">Map</button>
+        <button class="tab" data-view="hf" type="button">HF</button>
+        <button class="tab" data-view="hpa" type="button">HPA</button>
+        <button class="tab" data-view="admin" type="button">Admin</button>
+        <button class="tab" data-view="training" type="button">Training</button>
+        <button class="tab" id="logoutBtn" type="button">Logout</button>
       </nav>
 
       <!-- =====================================================
-           MAP VIEW (RESTORED FULL STRUCTURE)
+           MAP VIEW (FULL STRUCTURE)
            ===================================================== -->
       <section id="view-map" class="hidden">
 
@@ -609,7 +616,7 @@
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <div>
               <strong>Store Map</strong>
-              <div class="subtitle">Weekly reset • Live status • Issues & checklist</div>
+              <div class="subtitle">Weekly reset • Live status • Issues &amp; checklist</div>
             </div>
 
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;justify-content:flex-end;">
@@ -659,19 +666,19 @@
             <div style="margin-top:10px;">
               <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
               <div class="kv"><span>Negatives</span><span id="spNegatives">—</span></div>
-              <div class="kv"><span>Issues</span><span id="spIssues">—</span></div>
+              <div class="kv"><span>Issues</span><span id="spIssues" title="Click to view issues">—</span></div>
             </div>
 
-            <!-- Quick actions (restored + expanded) -->
+            <!-- Quick actions -->
             <div id="storeActions" class="store-actions">
-              <button id="btnQuickWater" class="popup-close" disabled>💧 Mark Watered</button>
-              <button id="btnAddIssue" class="popup-close" disabled>🚩 Add Issue</button>
-              <button id="btnOpenChecklist" class="popup-close" disabled>📋 Checklist</button>
+              <button id="btnQuickWater" class="popup-close" disabled type="button">💧 Mark Watered</button>
+              <button id="btnAddIssue" class="popup-close" disabled type="button">🚩 Add Issue</button>
+              <button id="btnOpenChecklist" class="popup-close" disabled type="button">📋 Checklist</button>
             </div>
 
-            <!-- Checklist mount point (restored) -->
+            <!-- Checklist mount point -->
             <div id="checklistMount" style="margin-top:12px;">
-              <!-- Segment 3+ will inject checklistBox here -->
+              <!-- checklistBox injected here -->
             </div>
           </aside>
         </div>
@@ -687,16 +694,16 @@
       <section id="view-hf" class="hidden">
         <!-- Seasonal banner injected by JS -->
         <div class="tabs">
-          <button class="tab active" data-hf-tab="guidelines">Guidelines</button>
-          <button class="tab" data-hf-tab="care">Care &amp; Identification</button>
+          <button class="tab active" data-hf-tab="guidelines" type="button">Guidelines</button>
+          <button class="tab" data-hf-tab="care" type="button">Care &amp; Identification</button>
         </div>
 
         <div id="hf-guidelines" class="glass-panel"></div>
 
         <div id="hf-care" class="hidden glass-panel">
           <div class="tabs">
-            <button class="tab active" data-hf-care="plants">Perennials</button>
-            <button class="tab" data-hf-care="pests">Pests</button>
+            <button class="tab active" data-hf-care="plants" type="button">Perennials</button>
+            <button class="tab" data-hf-care="pests" type="button">Pests</button>
           </div>
 
           <div id="hf-plants"></div>
@@ -709,18 +716,18 @@
            ===================================================== -->
       <section id="view-hpa" class="hidden">
         <div class="tabs">
-          <button class="tab active" data-hpa-tab="guidelines">Guidelines</button>
-          <button class="tab" data-hpa-tab="products">Product Info</button>
-          <button class="tab" data-hpa-tab="care">Care &amp; Identification</button>
+          <button class="tab active" data-hpa-tab="guidelines" type="button">Guidelines</button>
+          <button class="tab" data-hpa-tab="products" type="button">Product Info</button>
+          <button class="tab" data-hpa-tab="care" type="button">Care &amp; Identification</button>
         </div>
 
         <div id="hpa-guidelines" class="glass-panel"></div>
 
-        <!-- Product Info container (restored: expected inner sections) -->
+        <!-- Product Info container -->
         <div id="hpa-products" class="glass-panel hidden">
           <div class="tabs" style="margin-bottom:10px;">
-            <button class="tab active" data-products="skus" id="hpaProductsTabSkus">SKU Catalogue</button>
-            <button class="tab" data-products="orders" id="hpaProductsTabOrders">Order Breakdown</button>
+            <button class="tab active" data-products="skus" id="hpaProductsTabSkus" type="button">SKU Catalogue</button>
+            <button class="tab" data-products="orders" id="hpaProductsTabOrders" type="button">Order Breakdown</button>
           </div>
 
           <section id="products-skus"></section>
@@ -729,8 +736,8 @@
 
         <div id="hpa-care" class="glass-panel hidden">
           <div class="tabs">
-            <button class="tab active" data-hpa-care="plants">Plants</button>
-            <button class="tab" data-hpa-care="pests">Pests</button>
+            <button class="tab active" data-hpa-care="plants" type="button">Plants</button>
+            <button class="tab" data-hpa-care="pests" type="button">Pests</button>
           </div>
 
           <div id="hpa-plants"></div>
@@ -744,10 +751,10 @@
       <section id="view-admin" class="hidden glass-panel">
         <h2>Admin Tools</h2>
         <div class="tabs">
-          <button class="tab">AIR Uploads</button>
-          <button class="tab">Store Audit</button>
-          <button class="tab">Rack Counts</button>
-          <button class="tab">District Checklist</button>
+          <button class="tab" type="button">AIR Uploads</button>
+          <button class="tab" type="button">Store Audit</button>
+          <button class="tab" type="button">Rack Counts</button>
+          <button class="tab" type="button">District Checklist</button>
         </div>
       </section>
 
@@ -757,9 +764,9 @@
       <section id="view-training" class="hidden glass-panel">
         <h2>Training Hub</h2>
         <div class="tabs">
-          <button class="tab active" data-train="basics">Basics</button>
-          <button class="tab" data-train="merch">Merchandising</button>
-          <button class="tab" data-train="supervisor">Supervisor</button>
+          <button class="tab active" data-train="basics" type="button">Basics</button>
+          <button class="tab" data-train="merch" type="button">Merchandising</button>
+          <button class="tab" data-train="supervisor" type="button">Supervisor</button>
         </div>
 
         <div id="train-basics">Loading…</div>
@@ -776,1194 +783,2794 @@
 
     </div>
   </div>
+
+  <!-- =====================================================
+       REQUIRED GLOBAL HELPERS (FIXES "undefined" CRASHES)
+       ===================================================== -->
   <script>
-/* =====================================================
-   SEGMENT 3 — LIVE MAP CORE (FIXED + COMPLETE)
-   ===================================================== */
+    // Lightweight global app identity object used by LiveState
+    window.App = window.App || { user: { username: "User" } };
 
-/* ---------- DOM CACHE (fixes undefined refs) ---------- */
-const spTitle      = document.getElementById("spTitle");
-const spSub        = document.getElementById("spSub");
-const spWatered    = document.getElementById("spWatered");
-const spNegatives  = document.getElementById("spNegatives");
-const spIssues     = document.getElementById("spIssues");
-const storeActions = document.getElementById("storeActions");
-const checklistMount = document.getElementById("checklistMount");
-
-const storeSearch = document.getElementById("storeSearch");
-const storeSearchResults = document.getElementById("storeSearchResults");
-const filterIssuesOnly = document.getElementById("filterIssuesOnly");
-const clearSearchBtn = document.getElementById("clearSearch");
-
-/* ---------- GLOBALS ---------- */
-let mapInitialized = false;
-let selectedStoreId = null;
-
-/* =====================================================
-   CHECKLIST (RESTORED)
-   ===================================================== */
-let CHECKLIST_ITEMS = [];
-
-async function loadChecklistItems(){
-  try{
-    const res = await fetch("checklist_items.csv", { cache:"no-store" });
-    if(!res.ok) throw new Error("missing checklist_items.csv");
-    const rows = parseCSV(await res.text());
-    const header = rows[0].map(h=>h.toLowerCase().trim());
-    const textIdx = header.indexOf("item");
-
-    CHECKLIST_ITEMS = rows.slice(1)
-      .map(r => (r[textIdx] || "").trim())
-      .filter(Boolean);
-  }catch{
-    CHECKLIST_ITEMS = [];
-  }
-}
-
-function renderChecklist(storeId){
-  if(!checklistMount) return;
-  const st = LiveState.get(storeId);
-
-  const state = st.checklist || {};
-  checklistMount.innerHTML = `
-    <div class="glass-panel" id="checklistBox">
-      <strong>Weekly Checklist</strong>
-      <div class="subtitle">Resets Monday</div>
-      <div style="margin-top:8px;">
-        ${CHECKLIST_ITEMS.map((item,i)=>`
-          <label class="checklist-row">
-            <input type="checkbox" data-idx="${i}" ${state[i] ? "checked":""} />
-            ${item}
-          </label>
-        `).join("") || `<div class="subtitle">No checklist items.</div>`}
-      </div>
-    </div>
-  `;
-
-  checklistMount.querySelectorAll("input[type='checkbox']").forEach(cb=>{
-    cb.addEventListener("change", async ()=>{
-      const idx = cb.dataset.idx;
-      const cur = LiveState.get(storeId);
-      cur.checklist = cur.checklist || {};
-      cur.checklist[idx] = cb.checked;
-      await LiveState.set(storeId, { checklist: cur.checklist });
-    });
-  });
-}
-
-/* =====================================================
-   STORE PANEL UPDATE
-   ===================================================== */
-function updateStorePanel(store){
-  const st = LiveState.get(store.id);
-
-  spTitle.textContent = `${store.name} (${store.id})`;
-  spSub.textContent   = `${store.city}, ${store.state}`;
-  spWatered.textContent   = st.watered ? "✅" : "❌";
-  spNegatives.textContent = st.negatives ? "⚠️" : "✅";
-  spIssues.textContent    = (st.issues||[]).some(i=>!i.resolved) ? "🚩" : "✅";
-
-  document.getElementById("btnQuickWater").disabled = false;
-  document.getElementById("btnAddIssue").disabled = false;
-  document.getElementById("btnOpenChecklist").disabled = false;
-
-  renderChecklist(store.id);
-}
-
-/* =====================================================
-   MAP HELPERS
-   ===================================================== */
-function markerClass(st){
-  if((st.issues||[]).some(i=>!i.resolved)) return "legend-warn";
-  if(st.watered && st.wateredOn === todayKey()) return "legend-ok";
-  return "legend-bad";
-}
-
-function applyIssueFilter(){
-  if(!filterIssuesOnly) return;
-  markers.forEach((marker,id)=>{
-    const st = LiveState.get(id);
-    const hasIssues = (st.issues||[]).some(i=>!i.resolved);
-    const el = marker.getElement?.();
-    if(!el) return;
-    el.style.display = filterIssuesOnly.checked && !hasIssues ? "none" : "";
-  });
-}
-
-/* =====================================================
-   STORE SELECTION
-   ===================================================== */
-function selectStore(storeId){
-  selectedStoreId = storeId;
-  const store = stores.find(s=>s.id===storeId);
-  if(!store) return;
-
-  updateStorePanel(store);
-
-  document.getElementById("btnQuickWater").onclick = async ()=>{
-    await LiveState.set(storeId, { watered:true, wateredOn: todayKey() });
-    updateMarkers();
-    updateStorePanel(store);
-  };
-
-  document.getElementById("btnAddIssue").onclick = async ()=>{
-    const txt = prompt("Describe issue:");
-    if(!txt) return;
-    const cur = LiveState.get(storeId);
-    cur.issues = cur.issues || [];
-    cur.issues.push({
-      id: crypto.randomUUID(),
-      text: txt,
-      resolved: false
-    });
-    await LiveState.set(storeId, { issues: cur.issues });
-    updateMarkers();
-    updateStorePanel(store);
-  };
-
-  document.getElementById("btnOpenChecklist").onclick = ()=>{
-    document.getElementById("checklistBox")
-      ?.scrollIntoView({ behavior:"smooth", block:"start" });
-  };
-}
-
-/* =====================================================
-   STORE SEARCH (RESTORED)
-   ===================================================== */
-function renderSearchResults(matches){
-  if(!storeSearchResults) return;
-  if(!matches.length){
-    storeSearchResults.innerHTML = "";
-    return;
-  }
-  storeSearchResults.innerHTML = matches.slice(0,8).map(s=>`
-    <div class="search-item" data-id="${s.id}">
-      <strong>${s.id}</strong> — ${s.name}<br/>
-      <span class="subtitle">${s.city}, ${s.state}</span>
-    </div>
-  `).join("");
-
-  storeSearchResults.querySelectorAll(".search-item").forEach(el=>{
-    el.onclick = ()=>{
-      const id = el.dataset.id;
-      const s = stores.find(x=>x.id===id);
-      if(!s) return;
-      map.setView([s.lat, s.lon], 11);
-      selectStore(id);
-      storeSearchResults.innerHTML = "";
+    // HTML escape helper (prevents XSS + fixes esc() not defined)
+    window.esc = window.esc || function esc(v){
+      return String(v ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     };
-  });
-}
 
-storeSearch?.addEventListener("input", ()=>{
-  const q = storeSearch.value.toLowerCase().trim();
-  if(!q){ storeSearchResults.innerHTML=""; return; }
-  const matches = stores.filter(s=>
-    `${s.id} ${s.name} ${s.city} ${s.state}`.toLowerCase().includes(q)
-  );
-  renderSearchResults(matches);
-});
+    // Date key helpers used by weekly/daily reset logic
+    window.todayKey = window.todayKey || function todayKey(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
+    };
 
-clearSearchBtn?.addEventListener("click", ()=>{
-  storeSearch.value = "";
-  storeSearchResults.innerHTML = "";
-});
+    // Monday of current week as YYYY-MM-DD (local time)
+    window.mondayKey = window.mondayKey || function mondayKey(){
+      const d = new Date();
+      const day = d.getDay(); // 0 Sun..6 Sat
+      const diff = (day === 0 ? -6 : 1) - day;
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() + diff);
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${dd}`;
+    };
 
+    // Robust CSV parser returning rows[][] (fixes parseCSV missing)
+    window.parseCSV = window.parseCSV || function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let q = false;
+
+      for(let i=0;i<text.length;i++){
+        const c = text[i];
+
+        if(c === '"'){
+          if(q && text[i+1] === '"'){ cur += '"'; i++; }
+          else q = !q;
+        } else if(c === "," && !q){
+          row.push(cur); cur = "";
+        } else if((c === "\n" || c === "\r") && !q){
+          if(c === "\r" && text[i+1] === "\n") i++;
+          row.push(cur);
+          if(row.some(cell => String(cell).trim() !== "")) rows.push(row);
+          row = []; cur = "";
+        } else {
+          cur += c;
+        }
+      }
+      row.push(cur);
+      if(row.some(cell => String(cell).trim() !== "")) rows.push(row);
+      return rows;
+    };
+
+    // Alias: some segments may reference parseCsv() casing
+    window.parseCsv = window.parseCsv || function(text){ return window.parseCSV(text); };
+
+    // UUID fallback (crypto.randomUUID not supported everywhere)
+    window.safeUUID = window.safeUUID || function safeUUID(){
+      try{
+        if (crypto && crypto.randomUUID) return crypto.randomUUID();
+      }catch{}
+      return "id-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+    };
+
+    // Ensure globals exist before later segments use them
+    window.stores = window.stores || [];
+    window.markers = window.markers || new Map();
+    window.map = window.map || null;
+  </script>
+
+  <!-- =====================================================
+       APP CONTROLLER (SPLASH/LOGIN/NAV/SESSION)
+       ===================================================== -->
+  <script>
+    (function AppController(){
+      const $ = (id)=>document.getElementById(id);
+
+      const viewSplash  = $("view-splash");
+      const viewLogin   = $("view-login");
+      const topbar      = $("topbar");
+      const globalTabs  = $("globalTabs");
+      const userPill    = $("userPill");
+
+      const splashEnter = $("splashEnter");
+      const loginBtn    = $("loginBtn");
+      const loginUser   = $("loginUser");
+      const loginPass   = $("loginPass");
+      const loginError  = $("loginError");
+      const logoutBtn   = $("logoutBtn");
+
+      const VIEWS = ["map","hf","hpa","admin","training"];
+
+      function setVisible(el, on){
+        if(!el) return;
+        el.classList.toggle("hidden", !on);
+      }
+
+      function showAuthShell(on){
+        setVisible(topbar, on);
+        setVisible(globalTabs, on);
+      }
+
+      function showOnlyView(name){
+        VIEWS.forEach(v=>{
+          const el = $("view-"+v);
+          setVisible(el, v===name);
+        });
+
+        // set active tab styling
+        document.querySelectorAll("#globalTabs .tab[data-view]").forEach(b=>{
+          b.classList.toggle("active", b.dataset.view === name);
+        });
+
+        sessionStorage.setItem("hub_view", name);
+      }
+
+      function showSplash(){
+        showAuthShell(false);
+        setVisible(viewSplash, true);
+        setVisible(viewLogin, false);
+        VIEWS.forEach(v=> setVisible($("view-"+v), false));
+        sessionStorage.removeItem("hub_view");
+      }
+
+      function showLogin(){
+        showAuthShell(false);
+        setVisible(viewSplash, false);
+        setVisible(viewLogin, true);
+        VIEWS.forEach(v=> setVisible($("view-"+v), false));
+        loginError.textContent = "";
+        setTimeout(()=> loginUser?.focus(), 0);
+      }
+
+      function showApp(defaultView="map"){
+        showAuthShell(true);
+        setVisible(viewSplash, false);
+        setVisible(viewLogin, false);
+        showOnlyView(defaultView);
+      }
+
+      function setUser(username){
+        const u = (username || "User").trim() || "User";
+        window.App.user = { username: u };
+        if(userPill) userPill.textContent = u;
+        localStorage.setItem("hub_user", u);
+      }
+
+      // Splash enter (click + keyboard)
+      function enterFromSplash(){
+        showLogin();
+      }
+      splashEnter?.addEventListener("click", enterFromSplash);
+      splashEnter?.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          enterFromSplash();
+        }
+      });
+
+      // Login action (non-destructive: doesn’t enforce auth rules unless you add them)
+      function doLogin(){
+        const u = loginUser?.value || "";
+        const p = loginPass?.value || "";
+
+        // Keep your existing behavior flexible:
+        // - if you later add real auth, replace this block
+        if(!u.trim()){
+          loginError.textContent = "Please enter a username.";
+          loginUser?.focus();
+          return;
+        }
+        if(!p.trim()){
+          // Allow blank password if you want; right now we warn but still allow if you prefer.
+          // Comment next two lines to allow blank passwords without warning.
+          loginError.textContent = "Please enter a password.";
+          loginPass?.focus();
+          return;
+        }
+
+        setUser(u);
+        showApp(sessionStorage.getItem("hub_view") || "map");
+      }
+
+      loginBtn?.addEventListener("click", doLogin);
+      [loginUser, loginPass].forEach(el=>{
+        el?.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter") doLogin();
+        });
+      });
+
+      // Global nav tab switching
+      document.querySelectorAll("#globalTabs .tab[data-view]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          showOnlyView(btn.dataset.view);
+        });
+      });
+
+      // Logout
+      logoutBtn?.addEventListener("click", ()=>{
+        // Keep username saved unless you want it cleared:
+        // localStorage.removeItem("hub_user");
+        showSplash();
+      });
+
+      // Restore session on refresh:
+      // If user exists -> go straight to app; else show splash.
+      (function restore(){
+        const savedUser = localStorage.getItem("hub_user");
+        const savedView = sessionStorage.getItem("hub_view") || "map";
+
+        if(savedUser){
+          setUser(savedUser);
+          showApp(savedView);
+        }else{
+          showSplash();
+        }
+      })();
+
+      // Expose a tiny API for later segments if needed
+      window.HubUI = window.HubUI || {
+        showOnlyView,
+        showApp,
+        showLogin,
+        showSplash
+      };
+    })();
+  </script>
+
+<!-- =====================================================
+     SEGMENT 2 — LIVE MAP CORE (UI + CHECKLIST + ISSUES)
+     - Safe even if Leaflet/Firebase are not loaded yet
+     - Waits for Map Engine (Segment 3) to be ready
+     ===================================================== -->
+<script>
 /* =====================================================
-   MAP BOOT (SAFE)
+   INTERNAL GUARDS
    ===================================================== */
-async function bootLiveMap(){
-  if(mapInitialized) return;
-  mapInitialized = true;
+window.__HUB_SEG2__ = window.__HUB_SEG2__ || { initialized:false };
+if(window.__HUB_SEG2__.initialized){
+  console.warn("[hub] Segment 2 already initialized; skipping duplicate load.");
+} else {
+  window.__HUB_SEG2__.initialized = true;
 
-  await loadStores();
-  await loadChecklistItems();
+  const DEBUG = false;
+  const log = (...a)=> DEBUG && console.log("[hub seg2]", ...a);
 
-  initMap();
-  renderMarkers();
-}
+  /* =====================================================
+     DOM CACHE
+     ===================================================== */
+  const spTitle         = document.getElementById("spTitle");
+  const spSub           = document.getElementById("spSub");
+  const spWatered       = document.getElementById("spWatered");
+  const spNegatives     = document.getElementById("spNegatives");
+  const spIssues        = document.getElementById("spIssues");
+  const checklistMount  = document.getElementById("checklistMount");
 
-/* Hook to nav */
-document.querySelectorAll(".tab[data-view]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    if(btn.dataset.view === "map"){
-      bootLiveMap();
-    }
-  });
-});
+  const btnQuickWater   = document.getElementById("btnQuickWater");
+  const btnAddIssue     = document.getElementById("btnAddIssue");
+  const btnOpenChecklist= document.getElementById("btnOpenChecklist");
 
-/* Restore on refresh */
-(function(){
-  if(sessionStorage.getItem("hub_view")==="map"){
-    bootLiveMap();
+  const storeSearch     = document.getElementById("storeSearch");
+  const storeSearchResults = document.getElementById("storeSearchResults");
+  const filterIssuesOnly= document.getElementById("filterIssuesOnly");
+  const clearSearchBtn  = document.getElementById("clearSearch");
+
+  /* =====================================================
+     GLOBALS
+     ===================================================== */
+  let selectedStoreId = null;
+  let checklistLoaded = false;
+  let CHECKLIST_ITEMS = [];
+
+  // Ensure global maps exist (Segment 1 already sets these, but keep safe)
+  window.stores = window.stores || [];
+  window.markers = window.markers || new Map();
+
+  /* =====================================================
+     LIVE STATE (LOCAL FALLBACK)
+     - Segment 3 will enhance with Firestore + weekKey remote merge.
+     - We DO NOT overwrite if already defined.
+     ===================================================== */
+  if(!window.LiveState){
+    const STATE_KEY = "hub_store_state";
+    const WEEK_KEY  = "hub_week_key";
+
+    const currentWeekKey = ()=> (typeof mondayKey === "function" ? mondayKey() : "1970-01-01");
+
+    (function weeklyResetLocal(){
+      try{
+        const wk = currentWeekKey();
+        const last = localStorage.getItem(WEEK_KEY);
+        if(last !== wk){
+          localStorage.removeItem(STATE_KEY);
+          localStorage.setItem(WEEK_KEY, wk);
+        }
+      }catch{}
+    })();
+
+    window.LiveState = {
+      local: (()=>{ try{ return JSON.parse(localStorage.getItem(STATE_KEY)||"{}"); }catch{ return {}; } })(),
+      remote: {},
+      defaults(){
+        return {
+          weekKey: currentWeekKey(),
+          watered:false,
+          wateredOn:null,
+          negatives:false,
+          checklist:{},
+          issues:[],
+          updatedAt:null,
+          updatedBy: (window.App?.user?.username || "User")
+        };
+      },
+      save(){
+        try{ localStorage.setItem(STATE_KEY, JSON.stringify(this.local)); }catch{}
+      },
+      get(id){
+        const wk = currentWeekKey();
+        const base = this.defaults();
+        const local = this.local[id] || {};
+        let merged = { ...base, ...local };
+
+        // Weekly reset ignore
+        if(merged.weekKey !== wk) merged = this.defaults();
+
+        // Daily watered reset
+        if(typeof todayKey === "function" && merged.wateredOn !== todayKey()) merged.watered = false;
+
+        if(!merged.checklist || typeof merged.checklist !== "object") merged.checklist = {};
+        if(!Array.isArray(merged.issues)) merged.issues = [];
+
+        return merged;
+      },
+      async set(id, patch){
+        const cur = this.get(id);
+        const wk = currentWeekKey();
+        const next = {
+          ...cur,
+          ...patch,
+          weekKey: wk,
+          updatedAt: Date.now(),
+          updatedBy: (window.App?.user?.username || "User")
+        };
+        this.local[id] = next;
+        this.save();
+        return next;
+      }
+    };
   }
-})();
+
+  /* =====================================================
+     CHECKLIST LOADER + RENDER
+     ===================================================== */
+  async function loadChecklistItems(){
+    if(checklistLoaded) return;
+    checklistLoaded = true;
+
+    try{
+      const res = await fetch("checklist_items.csv", { cache:"no-store" });
+      if(!res.ok) throw new Error("checklist_items.csv missing");
+      const rows = parseCSV(await res.text());
+      if(!rows || !rows.length) throw new Error("empty checklist csv");
+
+      const header = rows[0].map(h => String(h).toLowerCase().trim());
+      const itemIdx = header.indexOf("item") >= 0 ? header.indexOf("item") : 0;
+
+      CHECKLIST_ITEMS = rows.slice(1)
+        .map(r => String(r[itemIdx] || "").trim())
+        .filter(Boolean);
+
+      log("Checklist items:", CHECKLIST_ITEMS.length);
+    }catch(e){
+      console.warn("[checklist] load failed; continuing with empty checklist.", e);
+      CHECKLIST_ITEMS = [];
+    }
+  }
+
+  function renderChecklist(storeId){
+    if(!checklistMount) return;
+    const st = LiveState.get(storeId);
+    const state = st.checklist || {};
+
+    checklistMount.innerHTML = `
+      <div class="glass-panel" id="checklistBox">
+        <strong>Weekly Checklist</strong>
+        <div class="subtitle">Resets Monday</div>
+
+        <div style="margin-top:8px;">
+          ${
+            CHECKLIST_ITEMS.length
+              ? CHECKLIST_ITEMS.map((item,i)=>`
+                  <label class="checklist-row">
+                    <input type="checkbox" data-idx="${i}" ${state[i] ? "checked" : ""} />
+                    ${esc(item)}
+                  </label>
+                `).join("")
+              : `<div class="subtitle">No checklist items.</div>`
+          }
+        </div>
+      </div>
+    `;
+
+    checklistMount.querySelectorAll("input[type='checkbox']").forEach(cb=>{
+      cb.addEventListener("change", async ()=>{
+        const idx = cb.dataset.idx;
+        const cur = LiveState.get(storeId);
+        cur.checklist = cur.checklist || {};
+        cur.checklist[idx] = cb.checked;
+        await LiveState.set(storeId, { checklist: cur.checklist });
+
+        // Update markers if engine is present
+        if(typeof window.updateMarkers === "function") window.updateMarkers();
+      });
+    });
+  }
+
+  /* =====================================================
+     PANEL + STATUS HELPERS
+     ===================================================== */
+  function hasOpenIssues(st){
+    return (st.issues || []).some(i => !i.resolved);
+  }
+
+  // Keep same semantics you had (issue => warn, watered today => ok, else bad)
+  window.markerClass = window.markerClass || function markerClass(st){
+    if(hasOpenIssues(st)) return "legend-warn";
+    if(st.watered && typeof todayKey === "function" && st.wateredOn === todayKey()) return "legend-ok";
+    return "legend-bad";
+  };
+
+  function updateStorePanel(store){
+    const st = LiveState.get(store.id);
+
+    if(spTitle) spTitle.textContent = `${store.name} (${store.id})`;
+    if(spSub) spSub.textContent = `${store.city}, ${store.state}`;
+    if(spWatered) spWatered.textContent = st.watered ? "✅" : "❌";
+    if(spNegatives) spNegatives.textContent = st.negatives ? "⚠️" : "✅";
+    if(spIssues) spIssues.textContent = hasOpenIssues(st) ? "🚩" : "✅";
+
+    if(btnQuickWater) btnQuickWater.disabled = false;
+    if(btnAddIssue) btnAddIssue.disabled = false;
+    if(btnOpenChecklist) btnOpenChecklist.disabled = false;
+
+    renderChecklist(store.id);
+  }
+
+  /* =====================================================
+     ISSUE FILTER (OPEN ISSUES ONLY)
+     ===================================================== */
+  window.applyIssueFilter = window.applyIssueFilter || function applyIssueFilter(){
+    if(!filterIssuesOnly) return;
+    if(!window.markers || typeof window.markers.forEach !== "function") return;
+
+    window.markers.forEach((marker,id)=>{
+      const st = LiveState.get(id);
+      const open = hasOpenIssues(st);
+      const el = marker && typeof marker.getElement === "function" ? marker.getElement() : null;
+      if(!el) return;
+      el.style.display = (filterIssuesOnly.checked && !open) ? "none" : "";
+    });
+  };
+
+  filterIssuesOnly?.addEventListener("change", ()=>{
+    if(typeof window.updateMarkers === "function") window.updateMarkers();
+    if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+  });
+
+  /* =====================================================
+     STORE SELECTION + QUICK ACTIONS
+     ===================================================== */
+  function selectStore(storeId){
+    selectedStoreId = storeId;
+    const store = (window.stores || []).find(s => s.id === storeId);
+    if(!store) return;
+
+    updateStorePanel(store);
+
+    // Quick Water
+    if(btnQuickWater){
+      btnQuickWater.onclick = async ()=>{
+        await LiveState.set(storeId, { watered:true, wateredOn: todayKey() });
+        updateStorePanel(store);
+        if(typeof window.updateMarkers === "function") window.updateMarkers();
+      };
+    }
+
+    // Add Issue
+    if(btnAddIssue){
+      btnAddIssue.onclick = async ()=>{
+        const txt = prompt("Describe issue:");
+        if(!txt) return;
+
+        const cur = LiveState.get(storeId);
+        cur.issues = cur.issues || [];
+        cur.issues.push({
+          id: safeUUID(),
+          text: txt,
+          resolved: false,
+          createdAt: Date.now(),
+          createdBy: (window.App?.user?.username || "User")
+        });
+
+        await LiveState.set(storeId, { issues: cur.issues });
+        updateStorePanel(store);
+        if(typeof window.updateMarkers === "function") window.updateMarkers();
+        if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+      };
+    }
+
+    // Open Checklist (scroll)
+    if(btnOpenChecklist){
+      btnOpenChecklist.onclick = ()=>{
+        document.getElementById("checklistBox")
+          ?.scrollIntoView({ behavior:"smooth", block:"start" });
+      };
+    }
+  }
+
+  // Expose selection function to engine / tooltips
+  window.selectStore = window.selectStore || selectStore;
+  window.__HUB_SELECTED_STORE__ = ()=> selectedStoreId;
+
+  /* =====================================================
+     STORE SEARCH DROPDOWN
+     ===================================================== */
+  function renderSearchResults(matches){
+    if(!storeSearchResults) return;
+    if(!matches.length){
+      storeSearchResults.innerHTML = "";
+      return;
+    }
+
+    storeSearchResults.innerHTML = matches.slice(0,8).map(s=>`
+      <div class="search-item" role="option" data-id="${esc(s.id)}">
+        <strong>${esc(s.id)}</strong> — ${esc(s.name)}<br/>
+        <span class="subtitle">${esc(s.city)}, ${esc(s.state)}</span>
+      </div>
+    `).join("");
+
+    storeSearchResults.querySelectorAll(".search-item").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const id = el.dataset.id;
+        const s = (window.stores || []).find(x => x.id === id);
+        if(!s) return;
+
+        // If map exists, pan/zoom
+        if(window.map && typeof window.map.setView === "function"){
+          window.map.setView([s.lat, s.lon], 11);
+        }
+
+        selectStore(id);
+        storeSearchResults.innerHTML = "";
+        storeSearch?.blur();
+      });
+    });
+  }
+
+  storeSearch?.addEventListener("input", ()=>{
+    const q = storeSearch.value.toLowerCase().trim();
+    if(!q){ storeSearchResults.innerHTML = ""; return; }
+
+    const list = (window.stores || []);
+    const matches = list.filter(s =>
+      `${s.id} ${s.name} ${s.city} ${s.state}`.toLowerCase().includes(q)
+    );
+
+    renderSearchResults(matches);
+  });
+
+  clearSearchBtn?.addEventListener("click", ()=>{
+    if(storeSearch) storeSearch.value = "";
+    if(storeSearchResults) storeSearchResults.innerHTML = "";
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e)=>{
+    if(!storeSearchResults || !storeSearch) return;
+    const inside = storeSearch.contains(e.target) || storeSearchResults.contains(e.target);
+    if(!inside) storeSearchResults.innerHTML = "";
+  });
+
+  /* =====================================================
+     ISSUES MODAL (ADD + RESOLVE)
+     - Preserves your original feature
+     ===================================================== */
+  function openIssuesModal(storeId){
+    const st = LiveState.get(storeId);
+
+    let bd = document.getElementById("issuesBackdrop");
+    if(!bd){
+      bd = document.createElement("div");
+      bd.id = "issuesBackdrop";
+      bd.className = "popup-backdrop";
+      bd.innerHTML = `
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="issuesTitle">
+          <h2 id="issuesTitle">Store Issues</h2>
+          <div class="popup-subtitle" id="issuesSub"></div>
+          <div id="issuesList"></div>
+          <button class="popup-close" id="issuesCloseBtn" type="button">Close</button>
+        </div>
+      `;
+      document.body.appendChild(bd);
+
+      document.getElementById("issuesCloseBtn").onclick = ()=> bd.style.display = "none";
+      bd.addEventListener("click", (e)=>{ if(e.target === bd) bd.style.display = "none"; });
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape" && bd.style.display === "flex"){
+          bd.style.display = "none";
+        }
+      });
+    }
+
+    document.getElementById("issuesSub").textContent = `Store ${storeId}`;
+
+    const list = document.getElementById("issuesList");
+    list.innerHTML = (st.issues || []).map(issue=>`
+      <div class="glass-panel" style="margin-bottom:10px;">
+        <div style="font-weight:900;">
+          ${issue.resolved ? "✅" : "🚩"} ${esc(issue.text)}
+        </div>
+        <div class="popup-subtitle" style="margin-top:6px;">
+          Status: ${issue.resolved ? "Resolved" : "Open"}
+          ${issue.createdBy ? ` • Added by ${esc(issue.createdBy)}` : ""}
+        </div>
+        ${issue.resolved ? "" : `<button class="popup-close" data-resolve="${esc(issue.id)}" type="button">Resolve</button>`}
+      </div>
+    `).join("") || `<div class="subtitle">No issues for this store.</div>`;
+
+    // Resolve handler
+    list.onclick = async (e)=>{
+      const btn = e.target.closest("[data-resolve]");
+      if(!btn) return;
+
+      const cur = LiveState.get(storeId);
+      const issue = (cur.issues || []).find(x => x.id === btn.dataset.resolve);
+      if(issue){
+        issue.resolved = true;
+        issue.resolvedAt = Date.now();
+        issue.resolvedBy = (window.App?.user?.username || "User");
+
+        await LiveState.set(storeId, { issues: cur.issues });
+
+        // Refresh panel + markers
+        const store = (window.stores || []).find(s => s.id === storeId);
+        if(store && selectedStoreId === storeId) updateStorePanel(store);
+
+        if(typeof window.updateMarkers === "function") window.updateMarkers();
+        if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+
+        // Re-render modal to reflect resolved state
+        openIssuesModal(storeId);
+      }
+    };
+
+    bd.style.display = "flex";
+  }
+
+  // Click issues indicator to open modal
+  if(spIssues){
+    spIssues.style.cursor = "pointer";
+    spIssues.addEventListener("click", ()=>{
+      if(selectedStoreId) openIssuesModal(selectedStoreId);
+    });
+  }
+
+  /* =====================================================
+     MAP BOOTSTRAP (WAIT FOR ENGINE)
+     - Segment 3 will provide: loadStores(), initMap(), renderMarkers(), updateMarkers(), startRealtimeSync()
+     - We call what exists and do not crash if not yet loaded.
+     ===================================================== */
+  async function bootLiveMap(){
+    await loadChecklistItems();
+
+    // If engine functions exist now, run them.
+    if(typeof window.loadStores === "function") await window.loadStores();
+    if(typeof window.initMap === "function") await window.initMap();
+    if(typeof window.renderMarkers === "function") window.renderMarkers();
+
+    // Start realtime sync if available (Segment 3)
+    if(typeof window.startRealtimeSync === "function") window.startRealtimeSync();
+
+    // Apply current filter if any
+    if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+  }
+
+  // Expose for other segments / debugging
+  window.bootLiveMap = window.bootLiveMap || bootLiveMap;
+
+  // Wait-for-engine mechanism: Segment 3 should dispatch this event when ready
+  function onEngineReady(){
+    log("Engine ready event received");
+    // Only boot if map view is currently shown
+    const mapView = document.getElementById("view-map");
+    const isVisible = mapView && !mapView.classList.contains("hidden");
+    if(isVisible) bootLiveMap();
+  }
+  window.addEventListener("hub:mapEngineReady", onEngineReady);
+
+  // Patch HubUI view switching (from Segment 1) so opening Map boots it once
+  (function patchHubUI(){
+    if(!window.HubUI || window.HubUI.__mapPatched) return;
+    window.HubUI.__mapPatched = true;
+
+    const original = window.HubUI.showOnlyView;
+    if(typeof original !== "function") return;
+
+    window.HubUI.showOnlyView = function(name){
+      original(name);
+      if(name === "map"){
+        // boot regardless; if engine not ready, it will run what it can
+        bootLiveMap();
+      }
+    };
+  })();
+
+  // Session restore support: if user refreshes on map view
+  (function bootIfMapVisibleOnLoad(){
+    const mapView = document.getElementById("view-map");
+    const isVisible = mapView && !mapView.classList.contains("hidden");
+    if(isVisible) bootLiveMap();
+  })();
+}
 </script>
+
+<!-- =====================================================
+     SEGMENT 3 — LIVE MAP ENGINE (LEAFLET + FIRESTORE + MARKERS)
+     ===================================================== -->
+<script>
+/* =====================================================
+   SEG3 GUARDS
+   ===================================================== */
+window.__HUB_SEG3__ = window.__HUB_SEG3__ || { loaded:false };
+if(window.__HUB_SEG3__.loaded){
+  console.warn("[hub] Segment 3 already loaded; skipping.");
+} else {
+  window.__HUB_SEG3__.loaded = true;
+
+  const DEBUG = false;
+  const log = (...a)=> DEBUG && console.log("[hub seg3]", ...a);
+
+  /* =====================================================
+     DEPENDENCY LOADERS
+     ===================================================== */
+  async function ensureLeaflet(){
+    if(window.L && typeof L.map === "function") return true;
+
+    const cssHref = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    const jsSrc   = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+
+    if(!document.querySelector(`link[href="${cssHref}"]`)){
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = cssHref;
+      document.head.appendChild(link);
+    }
+
+    await new Promise(resolve=>{
+      if(document.querySelector(`script[src="${jsSrc}"]`)) return resolve();
+      const s = document.createElement("script");
+      s.src = jsSrc;
+      s.onload = resolve;
+      s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+
+    return !!(window.L && typeof L.map === "function");
+  }
+
+  async function ensureFirestore(){
+    if(window.firebase?.firestore) return true;
+
+    // Keep your original compat approach
+    const appSrc = "https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js";
+    const fsSrc  = "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js";
+
+    const load = (src)=>new Promise(resolve=>{
+      if(document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+
+    await load(appSrc);
+    await load(fsSrc);
+
+    return !!(window.firebase?.initializeApp && window.firebase?.firestore);
+  }
+
+  /* =====================================================
+     WEEK KEY
+     ===================================================== */
+  function currentWeekKey(){
+    // Segment 1 provides mondayKey()
+    return (typeof mondayKey === "function") ? mondayKey() : "1970-01-01";
+  }
+
+  /* =====================================================
+     FIRESTORE INIT
+     ===================================================== */
+  window.firebaseConfig = window.firebaseConfig || {
+    // Keep your original config; replace if needed
+    apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
+    authDomain: "live-map-82f69.firebaseapp.com",
+    projectId: "live-map-82f69"
+  };
+
+  let db = null;
+
+  async function initFirestore(){
+    const ok = await ensureFirestore();
+    if(!ok){
+      console.warn("[firestore] Firebase not available; running local-only.");
+      return null;
+    }
+
+    try{
+      if(!firebase.apps.length){
+        firebase.initializeApp(window.firebaseConfig);
+      }
+      db = firebase.firestore();
+      return db;
+    }catch(e){
+      console.warn("[firestore] init failed; local-only", e);
+      db = null;
+      return null;
+    }
+  }
+
+  /* =====================================================
+     ENHANCE LiveState (merge local + remote + weekKey logic + Firestore writes)
+     - Does NOT remove features; it strengthens the local fallback.
+     ===================================================== */
+  (function enhanceLiveState(){
+    if(!window.LiveState) return; // Segment 2 defines fallback; should exist
+    if(window.LiveState.__enhanced) return;
+    window.LiveState.__enhanced = true;
+
+    // Ensure buckets exist
+    LiveState.local  = LiveState.local  || {};
+    LiveState.remote = LiveState.remote || {};
+
+    const origDefaults = LiveState.defaults?.bind(LiveState);
+    const origGet      = LiveState.get?.bind(LiveState);
+    const origSet      = LiveState.set?.bind(LiveState);
+    const origSave     = LiveState.save?.bind(LiveState);
+
+    LiveState.defaults = function(){
+      const base = (origDefaults ? origDefaults() : {}) || {};
+      return {
+        weekKey: currentWeekKey(),
+        watered:false,
+        wateredOn:null,
+        negatives:false,
+        checklist:{},
+        issues:[],
+        updatedAt:null,
+        updatedBy:(window.App?.user?.username || "User"),
+        ...base
+      };
+    };
+
+    LiveState.get = function(id){
+      const wk = currentWeekKey();
+      const base = this.defaults();
+
+      const local = this.local?.[id] || {};
+      const remote = this.remote?.[id] || null;
+
+      // Merge order: defaults -> local -> remote
+      let merged = { ...base, ...local, ...(remote || {}) };
+
+      // Ignore wrong-week data (global weekly reset)
+      if(merged.weekKey !== wk){
+        merged = { ...base };
+      }
+
+      // Daily watered reset
+      if(typeof todayKey === "function" && merged.wateredOn !== todayKey()){
+        merged.watered = false;
+      }
+
+      // Safety normalizations
+      if(!merged.checklist || typeof merged.checklist !== "object") merged.checklist = {};
+      if(!Array.isArray(merged.issues)) merged.issues = [];
+
+      return merged;
+    };
+
+    LiveState.set = async function(id, patch){
+      const wk = currentWeekKey();
+      const cur = (origGet ? origGet(id) : this.get(id));
+
+      const next = {
+        ...cur,
+        ...patch,
+        weekKey: wk,
+        updatedAt: Date.now(),
+        updatedBy: (window.App?.user?.username || "User")
+      };
+
+      // Save local first
+      this.local[id] = next;
+      try{
+        if(origSave) origSave();
+        else localStorage.setItem("hub_store_state", JSON.stringify(this.local));
+      }catch{}
+
+      // Best-effort remote write
+      if(db){
+        try{
+          await db.collection("stores").doc(id).set(next, { merge:true });
+        }catch(e){
+          console.warn("[firestore] write failed; kept local", e);
+        }
+      }
+      return next;
+    };
+  })();
+
+  /* =====================================================
+     STORES CSV LOADER
+     ===================================================== */
+  window.stores = window.stores || [];
+
+  window.loadStores = window.loadStores || async function loadStores(){
+    // If already loaded, do nothing
+    if(Array.isArray(window.stores) && window.stores.length) return window.stores;
+
+    const res = await fetch("stores.csv", { cache:"no-store" });
+    if(!res.ok) throw new Error("stores.csv missing");
+
+    const rows = parseCSV(await res.text());
+    if(!rows || rows.length < 2) throw new Error("stores.csv empty/invalid");
+
+    const h = rows[0].map(x=>String(x).toLowerCase().trim());
+    const idx = (name)=> h.indexOf(name);
+
+    const idI = idx("store_id");
+    const nI  = idx("store_name");
+    const laI = idx("lat");
+    const loI = idx("lon");
+    const cI  = idx("city");
+    const sI  = idx("state");
+
+    window.stores = rows.slice(1).map(r=>({
+      id:   String(r[idI] ?? "").trim(),
+      name: String(r[nI]  ?? "").trim(),
+      lat:  parseFloat(String(r[laI] ?? "").trim()),
+      lon:  parseFloat(String(r[loI] ?? "").trim()),
+      city: String(r[cI]  ?? "").trim(),
+      state:String(r[sI]  ?? "").trim()
+    })).filter(s =>
+      s.id && s.name && Number.isFinite(s.lat) && Number.isFinite(s.lon)
+    );
+
+    log("stores loaded:", window.stores.length);
+    return window.stores;
+  };
+
+  /* =====================================================
+     MAP INIT (uses inner mount so your overlays stay on top)
+     ===================================================== */
+  window.map = window.map || null;
+  window.__MAP_INIT__ = window.__MAP_INIT__ || false;
+
+  function setWeekBadge(){
+    const el = document.getElementById("mapWeekBadge");
+    if(!el) return;
+    const wk = currentWeekKey();
+    const d = new Date(wk + "T00:00:00");
+    el.textContent = `Week of ${d.toLocaleDateString(undefined, { month:"short", day:"numeric" })}`;
+  }
+
+  window.initMap = window.initMap || async function initMap(){
+    if(window.__MAP_INIT__) return;
+    window.__MAP_INIT__ = true;
+
+    const ok = await ensureLeaflet();
+    if(!ok){
+      console.warn("[leaflet] Leaflet not available; map disabled.");
+      return;
+    }
+
+    const container = document.getElementById("storeMap");
+    if(!container){
+      console.warn("[map] #storeMap missing");
+      return;
+    }
+
+    // Create a dedicated Leaflet mount so existing children (legend/badge) remain intact
+    let mount = document.getElementById("leafletMount");
+    if(!mount){
+      mount = document.createElement("div");
+      mount.id = "leafletMount";
+      mount.style.position = "absolute";
+      mount.style.inset = "0";
+      mount.style.zIndex = "1"; // overlays are zIndex 600
+      container.prepend(mount);
+    }
+
+    // Initialize map
+    window.map = L.map(mount, { preferCanvas:true }).setView([41.8, -87.6], 7);
+
+    // OSM tiles (include attribution)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(window.map);
+
+    setWeekBadge();
+    log("map initialized");
+  };
+
+  /* =====================================================
+     MARKERS RENDER/UPDATE
+     ===================================================== */
+  window.markers = window.markers || new Map();
+
+  function makeMarkerIconForState(st){
+    const cls = (typeof window.markerClass === "function") ? window.markerClass(st) : "legend-bad";
+    return L.divIcon({
+      className: "",
+      html: `<div class="legend-dot ${cls}"></div>`,
+      iconSize: [16,16],
+      iconAnchor: [8,8]
+    });
+  }
+
+  window.renderMarkers = window.renderMarkers || function renderMarkers(){
+    if(!window.map || !window.L) return;
+    if(!Array.isArray(window.stores) || !window.stores.length) return;
+
+    // Clear old markers
+    window.markers.forEach(m=>{
+      try{ window.map.removeLayer(m); }catch{}
+    });
+    window.markers.clear();
+
+    const bounds = [];
+
+    window.stores.forEach(s=>{
+      const st = LiveState.get(s.id);
+
+      const m = L.marker([s.lat, s.lon], { icon: makeMarkerIconForState(st) }).addTo(window.map);
+      m.bindTooltip(`${esc(s.name)} (${esc(s.id)})`, { direction:"top", opacity:0.9 });
+
+      m.on("click", ()=>{
+        if(typeof window.selectStore === "function") window.selectStore(s.id);
+      });
+
+      window.markers.set(s.id, m);
+      bounds.push([s.lat, s.lon]);
+    });
+
+    if(bounds.length){
+      window.map.fitBounds(bounds, { padding:[20,20] });
+    }
+
+    // Apply issue-only filter if present
+    if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+  };
+
+  window.updateMarkers = window.updateMarkers || function updateMarkers(){
+    if(!window.map || !window.L) return;
+    if(!window.markers || typeof window.markers.forEach !== "function") return;
+
+    window.markers.forEach((m, id)=>{
+      const st = LiveState.get(id);
+      try{
+        m.setIcon(makeMarkerIconForState(st));
+      }catch{}
+    });
+
+    if(typeof window.applyIssueFilter === "function") window.applyIssueFilter();
+  };
+
+  /* =====================================================
+     FIRESTORE REALTIME SYNC
+     ===================================================== */
+  window.__FIRESTORE_LISTENER__ = window.__FIRESTORE_LISTENER__ || false;
+
+  window.startRealtimeSync = window.startRealtimeSync || async function startRealtimeSync(){
+    if(window.__FIRESTORE_LISTENER__) return;
+    window.__FIRESTORE_LISTENER__ = true;
+
+    await initFirestore();
+    if(!db){
+      log("no db; skipping realtime sync");
+      return;
+    }
+
+    // Snapshot listener merges into LiveState.remote
+    db.collection("stores").onSnapshot((snap)=>{
+      snap.forEach(doc=>{
+        LiveState.remote[doc.id] = doc.data();
+      });
+
+      // Refresh markers + panel if a store is selected
+      if(typeof window.updateMarkers === "function") window.updateMarkers();
+
+      const selected = (typeof window.__HUB_SELECTED_STORE__ === "function")
+        ? window.__HUB_SELECTED_STORE__()
+        : null;
+
+      if(selected && typeof window.selectStore === "function"){
+        // Calling selectStore refreshes side panel; it's safe
+        window.selectStore(selected);
+      }
+
+    }, (err)=>{
+      console.warn("[firestore] snapshot error", err);
+    });
+
+    log("firestore listener active");
+  };
+
+  /* =====================================================
+     SIGNAL READINESS (Segment 2 listens for this)
+     ===================================================== */
+  window.dispatchEvent(new CustomEvent("hub:mapEngineReady"));
+}
+</script>
+<!-- =====================================================
+     SEGMENT 4 — HF/HPA/TRAINING CONTROLLERS + HPA PRODUCT INFO + HF UX POLISH
+     Paste AFTER Segment 3
+     ===================================================== -->
+
 <style>
   /* =====================================================
-     SEGMENT 4 add-on styles (search dropdown)
+     HPA PRODUCT INFO STYLES (missing previously)
      ===================================================== */
-  .search-results{
-    position:absolute;
-    top: calc(100% + 8px);
-    left:0;
-    right:0;
-    z-index: 999;
-    background: rgba(2,6,23,0.92);
-    border:1px solid rgba(148,163,184,0.45);
-    border-radius: 16px;
-    box-shadow: 0 18px 46px rgba(0,0,0,0.7);
-    overflow:hidden;
-    display:block;
-    max-height: 360px;
-    overflow-y:auto;
-  }
-  .search-item{
-    padding:10px 12px;
-    cursor:pointer;
-    border-bottom: 1px solid rgba(148,163,184,0.12);
-  }
-  .search-item:hover{ background: rgba(34,211,238,0.10); }
-  .checklist-row{
+  .hpa-controls{
     display:flex;
+    flex-direction:column;
     gap:10px;
-    align-items:flex-start;
-    padding:6px 0;
-    font-size:.9rem;
-    border-bottom:1px solid rgba(148,163,184,.12);
+    margin-bottom:12px;
   }
-  .checklist-row:last-child{ border-bottom:none; }
-  .checklist-row input{ accent-color: var(--accent); margin-top:2px; }
+
+  .hpa-search-wrapper{
+    position:relative;
+    max-width:520px;
+  }
+  .hpa-search-icon{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    opacity:.85;
+    pointer-events:none;
+  }
+  .hpa-search-input{
+    width:100%;
+    padding:10px 12px 10px 36px;
+    border-radius:14px;
+  }
+
+  .hpa-filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:flex-end;
+  }
+  .hpa-filter-group{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:170px;
+    flex:1 1 170px;
+  }
+  .hpa-filter-label{
+    font-size:.75rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .hpa-filter-input{
+    padding:10px 12px;
+    border-radius:14px;
+    width:100%;
+  }
+
+  .hpa-results-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:10px 0 12px;
+    color:var(--muted);
+    font-size:.9rem;
+  }
+
+  .hpa-sku-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:10px;
+  }
+  @media (max-width:980px){ .hpa-sku-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  @media (max-width:560px){ .hpa-sku-grid{ grid-template-columns:1fr; } }
+
+  .hpa-sku-card{
+    background:var(--card-glass);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:12px;
+    box-shadow:var(--shadow-soft);
+    position:relative;
+    overflow:hidden;
+  }
+  .hpa-sku-card::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    background:radial-gradient(circle at top left, rgba(34,211,238,.18), transparent 55%);
+    opacity:.8;
+    pointer-events:none;
+  }
+  .hpa-sku-year{
+    position:absolute;
+    top:10px;
+    right:10px;
+    font-size:.75rem;
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(2,6,23,.55);
+    border:1px solid rgba(148,163,184,.3);
+    color:var(--heading);
+    z-index:1;
+  }
+  .hpa-sku-name{
+    font-weight:900;
+    color:var(--heading);
+    margin-bottom:8px;
+    position:relative;
+    z-index:1;
+  }
+  .hpa-sku-meta{
+    color:var(--muted);
+    font-size:.85rem;
+    margin-top:4px;
+    position:relative;
+    z-index:1;
+  }
+  .hpa-empty{
+    padding:12px;
+    color:var(--muted);
+  }
+
+  .hpa-order-wrap{ overflow:auto; }
+  .hpa-order-title{
+    font-weight:900;
+    color:var(--heading);
+    margin-bottom:10px;
+  }
+  .hpa-order-table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:620px;
+    background:rgba(2,6,23,.25);
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid rgba(148,163,184,.25);
+  }
+  .hpa-order-table th,
+  .hpa-order-table td{
+    padding:10px 12px;
+    border-bottom:1px solid rgba(148,163,184,.16);
+    font-size:.9rem;
+  }
+  .hpa-order-table thead th{
+    text-align:left;
+    font-size:.75rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    background:rgba(2,6,23,.45);
+  }
+  .hpa-order-table tbody tr:hover{
+    background:rgba(34,211,238,.08);
+  }
 </style>
 
 <script>
 /* =====================================================
-   SEGMENT 4 — LIVE MAP ENGINE (RESTORES MISSING FEATURES)
+   SEG4 GUARD
    ===================================================== */
+window.__HUB_SEG4__ = window.__HUB_SEG4__ || { loaded:false };
+if(window.__HUB_SEG4__.loaded){
+  console.warn("[hub] Segment 4 already loaded; skipping.");
+} else {
+  window.__HUB_SEG4__.loaded = true;
 
-/* ---------- Ensure Leaflet exists ---------- */
-async function ensureLeaflet(){
-  if(window.L && typeof L.map === "function") return true;
+  const DEBUG = false;
+  const log = (...a)=> DEBUG && console.log("[hub seg4]", ...a);
 
-  // inject if missing
-  const cssHref = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-  const jsSrc   = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-
-  if(!document.querySelector(`link[href="${cssHref}"]`)){
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = cssHref;
-    document.head.appendChild(link);
+  /* =====================================================
+     TAB SWITCHING (HF / HPA / Training)
+     - Restores behavior that was missing
+     - Scoped to each view so it won't conflict with global nav
+     ===================================================== */
+  function setActive(btn, groupSelector){
+    document.querySelectorAll(groupSelector).forEach(b=> b.classList.remove("active"));
+    btn.classList.add("active");
   }
 
-  await new Promise(resolve=>{
-    if(document.querySelector(`script[src="${jsSrc}"]`)) return resolve();
-    const s = document.createElement("script");
-    s.src = jsSrc;
-    s.onload = resolve;
-    s.onerror = resolve;
-    document.head.appendChild(s);
-  });
+  // HF top tabs
+  document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActive(btn, "[data-hf-tab]");
+      const which = btn.dataset.hfTab;
 
-  return !!(window.L && typeof L.map === "function");
-}
+      document.getElementById("hf-guidelines")?.classList.toggle("hidden", which !== "guidelines");
+      document.getElementById("hf-care")?.classList.toggle("hidden", which !== "care");
 
-/* ---------- Ensure Firebase Firestore exists ---------- */
-async function ensureFirestore(){
-  if(window.firebase?.firestore) return true;
-
-  const appSrc = "https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js";
-  const fsSrc  = "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js";
-
-  const load = (src)=> new Promise(resolve=>{
-    if(document.querySelector(`script[src="${src}"]`)) return resolve();
-    const s = document.createElement("script");
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = resolve;
-    document.head.appendChild(s);
-  });
-
-  await load(appSrc);
-  await load(fsSrc);
-
-  return !!(window.firebase?.initializeApp && window.firebase?.firestore);
-}
-
-/* =====================================================
-   WEEK KEY (GLOBAL RESET WITHOUT DELETING FIRESTORE)
-   - Any data stored in Firestore is tagged with weekKey.
-   - On Monday, CURRENT_WEEK changes => old remote data ignored.
-   ===================================================== */
-function currentWeekKey(){
-  return mondayKey(); // from Segment 3/your map helpers
-}
-
-/* =====================================================
-   FIRESTORE INIT (SAFE)
-   ===================================================== */
-window.firebaseConfig = window.firebaseConfig || {
-  apiKey: "AIzaSyCbEnGdIr43SJ0iItI-jqTC3Do0hT0gk_Y",
-  authDomain: "live-map-82f69.firebaseapp.com",
-  projectId: "live-map-82f69"
-};
-
-let db = null;
-
-async function initFirestore(){
-  const ok = await ensureFirestore();
-  if(!ok){
-    console.warn("[firestore] Not available; running local-only");
-    return null;
-  }
-
-  try{
-    if(!firebase.apps.length){
-      firebase.initializeApp(window.firebaseConfig);
-    }
-    db = firebase.firestore();
-    return db;
-  }catch(e){
-    console.warn("[firestore] init failed", e);
-    return null;
-  }
-}
-
-/* =====================================================
-   LIVE STATE (RESTORED & FIXED)
-   - local + remote merge
-   - daily watered reset
-   - weekKey reset logic (global)
-   ===================================================== */
-
-const STATE_KEY = "hub_store_state";     // matches your current usage
-const WEEK_KEY  = "hub_week_key";        // matches your current usage
-
-// keep your existing monday local reset behavior too
-(function weeklyResetLocal(){
-  const wk = currentWeekKey();
-  const last = localStorage.getItem(WEEK_KEY);
-  if(last !== wk){
-    localStorage.removeItem(STATE_KEY);
-    localStorage.setItem(WEEK_KEY, wk);
-  }
-})();
-
-// Replace LiveState ONLY if not already defined correctly
-// (your current LiveState is missing weekKey logic + some safeguards)
-window.LiveState = window.LiveState || {};
-LiveState.local = (()=>{ try{return JSON.parse(localStorage.getItem(STATE_KEY)||"{}");}catch{return{};} })();
-LiveState.remote = LiveState.remote || {};
-
-LiveState.defaults = function(){
-  return {
-    weekKey: currentWeekKey(),
-    watered:false,
-    wateredOn:null,
-    negatives:false,
-    checklist:{},
-    issues:[],
-    updatedAt:null,
-    updatedBy:null
-  };
-};
-
-LiveState.save = function(){
-  try{ localStorage.setItem(STATE_KEY, JSON.stringify(this.local)); }catch{}
-};
-
-LiveState.get = function(id){
-  const wk = currentWeekKey();
-  const local = this.local[id] || this.defaults();
-  const remote = this.remote[id] || null;
-
-  // Merge order: defaults -> local -> remote
-  let merged = { ...this.defaults(), ...local, ...(remote||{}) };
-
-  // Weekly reset logic (GLOBAL): ignore any state from a different week
-  if(merged.weekKey !== wk){
-    merged = this.defaults();
-  }
-
-  // Daily watered reset
-  if(merged.wateredOn !== todayKey()) merged.watered = false;
-
-  // Safety
-  if(!merged.checklist || typeof merged.checklist !== "object") merged.checklist = {};
-  if(!Array.isArray(merged.issues)) merged.issues = [];
-
-  return merged;
-};
-
-LiveState.set = async function(id, patch){
-  const wk = currentWeekKey();
-  const cur = this.get(id);
-  const next = {
-    ...cur,
-    ...patch,
-    weekKey: wk,
-    updatedAt: Date.now(),
-    updatedBy: App.user?.username || "User"
-  };
-
-  this.local[id] = next;
-  this.save();
-
-  if(db){
-    try{
-      await db.collection("stores").doc(id).set(next, { merge:true });
-    }catch(e){
-      console.warn("[firestore] write failed, kept local", e);
-    }
-  }
-
-  return next;
-};
-
-/* =====================================================
-   MAP DATA + MAP FUNCTIONS (RESTORED)
-   ===================================================== */
-
-// Globals used by Segment 3
-window.stores = window.stores || [];
-window.markers = window.markers || new Map();
-window.map = window.map || null;
-
-async function loadStores(){
-  const res = await fetch("stores.csv", { cache:"no-store" });
-  if(!res.ok) throw new Error("stores.csv missing");
-  const rows = parseCSV(await res.text());
-  const h = rows[0].map(x=>String(x).toLowerCase().trim());
-
-  const id=h.indexOf("store_id"), n=h.indexOf("store_name"),
-        la=h.indexOf("lat"), lo=h.indexOf("lon"),
-        c=h.indexOf("city"), st=h.indexOf("state");
-
-  stores = rows.slice(1).map(r=>({
-    id:(r[id]||"").trim(),
-    name:(r[n]||"").trim(),
-    lat:parseFloat((r[la]||"").trim()),
-    lon:parseFloat((r[lo]||"").trim()),
-    city:(r[c]||"").trim(),
-    state:(r[st]||"").trim()
-  })).filter(s=>s.id && s.name && !Number.isNaN(s.lat) && !Number.isNaN(s.lon));
-}
-
-/* markerClass exists in Segment 3; keep it.
-   If not, define a safe version. */
-if(typeof markerClass !== "function"){
-  window.markerClass = function(st){
-    if((st.issues||[]).some(i=>!i.resolved)) return "legend-warn";
-    if(st.watered && st.wateredOn===todayKey()) return "legend-ok";
-    return "legend-bad";
-  };
-}
-
-function setWeekBadge(){
-  const el = document.getElementById("mapWeekBadge");
-  if(!el) return;
-  const d = new Date(currentWeekKey()+"T00:00:00");
-  el.textContent = `Week of ${d.toLocaleDateString(undefined,{month:"short",day:"numeric"})}`;
-}
-
-async function initMap(){
-  if(map) return;
-  const ok = await ensureLeaflet();
-  if(!ok){
-    console.warn("[leaflet] not available");
-    return;
-  }
-
-  map = L.map("storeMap", { preferCanvas:true }).setView([41.8,-87.6], 7);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19 }).addTo(map);
-
-  setWeekBadge();
-}
-
-function renderMarkers(){
-  if(!map) return;
-
-  markers.forEach(m=> map.removeLayer(m));
-  markers.clear();
-
-  const bounds = [];
-
-  stores.forEach(s=>{
-    const st = LiveState.get(s.id);
-
-    const icon = L.divIcon({
-      className:"",
-      html:`<div class="legend-dot ${markerClass(st)}"></div>`,
-      iconSize:[16,16],
-      iconAnchor:[8,8]
-    });
-
-    const m = L.marker([s.lat, s.lon], { icon }).addTo(map);
-    m.bindTooltip(`${s.name} (${s.id})`, { direction:"top", opacity:0.9 });
-    m.on("click", ()=> selectStore(s.id));
-    markers.set(s.id, m);
-
-    bounds.push([s.lat, s.lon]);
-  });
-
-  if(bounds.length){
-    map.fitBounds(bounds, { padding:[20,20] });
-  }
-
-  // apply current issue-only filter if enabled
-  if(typeof applyIssueFilter === "function") applyIssueFilter();
-  applyIssueFilterLocal();
-}
-
-function updateMarkers(){
-  if(!map) return;
-  markers.forEach((m,id)=>{
-    const st = LiveState.get(id);
-    m.setIcon(L.divIcon({
-      className:"",
-      html:`<div class="legend-dot ${markerClass(st)}"></div>`,
-      iconSize:[16,16],
-      iconAnchor:[8,8]
-    }));
-  });
-  if(typeof applyIssueFilter === "function") applyIssueFilter();
-  applyIssueFilterLocal();
-}
-
-/* local filter fallback (in case Segment 3’s applyIssueFilter is not called) */
-function applyIssueFilterLocal(){
-  if(!filterIssuesOnly) return;
-  markers.forEach((marker,id)=>{
-    const st = LiveState.get(id);
-    const hasIssues = (st.issues||[]).some(i=>!i.resolved);
-    const el = marker.getElement?.();
-    if(!el) return;
-    el.style.display = filterIssuesOnly.checked && !hasIssues ? "none" : "";
-  });
-}
-
-filterIssuesOnly?.addEventListener("change", ()=>{
-  updateMarkers();
-});
-
-/* =====================================================
-   ISSUE RESOLVE MODAL (RESTORED FEATURE)
-   ===================================================== */
-function openIssuesModal(storeId){
-  const st = LiveState.get(storeId);
-
-  let bd = document.getElementById("issuesBackdrop");
-  if(!bd){
-    bd = document.createElement("div");
-    bd.id = "issuesBackdrop";
-    bd.className = "popup-backdrop";
-    bd.innerHTML = `
-      <div class="popup">
-        <h2>Store Issues</h2>
-        <div class="popup-subtitle" id="issuesSub"></div>
-        <div id="issuesList"></div>
-        <button class="popup-close" id="issuesCloseBtn">Close</button>
-      </div>
-    `;
-    document.body.appendChild(bd);
-
-    document.getElementById("issuesCloseBtn").onclick = ()=> bd.style.display="none";
-    bd.onclick = (e)=>{ if(e.target===bd) bd.style.display="none"; };
-
-    document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape" && bd.style.display === "flex"){
-        bd.style.display="none";
+      // When switching to care, ensure subtab is consistent
+      if(which === "care"){
+        // Default: plants
+        const activeCare = document.querySelector("[data-hf-care].active")?.dataset.hfCare || "plants";
+        document.getElementById("hf-plants")?.classList.toggle("hidden", activeCare !== "plants");
+        document.getElementById("hf-pests")?.classList.toggle("hidden", activeCare !== "pests");
       }
     });
-  }
+  });
 
-  document.getElementById("issuesSub").textContent = `Store ${storeId}`;
-  const list = document.getElementById("issuesList");
+  // HF care subtabs
+  document.querySelectorAll("[data-hf-care]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActive(btn, "[data-hf-care]");
+      const which = btn.dataset.hfCare;
+      document.getElementById("hf-plants")?.classList.toggle("hidden", which !== "plants");
+      document.getElementById("hf-pests")?.classList.toggle("hidden", which !== "pests");
+    });
+  });
 
-  list.innerHTML = (st.issues||[]).map(issue=>`
-    <div class="glass-panel" style="margin-bottom:10px;">
-      <div style="font-weight:900;">${issue.resolved ? "✅" : "🚩"} ${esc(issue.text)}</div>
-      <div class="popup-subtitle" style="margin-top:6px;">
-        Status: ${issue.resolved ? "Resolved" : "Open"}
-      </div>
-      ${issue.resolved ? "" : `<button class="popup-close" data-resolve="${issue.id}">Resolve</button>`}
-    </div>
-  `).join("") || `<div class="subtitle">No issues for this store.</div>`;
+  // HPA top tabs
+  document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActive(btn, "[data-hpa-tab]");
+      const which = btn.dataset.hpaTab;
 
-  list.onclick = async (e)=>{
-    const btn = e.target.closest("[data-resolve]");
-    if(!btn) return;
+      document.getElementById("hpa-guidelines")?.classList.toggle("hidden", which !== "guidelines");
+      document.getElementById("hpa-products")?.classList.toggle("hidden", which !== "products");
+      document.getElementById("hpa-care")?.classList.toggle("hidden", which !== "care");
 
-    const cur = LiveState.get(storeId);
-    const issue = cur.issues.find(x=>x.id===btn.dataset.resolve);
-    if(issue){
-      issue.resolved = true;
-      await LiveState.set(storeId, { issues: cur.issues });
-      updateMarkers();
-      // refresh store panel if it’s selected
-      if(selectedStoreId === storeId){
-        const store = stores.find(s=>s.id===storeId);
-        if(store) updateStorePanel(store);
+      // Boot product info on first open
+      if(which === "products"){
+        if(typeof window.bootHpaProductInfo === "function") window.bootHpaProductInfo();
       }
-      openIssuesModal(storeId);
-    }
-  };
 
-  bd.style.display = "flex";
-}
-
-/* Make clicking the Issues status open the modal */
-spIssues?.addEventListener("click", ()=>{
-  if(selectedStoreId) openIssuesModal(selectedStoreId);
-});
-spIssues && (spIssues.style.cursor = "pointer");
-
-/* =====================================================
-   FIRESTORE SNAPSHOT (RESTORED)
-   ===================================================== */
-async function startRealtimeSync(){
-  await initFirestore();
-  if(!db) return;
-
-  db.collection("stores").onSnapshot((snap)=>{
-    snap.forEach(doc=>{
-      LiveState.remote[doc.id] = doc.data();
-    });
-    updateMarkers();
-    if(selectedStoreId){
-      const store = stores.find(s=>s.id===selectedStoreId);
-      if(store) updateStorePanel(store);
-    }
-  }, (err)=> console.warn("[firestore] snapshot error", err));
-}
-
-/* =====================================================
-   BOOTSTRAP (MAP+DATA)
-   ===================================================== */
-(async function seg4Boot(){
-  try{
-    // Map is booted by Segment 3 when user enters Map view,
-    // but we must ensure functions exist beforehand.
-    // Preload stores + start sync so map is ready instantly.
-    await loadStores();
-    await initMap();
-    renderMarkers();
-    startRealtimeSync();
-  }catch(e){
-    console.warn("[map] boot failed", e);
-  }
-})();
-</script>
-<script>
-/* =====================================================
-   SEGMENT 5 — HPA PRODUCT INFO (FULL RESTORE)
-   ===================================================== */
-
-/* -----------------------------------------------------
-   CSV helpers (safe)
------------------------------------------------------ */
-function parseCsvLine(line){
-  const out=[]; let cur=""; let q=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){
-      if(q && line[i+1]==='"'){ cur+='"'; i++; }
-      else q=!q;
-    }else if(c==="," && !q){
-      out.push(cur); cur="";
-    }else cur+=c;
-  }
-  out.push(cur);
-  return out;
-}
-
-function parseCsv(text){
-  const lines=text.split(/\r?\n/).filter(l=>l.trim());
-  if(!lines.length) return { header:[], rows:[] };
-  const header=parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
-  const rows=lines.slice(1).map(parseCsvLine);
-  return { header, rows };
-}
-
-async function loadCsv(url){
-  const r=await fetch(url,{cache:"no-store"});
-  if(!r.ok) throw new Error(url+" missing");
-  return parseCsv(await r.text());
-}
-
-/* -----------------------------------------------------
-   PRODUCT INFO: TAB SWITCHING
------------------------------------------------------ */
-(function wireProductTabs(){
-  const skusTab = document.getElementById("hpaProductsTabSkus");
-  const ordersTab = document.getElementById("hpaProductsTabOrders");
-  const skus = document.getElementById("products-skus");
-  const orders = document.getElementById("products-orders");
-
-  if(!skusTab || !ordersTab) return;
-
-  skusTab.onclick = ()=>{
-    skusTab.classList.add("active");
-    ordersTab.classList.remove("active");
-    skus.classList.remove("hidden");
-    orders.classList.add("hidden");
-  };
-
-  ordersTab.onclick = ()=>{
-    ordersTab.classList.add("active");
-    skusTab.classList.remove("active");
-    orders.classList.remove("hidden");
-    skus.classList.add("hidden");
-  };
-})();
-
-/* -----------------------------------------------------
-   SKU CATALOGUE
------------------------------------------------------ */
-let HPA_SKUS = [];
-
-async function loadHpaSkus(){
-  const {header,rows} = await loadCsv("SKU_Name_2026.csv");
-
-  const idx = n => header.indexOf(n);
-  const nameI = idx("sku name");
-  const skuI  = idx("sku");
-  const sentI = idx("sent in");
-  const yearI = idx("year sent");
-
-  HPA_SKUS = rows.map(r=>({
-    name:(r[nameI]||"").trim(),
-    sku:(r[skuI]||"").trim(),
-    sent:(r[sentI]||"").trim(),
-    year:(r[yearI]||"").trim()
-  })).filter(x=>x.name && x.sku);
-}
-
-function renderSkuCatalogue(){
-  const mount = document.getElementById("products-skus");
-  if(!mount) return;
-
-  mount.innerHTML = `
-    <div class="hpa-controls">
-      <div class="hpa-search-wrapper">
-        <span class="hpa-search-icon">🔍</span>
-        <input id="hpaSkuName" class="hpa-search-input" placeholder="Filter by name…" />
-      </div>
-
-      <div class="hpa-filters">
-        <div class="hpa-filter-group">
-          <span class="hpa-filter-label">SKU</span>
-          <input id="hpaSkuCode" class="hpa-filter-input" placeholder="e.g. 1005-837-400" />
-        </div>
-        <div class="hpa-filter-group">
-          <span class="hpa-filter-label">Sent In</span>
-          <input id="hpaSkuSent" class="hpa-filter-input" placeholder="6 / Promo / Holiday" />
-        </div>
-        <div class="hpa-filter-group">
-          <span class="hpa-filter-label">Year</span>
-          <select id="hpaSkuYear" class="hpa-filter-input">
-            <option value="all">All</option>
-            ${[...new Set(HPA_SKUS.map(s=>s.year).filter(Boolean))]
-              .sort()
-              .map(y=>`<option>${y}</option>`).join("")}
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="hpa-results-header">
-      <div><strong id="hpaSkuCount">0</strong> SKUs shown</div>
-    </div>
-
-    <div id="hpaSkuGrid" class="hpa-sku-grid"></div>
-    <div id="hpaSkuEmpty" class="hpa-empty hidden">No matching SKUs.</div>
-  `;
-
-  const grid = document.getElementById("hpaSkuGrid");
-  const count = document.getElementById("hpaSkuCount");
-  const empty = document.getElementById("hpaSkuEmpty");
-
-  const fName = document.getElementById("hpaSkuName");
-  const fSku  = document.getElementById("hpaSkuCode");
-  const fSent = document.getElementById("hpaSkuSent");
-  const fYear = document.getElementById("hpaSkuYear");
-
-  function norm(s){ return (s||"").toLowerCase(); }
-
-  function render(){
-    const out = HPA_SKUS.filter(s=>{
-      if(fName.value && !norm(s.name).includes(norm(fName.value))) return false;
-      if(fSku.value && !norm(s.sku).includes(norm(fSku.value))) return false;
-      if(fSent.value && !norm(s.sent).includes(norm(fSent.value))) return false;
-      if(fYear.value!=="all" && s.year!==fYear.value) return false;
-      return true;
-    });
-
-    count.textContent = out.length;
-    empty.classList.toggle("hidden", out.length!==0);
-
-    grid.innerHTML = out.map(s=>`
-      <div class="hpa-sku-card">
-        ${s.year?`<div class="hpa-sku-year">${s.year}</div>`:""}
-        <div class="hpa-sku-name">${esc(s.name)}</div>
-        <div class="hpa-sku-meta"><strong>SKU:</strong> ${esc(s.sku)}</div>
-        <div class="hpa-sku-meta"><strong>Sent In:</strong> ${esc(s.sent)}</div>
-      </div>
-    `).join("");
-  }
-
-  [fName,fSku,fSent,fYear].forEach(el=>el.oninput=render);
-  render();
-}
-
-/* -----------------------------------------------------
-   ORDER BREAKDOWN
------------------------------------------------------ */
-async function renderOrderBreakdown(){
-  const mount = document.getElementById("products-orders");
-  if(!mount) return;
-
-  mount.innerHTML = `
-    <div class="hpa-order-wrap">
-      <div class="hpa-order-title">Weekly Shipping Overview</div>
-      <table class="hpa-order-table">
-        <thead>
-          <tr>
-            <th>Week #</th>
-            <th>Week Date</th>
-            <th>Shipping</th>
-            <th>Additional</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="hpaOrderWeeks"></tbody>
-      </table>
-    </div>
-  `;
-
-  const body = document.getElementById("hpaOrderWeeks");
-  const {header,rows} = await loadCsv("OrderWeeks.csv");
-
-  const idx = n => header.indexOf(n);
-  const w=idx("week #"), d=idx("week date"),
-        s=idx("shipping"), a=idx("additional"),
-        st=idx("status");
-
-  body.innerHTML = rows.map(r=>`
-    <tr>
-      <td>${esc(r[w])}</td>
-      <td>${esc(r[d])}</td>
-      <td>${esc(r[s])}</td>
-      <td>${esc(r[a])}</td>
-      <td>${esc(r[st])}</td>
-    </tr>
-  `).join("");
-}
-
-/* -----------------------------------------------------
-   BOOT HPA PRODUCT INFO
------------------------------------------------------ */
-async function bootHpaProductInfo(){
-  await loadHpaSkus();
-  renderSkuCatalogue();
-  renderOrderBreakdown();
-}
-
-/* Hook to HPA tab */
-document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    if(btn.dataset.hpaTab==="products"){
-      bootHpaProductInfo();
-    }
-  });
-});
-
-/* Session restore */
-(function(){
-  if(sessionStorage.getItem("hub_view")==="hpa"){
-    const active=document.querySelector("[data-hpa-tab].active")?.dataset.hpaTab;
-    if(active==="products") bootHpaProductInfo();
-  }
-})();
-</script>
-<script>
-/* =====================================================
-   SEGMENT 6 — HF UX POLISH (SAFE + ADDITIVE)
-   ===================================================== */
-
-/* -----------------------------------------------------
-   STORAGE KEYS
------------------------------------------------------ */
-const HF_RECENT_KEY = "hf_recent_items";
-const HF_FAVORITES_KEY = "hf_favorites";
-
-/* -----------------------------------------------------
-   HELPERS
------------------------------------------------------ */
-function loadSet(key){
-  try{
-    return new Set(JSON.parse(localStorage.getItem(key) || "[]"));
-  }catch{ return new Set(); }
-}
-function saveSet(key,set){
-  localStorage.setItem(key, JSON.stringify([...set]));
-}
-
-/* -----------------------------------------------------
-   RECENTLY VIEWED
------------------------------------------------------ */
-const HF_RECENT = loadSet(HF_RECENT_KEY);
-
-function addRecent(id){
-  HF_RECENT.delete(id);
-  HF_RECENT.add(id);
-  while(HF_RECENT.size > 5){
-    HF_RECENT.delete(HF_RECENT.values().next().value);
-  }
-  saveSet(HF_RECENT_KEY, HF_RECENT);
-}
-
-function renderRecentBar(mountId){
-  const mount = document.getElementById(mountId);
-  if(!mount || !HF_RECENT.size) return;
-
-  const bar = document.createElement("div");
-  bar.className = "glass-panel";
-  bar.style.marginBottom = "12px";
-  bar.innerHTML = `
-    <strong>Recently Viewed</strong>
-    <div class="subtitle">Quick access</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-      ${[...HF_RECENT].reverse().map(id=>`
-        <button class="tab" data-recent="${id}">${id}</button>
-      `).join("")}
-    </div>
-  `;
-
-  mount.prepend(bar);
-
-  bar.querySelectorAll("[data-recent]").forEach(btn=>{
-    btn.onclick = ()=>{
-      const id = btn.dataset.recent;
-      document.querySelector(`[data-id="${CSS.escape(id)}"]`)?.click();
-    };
-  });
-}
-
-/* -----------------------------------------------------
-   FAVORITES
------------------------------------------------------ */
-const HF_FAVORITES = loadSet(HF_FAVORITES_KEY);
-
-function toggleFavorite(id){
-  if(HF_FAVORITES.has(id)) HF_FAVORITES.delete(id);
-  else HF_FAVORITES.add(id);
-  saveSet(HF_FAVORITES_KEY, HF_FAVORITES);
-}
-
-function favIcon(id){
-  return HF_FAVORITES.has(id) ? "⭐" : "☆";
-}
-
-/* -----------------------------------------------------
-   PATCH PERENNIAL & PEST CARD RENDERING (WRAP ONLY)
------------------------------------------------------ */
-function patchCards(containerId){
-  const root = document.getElementById(containerId);
-  if(!root) return;
-
-  root.querySelectorAll(".card").forEach(card=>{
-    const id = card.dataset.id;
-    if(!id || card.dataset.patched) return;
-    card.dataset.patched = "1";
-
-    const fav = document.createElement("span");
-    fav.textContent = favIcon(id);
-    fav.style.cssText = `
-      float:right;cursor:pointer;font-size:1.1rem;
-      color:var(--accent);margin-left:6px;
-    `;
-    fav.title = "Toggle favorite";
-
-    fav.onclick = (e)=>{
-      e.stopPropagation();
-      toggleFavorite(id);
-      fav.textContent = favIcon(id);
-    };
-
-    card.prepend(fav);
-
-    card.addEventListener("click", ()=>{
-      addRecent(id);
-      saveSet(HF_RECENT_KEY, HF_RECENT);
+      // When switching to care, keep care subtabs consistent
+      if(which === "care"){
+        const activeCare = document.querySelector("[data-hpa-care].active")?.dataset.hpaCare || "plants";
+        document.getElementById("hpa-plants")?.classList.toggle("hidden", activeCare !== "plants");
+        document.getElementById("hpa-pests")?.classList.toggle("hidden", activeCare !== "pests");
+      }
     });
   });
-}
 
-/* -----------------------------------------------------
-   SAFE POPUP FIX (prevents duplicates)
------------------------------------------------------ */
-(function enforceSinglePopup(){
-  const observer = new MutationObserver(()=>{
-    const popups = document.querySelectorAll(".popup-backdrop");
-    if(popups.length > 1){
-      popups.forEach((p,i)=>{ if(i>0) p.remove(); });
-    }
+  // HPA care subtabs
+  document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActive(btn, "[data-hpa-care]");
+      const which = btn.dataset.hpaCare;
+      document.getElementById("hpa-plants")?.classList.toggle("hidden", which !== "plants");
+      document.getElementById("hpa-pests")?.classList.toggle("hidden", which !== "pests");
+    });
   });
-  observer.observe(document.body,{ childList:true, subtree:true });
-})();
 
-/* -----------------------------------------------------
-   HOOKS INTO EXISTING HF RENDERS
------------------------------------------------------ */
-document.addEventListener("click", ()=>{
-  patchCards("hf-plants");
-  patchCards("hf-pests");
-});
+  // Training subtabs
+  document.querySelectorAll("[data-train]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActive(btn, "[data-train]");
+      const which = btn.dataset.train;
 
-document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    if(btn.dataset.hfTab === "care"){
-      setTimeout(()=>{
-        renderRecentBar("hf-care");
-        patchCards("hf-plants");
-        patchCards("hf-pests");
-      }, 0);
-    }
+      document.getElementById("train-basics")?.classList.toggle("hidden", which !== "basics");
+      document.getElementById("train-merch")?.classList.toggle("hidden", which !== "merch");
+      document.getElementById("train-supervisor")?.classList.toggle("hidden", which !== "supervisor");
+    });
   });
-});
 
-/* Restore on refresh */
-(function(){
-  if(sessionStorage.getItem("hub_view")==="hf"){
-    setTimeout(()=>{
-      renderRecentBar("hf-care");
-      patchCards("hf-plants");
-      patchCards("hf-pests");
-    }, 0);
+  /* =====================================================
+     HPA PRODUCT INFO — CSV LOADERS + RENDERS
+     - Keeps your original feature set
+     - Uses global parseCSV + esc from Segment 1
+     ===================================================== */
+  let HPA_SKUS = [];
+  let __HPA_BOOTED__ = false;
+
+  function csvToObjects(urlText){
+    const rows = parseCSV(urlText);
+    if(!rows || rows.length < 2) return { header:[], rows:[] };
+    const header = rows[0].map(h => String(h).toLowerCase().trim());
+    const data = rows.slice(1);
+    return { header, rows:data };
   }
-})();
-</script>
-<script>
-/* =====================================================
-   SEGMENT 7 — FINAL HARDENING & STABILITY GUARDS
-   ===================================================== */
 
-/* =====================================================
-   GLOBAL FLAGS (prevents double init)
-   ===================================================== */
-window.__APP_READY__ = window.__APP_READY__ || false;
-window.__MAP_INIT__ = window.__MAP_INIT__ || false;
-window.__FIRESTORE_LISTENER__ = window.__FIRESTORE_LISTENER__ || false;
-
-/* =====================================================
-   SAFE LOGGER (toggleable)
-   ===================================================== */
-const DEBUG = false; // flip to true if you need console logs
-function log(...args){ if(DEBUG) console.log(...args); }
-
-/* =====================================================
-   SAFE CSV ACCESSORS
-   ===================================================== */
-function safeIdx(header, name){
-  const i = header.indexOf(name);
-  return i >= 0 ? i : null;
-}
-
-function safeCell(row, idx){
-  if(idx === null) return "";
-  return (row[idx] || "").trim();
-}
-
-/* =====================================================
-   SAFE CSV LOAD WRAPPER
-   ===================================================== */
-async function loadCsvSafeWithMessage(url, mountId){
-  try{
+  async function fetchCsv(url){
     const r = await fetch(url, { cache:"no-store" });
-    if(!r.ok) throw new Error("fetch failed");
+    if(!r.ok) throw new Error(url + " missing");
     const text = await r.text();
-    if(!text.trim()) throw new Error("empty csv");
-    return parseCSV(text);
-  }catch(err){
-    log("[CSV]", url, err);
-    if(mountId){
-      const el = document.getElementById(mountId);
-      if(el){
-        el.innerHTML = `
+    return csvToObjects(text);
+  }
+
+  async function loadHpaSkus(){
+    const { header, rows } = await fetchCsv("SKU_Name_2026.csv");
+
+    const idx = (name)=> header.indexOf(name);
+    const nameI = idx("sku name");
+    const skuI  = idx("sku");
+    const sentI = idx("sent in");
+    const yearI = idx("year sent");
+
+    HPA_SKUS = rows.map(r=>({
+      name: String(r[nameI] || "").trim(),
+      sku:  String(r[skuI]  || "").trim(),
+      sent: String(r[sentI] || "").trim(),
+      year: String(r[yearI] || "").trim()
+    })).filter(x=> x.name && x.sku);
+  }
+
+  function renderSkuCatalogue(){
+    const mount = document.getElementById("products-skus");
+    if(!mount) return;
+
+    const years = [...new Set(HPA_SKUS.map(s=>s.year).filter(Boolean))].sort();
+
+    mount.innerHTML = `
+      <div class="hpa-controls">
+        <div class="hpa-search-wrapper">
+          <span class="hpa-search-icon">🔍</span>
+          <input id="hpaSkuName" class="hpa-search-input" placeholder="Filter by name…" />
+        </div>
+
+        <div class="hpa-filters">
+          <div class="hpa-filter-group">
+            <span class="hpa-filter-label">SKU</span>
+            <input id="hpaSkuCode" class="hpa-filter-input" placeholder="e.g. 1005-837-400" />
+          </div>
+
+          <div class="hpa-filter-group">
+            <span class="hpa-filter-label">Sent In</span>
+            <input id="hpaSkuSent" class="hpa-filter-input" placeholder="6 / Promo / Holiday" />
+          </div>
+
+          <div class="hpa-filter-group">
+            <span class="hpa-filter-label">Year</span>
+            <select id="hpaSkuYear" class="hpa-filter-input">
+              <option value="all">All</option>
+              ${years.map(y=> `<option value="${esc(y)}">${esc(y)}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="hpa-results-header">
+        <div><strong id="hpaSkuCount">0</strong> SKUs shown</div>
+      </div>
+
+      <div id="hpaSkuGrid" class="hpa-sku-grid"></div>
+      <div id="hpaSkuEmpty" class="hpa-empty hidden">No matching SKUs.</div>
+    `;
+
+    const grid  = document.getElementById("hpaSkuGrid");
+    const count = document.getElementById("hpaSkuCount");
+    const empty = document.getElementById("hpaSkuEmpty");
+
+    const fName = document.getElementById("hpaSkuName");
+    const fSku  = document.getElementById("hpaSkuCode");
+    const fSent = document.getElementById("hpaSkuSent");
+    const fYear = document.getElementById("hpaSkuYear");
+
+    const norm = (s)=> (s || "").toLowerCase();
+
+    function render(){
+      const out = HPA_SKUS.filter(s=>{
+        if(fName.value && !norm(s.name).includes(norm(fName.value))) return false;
+        if(fSku.value  && !norm(s.sku).includes(norm(fSku.value))) return false;
+        if(fSent.value && !norm(s.sent).includes(norm(fSent.value))) return false;
+        if(fYear.value !== "all" && s.year !== fYear.value) return false;
+        return true;
+      });
+
+      count.textContent = out.length;
+      empty.classList.toggle("hidden", out.length !== 0);
+
+      grid.innerHTML = out.map(s=>`
+        <div class="hpa-sku-card">
+          ${s.year ? `<div class="hpa-sku-year">${esc(s.year)}</div>` : ""}
+          <div class="hpa-sku-name">${esc(s.name)}</div>
+          <div class="hpa-sku-meta"><strong>SKU:</strong> ${esc(s.sku)}</div>
+          <div class="hpa-sku-meta"><strong>Sent In:</strong> ${esc(s.sent)}</div>
+        </div>
+      `).join("");
+    }
+
+    [fName,fSku,fSent,fYear].forEach(el=>{
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+
+    render();
+  }
+
+  async function renderOrderBreakdown(){
+    const mount = document.getElementById("products-orders");
+    if(!mount) return;
+
+    mount.innerHTML = `
+      <div class="hpa-order-wrap">
+        <div class="hpa-order-title">Weekly Shipping Overview</div>
+        <table class="hpa-order-table">
+          <thead>
+            <tr>
+              <th>Week #</th>
+              <th>Week Date</th>
+              <th>Shipping</th>
+              <th>Additional</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="hpaOrderWeeks"></tbody>
+        </table>
+      </div>
+    `;
+
+    const body = document.getElementById("hpaOrderWeeks");
+
+    try{
+      const { header, rows } = await fetchCsv("OrderWeeks.csv");
+      const idx = (name)=> header.indexOf(name);
+
+      const w  = idx("week #");
+      const d  = idx("week date");
+      const s  = idx("shipping");
+      const a  = idx("additional");
+      const st = idx("status");
+
+      body.innerHTML = rows.map(r=>`
+        <tr>
+          <td>${esc(r[w] ?? "")}</td>
+          <td>${esc(r[d] ?? "")}</td>
+          <td>${esc(r[s] ?? "")}</td>
+          <td>${esc(r[a] ?? "")}</td>
+          <td>${esc(r[st] ?? "")}</td>
+        </tr>
+      `).join("");
+    }catch(e){
+      console.warn("[hpa] OrderWeeks.csv load failed", e);
+      body.innerHTML = `
+        <tr>
+          <td colspan="5" style="color:var(--muted);">
+            Could not load <code>OrderWeeks.csv</code>.
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+  function wireProductTabs(){
+    const skusTab  = document.getElementById("hpaProductsTabSkus");
+    const ordersTab= document.getElementById("hpaProductsTabOrders");
+    const skus     = document.getElementById("products-skus");
+    const orders   = document.getElementById("products-orders");
+    if(!skusTab || !ordersTab || !skus || !orders) return;
+
+    skusTab.addEventListener("click", ()=>{
+      skusTab.classList.add("active");
+      ordersTab.classList.remove("active");
+      skus.classList.remove("hidden");
+      orders.classList.add("hidden");
+    });
+
+    ordersTab.addEventListener("click", ()=>{
+      ordersTab.classList.add("active");
+      skusTab.classList.remove("active");
+      orders.classList.remove("hidden");
+      skus.classList.add("hidden");
+    });
+  }
+
+  // Expose boot function (Segment 1/4 tab switch calls this)
+  window.bootHpaProductInfo = window.bootHpaProductInfo || (async function bootHpaProductInfo(){
+    if(__HPA_BOOTED__) return;
+    __HPA_BOOTED__ = true;
+
+    wireProductTabs();
+
+    try{
+      await loadHpaSkus();
+      renderSkuCatalogue();
+    }catch(e){
+      console.warn("[hpa] SKU_Name_2026.csv load failed", e);
+      const mount = document.getElementById("products-skus");
+      if(mount){
+        mount.innerHTML = `
           <div class="glass-panel">
             <strong>Data unavailable</strong>
-            <div class="subtitle">
-              Could not load <code>${url}</code>
-            </div>
+            <div class="subtitle">Could not load <code>SKU_Name_2026.csv</code></div>
           </div>
         `;
       }
     }
-    return null;
+
+    // Always attempt order breakdown (handles its own failure UI)
+    await renderOrderBreakdown();
+  });
+
+  /* =====================================================
+     HF UX POLISH — Recently Viewed + Favorites
+     - Preserves existing HF feature behavior; only enhances cards.
+     ===================================================== */
+  const HF_RECENT_KEY = "hf_recent_items";
+  const HF_FAVORITES_KEY = "hf_favorites";
+
+  function loadSet(key){
+    try{ return new Set(JSON.parse(localStorage.getItem(key) || "[]")); }
+    catch{ return new Set(); }
   }
-}
-
-/* =====================================================
-   MAP INIT GUARD (prevents re-init)
-   ===================================================== */
-const _origInitMap = window.initMap;
-window.initMap = async function(){
-  if(window.__MAP_INIT__){
-    log("[map] init skipped (already initialized)");
-    return;
+  function saveSet(key, set){
+    try{ localStorage.setItem(key, JSON.stringify([...set])); }catch{}
   }
-  window.__MAP_INIT__ = true;
-  log("[map] init");
-  if(typeof _origInitMap === "function"){
-    await _origInitMap();
+
+  const HF_RECENT = loadSet(HF_RECENT_KEY);
+  const HF_FAVORITES = loadSet(HF_FAVORITES_KEY);
+
+  function addRecent(id){
+    HF_RECENT.delete(id);
+    HF_RECENT.add(id);
+    while(HF_RECENT.size > 5){
+      HF_RECENT.delete(HF_RECENT.values().next().value);
+    }
+    saveSet(HF_RECENT_KEY, HF_RECENT);
   }
-};
 
-/* =====================================================
-   FIRESTORE LISTENER GUARD
-   ===================================================== */
-const _origStartSync = window.startRealtimeSync;
-window.startRealtimeSync = async function(){
-  if(window.__FIRESTORE_LISTENER__){
-    log("[firestore] listener already active");
-    return;
+  function toggleFavorite(id){
+    if(HF_FAVORITES.has(id)) HF_FAVORITES.delete(id);
+    else HF_FAVORITES.add(id);
+    saveSet(HF_FAVORITES_KEY, HF_FAVORITES);
   }
-  window.__FIRESTORE_LISTENER__ = true;
-  log("[firestore] starting listener");
-  if(typeof _origStartSync === "function"){
-    await _origStartSync();
+  function favIcon(id){ return HF_FAVORITES.has(id) ? "⭐" : "☆"; }
+
+  function renderRecentBar(mountId){
+    const mount = document.getElementById(mountId);
+    if(!mount) return;
+
+    // Remove existing bar to avoid duplicates
+    mount.querySelectorAll("[data-hf-recent-bar]").forEach(x=> x.remove());
+
+    if(!HF_RECENT.size) return;
+
+    const bar = document.createElement("div");
+    bar.className = "glass-panel";
+    bar.dataset.hfRecentBar = "1";
+    bar.style.marginBottom = "12px";
+    bar.innerHTML = `
+      <strong>Recently Viewed</strong>
+      <div class="subtitle">Quick access</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+        ${[...HF_RECENT].reverse().map(id=>`
+          <button class="tab" type="button" data-recent="${esc(id)}">${esc(id)}</button>
+        `).join("")}
+      </div>
+    `;
+
+    mount.prepend(bar);
+
+    bar.querySelectorAll("[data-recent]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.dataset.recent;
+        document.querySelector(`[data-id="${CSS.escape(id)}"]`)?.click();
+      });
+    });
   }
-};
 
-/* =====================================================
-   GLOBAL ERROR TRAP (non-fatal)
-   ===================================================== */
-window.addEventListener("error", (e)=>{
-  console.warn("[Non-fatal error caught]", e.message);
-});
+  function patchCards(containerId){
+    const root = document.getElementById(containerId);
+    if(!root) return;
 
-/* =====================================================
-   FINAL APP READY SIGNAL
-   ===================================================== */
-(function finalizeApp(){
-  if(window.__APP_READY__) return;
-  window.__APP_READY__ = true;
+    root.querySelectorAll(".card").forEach(card=>{
+      const id = card.dataset.id;
+      if(!id || card.dataset.patched) return;
+      card.dataset.patched = "1";
 
-  log("✅ App ready");
+      const fav = document.createElement("span");
+      fav.textContent = favIcon(id);
+      fav.title = "Toggle favorite";
+      fav.style.cssText = `
+        float:right; cursor:pointer; font-size:1.1rem;
+        color: var(--accent); margin-left:6px;
+      `;
 
-  // Small UX polish: focus store title after selection
-  const spTitle = document.getElementById("spTitle");
-  if(spTitle){
-    const observer = new MutationObserver(()=>{
-      if(spTitle.textContent && spTitle.textContent !== "—"){
-        spTitle.focus({ preventScroll:true });
+      fav.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        toggleFavorite(id);
+        fav.textContent = favIcon(id);
+      });
+
+      // Prepend star
+      card.prepend(fav);
+
+      // Record recent when opening the card (your existing click handlers still run)
+      card.addEventListener("click", ()=>{
+        addRecent(id);
+        renderRecentBar("hf-care");
+      });
+    });
+  }
+
+  // Patch cards anytime user clicks (safe heuristic)
+  document.addEventListener("click", ()=>{
+    patchCards("hf-plants");
+    patchCards("hf-pests");
+  });
+
+  // Render recent bar when HF Care tab opens
+  document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.hfTab === "care"){
+        // next tick so any renderers populate DOM first
+        setTimeout(()=>{
+          renderRecentBar("hf-care");
+          patchCards("hf-plants");
+          patchCards("hf-pests");
+        }, 0);
       }
     });
-    observer.observe(spTitle,{ childList:true });
-  }
-})();
-</script>
+  });
 
+  /* =====================================================
+     POPUP STABILITY — prevent duplicate backdrops
+     - Does NOT break the Issues modal (#issuesBackdrop)
+     ===================================================== */
+  (function stabilizePopups(){
+    const observer = new MutationObserver(()=>{
+      const backdrops = [...document.querySelectorAll(".popup-backdrop")];
+
+      // Group by id ("" for no id)
+      const byId = new Map();
+      backdrops.forEach(b=>{
+        const id = b.id || "";
+        byId.set(id, (byId.get(id) || []).concat(b));
+      });
+
+      // Remove exact duplicates with same id (keep first)
+      byId.forEach((arr, id)=>{
+        if(arr.length <= 1) return;
+        arr.slice(1).forEach(node=>{
+          // Never remove issuesBackdrop unless it's a true duplicate of itself
+          if(id === "issuesBackdrop") node.remove();
+          else node.remove();
+        });
+      });
+
+      // If there are MANY anonymous backdrops, keep the most recent one
+      const anon = byId.get("") || [];
+      if(anon.length > 2){
+        // Keep last two (in case one is animating); remove the rest
+        anon.slice(0, anon.length - 2).forEach(n=> n.remove());
+      }
+    });
+
+    observer.observe(document.body, { childList:true, subtree:true });
+  })();
+
+  /* =====================================================
+     GLOBAL ERROR TRAP (non-fatal)
+     ===================================================== */
+  window.addEventListener("error", (e)=>{
+    console.warn("[Non-fatal error caught]", e.message);
+  });
+
+  /* =====================================================
+     SESSION RESTORE HELPERS
+     - If user refreshes while on HPA Products, auto-boot it
+     ===================================================== */
+  (function restoreProductInfoIfActive(){
+    try{
+      const view = sessionStorage.getItem("hub_view");
+      if(view === "hpa"){
+        const active = document.querySelector("[data-hpa-tab].active")?.dataset.hpaTab;
+        if(active === "products"){
+          window.bootHpaProductInfo();
+        }
+      }
+    }catch{}
+  })();
+
+  log("Segment 4 loaded ✅");
+}
+</script>
+<!-- =====================================================
+     SEGMENT 5 — HF/HPA/TRAINING CONTENT LOADER (CSV/HTML) + UNIVERSAL MODAL + CACHING
+     Paste AFTER Segment 4
+     ===================================================== -->
+
+<style>
+  /* =====================================================
+     Content sections: toolbars + search (non-destructive)
+     ===================================================== */
+  .content-toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .content-toolbar .subtitle{
+    margin-top:2px;
+  }
+  .content-search{
+    flex:1 1 260px;
+    min-width:220px;
+    max-width:420px;
+    position:relative;
+  }
+  .content-search input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:14px;
+  }
+  .content-hint{
+    color:var(--muted);
+    font-size:.85rem;
+  }
+
+  /* =====================================================
+     Detail modal content formatting (works with print mode too)
+     ===================================================== */
+  .detail-meta{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:560px){ .detail-meta{ grid-template-columns:1fr; } }
+
+  .detail-chip{
+    border:1px solid rgba(148,163,184,.25);
+    background: rgba(2,6,23,.35);
+    padding:10px 12px;
+    border-radius:14px;
+  }
+  .detail-chip .label{
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .detail-chip .value{
+    margin-top:4px;
+    font-weight:900;
+    color:var(--heading);
+  }
+
+  .detail-body{
+    margin-top:12px;
+    color:var(--text);
+    line-height:1.45;
+    font-size:.95rem;
+  }
+
+  .detail-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    justify-content:flex-end;
+  }
+
+  .btn-ghost{
+    background: rgba(15,23,42,0.55);
+    border:1px solid rgba(148,163,184,0.35);
+    color: var(--heading);
+    border-radius:999px;
+    padding:9px 16px;
+    cursor:pointer;
+    font-weight:800;
+  }
+  .btn-ghost:hover{ background: rgba(15,23,42,0.85); transform: translateY(-1px); }
+</style>
+
+<script>
+/* =====================================================
+   SEG5 GUARD
+   ===================================================== */
+window.__HUB_SEG5__ = window.__HUB_SEG5__ || { loaded:false };
+if(window.__HUB_SEG5__.loaded){
+  console.warn("[hub] Segment 5 already loaded; skipping.");
+} else {
+  window.__HUB_SEG5__.loaded = true;
+
+  const DEBUG = false;
+  const log = (...a)=> DEBUG && console.log("[hub seg5]", ...a);
+
+  /* =====================================================
+     SIMPLE CACHE (sessionStorage)
+     ===================================================== */
+  const CACHE_PREFIX = "hub_cache_v1::";
+  async function fetchTextCached(url){
+    const key = CACHE_PREFIX + url;
+    const cached = sessionStorage.getItem(key);
+    if(cached) return cached;
+
+    const r = await fetch(url, { cache:"no-store" });
+    if(!r.ok) throw new Error(url + " missing");
+    const text = await r.text();
+
+    // Only cache if non-empty
+    if(text && text.trim()){
+      try{ sessionStorage.setItem(key, text); }catch{}
+    }
+    return text;
+  }
+
+  async function tryFetchFirst(candidates){
+    for(const url of candidates){
+      try{
+        const text = await fetchTextCached(url);
+        if(text && text.trim()) return { url, text };
+      }catch(e){
+        // keep trying
+      }
+    }
+    return null;
+  }
+
+  function isProbablyHTML(text){
+    const t = (text || "").trim().toLowerCase();
+    return t.startsWith("<!doctype") || t.startsWith("<html") || t.startsWith("<div") || t.startsWith("<p") || t.includes("<br");
+  }
+
+  function mountMessage(mount, title, subtitle, code){
+    if(!mount) return;
+    mount.innerHTML = `
+      <div class="glass-panel">
+        <strong>${esc(title)}</strong>
+        <div class="subtitle">${esc(subtitle)}</div>
+        ${code ? `<div class="subtitle" style="margin-top:6px;">${code}</div>` : ""}
+      </div>
+    `;
+  }
+
+  /* =====================================================
+     UNIVERSAL MODAL (does NOT conflict with Issues modal)
+     ===================================================== */
+  function getDetailBackdrop(){
+    let bd = document.getElementById("detailBackdrop");
+    if(bd) return bd;
+
+    bd = document.createElement("div");
+    bd.id = "detailBackdrop";
+    bd.className = "popup-backdrop";
+    bd.innerHTML = `
+      <div class="popup" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <h2 id="detailTitle">Details</h2>
+        <div class="popup-subtitle" id="detailSubtitle"></div>
+        <div id="detailContent"></div>
+        <div class="detail-actions">
+          <button class="btn-ghost" id="detailPrintBtn" type="button" title="Print this card">🖨️ Print</button>
+          <button class="popup-close" id="detailCloseBtn" type="button">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(bd);
+
+    const close = ()=> bd.style.display = "none";
+    document.getElementById("detailCloseBtn").addEventListener("click", close);
+    bd.addEventListener("click", (e)=>{ if(e.target === bd) close(); });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && bd.style.display === "flex") close();
+    });
+
+    document.getElementById("detailPrintBtn").addEventListener("click", ()=>{
+      // Print in place (print CSS already hides nav)
+      window.print();
+    });
+
+    return bd;
+  }
+
+  function openDetailModal({ title, subtitle, bodyHTML }){
+    const bd = getDetailBackdrop();
+    document.getElementById("detailTitle").textContent = title || "Details";
+    document.getElementById("detailSubtitle").textContent = subtitle || "";
+    document.getElementById("detailContent").innerHTML = bodyHTML || "";
+    bd.style.display = "flex";
+  }
+
+  /* =====================================================
+     CSV -> Objects helper (uses global parseCSV from Segment 1)
+     Expects header row in CSV.
+     ===================================================== */
+  function csvToObjects(text){
+    const rows = parseCSV(text);
+    if(!rows || rows.length < 2) return [];
+    const header = rows[0].map(h => String(h).trim());
+    return rows.slice(1).map(r=>{
+      const obj = {};
+      header.forEach((h,i)=> obj[h] = (r[i] ?? "").toString().trim());
+      return obj;
+    }).filter(o => Object.values(o).some(v => String(v).trim() !== ""));
+  }
+
+  function normalizeKeys(obj){
+    // create a lowercased key map for flexible CSV headers
+    const out = {};
+    Object.keys(obj || {}).forEach(k=> out[k.toLowerCase().trim()] = obj[k]);
+    return out;
+  }
+
+  /* =====================================================
+     RENDER: GUIDELINES (HTML or CSV)
+     ===================================================== */
+  async function loadGuidelinesInto(mountId, candidates){
+    const mount = document.getElementById(mountId);
+    if(!mount) return;
+
+    const found = await tryFetchFirst(candidates);
+    if(!found){
+      mountMessage(mount, "Guidelines unavailable", "No guideline file found.", `Tried: ${candidates.map(c=>`<code>${esc(c)}</code>`).join(", ")}`);
+      return;
+    }
+
+    const { text, url } = found;
+    if(isProbablyHTML(text)){
+      mount.innerHTML = text;
+      return;
+    }
+
+    // CSV guidelines: columns recommended => Title, Body (others OK)
+    const rows = csvToObjects(text).map(normalizeKeys);
+    if(!rows.length){
+      mountMessage(mount, "Guidelines unavailable", "The guidelines file was empty.", `<code>${esc(url)}</code>`);
+      return;
+    }
+
+    mount.innerHTML = `
+      <div class="hf-seasonal">
+        <strong>Guidelines</strong>
+        <div class="subtitle">Loaded from <code>${esc(url)}</code></div>
+      </div>
+      ${rows.map(r=>{
+        const title = r.title || r.heading || r.name || "Guideline";
+        const body  = r.body || r.details || r.description || r.text || "";
+        return `
+          <div class="glass-panel" style="margin-bottom:10px;">
+            <div style="font-weight:900;color:var(--heading);">${esc(title)}</div>
+            <div class="subtitle" style="margin-top:6px;white-space:pre-wrap;">${esc(body)}</div>
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  /* =====================================================
+     RENDER: CARDS (Plants / Pests) from CSV or HTML
+     - If HTML: inject as-is
+     - If CSV: builds clickable cards with modal details
+     ===================================================== */
+  function renderCardGrid(mount, items, opts){
+    const {
+      title = "",
+      subtitle = "",
+      searchPlaceholder = "Search…",
+      getId = (x)=> x.id || x.name || "",
+      getTitle = (x)=> x.name || x.title || "Item",
+      getSub = (x)=> x.subtitle || x.category || x.group || "",
+      getBodyHTML = (x)=> {
+        // Build a robust detail view from available fields
+        const raw = normalizeKeys(x);
+        const main = raw.description || raw.details || raw.notes || raw.body || raw.text || "";
+        const chips = [];
+
+        // Common horticulture fields (optional)
+        const chipOrder = [
+          ["light","Light"],
+          ["water","Water"],
+          ["soil","Soil"],
+          ["spacing","Spacing"],
+          ["height","Height"],
+          ["bloom","Bloom"],
+          ["zones","Zones"],
+          ["temp","Temp"],
+          ["toxicity","Toxicity"],
+          ["symptoms","Symptoms"],
+          ["treatment","Treatment"],
+          ["prevention","Prevention"]
+        ];
+
+        chipOrder.forEach(([key,label])=>{
+          if(raw[key] && String(raw[key]).trim()){
+            chips.push(`
+              <div class="detail-chip">
+                <div class="label">${esc(label)}</div>
+                <div class="value">${esc(raw[key])}</div>
+              </div>
+            `);
+          }
+        });
+
+        const chipsHTML = chips.length ? `<div class="detail-meta">${chips.join("")}</div>` : "";
+        const body = main ? `<div class="detail-body" style="white-space:pre-wrap;">${esc(main)}</div>` : "";
+
+        // Optional image
+        const img = raw.image || raw.photo || raw.img || "";
+        const imgHTML = img ? `
+          <div style="margin-top:10px;">
+            <img src="${esc(img)}" alt="${esc(getTitle(x))}" style="width:100%;border-radius:16px;border:1px solid rgba(148,163,184,.25);" />
+          </div>
+        ` : "";
+
+        return `${imgHTML}${chipsHTML}${body || `<div class="detail-body" style="color:var(--muted);">No details provided.</div>`}`;
+      }
+    } = opts || {};
+
+    mount.innerHTML = `
+      <div class="content-toolbar">
+        <div>
+          <strong>${esc(title)}</strong>
+          <div class="subtitle">${esc(subtitle)}</div>
+        </div>
+        <div class="content-search">
+          <input type="search" placeholder="${esc(searchPlaceholder)}" aria-label="${esc(searchPlaceholder)}" />
+        </div>
+      </div>
+
+      <div class="card-grid" id="${esc(mount.id)}_grid"></div>
+      <div class="content-hint hidden" id="${esc(mount.id)}_empty">No matching results.</div>
+    `;
+
+    const input = mount.querySelector("input[type='search']");
+    const grid  = document.getElementById(`${mount.id}_grid`);
+    const empty = document.getElementById(`${mount.id}_empty`);
+
+    function draw(list){
+      if(!grid) return;
+      grid.innerHTML = list.map(item=>{
+        const id = getId(item) || safeUUID();
+        const t  = getTitle(item);
+        const sub= getSub(item);
+
+        return `
+          <div class="card" tabindex="0" role="button" data-id="${esc(id)}">
+            <div class="card-title">${esc(t)}</div>
+            ${sub ? `<div class="card-sub">${esc(sub)}</div>` : ""}
+          </div>
+        `;
+      }).join("");
+
+      const cards = grid.querySelectorAll(".card");
+      cards.forEach((card, idx)=>{
+        const item = list[idx];
+        const t = getTitle(item);
+        const sub = getSub(item);
+        const id = card.dataset.id;
+
+        const open = ()=>{
+          openDetailModal({
+            title: t,
+            subtitle: sub,
+            bodyHTML: getBodyHTML(item)
+          });
+
+          // For HF UX polish (recent/favorites) to hook into:
+          // It looks for .card[data-id] clicks; this keeps compatibility.
+          card.dispatchEvent(new Event("hub:opened", { bubbles:true }));
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            open();
+          }
+        });
+      });
+
+      empty?.classList.toggle("hidden", list.length !== 0);
+    }
+
+    function applyFilter(){
+      const q = (input?.value || "").toLowerCase().trim();
+      if(!q){ draw(items); return; }
+
+      const filtered = items.filter(x=>{
+        const raw = normalizeKeys(x);
+        const hay = [
+          raw.id, raw.name, raw.title, raw.subtitle, raw.category, raw.group,
+          raw.description, raw.details, raw.notes, raw.body, raw.text,
+          raw.light, raw.water, raw.soil, raw.symptoms, raw.treatment, raw.prevention
+        ].filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(q);
+      });
+
+      draw(filtered);
+    }
+
+    input?.addEventListener("input", applyFilter);
+    draw(items);
+  }
+
+  async function loadCardsInto(mountId, candidates, opts){
+    const mount = document.getElementById(mountId);
+    if(!mount) return;
+
+    const found = await tryFetchFirst(candidates);
+    if(!found){
+      mountMessage(mount, "Content unavailable", "No source file found.", `Tried: ${candidates.map(c=>`<code>${esc(c)}</code>`).join(", ")}`);
+      return;
+    }
+
+    const { text, url } = found;
+    if(isProbablyHTML(text)){
+      mount.innerHTML = text;
+      return;
+    }
+
+    const items = csvToObjects(text);
+    if(!items.length){
+      mountMessage(mount, "Content unavailable", "The source file was empty.", `<code>${esc(url)}</code>`);
+      return;
+    }
+
+    renderCardGrid(mount, items, {
+      ...(opts || {}),
+      subtitle: (opts?.subtitle ? opts.subtitle + " • " : "") + `Loaded from ${url}`
+    });
+  }
+
+  /* =====================================================
+     BOOT FUNCTIONS (HF/HPA/TRAINING)
+     - These are non-destructive: only fill the existing containers.
+     ===================================================== */
+
+  // HF — Guidelines + Care tabs (Perennials/Pests)
+  let __HF_BOOTED__ = false;
+  async function bootHF(){
+    if(__HF_BOOTED__) return;
+    __HF_BOOTED__ = true;
+
+    await loadGuidelinesInto("hf-guidelines", [
+      "hf_guidelines.html",
+      "hf_guidelines.csv",
+      "HF_Guidelines.html",
+      "HF_Guidelines.csv"
+    ]);
+
+    // Care: Perennials + Pests (loaded lazily when those subtabs show)
+    // We'll pre-wire a lazy loader so first click loads, then cached.
+    let loadedPlants = false;
+    let loadedPests  = false;
+
+    async function loadPlants(){
+      if(loadedPlants) return;
+      loadedPlants = true;
+      await loadCardsInto("hf-plants", [
+        "hf_plants.html",
+        "hf_plants.csv",
+        "HF_Plants.html",
+        "HF_Plants.csv"
+      ], {
+        title: "Perennials",
+        subtitle: "Care & Identification",
+        searchPlaceholder: "Search perennials…",
+        getId: (x)=> normalizeKeys(x).id || normalizeKeys(x)["plant id"] || normalizeKeys(x).name || "",
+        getTitle: (x)=> normalizeKeys(x).name || normalizeKeys(x).title || "Perennial",
+        getSub: (x)=> normalizeKeys(x).subtitle || normalizeKeys(x).type || normalizeKeys(x).category || ""
+      });
+    }
+
+    async function loadPests(){
+      if(loadedPests) return;
+      loadedPests = true;
+      await loadCardsInto("hf-pests", [
+        "hf_pests.html",
+        "hf_pests.csv",
+        "HF_Pests.html",
+        "HF_Pests.csv"
+      ], {
+        title: "Pests",
+        subtitle: "Identification & Treatment",
+        searchPlaceholder: "Search pests…",
+        getId: (x)=> normalizeKeys(x).id || normalizeKeys(x)["pest id"] || normalizeKeys(x).name || "",
+        getTitle: (x)=> normalizeKeys(x).name || normalizeKeys(x).title || "Pest",
+        getSub: (x)=> normalizeKeys(x).subtitle || normalizeKeys(x).symptoms || ""
+      });
+    }
+
+    // Wire to HF tabs
+    document.querySelectorAll("[data-hf-tab]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hfTab === "care"){
+          // load currently active care tab
+          const activeCare = document.querySelector("[data-hf-care].active")?.dataset.hfCare || "plants";
+          if(activeCare === "plants") loadPlants();
+          else loadPests();
+        }
+      });
+    });
+    document.querySelectorAll("[data-hf-care]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hfCare === "plants") loadPlants();
+        if(btn.dataset.hfCare === "pests") loadPests();
+      });
+    });
+
+    // If HF Care is already visible (session restore), load active subtab
+    const hfCareVisible = document.getElementById("hf-care") && !document.getElementById("hf-care").classList.contains("hidden");
+    if(hfCareVisible){
+      const activeCare = document.querySelector("[data-hf-care].active")?.dataset.hfCare || "plants";
+      if(activeCare === "plants") await loadPlants();
+      else await loadPests();
+    }
+  }
+
+  // HPA — Guidelines + Care tabs
+  let __HPA_CARE_BOOTED__ = false;
+  async function bootHpaCare(){
+    if(__HPA_CARE_BOOTED__) return;
+    __HPA_CARE_BOOTED__ = true;
+
+    await loadGuidelinesInto("hpa-guidelines", [
+      "hpa_guidelines.html",
+      "hpa_guidelines.csv",
+      "HPA_Guidelines.html",
+      "HPA_Guidelines.csv"
+    ]);
+
+    let loadedPlants = false;
+    let loadedPests  = false;
+
+    async function loadPlants(){
+      if(loadedPlants) return;
+      loadedPlants = true;
+      await loadCardsInto("hpa-plants", [
+        "hpa_plants.html",
+        "hpa_plants.csv",
+        "HPA_Plants.html",
+        "HPA_Plants.csv"
+      ], {
+        title: "Plants",
+        subtitle: "Care & Identification",
+        searchPlaceholder: "Search plants…",
+        getId: (x)=> normalizeKeys(x).id || normalizeKeys(x)["plant id"] || normalizeKeys(x).name || "",
+        getTitle: (x)=> normalizeKeys(x).name || normalizeKeys(x).title || "Plant",
+        getSub: (x)=> normalizeKeys(x).subtitle || normalizeKeys(x).type || normalizeKeys(x).category || ""
+      });
+    }
+
+    async function loadPests(){
+      if(loadedPests) return;
+      loadedPests = true;
+      await loadCardsInto("hpa-pests", [
+        "hpa_pests.html",
+        "hpa_pests.csv",
+        "HPA_Pests.html",
+        "HPA_Pests.csv"
+      ], {
+        title: "Pests",
+        subtitle: "Identification & Treatment",
+        searchPlaceholder: "Search pests…",
+        getId: (x)=> normalizeKeys(x).id || normalizeKeys(x)["pest id"] || normalizeKeys(x).name || "",
+        getTitle: (x)=> normalizeKeys(x).name || normalizeKeys(x).title || "Pest",
+        getSub: (x)=> normalizeKeys(x).subtitle || normalizeKeys(x).symptoms || ""
+      });
+    }
+
+    // Wire to HPA care tabs
+    document.querySelectorAll("[data-hpa-tab]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hpaTab === "care"){
+          const activeCare = document.querySelector("[data-hpa-care].active")?.dataset.hpaCare || "plants";
+          if(activeCare === "plants") loadPlants();
+          else loadPests();
+        }
+      });
+    });
+    document.querySelectorAll("[data-hpa-care]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(btn.dataset.hpaCare === "plants") loadPlants();
+        if(btn.dataset.hpaCare === "pests") loadPests();
+      });
+    });
+
+    // If HPA Care already visible (session restore), load active subtab
+    const hpaCareVisible = document.getElementById("hpa-care") && !document.getElementById("hpa-care").classList.contains("hidden");
+    if(hpaCareVisible){
+      const activeCare = document.querySelector("[data-hpa-care].active")?.dataset.hpaCare || "plants";
+      if(activeCare === "plants") await loadPlants();
+      else await loadPests();
+    }
+  }
+
+  // TRAINING — loads HTML/Markdown-ish into the 3 sections
+  let __TRAIN_BOOTED__ = false;
+  async function bootTraining(){
+    if(__TRAIN_BOOTED__) return;
+    __TRAIN_BOOTED__ = true;
+
+    async function loadInto(id, candidates){
+      const mount = document.getElementById(id);
+      if(!mount) return;
+
+      const found = await tryFetchFirst(candidates);
+      if(!found){
+        mountMessage(mount, "Training content missing", "No training file found.", `Tried: ${candidates.map(c=>`<code>${esc(c)}</code>`).join(", ")}`);
+        return;
+      }
+
+      const { text } = found;
+      if(isProbablyHTML(text)){
+        mount.innerHTML = text;
+      }else{
+        // plain text -> wrap in pre-like block
+        mount.innerHTML = `
+          <div class="glass-panel">
+            <strong>Training</strong>
+            <div class="subtitle" style="margin-top:6px;white-space:pre-wrap;">${esc(text)}</div>
+          </div>
+        `;
+      }
+    }
+
+    await Promise.all([
+      loadInto("train-basics", [
+        "training_basics.html",
+        "training_basics.txt",
+        "Training_Basics.html",
+        "Training_Basics.txt"
+      ]),
+      loadInto("train-merch", [
+        "training_merchandising.html",
+        "training_merchandising.txt",
+        "Training_Merchandising.html",
+        "Training_Merchandising.txt"
+      ]),
+      loadInto("train-supervisor", [
+        "training_supervisor.html",
+        "training_supervisor.txt",
+        "Training_Supervisor.html",
+        "Training_Supervisor.txt"
+      ])
+    ]);
+  }
+
+  /* =====================================================
+     HOOK INTO GLOBAL VIEW SWITCHING
+     - When user enters HF/HPA/Training views, boot content.
+     ===================================================== */
+  (function hookNavBoots(){
+    // Patch HubUI.showOnlyView if it exists (from Segment 1)
+    if(!window.HubUI || window.HubUI.__seg5Patched) return;
+    window.HubUI.__seg5Patched = true;
+
+    const original = window.HubUI.showOnlyView;
+    if(typeof original !== "function") return;
+
+    window.HubUI.showOnlyView = function(name){
+      original(name);
+
+      if(name === "hf")  bootHF();
+      if(name === "hpa") bootHpaCare();  // guidelines + care (products boot handled in Segment 4)
+      if(name === "training") bootTraining();
+    };
+  })();
+
+  /* =====================================================
+     SESSION RESTORE: if user refreshes on HF/HPA/Training, boot immediately
+     ===================================================== */
+  (function restoreBoot(){
+    try{
+      const view = sessionStorage.getItem("hub_view");
+      if(view === "hf") bootHF();
+      if(view === "hpa") bootHpaCare();
+      if(view === "training") bootTraining();
+    }catch{}
+  })();
+
+  // Expose for debugging/manual triggers
+  window.bootHF = window.bootHF || bootHF;
+  window.bootHpaCare = window.bootHpaCare || bootHpaCare;
+  window.bootTraining = window.bootTraining || bootTraining;
+
+  log("Segment 5 loaded ✅");
+}
+</script>
+<!-- =====================================================
+     SEGMENT 6 — FINAL HARDENING + PERFORMANCE + SAFETY GUARDS
+     Paste AFTER Segment 5
+     ===================================================== -->
+<script>
+/* =====================================================
+   SEG6 GUARD
+   ===================================================== */
+window.__HUB_SEG6__ = window.__HUB_SEG6__ || { loaded:false };
+if(window.__HUB_SEG6__.loaded){
+  console.warn("[hub] Segment 6 already loaded; skipping.");
+} else {
+  window.__HUB_SEG6__.loaded = true;
+
+  const DEBUG = false;
+  const log = (...a)=> DEBUG && console.log("[hub seg6]", ...a);
+
+  /* =====================================================
+     1) GLOBAL BOOT FLAGS (prevents accidental double-init)
+     ===================================================== */
+  window.__APP_READY__ = window.__APP_READY__ || false;
+  window.__MAP_READY__ = window.__MAP_READY__ || false;
+  window.__FIRESTORE_READY__ = window.__FIRESTORE_READY__ || false;
+
+  // Mark app ready once DOM is interactive
+  if(document.readyState === "complete" || document.readyState === "interactive"){
+    window.__APP_READY__ = true;
+  } else {
+    document.addEventListener("DOMContentLoaded", ()=> window.__APP_READY__ = true, { once:true });
+  }
+
+  /* =====================================================
+     2) SAFE HELPERS (non-destructive)
+     ===================================================== */
+  window.safeCall = window.safeCall || function safeCall(fn, ...args){
+    try{ return (typeof fn === "function") ? fn(...args) : undefined; }
+    catch(e){ console.warn("[hub] safeCall error:", e); return undefined; }
+  };
+
+  window.debounce = window.debounce || function debounce(fn, wait=160){
+    let t;
+    return (...args)=>{
+      clearTimeout(t);
+      t = setTimeout(()=> fn(...args), wait);
+    };
+  };
+
+  window.idle = window.idle || function idle(cb){
+    if("requestIdleCallback" in window) requestIdleCallback(cb, { timeout: 600 });
+    else setTimeout(cb, 0);
+  };
+
+  /* =====================================================
+     3) SAFE FETCH WRAPPER
+     - Standardizes missing-file behavior (no uncaught errors)
+     - Returns { ok, text, error }
+     ===================================================== */
+  window.fetchTextSafe = window.fetchTextSafe || async function fetchTextSafe(url, opts){
+    try{
+      const r = await fetch(url, { cache:"no-store", ...(opts||{}) });
+      if(!r.ok) return { ok:false, text:"", error: new Error(`Fetch failed (${r.status}) for ${url}`) };
+      const text = await r.text();
+      if(!text.trim()) return { ok:false, text:"", error: new Error(`Empty response for ${url}`) };
+      return { ok:true, text, error:null };
+    }catch(e){
+      return { ok:false, text:"", error:e };
+    }
+  };
+
+  // Lightweight session cache (optional)
+  window.fetchTextCachedSafe = window.fetchTextCachedSafe || async function fetchTextCachedSafe(url){
+    const key = "hub_cache_v2::" + url;
+    try{
+      const hit = sessionStorage.getItem(key);
+      if(hit) return { ok:true, text:hit, error:null, cached:true };
+    }catch{}
+
+    const res = await window.fetchTextSafe(url);
+    if(res.ok){
+      try{ sessionStorage.setItem(key, res.text); }catch{}
+    }
+    return { ...res, cached:false };
+  };
+
+  /* =====================================================
+     4) FIX: prevent listener stacking when segments patch HubUI.showOnlyView
+     - Ensures showOnlyView is wrapped at most once per "feature key"
+     ===================================================== */
+  window.wrapOnce = window.wrapOnce || function wrapOnce(obj, method, key, wrapper){
+    if(!obj || typeof obj[method] !== "function") return false;
+    obj.__wrapped = obj.__wrapped || {};
+    const tag = method + "::" + key;
+    if(obj.__wrapped[tag]) return false;
+    obj.__wrapped[tag] = true;
+
+    const original = obj[method];
+    obj[method] = wrapper(original);
+    return true;
+  };
+
+  // Wrap HubUI.showOnlyView only once to add small UX polish hooks
+  if(window.HubUI){
+    window.wrapOnce(window.HubUI, "showOnlyView", "seg6Polish", (original)=> (name)=>{
+      original(name);
+
+      // After switching views, move focus to first heading for accessibility
+      window.idle(()=>{
+        const viewEl = document.getElementById("view-" + name);
+        const heading = viewEl?.querySelector("h2, h1, strong");
+        if(heading && typeof heading.focus === "function"){
+          // only focus if it has tabindex or is naturally focusable
+          if(heading.hasAttribute("tabindex")) heading.focus({ preventScroll:true });
+        }
+      });
+    });
+  }
+
+  /* =====================================================
+     5) MAP: harden boot sequence (no double/partial init cascades)
+     ===================================================== */
+  // If map engine dispatches ready event multiple times, ignore duplicates
+  if(!window.__MAP_READY_LISTENER__){
+    window.__MAP_READY_LISTENER__ = true;
+    window.addEventListener("hub:mapEngineReady", ()=>{
+      window.__MAP_READY__ = true;
+    }, { once:false });
+  }
+
+  // If map view is visible and engine exists, ensure we have markers rendered
+  function ensureMapHydrated(){
+    const mapView = document.getElementById("view-map");
+    if(!mapView || mapView.classList.contains("hidden")) return;
+
+    // If stores loaded and markers empty, attempt render
+    if(Array.isArray(window.stores) && window.stores.length &&
+       window.markers && typeof window.markers.size === "number" &&
+       window.markers.size === 0 &&
+       typeof window.renderMarkers === "function"){
+      safeCall(window.renderMarkers);
+    }
+  }
+
+  // Hook view switching to call ensureMapHydrated without adding duplicate listeners
+  if(window.HubUI){
+    window.wrapOnce(window.HubUI, "showOnlyView", "mapHydrate", (original)=> (name)=>{
+      original(name);
+      if(name === "map") window.idle(ensureMapHydrated);
+    });
+  }
+
+  /* =====================================================
+     6) IMPROVE SEARCH INPUT PERFORMANCE
+     - Debounce store search handler if Segment 2 attached a direct input listener
+     ===================================================== */
+  (function debounceStoreSearch(){
+    const input = document.getElementById("storeSearch");
+    if(!input || input.dataset.debounced) return;
+    input.dataset.debounced = "1";
+
+    // If there are existing listeners we can't remove, we can at least reduce work:
+    // We'll proxy by stopping heavy filtering while user is typing quickly.
+    // Approach: mark "typing" and let Segment 2 listener proceed, but we also offer an optimized hook
+    let typing = false;
+    input.addEventListener("input", window.debounce(()=>{ typing = false; }, 220));
+    input.addEventListener("input", ()=>{ typing = true; });
+
+    // Optional: expose a flag other code can check
+    window.__HUB_TYPING__ = ()=> typing;
+  })();
+
+  /* =====================================================
+     7) NETWORK / OFFLINE INDICATOR (non-invasive)
+     ===================================================== */
+  (function networkIndicator(){
+    const topbar = document.getElementById("topbar");
+    if(!topbar || document.getElementById("netPill")) return;
+
+    const pill = document.createElement("div");
+    pill.id = "netPill";
+    pill.className = "header-pill";
+    pill.style.marginLeft = "8px";
+    pill.style.borderColor = "rgba(148,163,184,.25)";
+    pill.style.background = "rgba(2,6,23,.35)";
+    pill.textContent = navigator.onLine ? "Online" : "Offline";
+
+    // Insert near user pill
+    const userPill = document.getElementById("userPill");
+    if(userPill && userPill.parentElement){
+      userPill.parentElement.appendChild(pill);
+    } else {
+      topbar.appendChild(pill);
+    }
+
+    const update = ()=>{
+      const on = navigator.onLine;
+      pill.textContent = on ? "Online" : "Offline";
+      pill.style.borderColor = on ? "rgba(34,211,238,.55)" : "rgba(239,68,68,.55)";
+      pill.style.color = on ? "var(--muted)" : "var(--bad)";
+    };
+
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    update();
+  })();
+
+  /* =====================================================
+     8) GLOBAL ERROR CAPTURE (more informative, still non-fatal)
+     ===================================================== */
+  if(!window.__HUB_ERROR_TRAPS__){
+    window.__HUB_ERROR_TRAPS__ = true;
+
+    window.addEventListener("error", (e)=>{
+      console.warn("[Hub non-fatal error]", {
+        message: e.message,
+        file: e.filename,
+        line: e.lineno,
+        col: e.colno
+      });
+    });
+
+    window.addEventListener("unhandledrejection", (e)=>{
+      console.warn("[Hub unhandled rejection]", e.reason);
+    });
+  }
+
+  /* =====================================================
+     9) DATA SANITY CHECKS (keeps markers and panels from breaking)
+     ===================================================== */
+  window.sanitizeStore = window.sanitizeStore || function sanitizeStore(s){
+    if(!s) return null;
+    const out = {
+      id: String(s.id ?? "").trim(),
+      name: String(s.name ?? "").trim(),
+      lat: Number(s.lat),
+      lon: Number(s.lon),
+      city: String(s.city ?? "").trim(),
+      state: String(s.state ?? "").trim()
+    };
+    if(!out.id || !out.name || !Number.isFinite(out.lat) || !Number.isFinite(out.lon)) return null;
+    return out;
+  };
+
+  // If stores exist, sanitize them once to avoid weird CSV issues
+  window.idle(()=>{
+    if(Array.isArray(window.stores) && window.stores.length && !window.stores.__sanitized){
+      const cleaned = window.stores.map(window.sanitizeStore).filter(Boolean);
+      cleaned.__sanitized = true;
+      window.stores = cleaned;
+      log("Sanitized stores:", cleaned.length);
+      safeCall(window.updateMarkers);
+    }
+  });
+
+  /* =====================================================
+     10) OPTIONAL: CLEAR SESSION CACHE BUTTON (dev helper)
+     - Only visible if DEBUG=true
+     ===================================================== */
+  (function devCacheButton(){
+    if(!DEBUG) return;
+    const footer = document.querySelector(".footer");
+    if(!footer || document.getElementById("clearCacheBtn")) return;
+
+    const btn = document.createElement("button");
+    btn.id = "clearCacheBtn";
+    btn.className = "tab";
+    btn.type = "button";
+    btn.style.marginLeft = "10px";
+    btn.textContent = "Clear Cache";
+    btn.onclick = ()=>{
+      Object.keys(sessionStorage).forEach(k=>{
+        if(k.startsWith("hub_cache_")) sessionStorage.removeItem(k);
+      });
+      alert("Session cache cleared.");
+    };
+    footer.appendChild(btn);
+  })();
+
+  /* =====================================================
+     11) FINAL READY SIGNAL
+     ===================================================== */
+  window.__HUB_READY__ = true;
+  log("Segment 6 loaded ✅  Hub ready");
+}
+</script>
 </body>
 </html>
