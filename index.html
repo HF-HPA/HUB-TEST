@@ -5289,7 +5289,353 @@ window.celebrate = function(){
 
 })();
 </script>
+<!-- =====================================================
+     SEGMENT 11 — MOBILE-FIRST MAP UX OVERHAUL
+     ===================================================== -->
 
-  
+<style>
+/* =====================================================
+   MOBILE MAP MODE
+   ===================================================== */
+@media (max-width: 900px){
+  #view-map{
+    position:relative;
+  }
+
+  /* Fullscreen map */
+  #storeMap{
+    height: calc(100vh - 64px) !important;
+    border-radius:0 !important;
+  }
+
+  /* Hide legend by default on mobile */
+  .map-legend{
+    display:none !important;
+  }
+
+  /* Floating map controls */
+  .map-fab{
+    position:absolute;
+    right:12px;
+    z-index:700;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .map-fab button{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:none;
+    background: rgba(2,6,23,.9);
+    color:var(--heading);
+    font-size:1.1rem;
+    box-shadow:0 12px 30px rgba(0,0,0,.6);
+    cursor:pointer;
+  }
+}
+
+/* =====================================================
+   BIGGER MOBILE MARKERS
+   ===================================================== */
+@media (max-width: 900px){
+  .legend-dot{
+    width:20px !important;
+    height:20px !important;
+    border-width:3px;
+  }
+  .legend-dot.selected{
+    transform: scale(1.35);
+    box-shadow:0 0 0 10px rgba(34,211,238,.35);
+    z-index:9999;
+  }
+  .legend-dot.dimmed{
+    opacity:.4;
+  }
+}
+
+/* =====================================================
+   SNAP DRAWER
+   ===================================================== */
+@media (max-width: 900px){
+  #view-map aside.glass-panel{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:64px;
+    border-radius:24px 24px 0 0;
+    max-height:75vh;
+    transform: translateY(60%);
+    transition: transform .25s ease;
+    z-index:800;
+  }
+  #view-map aside.glass-panel.peek{ transform: translateY(68%); }
+  #view-map aside.glass-panel.half{ transform: translateY(30%); }
+  #view-map aside.glass-panel.full{ transform: translateY(0); }
+
+  .drawer-handle{
+    width:44px;
+    height:5px;
+    border-radius:999px;
+    background:rgba(148,163,184,.4);
+    margin:4px auto 10px;
+  }
+}
+</style>
+
+<script>
+/* =====================================================
+   MOBILE MAP UX LOGIC
+   ===================================================== */
+(function(){
+  if(!window.matchMedia("(max-width:900px)").matches) return;
+
+  const mapEl = document.getElementById("storeMap");
+  const drawer = document.querySelector("#view-map aside.glass-panel");
+  if(!mapEl || !drawer) return;
+
+  /* ---------- DRAWER SETUP ---------- */
+  if(!drawer.querySelector(".drawer-handle")){
+    const handle = document.createElement("div");
+    handle.className = "drawer-handle";
+    drawer.prepend(handle);
+  }
+
+  let drawerState = "peek";
+  function setDrawer(state){
+    drawer.classList.remove("peek","half","full");
+    drawer.classList.add(state);
+    drawerState = state;
+  }
+  setDrawer("peek");
+
+  drawer.addEventListener("click", ()=>{
+    if(drawerState === "peek") setDrawer("half");
+    else if(drawerState === "half") setDrawer("full");
+  });
+
+  /* ---------- MAP TOUCH CONTROL ---------- */
+  let mapActive = false;
+
+  mapEl.addEventListener("touchstart", ()=>{
+    mapActive = true;
+    document.body.style.overflow = "hidden";
+  });
+  mapEl.addEventListener("touchend", ()=>{
+    mapActive = false;
+    document.body.style.overflow = "";
+  });
+
+  /* ---------- FLOATING MAP BUTTONS ---------- */
+  if(!document.querySelector(".map-fab")){
+    const fab = document.createElement("div");
+    fab.className = "map-fab";
+    fab.innerHTML = `
+      <button title="My location">📍</button>
+      <button title="Center store">🎯</button>
+    `;
+    mapEl.appendChild(fab);
+
+    const [btnMe, btnCenter] = fab.querySelectorAll("button");
+
+    btnMe.onclick = ()=>{
+      if(!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(pos=>{
+        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+      });
+    };
+
+    btnCenter.onclick = ()=>{
+      if(!window.__HUB_SELECTED_STORE__) return;
+      const id = __HUB_SELECTED_STORE__();
+      const s = stores.find(x=>x.id===id);
+      if(s) map.setView([s.lat, s.lon], 13);
+    };
+  }
+
+  /* ---------- MARKER VISUAL FEEDBACK ---------- */
+  const origSelect = window.selectStore;
+  window.selectStore = function(id){
+    origSelect(id);
+
+    markers.forEach((m, mid)=>{
+      const el = m.getElement?.();
+      if(!el) return;
+      el.classList.remove("selected","dimmed");
+      if(mid === id) el.classList.add("selected");
+      else el.classList.add("dimmed");
+    });
+
+    setDrawer("half");
+  };
+
+})();
+</script>
+<!-- =====================================================
+     SEGMENT 12 — PASSWORD-PROTECTED MAP RESET
+     ===================================================== -->
+
+<style>
+/* =====================================================
+   RESET BUTTON STYLES
+   ===================================================== */
+.map-reset-btn{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(239,68,68,.6);
+  background: rgba(2,6,23,.75);
+  color:#fecaca;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 28px rgba(0,0,0,.6);
+}
+.map-reset-btn:hover{
+  background: rgba(239,68,68,.15);
+}
+
+/* Mobile FAB version */
+@media (max-width: 900px){
+  .map-reset-fab{
+    position:absolute;
+    left:12px;
+    bottom:120px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:1px solid rgba(239,68,68,.6);
+    background: rgba(2,6,23,.9);
+    color:#fecaca;
+    font-size:1.1rem;
+    box-shadow:0 12px 30px rgba(0,0,0,.6);
+    z-index:750;
+  }
+}
+</style>
+
+<script>
+/* =====================================================
+   MAP RESET LOGIC
+   ===================================================== */
+(function(){
+  const RESET_PASSWORD = "HF_HPA_ADMIN1";
+  let resetMounted = false;
+
+  function confirmReset(){
+    const pw = prompt("⚠️ ADMIN RESET\n\nThis will DELETE ALL MAP PROGRESS and ISSUES.\n\nEnter password to continue:");
+    if(pw !== RESET_PASSWORD){
+      alert("❌ Incorrect password. Reset cancelled.");
+      return;
+    }
+
+    const sure = confirm("FINAL CONFIRMATION:\n\nAll map progress, issues, and checklist data will be permanently reset.\n\nProceed?");
+    if(!sure) return;
+
+    performReset();
+  }
+
+  async function performReset(){
+    try{
+      /* ---------- LOCAL RESET ---------- */
+      if(window.LiveState){
+        LiveState.local = {};
+        try{
+          localStorage.removeItem("hub_store_state");
+        }catch{}
+      }
+
+      /* ---------- REMOTE (FIRESTORE) RESET ---------- */
+      if(window.db && window.stores && stores.length){
+        const batchSize = 20;
+        for(let i=0;i<stores.length;i+=batchSize){
+          const slice = stores.slice(i, i+batchSize);
+          await Promise.all(slice.map(s=>{
+            return db.collection("stores").doc(s.id).set(
+              LiveState.defaults(),
+              { merge:false }
+            );
+          }));
+        }
+      }
+
+      /* ---------- UI RESET ---------- */
+      window.selectedStoreId = null;
+
+      // Clear store panel
+      document.getElementById("spTitle").textContent = "—";
+      document.getElementById("spSub").textContent = "Select a store";
+      document.getElementById("spWatered").textContent = "—";
+      document.getElementById("spNegatives").textContent = "—";
+      document.getElementById("spIssues").textContent = "—";
+      document.getElementById("checklistMount").innerHTML = "";
+
+      // Reset markers + filters
+      if(window.filterIssuesOnly) filterIssuesOnly.checked = false;
+      if(typeof updateMarkers === "function") updateMarkers();
+      if(typeof renderMarkers === "function") renderMarkers();
+
+      // Collapse mobile drawer if present
+      const drawer = document.querySelector("#view-map aside.glass-panel");
+      drawer?.classList.remove("full","half");
+      drawer?.classList.add("peek");
+
+      celebrate();
+      alert("✅ Map reset complete.\n\nAll progress and issues have been cleared.");
+    }catch(err){
+      console.error("[map reset] failed", err);
+      alert("❌ Reset failed. Check console for details.");
+    }
+  }
+
+  /* =====================================================
+     MOUNT BUTTONS
+     ===================================================== */
+  function mountResetControls(){
+    if(resetMounted) return;
+    resetMounted = true;
+
+    /* Desktop: top bar */
+    const topbar = document.getElementById("topbar");
+    if(topbar && !topbar.querySelector(".map-reset-btn")){
+      const btn = document.createElement("button");
+      btn.className = "map-reset-btn";
+      btn.type = "button";
+      btn.innerHTML = "♻️ Reset Map";
+      btn.onclick = confirmReset;
+      topbar.appendChild(btn);
+    }
+
+    /* Mobile: floating FAB */
+    if(window.matchMedia("(max-width:900px)").matches){
+      const mapEl = document.getElementById("storeMap");
+      if(mapEl && !mapEl.querySelector(".map-reset-fab")){
+        const fab = document.createElement("button");
+        fab.className = "map-reset-fab";
+        fab.type = "button";
+        fab.title = "Reset Map";
+        fab.textContent = "♻️";
+        fab.onclick = confirmReset;
+        mapEl.appendChild(fab);
+      }
+    }
+  }
+
+  /* Mount when Map view is shown */
+  if(window.HubUI){
+    wrapOnce(HubUI,"showOnlyView","seg12Reset",(orig)=> (v)=>{
+      orig(v);
+      if(v === "map") mountResetControls();
+    });
+  }
+
+  /* Restore on refresh if map is active */
+  if(sessionStorage.getItem("hub_view") === "map"){
+    mountResetControls();
+  }
+})();
+</script>
+
 </body>
 </html>
