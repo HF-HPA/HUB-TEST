@@ -1,4 +1,4 @@
-store_id,store_name,address,city,state,zip,lat,lon
+store_id,store_name,address,city,state,zip,lat,lon,territory
 1851,Belleville,5501 Belleville Crossing St,Belleville,IL,62226.0,38.524745,-90.030281
 1901,Broadview,700 Broadview Village Square,Broadview,IL,60155.0,41.852765,-87.849351
 1902,Evanston,2201 Oakton Street,Evanston,IL,60201.0,42.026609,-87.704957
