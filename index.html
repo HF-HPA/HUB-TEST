@@ -4824,5 +4824,472 @@ Rule: Fill holes before perfecting labels.`}
   }
 })();
 </script>
+  <!-- =====================================================
+     SEGMENT 9 — FINAL FORM (PWA + OFFLINE + ROUTES + LEADERBOARD + CHALLENGES)
+     ===================================================== -->
+
+<script>
+/* =====================================================
+   1) PWA INSTALL PROMPT
+   ===================================================== */
+let deferredPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+
+  const pill = document.createElement("div");
+  pill.className = "header-pill";
+  pill.style.cursor = "pointer";
+  pill.textContent = "⬇ Install App";
+  pill.onclick = async ()=>{
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    pill.remove();
+  };
+
+  document.getElementById("topbar")?.appendChild(pill);
+});
+
+/* =====================================================
+   2) OFFLINE CACHE (CSV + IMAGES)
+   ===================================================== */
+const CACHE = "hub-offline-v1";
+
+if("serviceWorker" in navigator){
+  const swCode = `
+    const CACHE = "${CACHE}";
+    self.addEventListener("install", e=>{
+      e.waitUntil(caches.open(CACHE));
+    });
+    self.addEventListener("fetch", e=>{
+      if(e.request.method !== "GET") return;
+      e.respondWith(
+        caches.match(e.request).then(cached=>{
+          return cached || fetch(e.request).then(res=>{
+            const copy = res.clone();
+            caches.open(CACHE).then(c=>c.put(e.request, copy));
+            return res;
+          }).catch(()=>cached);
+        })
+      );
+    });
+  `;
+  const blob = new Blob([swCode], { type:"text/javascript" });
+  navigator.serviceWorker.register(URL.createObjectURL(blob));
+}
+
+/* =====================================================
+   3) ROUTE MODE (FIELD NAVIGATION)
+   ===================================================== */
+let ROUTE = [];
+let routeIndex = 0;
+
+window.startRoute = function(storeIds){
+  ROUTE = storeIds;
+  routeIndex = 0;
+  goToNextStop();
+};
+
+function goToNextStop(){
+  if(routeIndex >= ROUTE.length){
+    alert("✅ Route complete!");
+    return;
+  }
+  const id = ROUTE[routeIndex];
+  const s = stores.find(x=>x.id===id);
+  if(!s) return;
+
+  map.setView([s.lat, s.lon], 12);
+  selectStore(id);
+}
+
+window.completeStop = function(){
+  routeIndex++;
+  goToNextStop();
+};
+
+/* Quick UI button */
+document.addEventListener("keydown", e=>{
+  if(e.key==="n") completeStop(); // power-user shortcut
+});
+
+/* =====================================================
+   4) WEEKLY CHALLENGES ENGINE
+   ===================================================== */
+const CHALLENGE_KEY = "hub_weekly_challenges";
+
+function getWeekKey(){ return mondayKey(); }
+
+function loadChallenges(){
+  const wk = getWeekKey();
+  const saved = JSON.parse(localStorage.getItem(CHALLENGE_KEY)||"{}");
+  if(saved.week !== wk){
+    const fresh = {
+      week:wk,
+      goals:{
+        checklists:5,
+        issuesResolved:3,
+        storesVisited:8,
+        photos:3
+      },
+      progress:{ checklists:0, issuesResolved:0, storesVisited:0, photos:0 }
+    };
+    localStorage.setItem(CHALLENGE_KEY, JSON.stringify(fresh));
+    return fresh;
+  }
+  return saved;
+}
+
+function saveChallenges(c){ localStorage.setItem(CHALLENGE_KEY, JSON.stringify(c)); }
+
+window.bumpChallenge = function(type){
+  const c = loadChallenges();
+  if(c.progress[type] < c.goals[type]){
+    c.progress[type]++;
+    saveChallenges(c);
+    awardXP("weekly", 5);
+  }
+};
+
+/* Hook into real actions */
+const _origSet = LiveState.set;
+LiveState.set = async function(id, patch){
+  const prev = LiveState.get(id);
+  const res = await _origSet.call(LiveState, id, patch);
+
+  if(!prev.watered && res.watered) bumpChallenge("storesVisited");
+  if(prev.issues?.length && patch.issues){
+    const resolved = patch.issues.filter(i=>i.resolved).length;
+    if(resolved) bumpChallenge("issuesResolved");
+  }
+  if(patch.checklist) bumpChallenge("checklists");
+
+  return res;
+};
+
+/* =====================================================
+   5) LEADERBOARD (XP + HEALTH)
+   ===================================================== */
+window.renderLeaderboard = function(){
+  const mount = document.getElementById("train-supervisor");
+  if(!mount) return;
+
+  const rows = stores.map(s=>{
+    const st = LiveState.get(s.id);
+    return {
+      store:s.name,
+      health: computeHealthScore(s.id),
+      issues:(st.issues||[]).filter(i=>!i.resolved).length
+    };
+  }).sort((a,b)=>b.health-a.health);
+
+  mount.innerHTML = `
+    <div class="glass-panel">
+      <strong>🏆 Weekly Leaderboard</strong>
+      <div class="subtitle">Top performing stores</div>
+      <table style="width:100%;margin-top:10px;font-size:.9rem;">
+        ${rows.slice(0,10).map((r,i)=>`
+          <tr>
+            <td>${i+1}</td>
+            <td>${esc(r.store)}</td>
+            <td><strong>${r.health}</strong></td>
+            <td>${r.issues} issues</td>
+          </tr>
+        `).join("")}
+      </table>
+    </div>
+  `;
+};
+
+/* =====================================================
+   6) TRAINING ↔ FIELD SYNC
+   ===================================================== */
+window.addEventListener("hub:opened", ()=>{
+  awardXP("explore", 1);
+});
+
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden){
+    renderLeaderboard();
+  }
+});
+
+/* =====================================================
+   7) DELIGHT
+   ===================================================== */
+window.celebrate = function(){
+  const confetti = document.createElement("div");
+  confetti.textContent = "🎉🎉🎉";
+  confetti.style.position="fixed";
+  confetti.style.inset="0";
+  confetti.style.display="flex";
+  confetti.style.alignItems="center";
+  confetti.style.justifyContent="center";
+  confetti.style.fontSize="3rem";
+  confetti.style.pointerEvents="none";
+  confetti.style.zIndex="99999";
+  document.body.appendChild(confetti);
+  setTimeout(()=>confetti.remove(), 1200);
+};
+
+</script>
+<!-- =====================================================
+     SEGMENT 10 — TRAINING LMS + SOCIAL FUN + UI DELIGHT
+     ===================================================== -->
+
+<style>
+/* =====================================================
+   XP / PROGRESS VISUALS
+   ===================================================== */
+.xp-ring{
+  width:72px;height:72px;
+  border-radius:50%;
+  background:
+    conic-gradient(var(--accent) calc(var(--p)*1%), rgba(148,163,184,.15) 0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:1000;
+  color:var(--heading);
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+.xp-ring span{ font-size:.8rem; }
+
+/* =====================================================
+   CERT BADGES
+   ===================================================== */
+.cert-badge{
+  padding:10px 14px;
+  border-radius:16px;
+  border:1px solid rgba(34,211,238,.45);
+  background: radial-gradient(circle at top left, rgba(34,211,238,.25), rgba(15,23,42,.65));
+  font-weight:1000;
+  color:var(--heading);
+  box-shadow:0 14px 36px rgba(0,0,0,.7);
+}
+
+/* =====================================================
+   SOCIAL FEED
+   ===================================================== */
+.feed-item{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.2);
+  background: rgba(2,6,23,.35);
+  font-size:.85rem;
+}
+.feed-item strong{ color:var(--accent); }
+
+/* =====================================================
+   DELIGHT ANIMATIONS
+   ===================================================== */
+@keyframes pop{
+  0%{ transform:scale(.9); opacity:0; }
+  60%{ transform:scale(1.05); opacity:1; }
+  100%{ transform:scale(1); }
+}
+.pop{ animation: pop .35s ease-out; }
+
+.glow{
+  box-shadow:0 0 0 rgba(34,211,238,.6);
+  animation: glowPulse 1.6s ease-out;
+}
+@keyframes glowPulse{
+  0%{ box-shadow:0 0 0 0 rgba(34,211,238,.7); }
+  100%{ box-shadow:0 0 0 18px rgba(34,211,238,0); }
+}
+</style>
+
+<script>
+/* =====================================================
+   SEG10 BOOT
+   ===================================================== */
+(function(){
+  const USER = App.user?.username || "User";
+
+  /* =====================================================
+     TRAINING STATE
+     ===================================================== */
+  const TRAIN_STATE_KEY = "hub_train_state_v2";
+
+  function loadTrain(){
+    try{ return JSON.parse(localStorage.getItem(TRAIN_STATE_KEY)||"{}"); }
+    catch{ return {}; }
+  }
+  function saveTrain(s){
+    localStorage.setItem(TRAIN_STATE_KEY, JSON.stringify(s));
+  }
+
+  function awardXP(amount){
+    const s = loadTrain();
+    s.xp = (s.xp||0) + amount;
+    saveTrain(s);
+    celebrate();
+    return s.xp;
+  }
+
+  /* =====================================================
+     CERTIFICATIONS
+     ===================================================== */
+  const CERTS = {
+    foundations:{ name:"Merch Foundations", xp:120 },
+    plant:{ name:"Plant Care Specialist", xp:150 },
+    supervisor:{ name:"Field Captain", xp:180 }
+  };
+
+  function checkCerts(){
+    const s = loadTrain();
+    s.certs = s.certs || {};
+    Object.entries(CERTS).forEach(([k,v])=>{
+      if(!s.certs[k] && (s.xp||0) >= v.xp){
+        s.certs[k] = true;
+        logFeed(`🏅 ${USER} earned ${v.name}`);
+      }
+    });
+    saveTrain(s);
+  }
+
+  /* =====================================================
+     DAILY QUICK DRILL
+     ===================================================== */
+  function dailyDrill(){
+    const s = loadTrain();
+    const today = todayKey();
+    if(s.lastDrill === today) return null;
+
+    s.lastDrill = today;
+    saveTrain(s);
+
+    return {
+      q:"What’s the FIRST thing you fix when a display looks bad?",
+      a:["Signage","Empty holes","Pricing","Watering"],
+      correct:1
+    };
+  }
+
+  /* =====================================================
+     SOCIAL / SQUADS
+     ===================================================== */
+  const SQUAD_KEY = "hub_squad";
+
+  function getSquad(){
+    return localStorage.getItem(SQUAD_KEY) || "Solo";
+  }
+
+  function setSquad(name){
+    localStorage.setItem(SQUAD_KEY, name);
+    logFeed(`👥 ${USER} joined squad "${name}"`);
+  }
+
+  /* =====================================================
+     ACTIVITY FEED
+     ===================================================== */
+  const FEED_KEY = "hub_feed";
+  function loadFeed(){
+    try{ return JSON.parse(localStorage.getItem(FEED_KEY)||"[]"); }
+    catch{ return []; }
+  }
+  function logFeed(msg){
+    const f = loadFeed();
+    f.unshift({ msg, t:Date.now() });
+    localStorage.setItem(FEED_KEY, JSON.stringify(f.slice(0,20)));
+  }
+
+  /* =====================================================
+     RENDER TRAINING DASHBOARD
+     ===================================================== */
+  function renderTrainingHome(){
+    const mount = document.getElementById("train-basics");
+    if(!mount) return;
+
+    const s = loadTrain();
+    const xp = s.xp||0;
+    const level = Math.floor(xp/50)+1;
+    const pct = (xp%50)/50*100;
+
+    const drill = dailyDrill();
+
+    mount.innerHTML = `
+      <div class="glass-panel pop">
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <div class="xp-ring" style="--p:${pct}">
+            <span>Lv ${level}</span>
+          </div>
+          <div>
+            <strong>Welcome back, ${USER}</strong>
+            <div class="subtitle">Squad: ${getSquad()}</div>
+            <div class="subtitle">XP: ${xp}</div>
+          </div>
+        </div>
+      </div>
+
+      ${drill ? `
+      <div class="glass-panel pop glow" style="margin-top:12px;">
+        <strong>⚡ Daily Quick Drill</strong>
+        <div class="subtitle">${drill.q}</div>
+        <div style="margin-top:8px;display:grid;gap:8px;">
+          ${drill.a.map((x,i)=>`
+            <button class="tab" data-drill="${i}">${x}</button>
+          `).join("")}
+        </div>
+      </div>` : ""}
+
+      <div class="glass-panel" style="margin-top:12px;">
+        <strong>🏅 Certifications</strong>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+          ${Object.entries(CERTS).map(([k,v])=>{
+            return s.certs?.[k]
+              ? `<div class="cert-badge pop">${v.name}</div>`
+              : `<div class="header-pill">${v.name}</div>`;
+          }).join("")}
+        </div>
+      </div>
+
+      <div class="glass-panel" style="margin-top:12px;">
+        <strong>🔥 Activity</strong>
+        <div style="display:grid;gap:8px;margin-top:8px;">
+          ${loadFeed().map(f=>`
+            <div class="feed-item">
+              <strong>${new Date(f.t).toLocaleTimeString()}</strong> — ${f.msg}
+            </div>
+          `).join("") || `<div class="subtitle">No activity yet.</div>`}
+        </div>
+      </div>
+    `;
+
+    /* Drill handling */
+    mount.querySelectorAll("[data-drill]").forEach(btn=>{
+      btn.onclick = ()=>{
+        if(Number(btn.dataset.drill) === drill.correct){
+          awardXP(5);
+          logFeed(`✅ ${USER} completed Daily Drill (+5 XP)`);
+          renderTrainingHome();
+        }else{
+          alert("❌ Not quite — try again tomorrow!");
+        }
+      };
+    });
+
+    checkCerts();
+  }
+
+  /* =====================================================
+     HOOK INTO VIEW SWITCHING
+     ===================================================== */
+  wrapOnce(HubUI,"showOnlyView","seg10Training",(orig)=> (v)=>{
+    orig(v);
+    if(v==="training") renderTrainingHome();
+  });
+
+  if(sessionStorage.getItem("hub_view")==="training"){
+    renderTrainingHome();
+  }
+
+})();
+</script>
+
+  
 </body>
 </html>
