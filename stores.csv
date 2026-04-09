@@ -33,7 +33,7 @@ store_id,store_name,address,city,state,zip,lat,lon,territory
 1938,Vernon Hills,493 N Milwaukee Ave,Vernon Hills,IL,60061.0,42.235093,-87.939098,4
 1939,Bolingbrook,105 N. Weber Road,Bolingbrook,IL,60490.0,41.709235,-88.127489,2
 1940,Algonquin,200 S. Randall Road,Algonquin,IL,60102.0,42.172965,-88.338531,4
-1941,Waukegan,2001 Belvedere St,Waukegan,IL,60085.0,38.538776,-90.080168,4
+1941,Waukegan,2001 Belvedere St,Waukegan,IL,60085.0,42.354361,-87.839227,4
 1942,Woodridge,7200 Woodward Ave,Woodridge,IL,60517.0,41.75705,-88.033636,2
 1943,Carol Stream,475 Schmale Road,Carol Stream,IL,60188.0,41.890173,-88.104396,2
 1944,Volo,2731 W. Hartigan Road,Ingleside,IL,60041.0,42.362519,-88.16502,4
@@ -42,7 +42,7 @@ store_id,store_name,address,city,state,zip,lat,lon,territory
 1952,Lake Zurich,670 S Rand Road,Lake Zurich,IL,60047.0,42.187771,-88.09517,4
 1955,Oaklawn,4060 W. 95th Street,Oaklawn,IL,60453.0,41.720547,-87.723806,3
 1956,Machesney Park,1580 W. Lane Road,Machesney Park,IL,61115.0,42.367635,-89.023759,5
-1957,West Aurora,1250 N. Orchard Road,Aurora,IL,60506.0,37.909489,-87.105023,2
+1957,West Aurora,1250 N. Orchard Road,Aurora,IL,60506.0,41.773240,-88.366219,2
 1961,Elston/Leavitt,2570 N. Elston Avenue,Chicago,IL,60647.0,41.9269,-87.683345,3
 1962,Joliet,3001 Plainfield Road,Joliet,IL,60431.0,41.579175,-88.158574,2
 1964,Bartlett,950 IL Route 59,Bartlett,IL,60103.0,41.973204,-88.209088,4
