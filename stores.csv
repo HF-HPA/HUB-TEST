@@ -1,166 +1,165 @@
 store_id,store_name,address,city,state,zip,lat,lon,territory
-1851,Belleville,5501 Belleville Crossing St,Belleville,IL,62226.0,38.524745,-90.030281
-1901,Broadview,700 Broadview Village Square,Broadview,IL,60155.0,41.852765,-87.849351
-1902,Evanston,2201 Oakton Street,Evanston,IL,60201.0,42.026609,-87.704957
-1903,Brickyard,2555 N. Normandy,Chicago,IL,60607.0,41.9260822,-87.7920112
-1904,Schaumburg,100 Barrington Road,Schaumburg,IL,60159.0,42.0263915,-88.1473634
-1905,Darien,2101 W. 75th Street,Darien,IL,60561.0,41.7513589,-87.9948385
-1906,Orland Park,7300 W. 159th Street,Orland Park,IL,60462.0,41.6032171,-87.7966213
-1907,Niles,901 Civic Center Drive,Niles,IL,60714.0,42.0238321,-87.7997939
-1908,Bedford Park,7200 S Cicero Ave,Bedford Park,IL,60638.0,41.7625536,-87.7458841
-1909,Calumet City,1550 Torrence Avenue,Calumet City,IL,60409.0,41.5888083,-87.560906
-1911,Cicero,2803 S. Cicero Avenue,Cicero,IL,60804.0,41.8413072,-87.7412128
-1912,North Avenue,1232 W. North Avenue,Chicago,IL,60622.0,41.9115294,-87.6583991
-1913,Mt. Prospect,350 E. Kensington,Mt. Prospect,IL,60056.0,42.08123,-87.932278
-1914,Dan Ryan,200 W 87th St,Chicago,IL,60620.0,41.736201,-87.627428
-1915,Quincy,5432 Broadway,Quincy,IL,62305.0,39.932558,-91.328629
-1916,Downers Grove,2000 Butterfield Road,Downers Grove,IL,60515.0,41.834886,-88.031982
-1917,Glendale Heights,295 E. Army Trail Road,Glendale Heights,IL,60139.0,41.934228,-88.076892
-1918,Naperville,2920 Audrey Avenue,Naperville,IL,60540.0,41.74826,-88.203248
-1919,Northlake,37 W. North Avenue,Northlake,IL,60164.0,41.907015,-87.900716
-1920,Crystal Lake,4447 U.S. Route 14,Crystal Lake,IL,60014.0,42.225302,-88.285431
-1921,Geneva,2111 S. Randall Road,Geneva,IL,60134.0,41.868171,-88.340266
-1922,Gurnee,6625 Grand Avenue,Gurnee,IL,60031.0,42.383547,-87.968263
-1924,Fairview Heights,1706 W Hwy 50,Fairview Heights,IL,62269.0,38.592691,-89.957658
-1926,Deerfield,655 Lake Cook Road,Deerfield,IL,60015.0,42.151033,-87.843113
-1927,Palatine,825 E Dundee Road,Palatine,IL,60074.0,42.137033,-88.022602
-1928,Rockford,6930 Argus Drive,Rockford,IL,61107.0,42.273827,-88.982279
-1932,Matteson,20808 Cicero Avenue,Matteson,IL,60443.0,41.510299,-87.734503
-1934,Elgin,,,,,42.0504124,-88.3397459
-1935,Chicago Ridge,300 Commons Drive,Chicago Ridge,IL,60415.0,41.709533,-87.782118
-1936,Homewood,17845 Halstead Street,Homewood,IL,60430.0,41.565749,-87.633849
-1937,Schererville,960 U.S. Highway 41,Schererville,IN,46375.0,41.505109,-87.473088
-1938,Vernon Hills,493 N Milwaukee Ave,Vernon Hills,IL,60061.0,42.235093,-87.939098
-1939,Bolingbrook,105 N. Weber Road,Bolingbrook,IL,60490.0,41.709235,-88.127489
-1940,Algonquin,200 S. Randall Road,Algonquin,IL,60102.0,42.172965,-88.338531
-1941,Waukegan,2001 Belvedere St,Waukegan,IL,60085.0,38.538776,-90.080168
-1942,Woodridge,7200 Woodward Ave,Woodridge,IL,60517.0,41.75705,-88.033636
-1943,Carol Stream,475 Schmale Road,Carol Stream,IL,60188.0,41.890173,-88.104396
-1944,Volo,2731 W. Hartigan Road,Ingleside,IL,60041.0,42.362519,-88.16502
-1948,Carpentersville,251 Spring Hill Road,Carpentersville,IL,60110.0,42.105131,-88.295696
-1950,South Loop,1300 S. Clinton Street,Chicago,IL,60607.0,41.865818,-87.641473
-1952,Lake Zurich,670 S Rand Road,Lake Zurich,IL,60047.0,42.187771,-88.09517
-1955,Oaklawn,4060 W. 95th Street,Oaklawn,IL,60453.0,41.720547,-87.723806
-1956,Machesney Park,1580 W. Lane Road,Machesney Park,IL,61115.0,42.367635,-89.023759
-1957,West Aurora,1250 N. Orchard Road,Aurora,IL,60506.0,37.909489,-87.105023
-1961,Elston/Leavitt,2570 N. Elston Avenue,Chicago,IL,60647.0,41.9269,-87.683345
-1962,Joliet,3001 Plainfield Road,Joliet,IL,60431.0,41.579175,-88.158574
-1964,Bartlett,950 IL Route 59,Bartlett,IL,60103.0,41.973204,-88.209088
-1967,Mattoon,1301 Fort Worth Way,Mattoon,IL,61938.0,39.481594,-88.328806
-1969,Mchenry,2461 Richmond Road,McHenry,IL,60050.0,42.362075,-88.270653
-1973,Edwardsville,2500 Troy rd,Edwardsville,IL,62025.0,38.779945,-89.949656
-1974,Armitage,1919 N Cicero Ave,Chicago,IL,60639.0,41.916237,-87.744283
-1975,Oswego,3080 Route 34,Oswego,IL,60543.0,41.694852,-88.319838
-1976,Lincoln Park,2665 N. Halstead,Chicago,IL,60614.0,41.930802,-87.648663
-1977,Peru,,,,,41.3605715,-89.1292734
-1978,Peoria,5026 W. Holiday Dr,Peoria,IL,61615.0,40.773285,-89.672017
-1979,Marion,3200 Banterra Dr,Marion,IL,62959.0,37.746606,-88.98425
-1980,Kimball and Addison,3500 N. Kimball,Chicago,IL,60618.0,41.944282,-87.713508
-1981,Niles West,8650 Dempster Street,Niles,IL,60714.0,42.041223,-87.841896
-1982,Oakbrook Terrace,17W734 22nd Street,Oakbrook Terrace,IL,60181.0,41.84773,-87.976402
-1983,Countryside,140 Countryside Plaza,La Grange,IL,60525.0,41.780814,-87.869686
-1984,Champaign,820 Bloomington Rd,Champaign,IL,61820.0,40.133343,-88.256138
-1986,47th & Western,4555 S Western Blvd,Chicago,IL,60619.0,41.810941,-87.683204
-1987,Glenview,2850 Patriot Blvd,Glenview,IL,60026.0,42.107938,-87.82349
-1989,Homer Township,14053 S. Bell Road,Homer Glen,IL,60441.0,41.633218,-87.928075
-2001,Hobart,2851 East U.S. Route 30,Hobart,IN,46342.0,41.467814,-87.30019
-2030,Valparaiso,2430 LaPorte Avenue,Valparaiso,IN,46383.0,41.466435,-87.040046
-2036,Hammond,1624 E. 165th Street,Hammond,IN,46320.0,41.593685,-87.489742
-2775,Iron Mountain,,,,,45.8074866,-88.033048
-2801,Maplewood,"2360 White Bear Avenue,North",Maplewood,MN,55109.0,45.012947,-93.017015
-2802,Fridley,"5650 Main Street,NE",Fridley,MN,55432.0,45.070232,-93.270133
-2803,Coon Rapids,"3550 124th Avenue,NW",Coon Rapids,MN,55433.0,45.195148,-93.356076
-2804,Brooklyn Park,"6701 Boone Avenue,North",Brooklyn Park,MN,55428.0,45.077119,-93.393826
-2805,Bloomington,400 W. 79th Street,Bloomington,MN,55420.0,44.860721,-93.284966
-2806,St. Louis Park,5800 Cedar Lake Road,St. Louis Park,MN,55416.0,44.96499,-93.35248
-2807,New Brighton Road,1520 New Brighton Boulevard,Minneapolis,MN,55413.0,45.00529,-93.23398
-2808,Plymouth,1705 Annapolis Lane,Plymouth,MN,55441.0,44.99843,-93.4556
-2809,Burnsville,155 Nicollet Boulevard W,Burnsville,MN,55337.0,44.74963,-93.282
-2810,Woodbury,8334 Tamarack Village,Woodbury,MN,55125.0,44.94422,-92.94005
-2811,St. Cloud,"401 2nd Street,South",Waite Park,MN,56387.0,45.55114,-94.22252
-2812,Eden Prairie,13100 Valley View Rd,Eden Prairie,MN,55344.0,44.86836,-93.44366
-2813,Eagan,3220 Denmark Ave,Eagan,MN,55121.0,44.84002,-93.15569
-2817,Duluth,1101 Mall Dr,Duluth,MN,55811.0,46.80218,-92.15235
-2818,Baxter,,,,,46.349113,-94.2510427
-2820,Forest Lake,1943 W. Broadway Avenue,Forest Lake,MN,55025.0,45.28083,-93.00764
-2821,Elk River,"18011 Zane Street,NW",Elk River,MN,55330.0,45.29775,-93.54859
-2825,Chaska,300 Pioneer Trail,Chaska,MN,55318.0,44.83157,-93.5998
-2826,Rochester,3050 41st St NW,Rochester,MN,55901.0,44.06369,-92.50777
-2828,Blaine,4550 Pheasant Ridge Dr NE,Blaine,MN,55449.0,45.16646,-93.15559
-2829,Mankato,375 St. Andrews Drive,Mankato,MN,56001.0,44.18372,-93.95619
-2830,Bemidji,2425 Middle School Ave NW,Bemidji,MN,56601.0,47.49242,-94.91463
-2831,Fergus Falls,2025 W Lincoln Ave,Fergus Falls,MN,56537.0,46.28641,-96.11119
-2832,Albert Lea,2400 Consul St,Albert Lea,MN,56007.0,43.6536,-93.32717
-2833,Apple Valley,15101 Flagstaff Avenue,Apple Valley,MN,55124.0,44.72968,-93.19996
-2834,Grand Rapids,2600 S. Highway 169,Grand Rapids,MN,55744.0,47.20546,-93.5259
-2840,Monticello,1385 7th St E,Monticello,MN,55362.0,45.29537,-93.77595
-2841,Shakopee,1701 Co Rd 18,Shakopee,MN,55379.0,44.77327,-93.41117
-2842,Willmar,300 28th St SE,Willmar,MN,56201.0,45.09463,-95.0379
-2843,Inver Grove Heights,1300 E. Mendota Road,Inver Grove Heights,MN,55077.0,44.88227,-93.07621
-2844,Maple Grove,"15800 Grove Circle,North",Maple Grove,MN,55369.0,45.13634,-93.48146
-2845,Richfield,6301 Richfield Pkwy,Richfield,MN,55423.0,44.88756,-93.24808
-2847,SW Blaine,99 Northtown Drive,Blaine,MN,55434.0,45.12896,-93.26432
-3001,Columbia,3215 Clark Lane,Columbia,MO,65202.0,38.96615,-92.28932
-3002,Hanley Road,1603 S Hanley Rd,Brentwood,MO,63144.0,38.62606,-90.33689
-3003,Bridgeton,11215 St Charles Rock Rd,Bridgeton,MO,63044.0,38.74026,-90.39896
-3004,Manchester Road,13929 Manchester Rd,Ballwin,MO,63011.0,38.59986,-90.48782
-3007,Sunset Hills,10830 Sunset Hills,Sunset Hills,MO,63127.0,38.55271,-90.4106
-3009,St Charles,3891 Mexico Rd,St Charles,MO,63303.0,38.78733,-90.56423
-3010,South County,7481 S Lindbergh  Blvd,South County,MO,63125.0,38.50605,-90.32205
-3011,Southtown,3202 S Kingshighway Blvd,Kings,MO,63139.0,38.60144,-90.26745
-3013,Ferguson,10930 New Halls Ferry Rd,Ferguson,MO,63136.0,38.76989,-90.26253
-3014,Arnold,3865 Vogel Rd,Arnold,MO,63010.0,38.41251,-90.39483
-3015,O'Fallon,1525 Hwy K,O'Fallon,MO,63366.0,38.7884,-90.70177
-3018,Ellisville,37 Ellisville Town Ctr Dr,Ellisville,MO,63011.0,38.59075,-90.60872
-3022,Cottleville,6190 Mid Rivers Mall Dr,St Peters,MO,63304.0,38.7432,-90.6333
-3025,Wentzville,1920 Wentzville Pkwy,Wentzville,MO,63385.0,38.81575,-90.87419
-3027,Osage Beach,4030 Osage Beach Parkway,Osage Beach,MO,65065.0,38.15192,-92.61059
-3032,Festus,1131 West Gannon,Festus,Mo,63028.0,38.21142,-90.40177
-3033,Poplar Bluff,939 S Westwood Blvd,Poplar Bluff,MO,63901.0,36.74871,-90.41344
-3034,Florissant,13915 New Halls Ferry Rd,Florissant,MO,63033.0,38.80504,-90.29884
-3036,Kirksville,3015 N Baltimore,Kirksville,MO,63501.0,40.22581,-92.58467
-3037,Overland,8901 Page Ave,Overland,MO,63114.0,38.68805,-90.35511
-3701,Fargo,4700 17th Ave S,Fargo,ND,58103.0,46.85315,-96.86662
-3703,Minot,,,,,48.1993847,-101.2933103
-4902,West Allis,11071 W National Ave,West Allis,WI,53227.0,42.99037,-88.04981
-4903,Grand Chute,653 North Westhill Blvd,Grand Chute,WI,54915.0,44.26887,-88.46367
-4905,Onalaska,2927 Market Place,Onalaska,WI,54650.0,43.87993,-91.18632
-4906,East Madison,2425 East Springs Drive,Madison,WI,53704.0,43.13241,-89.29548
-4907,Franklin/Greenfield,6489 South 27th Street,Franklin,WI,53132.0,42.92682,-87.95297
-4909,West Madison,4550 Verona Road,Madison,WI,53711.0,43.03626,-89.45738
-4910,Delafield,3400 Hillside Dr,Delafield,WI,53018.0,43.04906,-88.36185
-4911,Janesville,3200 Deerfield Drive,Janesville,WI,53546.0,42.72014,-88.98207
-4912,North Shore,4155 North Port Washington Rd.,Milwaukee,WI,53212.0,43.09404,-87.92052
-4915,Bellevue,2595 Eaton Road,Green Bay,WI,54311.0,44.4633,-87.95285
-4916,Lake Geneva,500 North Edwards Boulevard,Lake Geneva,WI,53147.0,42.5958,-88.41479
-4918,Waukesha,2320 West Bluemound Road,Waukesha,WI,53186.0,43.03831,-88.1802
-4919,Grafton,,,,,43.3179901,-87.9218495
-4920,West Green Bay,810 South Taylor Street,Green Bay,WI,54303.0,44.5285,-88.07992
-4921,Mukwonago,,,,,42.8527842,-88.3175161
-4923,Wauwatosa,4100 N 124th St,Wauwatosa,WI,53222.0,43.09205,-88.06531
-4924,Kohler,4025 Highway 28,Kohler,WI,53044.0,43.71462,-87.7633
-4925,West Bend,,,,,43.3996033,-88.1853295
-4926,Racine,2429 S Green Bay Road,Racine,WI,53406.0,42.70201,-87.84966
-4928,Appleton,2201 S Kensington Ave,Appleton,WI,54915.0,44.24179,-88.36204
-4929,Lake Delton,136 Commerce Street,Lake Delton,WI,53940.0,43.58503,-89.8102
-4930,Rhinlander,,,,,45.6310748,-89.3886457
-4931,Wausau,2705 Sherman Street,Wausau,WI,54401.0,43.58503,-89.8102
-4935,Hudson,2330 Crest View Dr,Hudson,WI,54016.0,44.9579,-92.72442
-4940,Menomonee Falls,N94 W 18375 Thunder Ridge,Menomonee Falls,WI,53051.0,43.18733,-88.13747
-4941,SE Milwaukee,150 W Holt Ave,Milwaukee,WI,53207.0,42.98403,-87.91152
-4942,Wisconsin Rapids,,,,,44.3777926,-89.7982443
-6701,Elk Grove Village,600 Meacham Road,Elk Grove Village,IL,60007.0,42.00902,-88.04776
-6822,Alsip,12000 S. Cicero Avenue,Alsip,IL,60803.0,41.67477,-87.74217
-6887,Yorkville,735 Edward Ln,Yorkville,IL,60560.0,41.6645,-88.45918
-6919,Frankfort,20101 LaGrange Road,Frankfort,IL,60423.0,41.52435,-87.84731
-6920,Alton,1710 Homer Adams Pkwy,Alton,IL,62002.0,38.92087,-90.16527
-6923,South Elgin,440 S. Randall Road,South Elgin,IL,60177.0,41.98262,-88.3439
-6925,Shorewood,621 Brook Forest Avenue,Shorewood,IL,60435.0,41.53342,-88.20227
-6961,Collinsville,1049 Collinsville Crossing Blv,Collinsville,IL,62234.0,38.67411,-90.01459
-6981,Mundelein,3200 W. Route 60,Mundelein,IL,60060.0,42.28636,-88.04653
-6987,Normal,,,,,40.5237232,-88.9551462
-8430,Jacksonville,1601 W Morton Ave,Jacksonville,IL,62650.0,39.72098,-90.25431
-8431,Round Lake Beach,2050 N. IL Route 83,Round Lake Beach,IL,60073.0,42.38537,-88.06456
-8598,Lincoln/McCormick,6211 N Lincoln Ave,Chicago,IL,60659.0,41.99647,-87.71405
-8984,St. Joseph,,,,,39.8124178,-94.8121029
-8994,Chesterfield,390 Thf Boulevard,Chesterfield,MO,63005.0,38.66595,-90.60549
+1851,Belleville,5501 Belleville Crossing St,Belleville,IL,62226.0,38.524745,-90.030281,1
+1901,Broadview,700 Broadview Village Square,Broadview,IL,60155.0,41.852765,-87.849351,3
+1902,Evanston,2201 Oakton Street,Evanston,IL,60201.0,42.026609,-87.704957,3
+1903,Brickyard,2555 N. Normandy,Chicago,IL,60607.0,41.9260822,-87.7920112,3
+1904,Schaumburg,100 Barrington Road,Schaumburg,IL,60159.0,42.0263915,-88.1473634,4
+1905,Darien,2101 W. 75th Street,Darien,IL,60561.0,41.7513589,-87.9948385,2
+1906,Orland Park,7300 W. 159th Street,Orland Park,IL,60462.0,41.6032171,-87.7966213,2
+1907,Niles,901 Civic Center Drive,Niles,IL,60714.0,42.0238321,-87.7997939,4
+1908,Bedford Park,7200 S Cicero Ave,Bedford Park,IL,60638.0,41.7625536,-87.7458841,3
+1909,Calumet City,1550 Torrence Avenue,Calumet City,IL,60409.0,41.5888083,-87.560906,3
+1911,Cicero,2803 S. Cicero Avenue,Cicero,IL,60804.0,41.8413072,-87.7412128,3
+1912,North Avenue,1232 W. North Avenue,Chicago,IL,60622.0,41.9115294,-87.6583991,3
+1913,Mt. Prospect,350 E. Kensington,Mt. Prospect,IL,60056.0,42.08123,-87.932278,4
+1914,Dan Ryan,200 W 87th St,Chicago,IL,60620.0,41.736201,-87.627428,3
+1915,Quincy,5432 Broadway,Quincy,IL,62305.0,39.932558,-91.328629,1
+1916,Downers Grove,2000 Butterfield Road,Downers Grove,IL,60515.0,41.834886,-88.031982,2
+1917,Glendale Heights,295 E. Army Trail Road,Glendale Heights,IL,60139.0,41.934228,-88.076892,2
+1918,Naperville,2920 Audrey Avenue,Naperville,IL,60540.0,41.74826,-88.203248,2
+1919,Northlake,37 W. North Avenue,Northlake,IL,60164.0,41.907015,-87.900716,2
+1920,Crystal Lake,4447 U.S. Route 14,Crystal Lake,IL,60014.0,42.225302,-88.285431,4
+1921,Geneva,2111 S. Randall Road,Geneva,IL,60134.0,41.868171,-88.340266,2
+1922,Gurnee,6625 Grand Avenue,Gurnee,IL,60031.0,42.383547,-87.968263,4
+1924,Fairview Heights,1706 W Hwy 50,Fairview Heights,IL,62269.0,38.592691,-89.957658,1
+1926,Deerfield,655 Lake Cook Road,Deerfield,IL,60015.0,42.151033,-87.843113,4
+1927,Palatine,825 E Dundee Road,Palatine,IL,60074.0,42.137033,-88.022602,4
+1928,Rockford,6930 Argus Drive,Rockford,IL,61107.0,42.273827,-88.982279,5
+1932,Matteson,20808 Cicero Avenue,Matteson,IL,60443.0,41.510299,-87.734503,2
+1934,Elgin,,,,,42.0504124,-88.3397459,4
+1935,Chicago Ridge,300 Commons Drive,Chicago Ridge,IL,60415.0,41.709533,-87.782118,3
+1936,Homewood,17845 Halstead Street,Homewood,IL,60430.0,41.565749,-87.633849,3
+1937,Schererville,960 U.S. Highway 41,Schererville,IN,46375.0,41.505109,-87.473088,3
+1938,Vernon Hills,493 N Milwaukee Ave,Vernon Hills,IL,60061.0,42.235093,-87.939098,4
+1939,Bolingbrook,105 N. Weber Road,Bolingbrook,IL,60490.0,41.709235,-88.127489,2
+1940,Algonquin,200 S. Randall Road,Algonquin,IL,60102.0,42.172965,-88.338531,4
+1941,Waukegan,2001 Belvedere St,Waukegan,IL,60085.0,38.538776,-90.080168,4
+1942,Woodridge,7200 Woodward Ave,Woodridge,IL,60517.0,41.75705,-88.033636,2
+1943,Carol Stream,475 Schmale Road,Carol Stream,IL,60188.0,41.890173,-88.104396,2
+1944,Volo,2731 W. Hartigan Road,Ingleside,IL,60041.0,42.362519,-88.16502,4
+1948,Carpentersville,251 Spring Hill Road,Carpentersville,IL,60110.0,42.105131,-88.295696,4
+1950,South Loop,1300 S. Clinton Street,Chicago,IL,60607.0,41.865818,-87.641473,3
+1952,Lake Zurich,670 S Rand Road,Lake Zurich,IL,60047.0,42.187771,-88.09517,4
+1955,Oaklawn,4060 W. 95th Street,Oaklawn,IL,60453.0,41.720547,-87.723806,3
+1956,Machesney Park,1580 W. Lane Road,Machesney Park,IL,61115.0,42.367635,-89.023759,5
+1957,West Aurora,1250 N. Orchard Road,Aurora,IL,60506.0,37.909489,-87.105023,2
+1961,Elston/Leavitt,2570 N. Elston Avenue,Chicago,IL,60647.0,41.9269,-87.683345,3
+1962,Joliet,3001 Plainfield Road,Joliet,IL,60431.0,41.579175,-88.158574,2
+1964,Bartlett,950 IL Route 59,Bartlett,IL,60103.0,41.973204,-88.209088,4
+1967,Mattoon,1301 Fort Worth Way,Mattoon,IL,61938.0,39.481594,-88.328806,1
+1969,Mchenry,2461 Richmond Road,McHenry,IL,60050.0,42.362075,-88.270653,4
+1973,Edwardsville,2500 Troy rd,Edwardsville,IL,62025.0,38.779945,-89.949656,1
+1974,Armitage,1919 N Cicero Ave,Chicago,IL,60639.0,41.916237,-87.744283,3
+1975,Oswego,3080 Route 34,Oswego,IL,60543.0,41.694852,-88.319838,2
+1976,Lincoln Park,2665 N. Halstead,Chicago,IL,60614.0,41.930802,-87.648663,2
+1977,Peru,,,,,41.3605715,-89.1292734,1
+1978,Peoria,5026 W. Holiday Dr,Peoria,IL,61615.0,40.773285,-89.672017,1
+1979,Marion,3200 Banterra Dr,Marion,IL,62959.0,37.746606,-88.98425,1
+1980,Kimball and Addison,3500 N. Kimball,Chicago,IL,60618.0,41.944282,-87.713508,3
+1981,Niles West,8650 Dempster Street,Niles,IL,60714.0,42.041223,-87.841896,4
+1982,Oakbrook Terrace,17W734 22nd Street,Oakbrook Terrace,IL,60181.0,41.84773,-87.976402,2
+1983,Countryside,140 Countryside Plaza,La Grange,IL,60525.0,41.780814,-87.869686,2
+1984,Champaign,820 Bloomington Rd,Champaign,IL,61820.0,40.133343,-88.256138,1
+1986,47th & Western,4555 S Western Blvd,Chicago,IL,60619.0,41.810941,-87.683204,3
+1987,Glenview,2850 Patriot Blvd,Glenview,IL,60026.0,42.107938,-87.82349,4
+1989,Homer Township,14053 S. Bell Road,Homer Glen,IL,60441.0,41.633218,-87.928075,2
+2001,Hobart,2851 East U.S. Route 30,Hobart,IN,46342.0,41.467814,-87.30019,3
+2030,Valparaiso,2430 LaPorte Avenue,Valparaiso,IN,46383.0,41.466435,-87.040046,3
+2036,Hammond,1624 E. 165th Street,Hammond,IN,46320.0,41.593685,-87.489742,3
+2775,Iron Mountain,,,,,45.8074866,-88.033048,5
+2801,Maplewood,"2360 White Bear Avenue,North",Maplewood,MN,55109.0,45.012947,-93.017015,7
+2802,Fridley,"5650 Main Street,NE",Fridley,MN,55432.0,45.070232,-93.270133,6
+2803,Coon Rapids,"3550 124th Avenue,NW",Coon Rapids,MN,55433.0,45.195148,-93.356076,6
+2804,Brooklyn Park,"6701 Boone Avenue,North",Brooklyn Park,MN,55428.0,45.077119,-93.393826,7
+2805,Bloomington,400 W. 79th Street,Bloomington,MN,55420.0,44.860721,-93.284966,7
+2806,St. Louis Park,5800 Cedar Lake Road,St. Louis Park,MN,55416.0,44.96499,-93.35248,7
+2807,New Brighton Road,1520 New Brighton Boulevard,Minneapolis,MN,55413.0,45.00529,-93.23398,7
+2808,Plymouth,1705 Annapolis Lane,Plymouth,MN,55441.0,44.99843,-93.4556,7
+2809,Burnsville,155 Nicollet Boulevard W,Burnsville,MN,55337.0,44.74963,-93.282,7
+2810,Woodbury,8334 Tamarack Village,Woodbury,MN,55125.0,44.94422,-92.94005,7
+2811,St. Cloud,"401 2nd Street,South",Waite Park,MN,56387.0,45.55114,-94.22252,6
+2812,Eden Prairie,13100 Valley View Rd,Eden Prairie,MN,55344.0,44.86836,-93.44366,7
+2813,Eagan,3220 Denmark Ave,Eagan,MN,55121.0,44.84002,-93.15569,7
+2817,Duluth,1101 Mall Dr,Duluth,MN,55811.0,46.80218,-92.15235,6
+2818,Baxter,,,,,46.349113,-94.2510427,6
+2820,Forest Lake,1943 W. Broadway Avenue,Forest Lake,MN,55025.0,45.28083,-93.00764,6
+2821,Elk River,"18011 Zane Street,NW",Elk River,MN,55330.0,45.29775,-93.54859,6
+2825,Chaska,300 Pioneer Trail,Chaska,MN,55318.0,44.83157,-93.5998,7
+2826,Rochester,3050 41st St NW,Rochester,MN,55901.0,44.06369,-92.50777,7
+2828,Blaine,4550 Pheasant Ridge Dr NE,Blaine,MN,55449.0,45.16646,-93.15559,6
+2829,Mankato,375 St. Andrews Drive,Mankato,MN,56001.0,44.18372,-93.95619,7
+2830,Bemidji,2425 Middle School Ave NW,Bemidji,MN,56601.0,47.49242,-94.91463,6
+2831,Fergus Falls,2025 W Lincoln Ave,Fergus Falls,MN,56537.0,46.28641,-96.11119,6
+2832,Albert Lea,2400 Consul St,Albert Lea,MN,56007.0,43.6536,-93.32717,7
+2833,Apple Valley,15101 Flagstaff Avenue,Apple Valley,MN,55124.0,44.72968,-93.19996,7
+2834,Grand Rapids,2600 S. Highway 169,Grand Rapids,MN,55744.0,47.20546,-93.5259,6
+2840,Monticello,1385 7th St E,Monticello,MN,55362.0,45.29537,-93.77595,6
+2841,Shakopee,1701 Co Rd 18,Shakopee,MN,55379.0,44.77327,-93.41117,7
+2842,Willmar,300 28th St SE,Willmar,MN,56201.0,45.09463,-95.0379,6
+2843,Inver Grove Heights,1300 E. Mendota Road,Inver Grove Heights,MN,55077.0,44.88227,-93.07621,7
+2844,Maple Grove,"15800 Grove Circle,North",Maple Grove,MN,55369.0,45.13634,-93.48146,6
+2845,Richfield,6301 Richfield Pkwy,Richfield,MN,55423.0,44.88756,-93.24808,7
+2847,SW Blaine,99 Northtown Drive,Blaine,MN,55434.0,45.12896,-93.26432,6
+3001,Columbia,3215 Clark Lane,Columbia,MO,65202.0,38.96615,-92.28932,1
+3002,Hanley Road,1603 S Hanley Rd,Brentwood,MO,63144.0,38.62606,-90.33689,1
+3003,Bridgeton,11215 St Charles Rock Rd,Bridgeton,MO,63044.0,38.74026,-90.39896,1
+3004,Manchester Road,13929 Manchester Rd,Ballwin,MO,63011.0,38.59986,-90.48782,1
+3007,Sunset Hills,10830 Sunset Hills,Sunset Hills,MO,63127.0,38.55271,-90.4106,1
+3009,St Charles,3891 Mexico Rd,St Charles,MO,63303.0,38.78733,-90.56423,1
+3010,South County,7481 S Lindbergh  Blvd,South County,MO,63125.0,38.50605,-90.32205,1
+3011,Southtown,3202 S Kingshighway Blvd,Kings,MO,63139.0,38.60144,-90.26745,1
+3013,Ferguson,10930 New Halls Ferry Rd,Ferguson,MO,63136.0,38.76989,-90.26253,1
+3014,Arnold,3865 Vogel Rd,Arnold,MO,63010.0,38.41251,-90.39483,1
+3015,O'Fallon,1525 Hwy K,O'Fallon,MO,63366.0,38.7884,-90.70177,1
+3018,Ellisville,37 Ellisville Town Ctr Dr,Ellisville,MO,63011.0,38.59075,-90.60872,1
+3022,Cottleville,6190 Mid Rivers Mall Dr,St Peters,MO,63304.0,38.7432,-90.6333,1
+3025,Wentzville,1920 Wentzville Pkwy,Wentzville,MO,63385.0,38.81575,-90.87419,1
+3027,Osage Beach,4030 Osage Beach Parkway,Osage Beach,MO,65065.0,38.15192,-92.6,11059
+3032,Festus,1131 West Gannon,Festus,Mo,63028.0,38.21142,-90.40177,1
+3033,Poplar Bluff,939 S Westwood Blvd,Poplar Bluff,MO,63901.0,36.74871,-90.41344,1
+3034,Florissant,13915 New Halls Ferry Rd,Florissant,MO,63033.0,38.80504,-90.29884,1
+3036,Kirksville,3015 N Baltimore,Kirksville,MO,63501.0,40.22581,-92.58467,1
+3037,Overland,8901 Page Ave,Overland,MO,63114.0,38.68805,-90.35511,1
+3701,Fargo,4700 17th Ave S,Fargo,ND,58103.0,46.85315,-96.86662,6
+3703,Minot,,,,,48.1993847,-101.2933103,8
+4902,West Allis,11071 W National Ave,West Allis,WI,53227.0,42.99037,-88.04981,5
+4903,Grand Chute,653 North Westhill Blvd,Grand Chute,WI,54915.0,44.26887,-88.4667,5
+4905,Onalaska,2927 Market Place,Onalaska,WI,54650.0,43.87993,-91.18632,7
+4906,East Madison,2425 East Springs Drive,Madison,WI,53704.0,43.13241,-89.29548,5
+4907,Franklin/Greenfield,6489 South 27th Street,Franklin,WI,53132.0,42.92682,-87.95297,5
+4909,West Madison,4550 Verona Road,Madison,WI,53711.0,43.03626,-89.45738,5
+4910,Delafield,3400 Hillside Dr,Delafield,WI,53018.0,43.04906,-88.36185,5
+4911,Janesville,3200 Deerfield Drive,Janesville,WI,53546.0,42.72014,-88.98207,5
+4912,North Shore,4155 North Port Washington Rd.,Milwaukee,WI,53212.0,43.09404,-87.92052,5
+4915,Bellevue,2595 Eaton Road,Green Bay,WI,54311.0,44.4633,-87.95285,5
+4916,Lake Geneva,500 North Edwards Boulevard,Lake Geneva,WI,53147.0,42.5958,-88.41479,5
+4918,Waukesha,2320 West Bluemound Road,Waukesha,WI,53186.0,43.03831,-88.1802,5
+4919,Grafton,,,,,43.3179901,-87.9218495,5
+4920,West Green Bay,810 South Taylor Street,Green Bay,WI,54303.0,44.5285,-88.07992,5
+4921,Mukwonago,,,,,42.8527842,-88.3175161,5
+4923,Wauwatosa,4100 N 124th St,Wauwatosa,WI,53222.0,43.09205,-88.06531,5
+4924,Kohler,4025 Highway 28,Kohler,WI,53044.0,43.71462,-87.7633,5
+4925,West Bend,,,,,43.3996033,-88.1853295,5
+4926,Racine,2429 S Green Bay Road,Racine,WI,53406.0,42.70201,-87.84966,5
+4928,Appleton,2201 S Kensington Ave,Appleton,WI,54915.0,44.24179,-88.36204,5
+4929,Lake Delton,136 Commerce Street,Lake Delton,WI,53940.0,43.58503,-89.8102,5
+4930,Rhinlander,,,,,45.6310748,-89.3886457,5
+4931,Wausau,2705 Sherman Street,Wausau,WI,54401.0,43.58503,-89.8102,5
+4935,Hudson,2330 Crest View Dr,Hudson,WI,54016.0,44.9579,-92.72442,7
+4940,Menomonee Falls,N94 W 18375 Thunder Ridge,Menomonee Falls,WI,53051.0,43.18733,-88.13747,5
+4941,SE Milwaukee,150 W Holt Ave,Milwaukee,WI,53207.0,42.98403,-87.91152,5
+4942,Wisconsin Rapids,,,,,44.3777926,-89.7982443,5
+6701,Elk Grove Village,600 Meacham Road,Elk Grove Village,IL,60007.0,42.00902,-88.04776,4
+6822,Alsip,12000 S. Cicero Avenue,Alsip,IL,60803.0,41.67477,-87.74217,3
+6887,Yorkville,735 Edward Ln,Yorkville,IL,60560.0,41.6645,-88.45918,2
+6919,Frankfort,20101 LaGrange Road,Frankfort,IL,60423.0,41.52435,-87.84731,2
+6920,Alton,1710 Homer Adams Pkwy,Alton,IL,62002.0,38.92087,-90.16527,1
+6923,South Elgin,440 S. Randall Road,South Elgin,IL,60177.0,41.98262,-88.3439,2
+6925,Shorewood,621 Brook Forest Avenue,Shorewood,IL,60435.0,41.53342,-88.20227,2
+6961,Collinsville,1049 Collinsville Crossing Blv,Collinsville,IL,62234.0,38.67411,-90.01459,1
+6981,Mundelein,3200 W. Route 60,Mundelein,IL,60060.0,42.28636,-88.04653,4
+6987,Normal,,,,,40.5237232,-88.9551462,1
+8430,Jacksonville,1601 W Morton Ave,Jacksonville,IL,62650.0,39.72098,-90.25431,1
+8431,Round Lake Beach,2050 N. IL Route 83,Round Lake Beach,IL,60073.0,42.38537,-88.06456,4
+8598,Lincoln/McCormick,6211 N Lincoln Ave,Chicago,IL,60659.0,41.99647,-87.71405,4
+8994,Chesterfield,390 Thf Boulevard,Chesterfield,MO,63005.0,38.66595,-90.60549,1
