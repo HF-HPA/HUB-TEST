@@ -72,9 +72,6 @@
 
     .hidden{ display:none !important; }
 
-    /* =====================================================
-       APP SHELL
-       ===================================================== */
     .app-shell{
       width:100%;
       padding:16px;
@@ -101,9 +98,6 @@
       z-index:1;
     }
 
-    /* =====================================================
-       HEADER
-       ===================================================== */
     .header{
       display:flex;
       align-items:center;
@@ -143,9 +137,6 @@
       background:radial-gradient(circle at top left, rgba(34,211,238,.08), transparent 55%);
     }
 
-    /* =====================================================
-       TABS
-       ===================================================== */
     .tabs{
       display:flex;
       gap:8px;
@@ -182,9 +173,6 @@
       box-shadow:0 10px 32px rgba(0,0,0,.8);
     }
 
-    /* =====================================================
-       GLASS PANEL
-       ===================================================== */
     .glass-panel{
       background:var(--card-glass);
       border-radius:var(--radius-lg);
@@ -194,9 +182,6 @@
       padding:14px;
     }
 
-    /* =====================================================
-       FOOTER
-       ===================================================== */
     .footer{
       margin-top:14px;
       font-size:.75rem;
@@ -204,9 +189,6 @@
       text-align:right;
     }
 
-    /* =====================================================
-       INPUTS / FOCUS
-       ===================================================== */
     input[type="text"], input[type="password"], input[type="search"], select, textarea{
       background: rgba(2,6,23,0.65);
       color: var(--heading);
@@ -228,9 +210,6 @@
       border-radius: 10px;
     }
 
-    /* =====================================================
-       MAP PANEL KV ROWS
-       ===================================================== */
     .kv{
       display:flex;
       justify-content:space-between;
@@ -253,9 +232,6 @@
       color: var(--heading);
     }
 
-    /* =====================================================
-       LIVE MAP: Legend / Week badge / Quick actions
-       ===================================================== */
     #storeMap{ position:relative; }
 
     .map-legend{
@@ -322,65 +298,6 @@
       margin-top:10px;
     }
 
-    /* =====================================================
-       HF: Seasonal banner / toolbars / cards / filters
-       ===================================================== */
-    .hf-seasonal{
-      margin-bottom:12px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(34,211,238,.55);
-      background: radial-gradient(circle at top left, rgba(34,211,238,.22), rgba(15,23,42,.95));
-      box-shadow: 0 12px 30px rgba(0,0,0,.6);
-      font-size:.9rem;
-    }
-    .hf-seasonal strong{
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-
-    .hf-toolbar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .search-wrap{
-      position:relative;
-      flex: 1 1 320px;
-      min-width:240px;
-    }
-
-    .pill-toggle{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.35);
-      background: rgba(15,23,42,0.55);
-      color: var(--muted);
-      font-size: .82rem;
-      cursor:pointer;
-      user-select:none;
-      transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
-      white-space:nowrap;
-    }
-    .pill-toggle:hover{
-      transform: translateY(-1px);
-      color: var(--heading);
-      background: rgba(15,23,42,0.85);
-    }
-    .pill-toggle input{
-      transform: translateY(1px);
-      accent-color: var(--accent);
-    }
-
-    /* =====================================================
-       Cards / grids used by HF/HPA renderers
-       ===================================================== */
     .card-grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -406,9 +323,6 @@
     .card-title{ font-weight: 900; color: var(--heading); }
     .card-sub{ color: var(--muted); font-size: .85rem; margin-top: 4px; }
 
-    /* =====================================================
-       Popup / modal used by issue resolution & HF popups
-       ===================================================== */
     .popup-backdrop{
       position:fixed;
       inset:0;
@@ -463,9 +377,6 @@
     .popup-close:hover{ filter: brightness(1.07); transform: translateY(-1px); }
     .popup-close:active{ transform: translateY(0) scale(.99); }
 
-    /* =====================================================
-       Search dropdown + checklist rows
-       ===================================================== */
     .search-results{
       position:absolute;
       top: calc(100% + 8px);
@@ -491,20 +402,28 @@
     }
     .search-item:hover{ background: rgba(34,211,238,0.10); }
 
-    .checklist-row{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding:6px 0;
-      font-size:.9rem;
-      border-bottom:1px solid rgba(148,163,184,.12);
+    .data-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
     }
-    .checklist-row:last-child{ border-bottom:none; }
-    .checklist-row input{ accent-color: var(--accent); margin-top:2px; }
+    .data-table th{
+      background:rgba(34,211,238,0.15);
+      padding:10px;
+      text-align:left;
+      font-weight:600;
+      border-bottom:1px solid var(--border-subtle);
+    }
+    .data-table td{
+      padding:10px;
+      border-bottom:1px solid rgba(148,163,184,0.12);
+    }
+    .data-table tr:hover{
+      background:rgba(34,211,238,0.08);
+    }
 
-    /* =====================================================
-       PRINT MODE
-       ===================================================== */
+    .loading{ color:var(--muted); font-style:italic; }
+
     @media print{
       body{ background:#fff !important; color:#000 !important; }
       .tabs, #topbar, #globalTabs, .footer { display:none !important; }
@@ -521,9 +440,6 @@
   <div class="app-shell">
     <div class="app-inner">
 
-      <!-- =====================================================
-           SPLASH VIEW
-           ===================================================== -->
       <section id="view-splash">
         <div class="glass-panel" style="text-align:center; padding:40px;">
           <div style="font-size:1.6rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;">
@@ -544,9 +460,6 @@
         </div>
       </section>
 
-      <!-- =====================================================
-           LOGIN VIEW
-           ===================================================== -->
       <section id="view-login" class="hidden">
         <div class="glass-panel" style="max-width:380px;margin:0 auto;">
           <div style="text-align:center;margin-bottom:10px;">
@@ -588,9 +501,6 @@
         </div>
       </section>
 
-      <!-- =====================================================
-           HEADER
-           ===================================================== -->
       <header id="topbar" class="header hidden">
         <div class="header-left">
           <img src="hf_logo.png" alt="HF Logo" class="logo" />
@@ -602,9 +512,6 @@
         <div id="userPill" class="header-pill">User</div>
       </header>
 
-      <!-- =====================================================
-           GLOBAL NAV TABS
-           ===================================================== -->
       <nav id="globalTabs" class="tabs hidden" aria-label="Primary navigation">
         <button class="tab active" data-view="map" type="button">Map</button>
         <button class="tab" data-view="hf" type="button">HF</button>
@@ -614,48 +521,20 @@
         <button class="tab" id="logoutBtn" type="button">Logout</button>
       </nav>
 
-      <!-- =====================================================
-           MAP VIEW (FULL STRUCTURE)
-           ===================================================== -->
       <section id="view-map" class="hidden">
-
-        <!-- Top bar: Search + filters -->
         <div class="glass-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <div>
               <strong>Store Map</strong>
               <div class="subtitle">Weekly reset • Live status • Issues &amp; checklist</div>
             </div>
-
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;justify-content:flex-end;">
-              <div class="search-wrap" style="max-width:420px;flex:1;">
-                <input id="storeSearch"
-                       type="search"
-                       placeholder="Search stores by ID, name, city, state…"
-                       style="width:100%;" />
-                <div id="storeSearchResults" class="search-results" role="listbox"></div>
-              </div>
-
-              <label class="pill-toggle" title="Show only stores with open issues">
-                <input id="filterIssuesOnly" type="checkbox" />
-                Open Issues Only
-              </label>
-
-              <button id="clearSearch" class="tab" type="button" style="padding:8px 14px;">
-                Clear
-              </button>
-            </div>
           </div>
         </div>
 
-        <!-- Map + Store Panel layout -->
         <div style="display:grid;grid-template-columns: 1fr 360px;gap:12px;margin-top:10px;">
-          <!-- Map container -->
           <div class="glass-panel" style="padding:10px;">
             <div id="storeMap" style="height:62vh;border-radius:14px;overflow:hidden;position:relative;background:#0a0e1a;">
-              <!-- overlays expected by scripts -->
               <div id="mapWeekBadge" class="map-week-badge"></div>
-
               <div class="map-legend">
                 <div class="map-legend-title">Map Status</div>
                 <div class="legend-row"><span class="legend-dot legend-ok"></span> Complete</div>
@@ -666,48 +545,31 @@
             </div>
           </div>
 
-          <!-- Store panel -->
           <aside class="glass-panel" style="padding:14px;">
             <div class="subtitle" id="spSub">Select a store</div>
             <h2 id="spTitle" tabindex="-1" style="margin-top:4px;">—</h2>
-
             <div style="margin-top:10px;">
               <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
               <div class="kv"><span>Negatives</span><span id="spNegatives">—</span></div>
               <div class="kv"><span>Issues</span><span id="spIssues" title="Click to view issues">—</span></div>
             </div>
-
-            <!-- Quick actions -->
             <div id="storeActions" class="store-actions">
               <button id="btnQuickWater" class="popup-close" disabled type="button">💧 Mark Watered</button>
               <button id="btnAddIssue" class="popup-close" disabled type="button">🚩 Add Issue</button>
               <button id="btnOpenChecklist" class="popup-close" disabled type="button">📋 Checklist</button>
             </div>
-
-            <!-- Checklist mount point -->
-            <div id="checklistMount" style="margin-top:12px;">
-              <!-- checklistBox injected here -->
-            </div>
           </aside>
-        </div>
-
-        <div class="subtitle" style="margin-top:8px;text-align:right;">
-          Tip: Use "Open Issues Only" to focus attention quickly.
         </div>
       </section>
 
-      <!-- =====================================================
-           HF VIEW
-           ===================================================== -->
       <section id="view-hf" class="hidden">
-        <!-- Seasonal banner injected by JS -->
         <div class="tabs">
           <button class="tab active" data-hf-tab="guidelines" type="button">Guidelines</button>
           <button class="tab" data-hf-tab="care" type="button">Care &amp; Identification</button>
         </div>
 
         <div id="hf-guidelines" class="glass-panel">
-          <p>HF Guidelines content will load here.</p>
+          <p class="loading">Loading HF Guidelines...</p>
         </div>
 
         <div id="hf-care" class="hidden glass-panel">
@@ -716,14 +578,11 @@
             <button class="tab" data-hf-care="pests" type="button">Pests</button>
           </div>
 
-          <div id="hf-plants"><p>Plant care content will load here.</p></div>
-          <div id="hf-pests" class="hidden"><p>Pest management content will load here.</p></div>
+          <div id="hf-plants"><p class="loading">Loading Perennials...</p></div>
+          <div id="hf-pests" class="hidden"><p class="loading">Loading Pests...</p></div>
         </div>
       </section>
 
-      <!-- =====================================================
-           HPA VIEW
-           ===================================================== -->
       <section id="view-hpa" class="hidden">
         <div class="tabs">
           <button class="tab active" data-hpa-tab="guidelines" type="button">Guidelines</button>
@@ -732,18 +591,17 @@
         </div>
 
         <div id="hpa-guidelines" class="glass-panel">
-          <p>HPA Guidelines content will load here.</p>
+          <p class="loading">Loading HPA Guidelines...</p>
         </div>
 
-        <!-- Product Info container -->
         <div id="hpa-products" class="glass-panel hidden">
           <div class="tabs" style="margin-bottom:10px;">
-            <button class="tab active" data-products="skus" id="hpaProductsTabSkus" type="button">SKU Catalogue</button>
-            <button class="tab" data-products="orders" id="hpaProductsTabOrders" type="button">Order Breakdown</button>
+            <button class="tab active" data-products="skus" type="button">SKU Catalogue</button>
+            <button class="tab" data-products="orders" type="button">Order Breakdown</button>
           </div>
 
-          <section id="products-skus"><p>SKU information will load here.</p></section>
-          <section id="products-orders" class="hidden"><p>Order breakdown will load here.</p></section>
+          <section id="products-skus"><p class="loading">Loading SKU Data...</p></section>
+          <section id="products-orders" class="hidden"><p class="loading">Loading Order Data...</p></section>
         </div>
 
         <div id="hpa-care" class="glass-panel hidden">
@@ -752,44 +610,21 @@
             <button class="tab" data-hpa-care="pests" type="button">Pests</button>
           </div>
 
-          <div id="hpa-plants"><p>HPA plant care will load here.</p></div>
-          <div id="hpa-pests" class="hidden"><p>HPA pest management will load here.</p></div>
+          <div id="hpa-plants"><p class="loading">Loading Plants...</p></div>
+          <div id="hpa-pests" class="hidden"><p class="loading">Loading Pests...</p></div>
         </div>
       </section>
 
-      <!-- =====================================================
-           ADMIN VIEW
-           ===================================================== -->
       <section id="view-admin" class="hidden glass-panel">
         <h2>Admin Tools</h2>
-        <div class="tabs">
-          <button class="tab" type="button">AIR Uploads</button>
-          <button class="tab" type="button">Store Audit</button>
-          <button class="tab" type="button">Rack Counts</button>
-          <button class="tab" type="button">District Checklist</button>
-        </div>
-        <p style="margin-top:16px;color:var(--muted);">Admin functionality will be implemented here.</p>
+        <p style="color:var(--muted);">Admin functionality coming soon.</p>
       </section>
 
-      <!-- =====================================================
-           TRAINING VIEW
-           ===================================================== -->
       <section id="view-training" class="hidden glass-panel">
         <h2>Training Hub</h2>
-        <div class="tabs">
-          <button class="tab active" data-train="basics" type="button">Basics</button>
-          <button class="tab" data-train="merch" type="button">Merchandising</button>
-          <button class="tab" data-train="supervisor" type="button">Supervisor</button>
-        </div>
-
-        <div id="train-basics" style="margin-top:16px;"><p>Basic training content will load here.</p></div>
-        <div id="train-merch" class="hidden" style="margin-top:16px;"><p>Merchandising training content will load here.</p></div>
-        <div id="train-supervisor" class="hidden" style="margin-top:16px;"><p>Supervisor training content will load here.</p></div>
+        <p style="color:var(--muted);">Training content coming soon.</p>
       </section>
 
-      <!-- =====================================================
-           FOOTER
-           ===================================================== -->
       <div class="footer">
         Internal Tool • HF / HPA • Weekly Reset Enabled
       </div>
@@ -797,14 +632,9 @@
     </div>
   </div>
 
-  <!-- =====================================================
-       REQUIRED GLOBAL HELPERS (FIXES "undefined" CRASHES)
-       ===================================================== -->
   <script>
-    // Lightweight global app identity object used by LiveState
     window.App = window.App || { user: { username: "User" } };
 
-    // HTML escape helper (prevents XSS + fixes esc() not defined)
     window.esc = window.esc || function esc(v){
       return String(v ?? "")
         .replaceAll("&", "&amp;")
@@ -814,7 +644,6 @@
         .replaceAll("'", "&#39;");
     };
 
-    // Date key helpers used by weekly/daily reset logic
     window.todayKey = window.todayKey || function todayKey(){
       const d = new Date();
       const y = d.getFullYear();
@@ -823,10 +652,9 @@
       return `${y}-${m}-${day}`;
     };
 
-    // Monday of current week as YYYY-MM-DD (local time)
     window.mondayKey = window.mondayKey || function mondayKey(){
       const d = new Date();
-      const day = d.getDay(); // 0 Sun..6 Sat
+      const day = d.getDay();
       const diff = (day === 0 ? -6 : 1) - day;
       d.setHours(0,0,0,0);
       d.setDate(d.getDate() + diff);
@@ -836,7 +664,6 @@
       return `${y}-${m}-${dd}`;
     };
 
-    // Robust CSV parser returning rows[][] (fixes parseCSV missing)
     window.parseCSV = window.parseCSV || function parseCSV(text){
       const rows = [];
       let row = [];
@@ -865,10 +692,8 @@
       return rows;
     };
 
-    // Alias: some segments may reference parseCsv() casing
     window.parseCsv = window.parseCsv || function(text){ return window.parseCSV(text); };
 
-    // UUID fallback (crypto.randomUUID not supported everywhere)
     window.safeUUID = window.safeUUID || function safeUUID(){
       try{
         if (crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -876,15 +701,24 @@
       return "id-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
     };
 
-    // Ensure globals exist before later segments use them
     window.stores = window.stores || [];
     window.markers = window.markers || new Map();
     window.map = window.map || null;
+
+    // CSV loader
+    async function loadCSV(filename) {
+      try {
+        const response = await fetch(filename);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        return window.parseCSV(text);
+      } catch (e) {
+        console.error(`Failed to load ${filename}:`, e);
+        return [];
+      }
+    }
   </script>
 
-  <!-- =====================================================
-       APP CONTROLLER (SPLASH/LOGIN/NAV/SESSION)
-       ===================================================== -->
   <script>
     (function AppController(){
       const $ = (id)=>document.getElementById(id);
@@ -920,7 +754,6 @@
           setVisible(el, v===name);
         });
 
-        // set active tab styling
         document.querySelectorAll("#globalTabs .tab[data-view]").forEach(b=>{
           b.classList.toggle("active", b.dataset.view === name);
         });
@@ -959,7 +792,6 @@
         localStorage.setItem("hub_user", u);
       }
 
-      // Splash enter (click + keyboard)
       function enterFromSplash(){
         showLogin();
       }
@@ -971,7 +803,6 @@
         }
       });
 
-      // Login action
       function doLogin(){
         const u = loginUser?.value || "";
         const p = loginPass?.value || "";
@@ -998,21 +829,18 @@
         });
       });
 
-      // Global nav tab switching
       document.querySelectorAll("#globalTabs .tab[data-view]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           showOnlyView(btn.dataset.view);
         });
       });
 
-      // Logout
       logoutBtn?.addEventListener("click", ()=>{
         localStorage.removeItem("hub_user");
         sessionStorage.removeItem("hub_view");
         showSplash();
       });
 
-      // Initialize - load user if exists
       const savedUser = localStorage.getItem("hub_user");
       if(savedUser){
         setUser(savedUser);
@@ -1023,14 +851,87 @@
     })();
   </script>
 
-  <!-- =====================================================
-       HF TAB SWITCHING
-       ===================================================== -->
   <script>
     (function HFController(){
       const $ = (id)=>document.getElementById(id);
 
-      // HF main tabs
+      let hfGuidelinesData = [];
+      let hfPerennialsData = [];
+      let pestsData = [];
+
+      async function loadHFData() {
+        hfGuidelinesData = await loadCSV("hf_guidelines.csv");
+        hfPerennialsData = await loadCSV("hf_perennials.csv");
+        pestsData = await loadCSV("pests.csv");
+
+        renderHFGuidelines();
+        renderHFPerennials();
+        renderPests();
+      }
+
+      function renderHFGuidelines() {
+        const container = $("hf-guidelines");
+        if (!hfGuidelinesData || hfGuidelinesData.length === 0) {
+          container.innerHTML = "<p class='loading'>No guidelines data found.</p>";
+          return;
+        }
+
+        let html = "";
+        for (let i = 1; i < hfGuidelinesData.length; i++) {
+          const row = hfGuidelinesData[i];
+          if (row.length < 3) continue;
+          html += `<div style="margin-bottom:16px;"><strong>${window.esc(row[0])}</strong><p style="color:var(--muted);margin-top:4px;">${window.esc(row[1])}</p></div>`;
+        }
+
+        container.innerHTML = html || "<p class='loading'>No data available.</p>";
+      }
+
+      function renderHFPerennials() {
+        const container = $("hf-plants");
+        if (!hfPerennialsData || hfPerennialsData.length === 0) {
+          container.innerHTML = "<p class='loading'>No perennials data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = hfPerennialsData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < Math.min(hfPerennialsData.length, 51); i++) {
+          const row = hfPerennialsData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      function renderPests() {
+        const container = $("hf-pests");
+        if (!pestsData || pestsData.length === 0) {
+          container.innerHTML = "<p class='loading'>No pests data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = pestsData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < pestsData.length; i++) {
+          const row = pestsData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
       document.querySelectorAll("#view-hf .tabs .tab[data-hf-tab]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const tab = btn.dataset.hfTab;
@@ -1045,7 +946,6 @@
         });
       });
 
-      // HF care subtabs
       document.querySelectorAll("#hf-care .tabs .tab[data-hf-care]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const tab = btn.dataset.hfCare;
@@ -1056,17 +956,145 @@
           });
         });
       });
+
+      loadHFData();
     })();
   </script>
 
-  <!-- =====================================================
-       HPA TAB SWITCHING
-       ===================================================== -->
   <script>
     (function HPAController(){
       const $ = (id)=>document.getElementById(id);
 
-      // HPA main tabs
+      let hpaGuidelinesData = [];
+      let skuData = [];
+      let orderBreakdownData = [];
+      let plantsData = [];
+      let pestsData = [];
+
+      async function loadHPAData() {
+        hpaGuidelinesData = await loadCSV("hpa_guidelines.csv");
+        skuData = await loadCSV("SKU_Name_2026.csv");
+        orderBreakdownData = await loadCSV("OrderBreakdown.csv");
+        plantsData = await loadCSV("plants.csv");
+        pestsData = await loadCSV("pests.csv");
+
+        renderHPAGuidelines();
+        renderSKUData();
+        renderOrderBreakdown();
+        renderHPAPlants();
+        renderHPAPests();
+      }
+
+      function renderHPAGuidelines() {
+        const container = $("hpa-guidelines");
+        if (!hpaGuidelinesData || hpaGuidelinesData.length === 0) {
+          container.innerHTML = "<p class='loading'>No guidelines data found.</p>";
+          return;
+        }
+
+        let html = "";
+        for (let i = 1; i < hpaGuidelinesData.length; i++) {
+          const row = hpaGuidelinesData[i];
+          if (row.length < 3) continue;
+          html += `<div style="margin-bottom:16px;"><strong>${window.esc(row[0])}</strong><p style="color:var(--muted);margin-top:4px;">${window.esc(row[1])}</p></div>`;
+        }
+
+        container.innerHTML = html || "<p class='loading'>No data available.</p>";
+      }
+
+      function renderSKUData() {
+        const container = $("products-skus");
+        if (!skuData || skuData.length === 0) {
+          container.innerHTML = "<p class='loading'>No SKU data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = skuData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < Math.min(skuData.length, 101); i++) {
+          const row = skuData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      function renderOrderBreakdown() {
+        const container = $("products-orders");
+        if (!orderBreakdownData || orderBreakdownData.length === 0) {
+          container.innerHTML = "<p class='loading'>No order data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = orderBreakdownData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < orderBreakdownData.length; i++) {
+          const row = orderBreakdownData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      function renderHPAPlants() {
+        const container = $("hpa-plants");
+        if (!plantsData || plantsData.length === 0) {
+          container.innerHTML = "<p class='loading'>No plants data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = plantsData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < Math.min(plantsData.length, 61); i++) {
+          const row = plantsData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      function renderHPAPests() {
+        const container = $("hpa-pests");
+        if (!pestsData || pestsData.length === 0) {
+          container.innerHTML = "<p class='loading'>No pests data found.</p>";
+          return;
+        }
+
+        let html = "<table class='data-table'><thead><tr>";
+        const headers = pestsData[0];
+        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
+        html += "</tr></thead><tbody>";
+
+        for (let i = 1; i < pestsData.length; i++) {
+          const row = pestsData[i];
+          html += "<tr>";
+          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
+          html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      // Main tab switching
       document.querySelectorAll("#view-hpa .tabs:first-of-type .tab[data-hpa-tab]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const tab = btn.dataset.hpaTab;
@@ -1079,7 +1107,7 @@
         });
       });
 
-      // HPA products subtabs
+      // Products subtabs
       document.querySelectorAll("#hpa-products .tab[data-products]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const tab = btn.dataset.products;
@@ -1091,7 +1119,7 @@
         });
       });
 
-      // HPA care subtabs
+      // Care subtabs
       document.querySelectorAll("#hpa-care .tabs .tab[data-hpa-care]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const tab = btn.dataset.hpaCare;
@@ -1102,161 +1130,8 @@
           });
         });
       });
-    })();
-  </script>
 
-  <!-- =====================================================
-       TRAINING TAB SWITCHING
-       ===================================================== -->
-  <script>
-    (function TrainingController(){
-      const $ = (id)=>document.getElementById(id);
-
-      document.querySelectorAll("#view-training .tabs .tab[data-train]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.train;
-          $("train-basics")?.classList.toggle("hidden", tab !== "basics");
-          $("train-merch")?.classList.toggle("hidden", tab !== "merch");
-          $("train-supervisor")?.classList.toggle("hidden", tab !== "supervisor");
-          document.querySelectorAll("#view-training .tabs .tab[data-train]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.train === tab);
-          });
-        });
-      });
-    })();
-  </script>
-
-  <!-- =====================================================
-       STORE MAP AND STORE PANEL INTERACTIONS
-       ===================================================== -->
-  <script>
-    (function MapController(){
-      const $ = (id)=>document.getElementById(id);
-
-      // Store search functionality
-      const storeSearch = $("storeSearch");
-      const storeSearchResults = $("storeSearchResults");
-      const filterIssuesOnly = $("filterIssuesOnly");
-      const clearSearch = $("clearSearch");
-
-      // Store panel
-      const spTitle = $("spTitle");
-      const spSub = $("spSub");
-      const spWatered = $("spWatered");
-      const spNegatives = $("spNegatives");
-      const spIssues = $("spIssues");
-      const btnQuickWater = $("btnQuickWater");
-      const btnAddIssue = $("btnAddIssue");
-      const btnOpenChecklist = $("btnOpenChecklist");
-
-      let currentStore = null;
-      const mockStores = [
-        { id: "001", name: "Store 1", city: "New York", state: "NY", watered: true, negatives: 2, issues: 0 },
-        { id: "002", name: "Store 2", city: "Los Angeles", state: "CA", watered: false, negatives: 5, issues: 1 },
-        { id: "003", name: "Store 3", city: "Chicago", state: "IL", watered: true, negatives: 0, issues: 0 },
-      ];
-
-      // Initialize store map week badge
-      const mondayStr = window.mondayKey();
-      const mapWeekBadge = $("mapWeekBadge");
-      if(mapWeekBadge){
-        mapWeekBadge.textContent = "Week of " + mondayStr;
-      }
-
-      // Search handler
-      storeSearch?.addEventListener("input", (e)=>{
-        const query = e.target.value.toLowerCase().trim();
-        if(!query){
-          storeSearchResults.classList.remove("active");
-          return;
-        }
-
-        const filtered = mockStores.filter(s=>
-          s.id.includes(query) || 
-          s.name.toLowerCase().includes(query) ||
-          s.city.toLowerCase().includes(query) ||
-          s.state.toLowerCase().includes(query)
-        );
-
-        if(filtered.length === 0){
-          storeSearchResults.classList.remove("active");
-          return;
-        }
-
-        storeSearchResults.innerHTML = filtered.map(s=>
-          `<div class="search-item" data-store-id="${s.id}">
-            ${s.id} - ${s.name} (${s.city}, ${s.state})
-          </div>`
-        ).join("");
-        storeSearchResults.classList.add("active");
-
-        document.querySelectorAll(".search-item").forEach(item=>{
-          item.addEventListener("click", ()=>{
-            const storeId = item.dataset.storeId;
-            selectStore(storeId);
-          });
-        });
-      });
-
-      clearSearch?.addEventListener("click", ()=>{
-        storeSearch.value = "";
-        storeSearchResults.classList.remove("active");
-        currentStore = null;
-        spTitle.textContent = "—";
-        spSub.textContent = "Select a store";
-        spWatered.textContent = "—";
-        spNegatives.textContent = "—";
-        spIssues.textContent = "—";
-        btnQuickWater.disabled = true;
-        btnAddIssue.disabled = true;
-        btnOpenChecklist.disabled = true;
-      });
-
-      function selectStore(storeId){
-        const store = mockStores.find(s=> s.id === storeId);
-        if(!store) return;
-
-        currentStore = store;
-        spTitle.textContent = store.name;
-        spSub.textContent = `${store.city}, ${store.state}`;
-        spWatered.textContent = store.watered ? "✓ Yes" : "✗ No";
-        spNegatives.textContent = store.negatives.toString();
-        spIssues.textContent = store.issues.toString();
-        
-        btnQuickWater.disabled = false;
-        btnAddIssue.disabled = false;
-        btnOpenChecklist.disabled = false;
-
-        storeSearchResults.classList.remove("active");
-        storeSearch.value = "";
-      }
-
-      // Action buttons
-      btnQuickWater?.addEventListener("click", ()=>{
-        if(currentStore){
-          currentStore.watered = true;
-          spWatered.textContent = "✓ Yes";
-          alert(`Marked store ${currentStore.id} as watered!`);
-        }
-      });
-
-      btnAddIssue?.addEventListener("click", ()=>{
-        if(currentStore){
-          alert(`Add issue for store ${currentStore.id}`);
-        }
-      });
-
-      btnOpenChecklist?.addEventListener("click", ()=>{
-        if(currentStore){
-          alert(`Open checklist for store ${currentStore.id}`);
-        }
-      });
-
-      // Filter issues only
-      filterIssuesOnly?.addEventListener("change", ()=>{
-        // Implementation for filtering
-        console.log("Filter issues only:", filterIssuesOnly.checked);
-      });
+      loadHPAData();
     })();
   </script>
 
