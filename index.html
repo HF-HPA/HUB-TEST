@@ -3,17 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Merchandising Hub</title>
+  <title>HF-HPA Merchandising Hub</title>
 
-  <!-- Favicons -->
   <link rel="icon" type="image/png" href="hf_logo.png" />
   <link rel="apple-touch-icon" href="hf_logo.png" />
 
   <style>
     :root{
       --bg:#020617;
-      --bg-alt:#030a1a;
-      --card-bg:rgba(15,23,42,.85);
       --card-glass:rgba(15,23,42,.75);
       --text:#e5e7eb;
       --heading:#f9fafb;
@@ -39,1101 +36,1437 @@
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; }
+    html,body{ min-height:100%; }
 
     body{
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
         linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.8)),
-        url("philo.jpg") center/cover fixed;
+        radial-gradient(circle at 20% 10%, #06243a, #020617 55%) fixed;
       color:var(--text);
       min-height:100vh;
     }
-
     body::before{
-      content:"";
-      position:fixed;
-      inset:0;
+      content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       background:
         radial-gradient(circle at 30% 20%, rgba(34,211,238,.12), transparent 60%),
         radial-gradient(circle at 80% 70%, rgba(34,211,238,.1), transparent 70%);
-      pointer-events:none;
-      z-index:0;
-    }
-
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background: radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%);
-      z-index:0;
     }
 
     .hidden{ display:none !important; }
 
-    .app-shell{
-      width:100%;
-      padding:16px;
-      display:flex;
-      justify-content:center;
-      position:relative;
-      z-index:1;
-    }
-
+    .app-shell{ width:100%; padding:16px; display:flex; justify-content:center; position:relative; z-index:1; }
     .app-inner{
-      width:100%;
-      max-width:1200px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      padding:18px;
-      margin:0 auto;
+      width:100%; max-width:1200px; display:flex; flex-direction:column; gap:16px;
+      padding:18px; margin:0 auto;
       background:linear-gradient(135deg, rgba(15,23,42,.98), rgba(15,23,42,.9));
-      border-radius:24px;
-      border:1px solid var(--border-subtle);
-      box-shadow:var(--shadow-soft);
-      backdrop-filter:blur(18px);
-      position:relative;
-      z-index:1;
+      border-radius:24px; border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft); backdrop-filter:blur(18px);
+      position:relative; z-index:1;
     }
 
-    .header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-    }
-    .header-left{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .logo{
-      width:64px;
-      height:64px;
-      border-radius:18px;
-      object-fit:cover;
-      box-shadow:0 14px 36px rgba(0,0,0,.72);
-    }
-    .title-block h1{
-      font-size:1.4rem;
-      font-weight:800;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:var(--heading);
-    }
-    .subtitle{
-      font-size:.9rem;
-      color:var(--muted);
-    }
+    /* HEADER */
+    .header{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .header-left{ display:flex; align-items:center; gap:14px; }
+    .logo{ width:64px; height:64px; border-radius:18px; object-fit:cover; box-shadow:0 14px 36px rgba(0,0,0,.72);
+           background:rgba(34,211,238,.12); }
+    .title-block h1{ font-size:1.4rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--heading); }
+    .subtitle{ font-size:.9rem; color:var(--muted); }
     .header-pill{
-      padding:6px 12px;
-      border-radius:var(--radius-pill);
-      border:1px solid var(--border-soft);
-      font-size:.75rem;
-      color:var(--muted);
+      padding:6px 12px; border-radius:var(--radius-pill); border:1px solid var(--border-soft);
+      font-size:.75rem; color:var(--muted);
       background:radial-gradient(circle at top left, rgba(34,211,238,.08), transparent 55%);
     }
 
+    /* TABS (shared component for every level of navigation) */
     .tabs{
-      display:flex;
-      gap:8px;
-      border-bottom:1px solid rgba(15,23,42,.9);
-      padding-bottom:4px;
-      overflow-x:auto;
-      scrollbar-width:none;
-      -webkit-overflow-scrolling:touch;
+      display:flex; gap:8px; border-bottom:1px solid rgba(15,23,42,.9); padding-bottom:4px;
+      overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;
     }
     .tabs::-webkit-scrollbar{ display:none; }
-
     .tab{
-      padding:8px 16px;
-      border-radius:999px;
-      background:rgba(15,23,42,.6);
-      border:1px solid transparent;
-      color:var(--muted);
-      cursor:pointer;
-      white-space:nowrap;
-      transition:all var(--transition-fast);
-      font-size:.9rem;
-      user-select:none;
+      padding:8px 16px; border-radius:999px; background:rgba(15,23,42,.6);
+      border:1px solid transparent; color:var(--muted); cursor:pointer; white-space:nowrap;
+      transition:all var(--transition-fast); font-size:.9rem; user-select:none; font-family:inherit;
     }
-    .tab:hover{
-      color:var(--heading);
-      background:rgba(15,23,42,.9);
-      border-color:var(--border-subtle);
-      transform:translateY(-1px);
-    }
+    .tab:hover{ color:var(--heading); background:rgba(15,23,42,.9); border-color:var(--border-subtle); transform:translateY(-1px); }
     .tab.active{
       color:var(--heading);
       background:radial-gradient(circle at top left, rgba(34,211,238,.32), rgba(15,23,42,.98));
-      border-color:rgba(34,211,238,.8);
-      box-shadow:0 10px 32px rgba(0,0,0,.8);
+      border-color:rgba(34,211,238,.8); box-shadow:0 10px 32px rgba(0,0,0,.8);
     }
+    .tab:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .subtabs{ margin-top:14px; }
 
     .glass-panel{
-      background:var(--card-glass);
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border-subtle);
-      box-shadow:var(--shadow-soft);
-      backdrop-filter:blur(16px);
-      padding:14px;
+      background:var(--card-glass); border-radius:var(--radius-lg); border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft); backdrop-filter:blur(16px); padding:14px;
     }
 
-    .footer{
-      margin-top:14px;
-      font-size:.75rem;
-      color:#6b7280;
-      text-align:right;
-    }
+    .section-header{ display:flex; flex-direction:column; gap:4px; margin-bottom:8px; }
+    .section-title{ font-size:1.15rem; font-weight:700; color:var(--heading); }
+    .section-subtitle{ font-size:.85rem; color:var(--muted); }
 
-    input[type="text"], input[type="password"], input[type="search"], select, textarea{
-      background: rgba(2,6,23,0.65);
-      color: var(--heading);
-      border: 1px solid rgba(148,163,184,0.35);
-      outline: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-    }
-    input::placeholder{ color: rgba(156,163,175,0.75); }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(34,211,238,0.9);
-      box-shadow: 0 0 0 4px rgba(34,211,238,0.18);
-    }
-    :focus-visible{
-      outline: 3px solid rgba(34,211,238,0.9);
-      outline-offset: 3px;
-      border-radius: 10px;
-    }
-
-    .kv{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:10px 10px;
-      margin-top:8px;
-      border-radius:12px;
-      border:1px solid var(--border-soft);
-      background: linear-gradient(135deg, rgba(2,6,23,.35), rgba(15,23,42,.35));
-    }
-    .kv span:first-child{
-      color: var(--muted);
-      font-size:.85rem;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-    }
-    .kv span:last-child{
-      font-weight:900;
-      color: var(--heading);
-    }
-
-    #storeMap{ position:relative; }
-
-    .map-legend{
-      position:absolute;
-      bottom:14px;
-      left:14px;
-      z-index:600;
-      background: rgba(2,6,23,.9);
-      border:1px solid rgba(148,163,184,.4);
-      border-radius:14px;
-      padding:10px 12px;
-      box-shadow:0 12px 30px rgba(0,0,0,.7);
-      font-size:.78rem;
-      color:#e5e7eb;
-      user-select:none;
-      pointer-events:none;
-    }
-    .map-legend-title{
-      font-weight:800;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      font-size:.7rem;
-      margin-bottom:6px;
-      color:#f9fafb;
-    }
-    .legend-row{ display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-    .legend-dot{
-      width:14px;
-      height:14px;
-      border-radius:50%;
-      border:2px solid rgba(255,255,255,.9);
-      box-shadow:0 6px 16px rgba(0,0,0,.55);
-    }
-    .legend-ok{ background: var(--good); }
-    .legend-warn{ background: var(--warn); }
-    .legend-bad{ background: var(--bad); }
-    .legend-flag{
-      width:14px;height:14px;
-      background: var(--bad);
-      clip-path: polygon(0 0,100% 18%,0 50%,100% 82%,0 100%);
-      border-radius:2px;
-      box-shadow:0 6px 16px rgba(0,0,0,.55);
-    }
-
-    .map-week-badge{
-      position:absolute;
-      top:14px;
-      right:14px;
-      z-index:600;
-      padding:6px 12px;
-      border-radius:999px;
-      background: radial-gradient(circle at top left, rgba(34,211,238,.25), rgba(15,23,42,.95));
-      border:1px solid rgba(34,211,238,.8);
-      color:#f9fafb;
-      box-shadow:0 10px 26px rgba(0,0,0,.7);
-      user-select:none;
-      pointer-events:none;
-    }
-
-    .store-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
-    .card-grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap:10px;
-    }
-    @media (max-width: 980px){ .card-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 560px){ .card-grid{ grid-template-columns: 1fr; } }
-
-    .card{
-      background: var(--card-glass);
-      border: 1px solid var(--border-soft);
-      border-radius: 14px;
-      box-shadow: var(--shadow-soft);
-      padding: 12px;
-      cursor: pointer;
-      transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
-    }
-    .card:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,0.55);
-      background: rgba(15,23,42,0.85);
-    }
-    .card-title{ font-weight: 900; color: var(--heading); }
-    .card-sub{ color: var(--muted); font-size: .85rem; margin-top: 4px; }
-
-    .popup-backdrop{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,0.75);
-      display:none;
-      align-items:flex-start;
-      justify-content:center;
-      z-index:9999;
-      padding:24px 16px;
-      backdrop-filter: blur(8px);
-      overflow-y:auto;
-    }
-    .popup-backdrop.active{
-      display:flex;
-    }
-    .popup{
-      background: radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
-      padding: 20px 20px 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.6);
-      width: 100%;
-      max-width: 560px;
-      max-height: 90vh;
-      overflow-y:auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-    }
-    .popup h2{
-      font-size:1.1rem;
-      font-weight:900;
-      margin-bottom:4px;
-      color:var(--heading);
-    }
-    .popup-subtitle{
-      font-size:0.8rem;
-      color:var(--muted);
-      margin-bottom:10px;
-      font-style:italic;
-    }
-    .popup-close{
-      margin-top:14px;
-      background: linear-gradient(135deg, var(--accent-strong), #3b82f6);
-      color:#020617;
-      border:none;
-      border-radius: var(--radius-pill);
-      padding: 9px 16px;
-      cursor:pointer;
-      font-size:0.85rem;
-      font-weight:800;
-      box-shadow: 0 12px 30px rgba(37,99,235,0.7);
-      transition: transform var(--transition-fast), filter var(--transition-fast);
-    }
-    .popup-close:hover{ filter: brightness(1.07); transform: translateY(-1px); }
-    .popup-close:active{ transform: translateY(0) scale(.99); }
-
-    .search-results{
-      position:absolute;
-      top: calc(100% + 8px);
-      left:0;
-      right:0;
-      z-index: 999;
-      background: rgba(2,6,23,0.92);
-      border:1px solid rgba(148,163,184,0.45);
-      border-radius: 16px;
-      box-shadow: 0 18px 46px rgba(0,0,0,0.7);
-      overflow:hidden;
-      display:none;
-      max-height: 360px;
-      overflow-y:auto;
-    }
-    .search-results.active{
-      display:block;
-    }
-    .search-item{
-      padding:10px 12px;
-      cursor:pointer;
-      border-bottom: 1px solid rgba(148,163,184,0.12);
-    }
-    .search-item:hover{ background: rgba(34,211,238,0.10); }
-
-    .data-table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:12px;
-    }
-    .data-table th{
-      background:rgba(34,211,238,0.15);
-      padding:10px;
-      text-align:left;
-      font-weight:600;
-      border-bottom:1px solid var(--border-subtle);
-    }
-    .data-table td{
-      padding:10px;
-      border-bottom:1px solid rgba(148,163,184,0.12);
-    }
-    .data-table tr:hover{
-      background:rgba(34,211,238,0.08);
-    }
-
+    .footer{ margin-top:14px; font-size:.75rem; color:#6b7280; text-align:right; }
     .loading{ color:var(--muted); font-style:italic; }
+
+    /* FORM ELEMENTS */
+    input[type="text"], input[type="password"], input[type="search"], input[type="date"], select, textarea{
+      background:rgba(2,6,23,.65); color:var(--heading); border:1px solid rgba(148,163,184,.35);
+      outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.06); border-radius:8px;
+      padding:8px 12px; font-size:.9rem; font-family:inherit;
+    }
+    input::placeholder, textarea::placeholder{ color:rgba(156,163,175,.75); }
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(34,211,238,.9); box-shadow:0 0 0 4px rgba(34,211,238,.18);
+    }
+    :focus-visible{ outline:3px solid rgba(34,211,238,.9); outline-offset:3px; border-radius:10px; }
+
+    .primary-button{
+      background:linear-gradient(135deg, var(--accent-strong), #3b82f6); color:#020617;
+      border:none; border-radius:var(--radius-pill); padding:10px 18px; cursor:pointer;
+      font-size:.9rem; font-weight:700; box-shadow:0 12px 30px rgba(37,99,235,.55);
+      display:inline-flex; align-items:center; gap:6px; font-family:inherit;
+      transition:transform .15s ease-out, filter .15s ease-out;
+    }
+    .primary-button:hover{ filter:brightness(1.07); transform:translateY(-1px); }
+    .primary-button:disabled{ opacity:.45; cursor:not-allowed; transform:none; filter:none; }
+
+    /* KV ROWS */
+    .kv{
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      padding:10px; margin-top:8px; border-radius:12px; border:1px solid var(--border-soft);
+      background:linear-gradient(135deg, rgba(2,6,23,.35), rgba(15,23,42,.35));
+    }
+    .kv span:first-child{ color:var(--muted); font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; }
+    .kv span:last-child{ font-weight:800; color:var(--heading); }
+
+    /* SPLASH + LOGIN */
+    .splash-enter{ margin-top:26px; cursor:pointer; display:inline-block; border:none; background:none; }
+    .splash-logo{ width:160px; height:160px; border-radius:24px; box-shadow:0 18px 46px rgba(0,0,0,.85); background:rgba(34,211,238,.12); }
+
+    /* ===== PRODUCT INFO: SKU filters + cards ===== */
+    .controls{
+      background:var(--card-glass); border-radius:var(--radius-lg); border:1px solid var(--border-subtle);
+      padding:14px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-soft); backdrop-filter:blur(16px);
+    }
+    @media (min-width:900px){ .controls{ flex-direction:row; align-items:center; } }
+    .search-wrapper{ flex:2; position:relative; }
+    .search-input{ width:100%; padding:10px 34px; border-radius:var(--radius-pill); }
+    .search-icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#64748b; pointer-events:none; }
+    .filters{ flex:3; display:flex; gap:8px; flex-wrap:wrap; }
+    .filter-group{ display:flex; flex-direction:column; min-width:140px; gap:3px; }
+    .filter-label{ color:var(--muted); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
+    .filter-input{ border-radius:var(--radius-pill); font-size:.8rem; padding:6px 12px; }
+
+    .results-header{ display:flex; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:.8rem; }
+    .results-header strong{ color:var(--heading); }
+
+    .sku-grid{ display:grid; gap:12px; margin-top:10px; grid-template-columns:1fr; }
+    @media (min-width:600px){ .sku-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media (min-width:1000px){ .sku-grid{ grid-template-columns:repeat(3,1fr); } }
+
+    .sku-card{
+      position:relative; background:var(--card-glass); border-radius:var(--radius-lg);
+      border:1px solid rgba(148,163,184,.5); padding:14px; cursor:pointer; text-align:left;
+      box-shadow:var(--shadow-soft); backdrop-filter:blur(14px); font-family:inherit; color:var(--text);
+      transition:transform .18s ease-out, border-color .18s ease-out, box-shadow .18s ease-out, background .18s ease-out;
+    }
+    .sku-card:hover{
+      transform:translateY(-3px); border-color:var(--accent); box-shadow:0 18px 38px rgba(0,0,0,.8);
+      background:radial-gradient(circle at top left, rgba(34,211,238,.25), rgba(15,23,42,.98));
+    }
+    .sku-year-pill{
+      position:absolute; top:10px; right:10px; background:rgba(15,23,42,.98); border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.8); padding:3px 8px; font-size:.7rem; color:#e2e8f0;
+    }
+    .sku-name{ font-size:1rem; font-weight:600; margin-bottom:4px; color:#e5f0ff; padding-right:50px; }
+    .sku-meta{ font-size:.8rem; color:#cbd5e1; line-height:1.4; }
+
+    .empty-state{
+      padding:20px; margin-top:16px; text-align:center; color:var(--muted);
+      background:rgba(15,23,42,.75); border-radius:var(--radius-lg); border:1px dashed var(--border-subtle);
+    }
+
+    /* ===== ORDER BREAKDOWN ===== */
+    .order-table-wrapper{
+      background:var(--card-glass); border:1px solid var(--border-subtle); border-radius:var(--radius-lg);
+      padding:18px; box-shadow:var(--shadow-soft); margin-top:10px; backdrop-filter:blur(16px);
+    }
+    .order-table-title{ font-size:1.1rem; font-weight:600; margin-bottom:10px; color:var(--heading); }
+    .order-table{ width:100%; border-collapse:collapse; font-size:.85rem; color:var(--text); border-radius:var(--radius-md); overflow:hidden; }
+    .order-table th{ text-align:left; padding:9px 10px; background:rgba(15,23,42,.96); font-weight:600; border-bottom:1px solid var(--border-soft); color:#cbd5f5; }
+    .order-table td{ padding:8px 10px; border-bottom:1px solid rgba(148,163,184,.15); color:#e8f2ff; }
+    .order-table tr:nth-child(even){ background:rgba(15,23,42,.85); }
+    .order-table tr:nth-child(odd){ background:rgba(15,23,42,.75); }
+    .order-table tr:hover{ background:rgba(34,211,238,.12); transition:.2s; }
+    .status-highlight{ background:var(--warn); color:#111827; padding:2px 6px; border-radius:6px; font-weight:600; font-size:.75rem; }
+
+    .order-details-toggle{
+      margin-top:14px; display:inline-flex; align-items:center; gap:6px;
+      background:radial-gradient(circle at top left, rgba(34,211,238,.3), rgba(15,23,42,1));
+      color:#020617; border-radius:var(--radius-pill); border:1px solid rgba(34,211,238,.9);
+      padding:7px 16px; font-size:.85rem; cursor:pointer; font-weight:700; font-family:inherit;
+      box-shadow:0 10px 26px rgba(34,211,238,.35); transition:transform .18s ease-out, filter .18s ease-out;
+    }
+    .order-details-toggle:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+
+    .order-breakdown-wrapper{ margin-top:14px; display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .ob-header-stack{ display:flex; flex-direction:column; align-items:center; gap:6px; width:100%; max-width:700px; }
+    .ob-week-box, .ob-grades-box{
+      background:rgba(34,211,238,.12); border:1px solid rgba(34,211,238,.7); border-radius:var(--radius-md);
+      padding:10px 16px; text-align:center; color:#e5f0ff;
+    }
+    .ob-week-box{ max-width:380px; font-weight:600; }
+    .ob-grades-box{ width:100%; }
+    .ob-grid{ display:grid; grid-template-columns:1fr; gap:12px; width:100%; max-width:700px; }
+    @media (min-width:640px){ .ob-grid{ grid-template-columns:repeat(3,1fr); } }
+    .ob-box{ background:rgba(15,23,42,.95); border:1px solid rgba(148,163,184,.6); border-radius:var(--radius-md); padding:10px 12px; min-height:90px; }
+    .ob-box-title{ font-weight:600; text-align:center; margin-bottom:4px; color:var(--heading); }
+    .ob-box-body{ white-space:pre-line; font-size:.78rem; color:var(--text); }
+
+    /* ===== CARE / PEST CARDS ===== */
+    .pc-header{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+    .pc-title{ font-size:1.05rem; font-weight:600; color:var(--heading); }
+    .pc-search-wrapper{ position:relative; max-width:360px; }
+    .pc-search-input{ width:100%; padding:8px 30px; border-radius:var(--radius-pill); font-size:.85rem; }
+    .pc-search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#64748b; pointer-events:none; }
+    .pc-grid{ margin-top:12px; display:grid; grid-template-columns:1fr; gap:10px; }
+    @media (min-width:640px){ .pc-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media (min-width:1000px){ .pc-grid{ grid-template-columns:repeat(3,1fr); } }
+    .pc-card{
+      background:var(--card-glass); border-radius:var(--radius-lg); border:1px solid rgba(148,163,184,.5);
+      padding:12px; box-shadow:var(--shadow-soft); text-align:left; cursor:pointer; backdrop-filter:blur(14px);
+      font-family:inherit; color:var(--text);
+      transition:transform .18s ease-out, border-color .18s ease-out, box-shadow .18s ease-out, background .18s ease-out;
+    }
+    .pc-card:hover{
+      transform:translateY(-2px); border-color:var(--accent); box-shadow:0 16px 34px rgba(0,0,0,.8);
+      background:radial-gradient(circle at top left, rgba(34,211,238,.25), rgba(15,23,42,.98));
+    }
+    .pc-card-title{ font-weight:600; font-size:.95rem; color:var(--heading); }
+    .pc-card-subtitle{ margin-top:4px; font-size:.78rem; color:var(--muted); }
+
+    /* ===== POPUPS ===== */
+    .popup-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:flex-start;
+      justify-content:center; z-index:9999; padding:24px 16px; backdrop-filter:blur(8px); overflow-y:auto;
+    }
+    .popup-backdrop.active{ display:flex; }
+    .popup{
+      background:radial-gradient(circle at top left, #020617 0, #020617 35%, #02040a 100%);
+      padding:20px 20px 16px; border-radius:20px; border:1px solid rgba(148,163,184,.6);
+      width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.9);
+    }
+    .popup h2{ font-size:1.1rem; font-weight:700; margin-bottom:4px; color:var(--heading); }
+    .popup-subtitle{ font-size:.8rem; color:var(--muted); margin-bottom:6px; font-style:italic; }
+    .popup-section-title{ font-weight:600; margin-top:10px; font-size:.9rem; color:var(--heading); }
+    .popup-text{ font-size:.82rem; color:#e5e7eb; margin-top:2px; }
+    .popup-image{ width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-soft); }
+    .popup-close{
+      margin-top:16px; background:linear-gradient(135deg, var(--accent-strong), #3b82f6); color:#020617;
+      border:none; border-radius:var(--radius-pill); padding:8px 16px; cursor:pointer; font-size:.85rem;
+      font-weight:700; font-family:inherit; transition:transform .15s ease-out, filter .15s ease-out;
+    }
+    .popup-close:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+
+    /* ===== FLOW CHARTS ===== */
+    .flow-list{ display:flex; flex-direction:column; gap:8px; max-width:680px; margin-top:8px; }
+    .flow-step{
+      display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-radius:var(--radius-md);
+      background:rgba(15,23,42,.98); border:1px solid rgba(148,163,184,.5);
+    }
+    .flow-step-number{
+      width:30px; height:26px; min-width:30px; border-radius:13px; background:var(--accent-soft);
+      border:1px solid var(--accent); display:flex; align-items:center; justify-content:center;
+      font-size:.78rem; font-weight:600; color:var(--heading); padding:0 4px;
+    }
+    .flow-step-body{ flex:1; }
+    .flow-step-title{ font-size:.9rem; font-weight:600; margin-bottom:2px; color:var(--heading); }
+    .flow-step-role{ font-size:.76rem; color:var(--muted); margin-bottom:2px; }
+    .flow-step-text{ font-size:.8rem; color:#e5e7eb; }
+    .flow-arrow{ text-align:center; font-size:1rem; color:var(--muted); }
+
+    /* ===== CHECKLISTS ===== */
+    .checklist-section{
+      background:rgba(15,23,42,.96); border-radius:var(--radius-lg); border:1px solid var(--border-subtle);
+      padding:12px; margin-bottom:10px;
+    }
+    .checklist-title{ font-size:.95rem; font-weight:600; margin-bottom:6px; color:var(--heading); }
+    .checklist-item{ display:flex; align-items:flex-start; gap:8px; font-size:.85rem; margin-bottom:4px; cursor:pointer; color:var(--text); }
+    .checklist-item input[type="checkbox"]{ margin-top:3px; accent-color:var(--accent); }
+    .checklist-list{ font-size:.85rem; color:#e5e7eb; padding-left:18px; margin-top:4px; }
+    .checklist-list li{ margin-bottom:3px; }
+
+    .visit-meta{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+    .form-group{ display:flex; flex-direction:column; gap:4px; }
+    .form-group.small{ max-width:200px; }
+    .form-label{ font-size:.74rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+    .claim-textarea{ min-height:80px; resize:vertical; width:100%; }
+    .visit-notes-wrapper{ margin-top:10px; }
+
+    @media (max-width:600px){
+      .order-table-wrapper{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .order-table{ min-width:520px; font-size:.75rem; }
+      .order-table th, .order-table td{ padding:6px 8px; white-space:nowrap; }
+    }
 
     @media print{
       body{ background:#fff !important; color:#000 !important; }
-      .tabs, #topbar, #globalTabs, .footer { display:none !important; }
-      .popup{
-        box-shadow:none !important;
-        border:1px solid #ccc !important;
-        max-width:100% !important;
-      }
+      .tabs, #topbar, #globalTabs, .footer{ display:none !important; }
     }
   </style>
 </head>
-
 <body>
   <div class="app-shell">
     <div class="app-inner">
 
+      <!-- ============ SPLASH ============ -->
       <section id="view-splash">
         <div class="glass-panel" style="text-align:center; padding:40px;">
-          <div style="font-size:1.6rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;">
-            Merchandising Hub
-          </div>
-          <div class="subtitle" style="margin-top:6px;">
-            Tap to enter
-          </div>
-
-          <div id="splashEnter"
-               role="button"
-               tabindex="0"
-               style="margin-top:26px;cursor:pointer;display:inline-block;">
-            <img src="hf_logo.png"
-                 alt="Enter Hub"
-                 style="width:160px;height:160px;border-radius:24px;box-shadow:0 18px 46px rgba(0,0,0,.85);" />
-          </div>
+          <div style="font-size:1.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;">HF-HPA Merchandising Hub</div>
+          <div class="subtitle" style="margin-top:6px;">Tap to enter</div>
+          <button id="splashEnter" class="splash-enter" aria-label="Enter the hub">
+            <img src="hf_logo.png" alt="" class="splash-logo" />
+          </button>
         </div>
       </section>
 
+      <!-- ============ LOGIN ============ -->
       <section id="view-login" class="hidden">
         <div class="glass-panel" style="max-width:380px;margin:0 auto;">
           <div style="text-align:center;margin-bottom:10px;">
-            <img src="hf_logo.png"
-                 alt="Logo"
-                 style="width:84px;height:84px;border-radius:20px;box-shadow:0 12px 32px rgba(0,0,0,.7);" />
+            <img src="hf_logo.png" alt="" style="width:84px;height:84px;border-radius:20px;box-shadow:0 12px 32px rgba(0,0,0,.7);background:rgba(34,211,238,.12);" />
           </div>
-
-          <h2 style="text-align:center;">Sign In</h2>
-          <div class="subtitle" style="text-align:center;margin-bottom:12px;">
-            Internal Tool
-          </div>
+          <h2 style="text-align:center;color:var(--heading);">Sign In</h2>
+          <div class="subtitle" style="text-align:center;margin-bottom:12px;">Internal tool — enter your name to continue</div>
 
           <div style="margin-top:10px;">
-            <label class="subtitle">Username</label>
-            <input id="loginUser"
-                   type="text"
-                   autocomplete="username"
-                   style="width:100%;margin-top:4px;" />
+            <label class="subtitle" for="loginUser">Name</label>
+            <input id="loginUser" type="text" autocomplete="username" style="width:100%;margin-top:4px;" />
           </div>
-
           <div style="margin-top:10px;">
-            <label class="subtitle">Password</label>
-            <input id="loginPass"
-                   type="password"
-                   autocomplete="current-password"
-                   style="width:100%;margin-top:4px;" />
+            <label class="subtitle" for="loginPass">Access code</label>
+            <input id="loginPass" type="password" autocomplete="current-password" style="width:100%;margin-top:4px;" />
           </div>
 
-          <button id="loginBtn"
-                  class="tab active"
-                  style="width:100%;margin-top:14px;">
-            Login
-          </button>
-
-          <div id="loginError"
-               style="margin-top:8px;color:var(--bad);font-size:.85rem;text-align:center;">
-          </div>
+          <button id="loginBtn" class="primary-button" style="width:100%;margin-top:14px;justify-content:center;">Sign in</button>
+          <div id="loginError" style="margin-top:8px;color:var(--bad);font-size:.85rem;text-align:center;"></div>
         </div>
       </section>
 
+      <!-- ============ HEADER + TABS (post-login) ============ -->
       <header id="topbar" class="header hidden">
         <div class="header-left">
           <img src="hf_logo.png" alt="HF Logo" class="logo" />
           <div class="title-block">
-            <h1>Merchandising Hub</h1>
-            <div class="subtitle">Live Map • HF • HPA • Training</div>
+            <h1>HF-HPA Hub</h1>
+            <div class="subtitle">Map • Product Info • Care &amp; ID • Store Ops</div>
           </div>
         </div>
         <div id="userPill" class="header-pill">User</div>
       </header>
 
       <nav id="globalTabs" class="tabs hidden" aria-label="Primary navigation">
-        <button class="tab active" data-view="map" type="button">Map</button>
-        <button class="tab" data-view="hf" type="button">HF</button>
-        <button class="tab" data-view="hpa" type="button">HPA</button>
-        <button class="tab" data-view="admin" type="button">Admin</button>
-        <button class="tab" data-view="training" type="button">Training</button>
+        <button class="tab active" data-view="map" type="button">🗺 Map</button>
+        <button class="tab" data-view="products" type="button">📦 Product Info</button>
+        <button class="tab" data-view="careid" type="button">🌿 Care &amp; ID</button>
+        <button class="tab" data-view="ops" type="button">🛠 Store Ops</button>
         <button class="tab" id="logoutBtn" type="button">Logout</button>
       </nav>
 
+      <!-- ============ MAP ============ -->
       <section id="view-map" class="hidden">
         <div class="glass-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <div>
-              <strong>Store Map</strong>
-              <div class="subtitle">Weekly reset • Live status • Issues &amp; checklist</div>
+              <strong style="color:var(--heading);">Store Map</strong>
+              <div class="subtitle">Weekly reset status • issues &amp; quick actions</div>
             </div>
+            <div id="mapWeekBadge" class="header-pill"></div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns: 1fr 360px;gap:12px;margin-top:10px;">
-          <div class="glass-panel" style="padding:10px;">
-            <div id="storeMap" style="height:62vh;border-radius:14px;overflow:hidden;position:relative;background:#0a0e1a;">
-              <div id="mapWeekBadge" class="map-week-badge"></div>
-              <div class="map-legend">
-                <div class="map-legend-title">Map Status</div>
-                <div class="legend-row"><span class="legend-dot legend-ok"></span> Complete</div>
-                <div class="legend-row"><span class="legend-dot legend-warn"></span> In Progress</div>
-                <div class="legend-row"><span class="legend-dot legend-bad"></span> Needs Work</div>
-                <div class="legend-row"><span class="legend-flag"></span> Open Issue</div>
-              </div>
-            </div>
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:10px;" id="mapLayout">
+          <div class="glass-panel" style="padding:14px;">
+            <div class="section-subtitle" style="margin-bottom:8px;">Tap a store to see its status and log actions.</div>
+            <div id="storeList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;"></div>
           </div>
 
           <aside class="glass-panel" style="padding:14px;">
-            <div class="subtitle" id="spSub">Select a store</div>
-            <h2 id="spTitle" tabindex="-1" style="margin-top:4px;">—</h2>
+            <div class="subtitle" id="spSub">No store selected</div>
+            <h2 id="spTitle" tabindex="-1" style="margin-top:4px;color:var(--heading);">—</h2>
             <div style="margin-top:10px;">
-              <div class="kv"><span>Watered</span><span id="spWatered">—</span></div>
+              <div class="kv"><span>Watered today</span><span id="spWatered">—</span></div>
               <div class="kv"><span>Negatives</span><span id="spNegatives">—</span></div>
-              <div class="kv"><span>Issues</span><span id="spIssues" title="Click to view issues">—</span></div>
+              <div class="kv"><span>Open issues</span><span id="spIssues">—</span></div>
             </div>
-            <div id="storeActions" class="store-actions">
-              <button id="btnQuickWater" class="popup-close" disabled type="button">💧 Mark Watered</button>
-              <button id="btnAddIssue" class="popup-close" disabled type="button">🚩 Add Issue</button>
-              <button id="btnOpenChecklist" class="popup-close" disabled type="button">📋 Checklist</button>
+            <div class="store-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+              <button id="btnQuickWater" class="primary-button" disabled type="button">💧 Mark watered</button>
+              <button id="btnAddIssue" class="primary-button" disabled type="button">🚩 Add issue</button>
             </div>
+            <div id="spIssueList" style="margin-top:12px;"></div>
           </aside>
         </div>
       </section>
 
-      <section id="view-hf" class="hidden">
+      <!-- ============ PRODUCT INFO ============ -->
+      <section id="view-products" class="hidden">
+        <div class="section-header">
+          <div class="section-title">Product Info</div>
+          <p class="section-subtitle">Search SKUs and review weekly shipping breakdowns.</p>
+        </div>
+
         <div class="tabs">
-          <button class="tab active" data-hf-tab="guidelines" type="button">Guidelines</button>
-          <button class="tab" data-hf-tab="care" type="button">Care &amp; Identification</button>
+          <button class="tab active" data-products="skus" type="button">SKU Catalogue</button>
+          <button class="tab" data-products="orders" type="button">Order Breakdown</button>
         </div>
 
-        <div id="hf-guidelines" class="glass-panel">
-          <p class="loading">Loading HF Guidelines...</p>
-        </div>
+        <section id="products-skus" class="subtabs">
+          <section class="controls">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input id="nameFilter" class="search-input" placeholder="Filter by SKU name..." />
+            </div>
+            <div class="filters">
+              <div class="filter-group">
+                <span class="filter-label">SKU</span>
+                <input id="skuFilter" class="filter-input" placeholder="e.g. 1005-837-400" />
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Sent In</span>
+                <input id="sentInFilter" class="filter-input" placeholder="e.g. 6 or Promo" />
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Year Sent</span>
+                <select id="yearFilter" class="filter-input">
+                  <option value="all">All</option>
+                  <option>2022</option><option>2023</option><option>2024</option>
+                  <option>2025</option><option>2026</option>
+                </select>
+              </div>
+            </div>
+          </section>
 
-        <div id="hf-care" class="hidden glass-panel">
-          <div class="tabs">
-            <button class="tab active" data-hf-care="plants" type="button">Perennials</button>
-            <button class="tab" data-hf-care="pests" type="button">Pests</button>
+          <div class="results-header"><span><strong id="resultCount">0</strong> SKUs shown</span></div>
+          <section id="skuGrid" class="sku-grid"></section>
+          <div id="skuEmptyState" class="empty-state hidden">No SKUs match your filters, or the data file could not be loaded.</div>
+        </section>
+
+        <section id="products-orders" class="subtabs hidden">
+          <div class="order-table-wrapper">
+            <div class="order-table-title">Weekly Shipping Overview</div>
+            <table class="order-table">
+              <thead><tr><th>Week #</th><th>Week Date</th><th>Shipping</th><th>Additional</th><th>Status</th></tr></thead>
+              <tbody id="orderWeeksBody"><tr><td colspan="5" class="loading">Loading weekly overview…</td></tr></tbody>
+            </table>
+
+            <button id="orderDetailsToggle" class="order-details-toggle" type="button">Show Detailed Breakdown</button>
+
+            <div id="orderDetailsPanel" class="hidden">
+              <div class="order-breakdown-wrapper">
+                <div class="ob-header-stack">
+                  <div class="ob-week-box">Shipping Week #: <span id="obWeekDisplay">TBD</span></div>
+                  <div class="ob-grades-box">Store Grade Shipping: <span id="obGradesDisplay">All stores</span></div>
+                </div>
+                <div class="ob-grid">
+                  <div class="ob-box"><div class="ob-box-title">FLO</div><div id="obFloBody" class="ob-box-body"></div></div>
+                  <div class="ob-box"><div class="ob-box-title">FOL</div><div id="obFolBody" class="ob-box-body"></div></div>
+                  <div class="ob-box"><div class="ob-box-title">UCO</div><div id="obUcoBody" class="ob-box-body"></div></div>
+                  <div class="ob-box"><div class="ob-box-title">FHB</div><div id="obFhbBody" class="ob-box-body"></div></div>
+                  <div class="ob-box"><div class="ob-box-title">TRP</div><div id="obTrpBody" class="ob-box-body"></div></div>
+                  <div class="ob-box"><div class="ob-box-title">SPC</div><div id="obSpcBody" class="ob-box-body"></div></div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div id="hf-plants"><p class="loading">Loading Perennials...</p></div>
-          <div id="hf-pests" class="hidden"><p class="loading">Loading Pests...</p></div>
-        </div>
+        </section>
       </section>
 
-      <section id="view-hpa" class="hidden">
+      <!-- ============ CARE & IDENTIFICATION ============ -->
+      <section id="view-careid" class="hidden">
+        <div class="section-header">
+          <div class="section-title">Care &amp; Identification</div>
+          <p class="section-subtitle">Quick reference for plant care and pest identification.</p>
+        </div>
+
         <div class="tabs">
-          <button class="tab active" data-hpa-tab="guidelines" type="button">Guidelines</button>
-          <button class="tab" data-hpa-tab="products" type="button">Product Info</button>
-          <button class="tab" data-hpa-tab="care" type="button">Care &amp; Identification</button>
+          <button class="tab active" data-careid="plants" type="button">Care Library</button>
+          <button class="tab" data-careid="pests" type="button">Pest Identification</button>
         </div>
 
-        <div id="hpa-guidelines" class="glass-panel">
-          <p class="loading">Loading HPA Guidelines...</p>
+        <section id="careid-plants" class="subtabs">
+          <div class="pc-header">
+            <div class="pc-title">Care Library</div>
+            <div class="pc-search-wrapper">
+              <span class="pc-search-icon">🔎</span>
+              <input id="careSearch" class="pc-search-input" placeholder="Search plants..." />
+            </div>
+          </div>
+          <div class="pc-grid" id="plantCareGrid"><p class="loading">Loading plants…</p></div>
+        </section>
+
+        <section id="careid-pests" class="subtabs hidden">
+          <div class="pc-header">
+            <div class="pc-title">Pest Identification</div>
+            <div class="pc-search-wrapper">
+              <span class="pc-search-icon">🔎</span>
+              <input id="pestSearch" class="pc-search-input" placeholder="Search pests..." />
+            </div>
+          </div>
+          <div class="pc-grid" id="pestGrid"><p class="loading">Loading pests…</p></div>
+        </section>
+      </section>
+
+      <!-- ============ STORE OPERATIONS ============ -->
+      <section id="view-ops" class="hidden">
+        <div class="section-header">
+          <div class="section-title">Store Operations</div>
+          <p class="section-subtitle">Damage flows, protocols, picture standards, and the store visit checklist.</p>
         </div>
 
-        <div id="hpa-products" class="glass-panel hidden">
+        <div class="tabs">
+          <button class="tab active" data-ops="protocols" type="button">HPA Protocols</button>
+          <button class="tab" data-ops="visit" type="button">Store Visit</button>
+        </div>
+
+        <!-- PROTOCOLS -->
+        <section id="ops-protocols" class="subtabs">
           <div class="tabs" style="margin-bottom:10px;">
-            <button class="tab active" data-products="skus" type="button">SKU Catalogue</button>
-            <button class="tab" data-products="orders" type="button">Order Breakdown</button>
+            <button class="tab active" data-hpa="claims" type="button">Damage Claims</button>
+            <button class="tab" data-hpa="nonorder" type="button">Non-Order Days</button>
+            <button class="tab" data-hpa="inventory" type="button">Weekly Inventory</button>
+            <button class="tab" data-hpa="bi" type="button">BI / Reporting</button>
+            <button class="tab" data-hpa="pictures" type="button">Picture Standards</button>
           </div>
 
-          <section id="products-skus"><p class="loading">Loading SKU Data...</p></section>
-          <section id="products-orders" class="hidden"><p class="loading">Loading Order Data...</p></section>
-        </div>
+          <!-- DAMAGE CLAIMS -->
+          <section id="hpa-claims">
+            <div class="tabs" style="margin-bottom:10px;">
+              <button class="tab active" data-damage="cold" type="button">Cold Damage</button>
+              <button class="tab" data-damage="pest" type="button">Pest Damage</button>
+            </div>
+            <div id="damage-cold"></div>
+            <div id="damage-pest" class="hidden"></div>
+          </section>
 
-        <div id="hpa-care" class="glass-panel hidden">
-          <div class="tabs">
-            <button class="tab active" data-hpa-care="plants" type="button">Plants</button>
-            <button class="tab" data-hpa-care="pests" type="button">Pests</button>
+          <section id="hpa-nonorder" class="hidden"></section>
+          <section id="hpa-inventory" class="hidden"></section>
+          <section id="hpa-bi" class="hidden"></section>
+          <section id="hpa-pictures" class="hidden"></section>
+        </section>
+
+        <!-- STORE VISIT -->
+        <section id="ops-visit" class="subtabs hidden">
+          <div class="pc-header">
+            <div class="pc-title">Store Visit Checklist (Indoor)</div>
+            <p class="section-subtitle">Work through each subtab during a visit, then download a summary.</p>
           </div>
 
-          <div id="hpa-plants"><p class="loading">Loading Plants...</p></div>
-          <div id="hpa-pests" class="hidden"><p class="loading">Loading Pests...</p></div>
-        </div>
+          <div class="visit-meta">
+            <div class="form-group small">
+              <label class="form-label" for="visitStore">Store #</label>
+              <input id="visitStore" placeholder="e.g. 1234" />
+            </div>
+            <div class="form-group small">
+              <label class="form-label" for="visitDate">Visit Date</label>
+              <input id="visitDate" type="date" />
+            </div>
+            <div class="form-group small">
+              <label class="form-label" for="visitRep">Rep / Visitor</label>
+              <input id="visitRep" placeholder="Your name" />
+            </div>
+          </div>
+
+          <div class="tabs" style="margin-bottom:10px;">
+            <button class="tab active" data-store="walk" type="button">Store Walk</button>
+            <button class="tab" data-store="pods" type="button">Pod Merchandising</button>
+            <button class="tab" data-store="cleanup" type="button">Clean Up / Water</button>
+            <button class="tab" data-store="pictures" type="button">Pictures</button>
+          </div>
+
+          <div id="store-walk"></div>
+          <div id="store-pods" class="hidden"></div>
+          <div id="store-cleanup" class="hidden"></div>
+          <div id="store-pictures" class="hidden"></div>
+
+          <div class="visit-notes-wrapper">
+            <div class="form-group">
+              <label class="form-label" for="visitNotes">Visit Notes / Follow-Ups</label>
+              <textarea id="visitNotes" class="claim-textarea" placeholder="Key issues, wins, follow-ups, and anything for the HF team."></textarea>
+            </div>
+          </div>
+
+          <button id="exportVisitSummary" class="primary-button" style="margin-top:12px;" type="button">📄 Download Visit Summary (.txt)</button>
+        </section>
       </section>
 
-      <section id="view-admin" class="hidden glass-panel">
-        <h2>Admin Tools</h2>
-        <p style="color:var(--muted);">Admin functionality coming soon.</p>
-      </section>
+      <div class="footer">HF-HPA internal tool • Consolidated: Map • Product Info • Care &amp; ID • Store Operations</div>
+    </div>
+  </div>
 
-      <section id="view-training" class="hidden glass-panel">
-        <h2>Training Hub</h2>
-        <p style="color:var(--muted);">Training content coming soon.</p>
-      </section>
+  <!-- ============ POPUPS ============ -->
+  <div id="skuBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2 id="skuPopName"></h2>
+      <p class="popup-text"><strong>SKU:</strong> <span id="skuPopSku"></span></p>
+      <p class="popup-text"><strong>Sent In:</strong> <span id="skuPopSent"></span></p>
+      <p class="popup-text"><strong>Year Sent:</strong> <span id="skuPopYear"></span></p>
+      <button class="popup-close" data-close="skuBackdrop" type="button">Close</button>
+    </div>
+  </div>
 
-      <div class="footer">
-        Internal Tool • HF / HPA • Weekly Reset Enabled
+  <div id="careBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <img id="careImage" class="popup-image" alt="" />
+      <h2 id="careTitle"></h2>
+      <p id="careScientific" class="popup-subtitle"></p>
+      <div class="popup-section-title">Light</div><div class="popup-text" id="careLight"></div>
+      <div class="popup-section-title">Water</div><div class="popup-text" id="careWater"></div>
+      <div class="popup-section-title">Humidity</div><div class="popup-text" id="careHumidity"></div>
+      <div class="popup-section-title">Temperature</div><div class="popup-text" id="careTemp"></div>
+      <div class="popup-section-title">Soil</div><div class="popup-text" id="careSoil"></div>
+      <div class="popup-section-title">Fertilizer</div><div class="popup-text" id="careFertilizer"></div>
+      <div class="popup-section-title">Toxicity</div><div class="popup-text" id="careToxicity"></div>
+      <div class="popup-section-title">Extra Tips</div><div class="popup-text" id="careTips"></div>
+      <button class="popup-close" data-close="careBackdrop" type="button">Close</button>
+    </div>
+  </div>
+
+  <div id="pestBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <img id="pestImage" class="popup-image" alt="" />
+      <h2 id="pestTitle"></h2>
+      <p id="pestScientific" class="popup-subtitle"></p>
+      <div class="popup-section-title">What They Look Like</div><div class="popup-text" id="pestLooksLike"></div>
+      <div class="popup-section-title">Identification</div><div class="popup-text" id="pestIdentification"></div>
+      <div class="popup-section-title">Prevention</div><div class="popup-text" id="pestPrevention"></div>
+      <div class="popup-section-title">Treatment</div><div class="popup-text" id="pestTreatment"></div>
+      <button class="popup-close" data-close="pestBackdrop" type="button">Close</button>
+    </div>
+  </div>
+
+  <div id="issueBackdrop" class="popup-backdrop">
+    <div class="popup">
+      <h2>Add Issue</h2>
+      <p class="popup-subtitle" id="issueStoreLabel"></p>
+      <div class="form-group" style="margin-top:8px;">
+        <label class="form-label" for="issueText">Describe the issue</label>
+        <textarea id="issueText" class="claim-textarea" placeholder="e.g. POD 3 needs restock; negatives on 4&quot; foliage"></textarea>
       </div>
-
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="popup-close" data-close="issueBackdrop" type="button" style="background:rgba(148,163,184,.3);color:var(--heading);">Cancel</button>
+        <button id="issueSaveBtn" class="popup-close" type="button">Save issue</button>
+      </div>
     </div>
   </div>
 
   <script>
-    window.App = window.App || { user: { username: "User" } };
+/* ============================================================
+   HF-HPA Merchandising Hub — consolidated controller
+   ============================================================ */
+(function () {
+  "use strict";
 
-    window.esc = window.esc || function esc(v){
-      return String(v ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    };
+  /* ---------- CONFIG ---------- */
+  var FILES = {
+    sku:        "SKU_Name_2026.csv",
+    orderWeeks: "OrderWeeks.csv",
+    orders:     "OrderBreakdown.csv",
+    plants:     "plants.csv",
+    pests:      "pests.csv"
+  };
 
-    window.todayKey = window.todayKey || function todayKey(){
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    };
+  var STORE_GRADES_BY_WEEK = {
+    "6": "All stores", "7": "All stores", "8": "A/B", "9": "SKIP",
+    "10": "All stores", "11": "All stores", "12": "All stores", "13": "All stores"
+  };
 
-    window.mondayKey = window.mondayKey || function mondayKey(){
-      const d = new Date();
-      const day = d.getDay();
-      const diff = (day === 0 ? -6 : 1) - day;
-      d.setHours(0,0,0,0);
-      d.setDate(d.getDate() + diff);
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const dd = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${dd}`;
-    };
+  /* Demo store roster for the Map view (replace with a real feed when available). */
+  var STORES = [
+    { id: "1201", name: "Elgin", status: "ok",   negatives: 2 },
+    { id: "1248", name: "Schaumburg", status: "warn", negatives: 5 },
+    { id: "1305", name: "Naperville", status: "bad", negatives: 11 },
+    { id: "1412", name: "Aurora", status: "ok", negatives: 0 },
+    { id: "1533", name: "Crystal Lake", status: "warn", negatives: 3 },
+    { id: "1610", name: "Rockford", status: "ok", negatives: 1 }
+  ];
 
-    window.parseCSV = window.parseCSV || function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let q = false;
+  /* ---------- HELPERS ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
-      for(let i=0;i<text.length;i++){
-        const c = text[i];
+  function esc(v) {
+    return String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  var normalizeSku = function (s) { return (s || "").toLowerCase().replace(/[^0-9a-z]/g, ""); };
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
 
-        if(c === '"'){
-          if(q && text[i+1] === '"'){ cur += '"'; i++; }
-          else q = !q;
-        } else if(c === "," && !q){
-          row.push(cur); cur = "";
-        } else if((c === "\n" || c === "\r") && !q){
-          if(c === "\r" && text[i+1] === "\n") i++;
-          row.push(cur);
-          if(row.some(cell => String(cell).trim() !== "")) rows.push(row);
-          row = []; cur = "";
+  /* CSV parser tuned for garden data. Handles quoted fields, escaped quotes ("")
+     CRLF, and embedded newlines — but treats a double-quote as a LITERAL character
+     when it appears mid-field (e.g. sizes like 6" or 4"), so inch marks don't break
+     parsing. A quote only opens a quoted field at the very start of a field. */
+  function parseCSV(text) {
+    var rows = [], row = [], cur = "", q = false, atFieldStart = true;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (c === '"') {
+        if (q) {
+          if (text[i + 1] === '"') { cur += '"'; i++; }   // escaped quote inside quoted field
+          else { q = false; }                              // close quoted field
+        } else if (atFieldStart) {
+          q = true; atFieldStart = false;                  // open quoted field
         } else {
-          cur += c;
+          cur += '"';                                      // literal inch mark
         }
-      }
-      row.push(cur);
-      if(row.some(cell => String(cell).trim() !== "")) rows.push(row);
-      return rows;
-    };
-
-    window.parseCsv = window.parseCsv || function(text){ return window.parseCSV(text); };
-
-    window.safeUUID = window.safeUUID || function safeUUID(){
-      try{
-        if (crypto && crypto.randomUUID) return crypto.randomUUID();
-      }catch{}
-      return "id-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
-    };
-
-    window.stores = window.stores || [];
-    window.markers = window.markers || new Map();
-    window.map = window.map || null;
-
-    // CSV loader
-    async function loadCSV(filename) {
-      try {
-        const response = await fetch(filename);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const text = await response.text();
-        return window.parseCSV(text);
-      } catch (e) {
-        console.error(`Failed to load ${filename}:`, e);
-        return [];
+      } else if (c === "," && !q) {
+        row.push(cur); cur = ""; atFieldStart = true;
+      } else if ((c === "\n" || c === "\r") && !q) {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cur);
+        if (row.some(function (x) { return String(x).trim() !== ""; })) rows.push(row);
+        row = []; cur = ""; atFieldStart = true;
+      } else {
+        cur += c; atFieldStart = false;
       }
     }
+    row.push(cur);
+    if (row.some(function (x) { return String(x).trim() !== ""; })) rows.push(row);
+    return rows;
+  }
+
+  /* Turn a parsed CSV (array of arrays) into objects keyed by lowercased header. */
+  function toObjects(rows) {
+    if (!rows.length) return [];
+    var header = rows[0].map(function (h) { return String(h).toLowerCase().trim(); });
+    var out = [];
+    for (var i = 1; i < rows.length; i++) {
+      var obj = {};
+      for (var j = 0; j < header.length; j++) obj[header[j]] = (rows[i][j] || "").trim();
+      out.push(obj);
+    }
+    return out;
+  }
+
+  function loadCSV(file) {
+    return fetch(file).then(function (res) {
+      if (!res.ok) throw new Error(file + " (HTTP " + res.status + ")");
+      return res.text();
+    }).then(function (txt) { return toObjects(parseCSV(txt)); });
+  }
+
+  /* ---------- POPUP WIRING ---------- */
+  function openPopup(id) { var el = $(id); if (el) el.classList.add("active"); }
+  function closePopup(id) { var el = $(id); if (el) el.classList.remove("active"); }
+
+  $$(".popup-close[data-close]").forEach(function (btn) {
+    btn.addEventListener("click", function () { closePopup(btn.dataset.close); });
+  });
+  $$(".popup-backdrop").forEach(function (back) {
+    back.addEventListener("click", function (e) { if (e.target === back) back.classList.remove("active"); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") $$(".popup-backdrop.active").forEach(function (b) { b.classList.remove("active"); });
+  });
+
+  /* ============================================================
+     AUTH SHELL  (splash -> login -> app)
+     ============================================================ */
+  var VIEWS = ["map", "products", "careid", "ops"];
+
+  function setVisible(el, on) { if (el) el.classList.toggle("hidden", !on); }
+
+  function showOnlyView(name) {
+    VIEWS.forEach(function (v) { setVisible($("view-" + v), v === name); });
+    $$("#globalTabs .tab[data-view]").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.view === name);
+    });
+    try { sessionStorage.setItem("hub_view", name); } catch (e) {}
+  }
+
+  function showSplash() {
+    setVisible($("topbar"), false); setVisible($("globalTabs"), false);
+    setVisible($("view-splash"), true); setVisible($("view-login"), false);
+    VIEWS.forEach(function (v) { setVisible($("view-" + v), false); });
+    try { sessionStorage.removeItem("hub_view"); } catch (e) {}
+  }
+
+  function showLogin() {
+    setVisible($("topbar"), false); setVisible($("globalTabs"), false);
+    setVisible($("view-splash"), false); setVisible($("view-login"), true);
+    VIEWS.forEach(function (v) { setVisible($("view-" + v), false); });
+    $("loginError").textContent = "";
+    setTimeout(function () { var u = $("loginUser"); if (u) u.focus(); }, 0);
+  }
+
+  function showApp(view) {
+    setVisible($("topbar"), true); setVisible($("globalTabs"), true);
+    setVisible($("view-splash"), false); setVisible($("view-login"), false);
+    showOnlyView(view || "map");
+  }
+
+  function setUser(name) {
+    var u = (name || "User").trim() || "User";
+    $("userPill").textContent = u;
+    try { localStorage.setItem("hub_user", u); } catch (e) {}
+  }
+
+  function doLogin() {
+    var u = ($("loginUser").value || "").trim();
+    var p = ($("loginPass").value || "").trim();
+    if (!u) { $("loginError").textContent = "Enter your name to continue."; $("loginUser").focus(); return; }
+    if (!p) { $("loginError").textContent = "Enter the access code to continue."; $("loginPass").focus(); return; }
+    setUser(u);
+    var saved;
+    try { saved = sessionStorage.getItem("hub_view"); } catch (e) {}
+    showApp(saved || "map");
+  }
+
+  $("splashEnter").addEventListener("click", showLogin);
+  $("loginBtn").addEventListener("click", doLogin);
+  [$("loginUser"), $("loginPass")].forEach(function (el) {
+    el.addEventListener("keydown", function (e) { if (e.key === "Enter") doLogin(); });
+  });
+  $("logoutBtn").addEventListener("click", function () {
+    try { localStorage.removeItem("hub_user"); sessionStorage.removeItem("hub_view"); } catch (e) {}
+    showSplash();
+  });
+  $$("#globalTabs .tab[data-view]").forEach(function (btn) {
+    btn.addEventListener("click", function () { showOnlyView(btn.dataset.view); });
+  });
+
+  /* ---------- generic subtab switcher ----------
+     attr: the data-* attribute name used on the buttons (e.g. "products")
+     map:  { value -> sectionElementId }                                       */
+  function wireTabs(attr, map, scopeSelector) {
+    var scope = scopeSelector ? $$(scopeSelector)[0] : document;
+    if (!scope) return;
+    var buttons = $$('[data-' + attr + ']', scope);
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-" + attr);
+        Object.keys(map).forEach(function (k) {
+          var sec = $(map[k]); if (sec) sec.classList.toggle("hidden", k !== key);
+        });
+        buttons.forEach(function (b) {
+          b.classList.toggle("active", b.getAttribute("data-" + attr) === key);
+        });
+      });
+    });
+  }
+
+  /* ============================================================
+     PRODUCT INFO — SKUs
+     ============================================================ */
+  var skuData = [];
+
+  function renderSkuList() {
+    var grid = $("skuGrid");
+    grid.innerHTML = "";
+    var nameQ = ($("nameFilter").value || "").toLowerCase();
+    var skuQ = normalizeSku($("skuFilter").value || "");
+    var sentQ = ($("sentInFilter").value || "").toLowerCase();
+    var yearQ = $("yearFilter").value;
+
+    var filtered = skuData.filter(function (it) {
+      return (!nameQ || (it.name || "").toLowerCase().indexOf(nameQ) > -1) &&
+             (!skuQ || normalizeSku(it.sku).indexOf(skuQ) > -1) &&
+             (!sentQ || (it.sentIn || "").toLowerCase().indexOf(sentQ) > -1) &&
+             (yearQ === "all" || it.yearSent === yearQ);
+    });
+
+    filtered.forEach(function (it) {
+      var card = document.createElement("button");
+      card.className = "sku-card"; card.type = "button";
+      card.innerHTML =
+        '<div class="sku-year-pill">' + esc(it.yearSent) + '</div>' +
+        '<div class="sku-name">' + esc(it.name) + '</div>' +
+        '<div class="sku-meta"><strong>SKU:</strong> ' + esc(it.sku) + '</div>' +
+        '<div class="sku-meta"><strong>Sent In:</strong> ' + esc(it.sentIn) + '</div>';
+      card.addEventListener("click", function () {
+        $("skuPopName").textContent = it.name;
+        $("skuPopSku").textContent = it.sku;
+        $("skuPopSent").textContent = it.sentIn;
+        $("skuPopYear").textContent = it.yearSent;
+        openPopup("skuBackdrop");
+      });
+      grid.appendChild(card);
+    });
+
+    $("resultCount").textContent = filtered.length;
+    $("skuEmptyState").classList.toggle("hidden", filtered.length !== 0);
+  }
+
+  function initSkus() {
+    ["nameFilter", "skuFilter", "sentInFilter"].forEach(function (id) {
+      $(id).addEventListener("input", renderSkuList);
+    });
+    $("yearFilter").addEventListener("change", renderSkuList);
+
+    loadCSV(FILES.sku).then(function (rows) {
+      skuData = rows.map(function (r) {
+        return { name: r["sku name"] || "", sku: r["sku"] || "", sentIn: r["sent in"] || "", yearSent: r["year sent"] || "" };
+      }).filter(function (r) { return r.name && r.sku; });
+      renderSkuList();
+    }).catch(function (err) {
+      console.error(err);
+      $("skuEmptyState").classList.remove("hidden");
+      $("skuEmptyState").textContent = "Could not load " + FILES.sku + ".";
+    });
+  }
+
+  /* ============================================================
+     PRODUCT INFO — Orders
+     ============================================================ */
+  function highlightStatus(status) {
+    if (!status) return "";
+    var lower = status.toLowerCase();
+    if (lower.indexOf("request") > -1 || lower.indexOf("due") > -1) {
+      return '<span class="status-highlight">' + esc(status) + "</span>";
+    }
+    return esc(status);
+  }
+
+  function renderOrderWeeks(rows) {
+    var body = $("orderWeeksBody");
+    body.innerHTML = "";
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="5" class="loading">No weekly data found.</td></tr>'; return; }
+    rows.forEach(function (r) {
+      var week = r["week #"] || "";
+      if (!week) return;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td>" + esc(week) + "</td>" +
+        "<td>" + esc(r["week date"] || "") + "</td>" +
+        "<td>" + esc(r["shipping"] || "") + "</td>" +
+        "<td>" + esc(r["additional"] || "") + "</td>" +
+        "<td>" + highlightStatus(r["status"] || "") + "</td>";
+      body.appendChild(tr);
+    });
+  }
+
+  function applyOrderBreakdown(rows) {
+    var bodies = { FLO: $("obFloBody"), FOL: $("obFolBody"), UCO: $("obUcoBody"), FHB: $("obFhbBody"), TRP: $("obTrpBody"), SPC: $("obSpcBody") };
+    if (!rows.length) {
+      $("obWeekDisplay").textContent = "TBD";
+      $("obGradesDisplay").textContent = "All stores";
+      Object.keys(bodies).forEach(function (k) { if (bodies[k]) bodies[k].textContent = ""; });
+      return;
+    }
+    var weeks = rows.map(function (r) { return r.week; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    var numeric = weeks.map(Number).filter(function (n) { return !isNaN(n); });
+    var latest = numeric.length ? Math.max.apply(null, numeric) : weeks[0];
+
+    $("obWeekDisplay").textContent = latest;
+    $("obGradesDisplay").textContent = STORE_GRADES_BY_WEEK[String(latest)] || "All stores";
+
+    var groups = { FLO: [], FOL: [], UCO: [], FHB: [], TRP: [], SPC: [] };
+    rows.filter(function (r) { return String(r.week) === String(latest); }).forEach(function (r) {
+      if (groups[r.category]) {
+        var line = (r.size && r.plant) ? (r.size + " — " + r.plant) : (r.size || r.plant);
+        if (line) groups[r.category].push(line);
+      }
+    });
+    Object.keys(groups).forEach(function (cat) { if (bodies[cat]) bodies[cat].textContent = groups[cat].join("\n"); });
+  }
+
+  function initOrders() {
+    var toggle = $("orderDetailsToggle"), panel = $("orderDetailsPanel");
+    toggle.addEventListener("click", function () {
+      var hidden = panel.classList.toggle("hidden");
+      toggle.textContent = hidden ? "Show Detailed Breakdown" : "Hide Detailed Breakdown";
+    });
+
+    loadCSV(FILES.orderWeeks).then(renderOrderWeeks).catch(function (err) {
+      console.error(err);
+      $("orderWeeksBody").innerHTML = '<tr><td colspan="5" class="loading">Could not load ' + FILES.orderWeeks + '.</td></tr>';
+    });
+
+    loadCSV(FILES.orders).then(function (rows) {
+      var norm = rows.map(function (r) {
+        return { week: r["week"] || "", category: (r["category"] || "").toUpperCase(), size: r["size"] || "", plant: r["plant name"] || "" };
+      }).filter(function (r) { return r.week && r.category && (r.size || r.plant); });
+      applyOrderBreakdown(norm);
+    }).catch(function (err) { console.error(err); applyOrderBreakdown([]); });
+  }
+
+  /* ============================================================
+     CARE & IDENTIFICATION — plants + pests
+     ============================================================ */
+  var PLANTS = [], PESTS = [];
+
+  function renderPlantCards() {
+    var grid = $("plantCareGrid");
+    grid.innerHTML = "";
+    if (!PLANTS.length) { grid.innerHTML = '<p class="loading">No plant data found.</p>'; return; }
+    PLANTS.forEach(function (p) {
+      var btn = document.createElement("button");
+      btn.className = "pc-card"; btn.type = "button";
+      btn.innerHTML = '<div class="pc-card-title">' + esc(p.commonName) + "</div>" +
+                      '<div class="pc-card-subtitle">' + esc(p.scientificName || "") + "</div>";
+      btn.addEventListener("click", function () { openCarePopup(p); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function openCarePopup(p) {
+    $("careTitle").textContent = p.commonName || "";
+    $("careScientific").textContent = p.scientificName || "";
+    $("careLight").textContent = p.light || "";
+    $("careWater").textContent = p.water || "";
+    $("careHumidity").textContent = p.humidity || "";
+    $("careTemp").textContent = p.temp || "";
+    $("careSoil").textContent = p.soil || "";
+    $("careFertilizer").textContent = p.fertilizer || "";
+    $("careToxicity").textContent = p.toxicity || "";
+    $("careTips").textContent = p.tips || "";
+    var img = $("careImage");
+    if (p.image) { img.src = p.image; img.alt = p.commonName || ""; img.style.display = ""; }
+    else { img.style.display = "none"; }
+    openPopup("careBackdrop");
+  }
+
+  function renderPestCards() {
+    var grid = $("pestGrid");
+    grid.innerHTML = "";
+    if (!PESTS.length) { grid.innerHTML = '<p class="loading">No pest data found.</p>'; return; }
+    PESTS.forEach(function (p) {
+      var btn = document.createElement("button");
+      btn.className = "pc-card"; btn.type = "button";
+      btn.innerHTML = '<div class="pc-card-title">' + esc(p.commonName) + "</div>" +
+                      '<div class="pc-card-subtitle">' + esc(p.identification || p.scientificName || "") + "</div>";
+      btn.addEventListener("click", function () { openPestPopup(p); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function openPestPopup(p) {
+    $("pestTitle").textContent = p.commonName || "";
+    $("pestScientific").textContent = p.scientificName || "";
+    $("pestLooksLike").textContent = p.looksLike || "";
+    $("pestIdentification").textContent = p.identification || "";
+    $("pestPrevention").textContent = p.prevention || "";
+    $("pestTreatment").textContent = p.treatment || "";
+    var img = $("pestImage");
+    if (p.image) { img.src = p.image; img.alt = p.commonName || ""; img.style.display = ""; }
+    else { img.style.display = "none"; }
+    openPopup("pestBackdrop");
+  }
+
+  function filterCards(input, grid) {
+    var q = (input.value || "").toLowerCase().trim();
+    $$(".pc-card", grid).forEach(function (card) {
+      card.style.display = (!q || (card.textContent || "").toLowerCase().indexOf(q) > -1) ? "" : "none";
+    });
+  }
+
+  function initCareId() {
+    $("careSearch").addEventListener("input", function () { filterCards($("careSearch"), $("plantCareGrid")); });
+    $("pestSearch").addEventListener("input", function () { filterCards($("pestSearch"), $("pestGrid")); });
+
+    loadCSV(FILES.plants).then(function (rows) {
+      PLANTS = rows.map(function (r) {
+        return {
+          commonName: r["common_name"] || "", scientificName: r["scientific_name"] || "",
+          image: r["image"] || "", light: r["light"] || "", water: r["water"] || "",
+          humidity: r["humidity"] || "", temp: r["temp"] || "", soil: r["soil"] || "",
+          fertilizer: r["fertilizer"] || "", toxicity: r["toxicity"] || "", tips: r["tips"] || ""
+        };
+      }).filter(function (r) { return r.commonName; });
+      renderPlantCards();
+    }).catch(function (err) { console.error(err); renderPlantCards(); });
+
+    loadCSV(FILES.pests).then(function (rows) {
+      PESTS = rows.map(function (r) {
+        return {
+          commonName: r["common_name"] || "", scientificName: r["scientific_name"] || "",
+          image: r["image"] || "", looksLike: r["what_they_look_like"] || "",
+          identification: r["identification"] || "", prevention: r["prevention"] || "", treatment: r["treatment"] || ""
+        };
+      }).filter(function (r) { return r.commonName; });
+      renderPestCards();
+    }).catch(function (err) { console.error(err); renderPestCards(); });
+  }
+
+  /* ============================================================
+     STORE OPS — protocol content (rendered from data)
+     ============================================================ */
+  function flowChart(steps) {
+    var html = '<div class="flow-list">';
+    steps.forEach(function (s, i) {
+      if (i > 0) html += '<div class="flow-arrow">⬇️</div>';
+      html += '<div class="flow-step"><div class="flow-step-number">' + esc(s.n) + '</div>' +
+              '<div class="flow-step-body"><div class="flow-step-title">' + esc(s.title) + '</div>' +
+              (s.role ? '<div class="flow-step-role">' + esc(s.role) + '</div>' : '') +
+              '<div class="flow-step-text">' + s.text + '</div></div></div>';
+    });
+    return html + '</div>';
+  }
+
+  function infoCard(title, sub) {
+    return '<div class="pc-card" style="margin-bottom:8px;cursor:default;">' +
+           '<div class="pc-card-title">' + esc(title) + '</div>' +
+           '<p class="pc-card-subtitle">' + esc(sub) + '</p></div>';
+  }
+
+  var COLD_STEPS = [
+    { n: 1, title: "Identify Cold Damage", role: "FS – Field Supervisor", text: "Confirm symptoms of cold damage (water-soaked or darkened tissue, limp/collapsed growth, damage showing a day or two after exposure)." },
+    { n: 2, title: "Take Photos", role: "FS", text: "Capture clear photos of full tables/racks and close-ups of the worst and \"typical\" plants, plus any visible cold exposure source." },
+    { n: 3, title: "Send Photos to DM / RMM", role: "FS → DM / RMM", text: "Text or email photos with store #, department, and a quick description of what you're seeing." },
+    { n: 4, title: "Notify Home Depot SM / ASM", role: "FS → Store Management", text: "Let the Store or Assistant Store Manager know about the cold damage, what product is affected, and that a claim is being started." },
+    { n: 5, title: "Scan Product Under Training Mode", role: "FS", text: "Scan the affected product under training mode as directed so the store is not charged incorrectly at the register." },
+    { n: 6, title: "Capture Receipt & Share", role: "FS → DM / RMM", text: "Take a picture of the receipt or transaction record tied to the adjustment and send it to your DM/RMM." },
+    { n: 7, title: "Provide Copy to Store", role: "FS → Store", text: "Give a copy of the receipt to the store so they can attach it to the store claim as needed." },
+    { n: 8, title: "Record Cold Damage Internally", role: "FS / Office", text: "Record the loss in the required internal system per current HF / customer procedures." },
+    { n: 9, title: "Share Claim Number with RMM", role: "FS → RMM", text: "Once you have the claim number from the store, send it to your RMM for the cold damage tracking sheet." },
+    { n: 10, title: "Complete Cold Damage Spreadsheet", role: "RMM", text: "RMM fills out the cold damage spreadsheet and forwards it to the right contacts to submit to Depot." },
+    { n: 11, title: "Approval & Payment / Credit", role: "Office / Depot", text: "Claim is submitted to Depot for approval. Once approved, payment/credit is processed per current accounting procedures." }
+  ];
+
+  var PEST_STEPS = [
+    { n: 1, title: "Identify Pest Damage", role: "FS – Field Supervisor", text: "Confirm damage is pest-related: webbing, speckling, sticky residue, chewing, or visible pests." },
+    { n: 2, title: "Take Photos", role: "FS", text: "Take clear close-ups of pests/webbing and wide shots of affected areas to show total volume affected." },
+    { n: 3, title: "Isolate Affected Product", role: "FS", text: "Pull heavily affected plants away from healthy stock and mark them HOLD / DAMAGED so they're not watered or handled normally." },
+    { n: 4, title: "Document Damage", role: "FS", text: "Record affected SKUs, approximate quantities, percentage of loss, and any treatment history (product, date, etc.)." },
+    { n: 5, title: "Notify HF Leadership", role: "FS → DM → RMM", text: "Send photos and documentation to your DM and RMM for review and next steps." },
+    { n: 6, title: "Submit Pest Claim Internally", role: "RMM / Office", text: "RMM and Office complete internal pest-damage documentation and submit to HF systems for review and credit." }
+  ];
+
+  var NONORDER_STEPS = [
+    { n: 1, title: "Walk the HPA & Cull", text: "Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor." },
+    { n: 2, title: "Clean Plants", text: "Deadhead blooms and remove yellowing or damaged leaves so the floor looks fresh and healthy." },
+    { n: 3, title: "Merchandise by POD / Table / Racks", text: "Reset tables, PODs, and CC racks: short-to-tall, category-with-category, no empty spaces, labels faced and clean." },
+    { n: 4, title: "Sweep & Clean", text: "Sweep top and bottom of PODs and the floor; remove extra material (pots, bags, trays, trash) from under tables and the sales view." },
+    { n: 5, title: "Water & Check Drainage", text: "Water as needed (goal: twice per week). Remove extra water from pots if overwatered." },
+    { n: 6, title: "Take Pictures & Recap", text: "Photograph all PODs, tables, and racks individually and send a recap to your supervisor noting work done and inventory concerns." }
+  ];
+
+  var INVENTORY_STEPS = [
+    { n: "Mon", title: "Order Skips & BI Review", text: "Send skip requests to your district by the deadline (based on rack counts &amp; prior-week notes). Review stores in BI and flag inventory opportunities or issues." },
+    { n: "Tue", title: "First Delivery & PICAS Check", text: "Be on the floor for the first weekly delivery. Check product quality, compare delivery to PICAS, and send discrepancies to the HPA team. Note fast/slow sellers." },
+    { n: "Wed–Thu", title: "Pictures & Negative Inventory", text: "Photograph stores that received the weekly order (subject: HPA/Store#/Date). Keep checking negatives and sell-through; track rack counts by store." },
+    { n: "Fri–Sat", title: "Close Out & Requests", text: "Send rack counts, negative counts, and remaining pictures to your district. Send inventory requests to the HPA team (Friday or Monday morning)." }
+  ];
+
+  function renderProtocols() {
+    $("damage-cold").innerHTML = infoCard("Cold Damage Claim Flow", "Use when product has been damaged by cold/freezing conditions.") + flowChart(COLD_STEPS);
+    $("damage-pest").innerHTML = infoCard("Pest Damage Claim Flow", "HF-only workflow for pest-related damage. No store involvement.") + flowChart(PEST_STEPS);
+    $("hpa-nonorder").innerHTML = infoCard("Non-Order Day Protocol", "What to focus on in the HPA when no order is delivering that day.") + flowChart(NONORDER_STEPS);
+    $("hpa-inventory").innerHTML = infoCard("Weekly Inventory Process (Supervisors)", "High-level weekly checklist for HF HPA supervisors.") + flowChart(INVENTORY_STEPS);
+
+    $("hpa-bi").innerHTML = infoCard("BI Check List (Supervisors)", "Key BI areas: inventory, negatives, comps, and sales performance.") +
+      biSection("Inventory & Negatives", [
+        "Use the Consignment Report tab for roll-over inventory and units on hand.",
+        "Set ship date range from 1/1/2021 to current day for accurate inventory.",
+        "Sort inventory smallest to largest; review negatives and unusually large numbers.",
+        "Review sell-through by store, by SKU, and by category."
+      ]) +
+      biSection("Sales & Comps", [
+        "Use the Dashboard tab to review comp $$ and comp sell-through vs. last year.",
+        "Use the Monthly Sales tab to compare month-to-month performance.",
+        "Use Consignment Report (units) and Consignment Analysis (sales $$) as needed."
+      ]) +
+      biSection("Transfers & Adjustments", [
+        "On the Consignment Report tab, scroll to see transfer from / transfer to details.",
+        "Use adjustment / transfer fields to understand inventory movement between locations."
+      ]) +
+      biSection("BI Features & Filters", [
+        "Use drill down / drill up on each page (by store, SKU, category, supervisor).",
+        "Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.",
+        "Click any line to update charts to that selection; watch pie charts and graphs change."
+      ]);
+
+    $("hpa-pictures").innerHTML = infoCard("Picture Standards Checklist", "Use when deciding if photos are training-only or can be sent to Home Depot.") +
+      checklistSection("Basic Quality", ["Pictures are clear and not blurry.", "Retail labels are front facing and readable."]) +
+      checklistSection("POD / Table Layout", [
+        "Correct category is in the correct spot (if not, there is a clear reason).",
+        "Top of POD is stripped across short-to-tall; décor blocked but still short-to-tall.",
+        "Bottom of POD is 2 rows deep and organized (not packed solid).",
+        "No trays for 6\" pots or larger; trays only for PW Littles / 4\" foliage.",
+        "PODs are clearly shoppable (no racks blocking access)."
+      ]) +
+      checklistSection("Racks & Displays", [
+        "Vigoro racks are filled correctly and organized.",
+        "PW racks are filled correctly and organized.",
+        "Basket displays are organized with one variety per rod.",
+        "Surplus racks are organized by category and condensed where possible."
+      ]) +
+      checklistSection("Inventory & Space", [
+        "No obvious empty space — product is not too sparse or too tight.",
+        "Racks and tables are not overloaded; layout fits current inventory level."
+      ]) +
+      checklistSection("Cleanliness & Timing", [
+        "Floor is swept, clear of clutter and garbage.",
+        "Background is clear of unnecessary items and distractions.",
+        "Pictures are taken before watering (avoids wet floor / shiny pots)."
+      ]) +
+      checklistSection("Where Should Photos Go?", [
+        "Decide if this photo goes to Home Depot or is kept for HF/HPA inventory review and training only."
+      ]);
+  }
+
+  function biSection(title, items) {
+    return '<div class="checklist-section"><div class="checklist-title">' + esc(title) + '</div><ul class="checklist-list">' +
+      items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul></div>";
+  }
+  function checklistSection(title, items) {
+    return '<div class="checklist-section"><div class="checklist-title">' + esc(title) + '</div>' +
+      items.map(function (i) {
+        return '<label class="checklist-item"><input type="checkbox" /> ' + i + "</label>";
+      }).join("") + "</div>";
+  }
+
+  /* ---------- STORE VISIT checklist content ---------- */
+  var POD_BASE = [
+    "Remove unsellable product; take to compactor or place on an empty CC rack at the back of the HPA if directed.",
+    "Remove yellowing/dead leaves on all plants.",
+    "Sweep off your pod.",
+    "Restock short-to-tall with fresh product from your delivery or overflow racks.",
+    "Move older product to the bottom of the pod (not the highlight area).",
+    "Restock the highlight area based on the HPA Guidelines.",
+    "Restock the bottom of the pod two deep.",
+    "Make sure all labels are facing out."
+  ];
+
+  function renderStoreVisit() {
+    $("store-walk").innerHTML =
+      checklistSection("1. Readiness", [
+        "Check that pods, tables, and overflow racks are shoppable in the HPA.",
+        "Emergency spot-water any product that is dry or wilted.",
+        "Remove unsellable product and take it to the compactor.",
+        "If product might bounce back, water it and move it off main displays (corner or empty rack)."
+      ]) +
+      checklistSection("2. Delivery Check", [
+        "If a houseplant shipment is scheduled, walk the store and receiving to locate your delivery.",
+        "Unwrap your delivery and stage racks in the racetrack so they are shoppable.",
+        "Check all product for damage and pests.",
+        "Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries."
+      ]) +
+      checklistSection("3. HF App", [
+        "Open the HF App and review the Houseplant Guidelines for the week before resetting pods and tables."
+      ]);
+
+    $("store-pods").innerHTML =
+      checklistSection("1. Blooming / Orchid Pod",
+        ["Remove unsellable product; compactor or empty CC rack if directed.",
+         "Remove yellowing/dead leaves and spent blooms on all plants.",
+         "Sweep off your pod.",
+         "Restock short-to-tall from delivery/overflow; keep colors together.",
+         "Move older product to the bottom (not the highlight area).",
+         "Restock the highlight area per HPA Guidelines.",
+         "Restock the bottom of the pod two deep.",
+         "Make sure all labels are facing out."]) +
+      checklistSection("2. Vigoro Pod", POD_BASE) +
+      checklistSection("3. Specialty Pod", POD_BASE) +
+      checklistSection("4. Hanging Basket Pod", [
+        "Remove unsellable product; compactor or empty CC rack if directed.",
+        "Remove yellowing/dead leaves on all plants.",
+        "Restock with the same variety on each bar from deliveries or overflow racks.",
+        "Rotate baskets on the inside of the pod weekly."
+      ]) +
+      checklistSection("5. Tropical Table(s)", [
+        "Remove unsellable product; compactor or empty CC rack if directed.",
+        "Remove yellowing/dead leaves on all plants.",
+        "Sweep off your table.",
+        "Restock short-to-tall from delivery or overflow racks.",
+        "Make sure all labels are facing out."
+      ]) +
+      checklistSection("6. CC Racks", [
+        "Remove unsellable product; compactor or empty CC rack if directed.",
+        "Remove yellowing/dead leaves on all plants.",
+        "Restock short-to-tall from delivery or overflow racks.",
+        "Rotate product from the back of racks to the front weekly.",
+        "Condense and stage racks that will stay in the HPA.",
+        "Clean up empty racks and place them in the designated pickup location."
+      ]);
+
+    $("store-cleanup").innerHTML = checklistSection("Clean Up / Water", [
+      "Sweep around and under all tables and pods.",
+      "Water all product in the HPA, paying attention to dry or wilted plants."
+    ]);
+
+    $("store-pictures").innerHTML = checklistSection("Pictures", [
+      "Take pictures of your pods, tropical tables, and racks.",
+      "Ensure pictures are clear and show product, labels, and overall merchandising.",
+      "Send HPA pictures to your manager as directed."
+    ]);
+  }
+
+  function initVisitExport() {
+    var di = $("visitDate");
+    if (di && !di.value) di.value = todayKey();
+
+    $("exportVisitSummary").addEventListener("click", function () {
+      var store = ($("visitStore").value || "").trim();
+      var date = $("visitDate").value || todayKey();
+      var rep = ($("visitRep").value || "").trim();
+      var notes = ($("visitNotes").value || "").trim();
+
+      var lines = ["STORE VISIT SUMMARY", "===================", "",
+        "Store #: " + (store || "N/A"), "Visit Date: " + date, "Rep / Visitor: " + (rep || "N/A"),
+        "", "Checklist", "---------"];
+
+      $$("#ops-visit .checklist-section").forEach(function (section) {
+        var titleEl = section.querySelector(".checklist-title");
+        var title = titleEl ? titleEl.textContent.trim() : "";
+        if (title) { lines.push(title); lines.push(new Array(title.length + 1).join("-")); }
+        $$(".checklist-item", section).forEach(function (label) {
+          var cb = label.querySelector("input[type='checkbox']");
+          var text = (label.textContent || "").replace(/\s+/g, " ").trim();
+          lines.push("  " + (cb && cb.checked ? "[x]" : "[ ]") + " " + text);
+        });
+        lines.push("");
+      });
+
+      lines.push("Notes / Follow-Ups", "-------------------", notes || "None", "", "Generated via HF-HPA Store Visit Checklist");
+
+      var blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "StoreVisit_" + (store || "Store") + "_" + date + ".txt";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /* ============================================================
+     MAP — store status board (in-memory; resets daily)
+     ============================================================ */
+  var storeState = {};   // id -> { watered, issues: [] }
+  var selectedStore = null;
+
+  function stateFor(id) {
+    if (!storeState[id]) storeState[id] = { watered: false, issues: [] };
+    return storeState[id];
+  }
+
+  function statusColor(s) {
+    return s === "ok" ? "var(--good)" : s === "warn" ? "var(--warn)" : "var(--bad)";
+  }
+
+  function renderStoreList() {
+    var list = $("storeList");
+    list.innerHTML = "";
+    STORES.forEach(function (store) {
+      var st = stateFor(store.id);
+      var card = document.createElement("button");
+      card.className = "sku-card"; card.type = "button";
+      card.style.padding = "10px 12px";
+      card.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="width:12px;height:12px;border-radius:50%;background:' + statusColor(store.status) + ';box-shadow:0 0 0 2px rgba(255,255,255,.15);"></span>' +
+          '<span class="sku-name" style="margin:0;padding:0;font-size:.92rem;">#' + esc(store.id) + '</span>' +
+        '</div>' +
+        '<div class="sku-meta" style="margin-top:4px;">' + esc(store.name) + '</div>' +
+        '<div class="sku-meta">' + (st.watered ? "💧 watered" : "—") +
+          (st.issues.length ? " · 🚩 " + st.issues.length : "") + '</div>';
+      card.addEventListener("click", function () { selectStore(store.id); });
+      list.appendChild(card);
+    });
+  }
+
+  function selectStore(id) {
+    selectedStore = id;
+    var store = STORES.filter(function (s) { return s.id === id; })[0];
+    if (!store) return;
+    var st = stateFor(id);
+
+    $("spSub").textContent = store.name;
+    $("spTitle").textContent = "#" + store.id;
+    $("spWatered").textContent = st.watered ? "Yes" : "No";
+    $("spNegatives").textContent = store.negatives;
+    $("spIssues").textContent = st.issues.length;
+
+    $("btnQuickWater").disabled = false;
+    $("btnAddIssue").disabled = false;
+
+    var issueWrap = $("spIssueList");
+    if (st.issues.length) {
+      issueWrap.innerHTML = '<div class="form-label" style="margin-bottom:4px;">Open issues</div>' +
+        st.issues.map(function (txt) {
+          return '<div class="kv" style="margin-top:4px;"><span style="text-transform:none;letter-spacing:0;color:var(--text);font-size:.82rem;">🚩 ' + esc(txt) + '</span></div>';
+        }).join("");
+    } else {
+      issueWrap.innerHTML = '<div class="section-subtitle">No open issues logged.</div>';
+    }
+    $("spTitle").focus();
+  }
+
+  function initMap() {
+    try {
+      $("mapWeekBadge").textContent = "Week of " + todayKey();
+    } catch (e) {}
+    renderStoreList();
+
+    $("btnQuickWater").addEventListener("click", function () {
+      if (!selectedStore) return;
+      stateFor(selectedStore).watered = true;
+      selectStore(selectedStore);
+      renderStoreList();
+    });
+
+    $("btnAddIssue").addEventListener("click", function () {
+      if (!selectedStore) return;
+      var store = STORES.filter(function (s) { return s.id === selectedStore; })[0];
+      $("issueStoreLabel").textContent = "Store #" + selectedStore + (store ? " — " + store.name : "");
+      $("issueText").value = "";
+      openPopup("issueBackdrop");
+      setTimeout(function () { $("issueText").focus(); }, 0);
+    });
+
+    $("issueSaveBtn").addEventListener("click", function () {
+      var txt = ($("issueText").value || "").trim();
+      if (!txt || !selectedStore) { closePopup("issueBackdrop"); return; }
+      stateFor(selectedStore).issues.push(txt);
+      closePopup("issueBackdrop");
+      selectStore(selectedStore);
+      renderStoreList();
+    });
+  }
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    // Subtab wiring
+    wireTabs("products", { skus: "products-skus", orders: "products-orders" }, "#view-products");
+    wireTabs("careid", { plants: "careid-plants", pests: "careid-pests" }, "#view-careid");
+    wireTabs("ops", { protocols: "ops-protocols", visit: "ops-visit" }, "#view-ops");
+    wireTabs("hpa", { claims: "hpa-claims", nonorder: "hpa-nonorder", inventory: "hpa-inventory", bi: "hpa-bi", pictures: "hpa-pictures" }, "#ops-protocols");
+    wireTabs("damage", { cold: "damage-cold", pest: "damage-pest" }, "#hpa-claims");
+    wireTabs("store", { walk: "store-walk", pods: "store-pods", cleanup: "store-cleanup", pictures: "store-pictures" }, "#ops-visit");
+
+    // Build static content
+    renderProtocols();
+    renderStoreVisit();
+
+    // Feature inits
+    initMap();
+    initSkus();
+    initOrders();
+    initCareId();
+    initVisitExport();
+
+    // Auth: resume session if a user is saved
+    var savedUser;
+    try { savedUser = localStorage.getItem("hub_user"); } catch (e) {}
+    if (savedUser) {
+      setUser(savedUser);
+      var savedView;
+      try { savedView = sessionStorage.getItem("hub_view"); } catch (e) {}
+      showApp(savedView || "map");
+    } else {
+      showSplash();
+    }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
   </script>
-
-  <script>
-    (function AppController(){
-      const $ = (id)=>document.getElementById(id);
-
-      const viewSplash  = $("view-splash");
-      const viewLogin   = $("view-login");
-      const topbar      = $("topbar");
-      const globalTabs  = $("globalTabs");
-      const userPill    = $("userPill");
-
-      const splashEnter = $("splashEnter");
-      const loginBtn    = $("loginBtn");
-      const loginUser   = $("loginUser");
-      const loginPass   = $("loginPass");
-      const loginError  = $("loginError");
-      const logoutBtn   = $("logoutBtn");
-
-      const VIEWS = ["map","hf","hpa","admin","training"];
-
-      function setVisible(el, on){
-        if(!el) return;
-        el.classList.toggle("hidden", !on);
-      }
-
-      function showAuthShell(on){
-        setVisible(topbar, on);
-        setVisible(globalTabs, on);
-      }
-
-      function showOnlyView(name){
-        VIEWS.forEach(v=>{
-          const el = $("view-"+v);
-          setVisible(el, v===name);
-        });
-
-        document.querySelectorAll("#globalTabs .tab[data-view]").forEach(b=>{
-          b.classList.toggle("active", b.dataset.view === name);
-        });
-
-        sessionStorage.setItem("hub_view", name);
-      }
-
-      function showSplash(){
-        showAuthShell(false);
-        setVisible(viewSplash, true);
-        setVisible(viewLogin, false);
-        VIEWS.forEach(v=> setVisible($("view-"+v), false));
-        sessionStorage.removeItem("hub_view");
-      }
-
-      function showLogin(){
-        showAuthShell(false);
-        setVisible(viewSplash, false);
-        setVisible(viewLogin, true);
-        VIEWS.forEach(v=> setVisible($("view-"+v), false));
-        loginError.textContent = "";
-        setTimeout(()=> loginUser?.focus(), 0);
-      }
-
-      function showApp(defaultView="map"){
-        showAuthShell(true);
-        setVisible(viewSplash, false);
-        setVisible(viewLogin, false);
-        showOnlyView(defaultView);
-      }
-
-      function setUser(username){
-        const u = (username || "User").trim() || "User";
-        window.App.user = { username: u };
-        if(userPill) userPill.textContent = u;
-        localStorage.setItem("hub_user", u);
-      }
-
-      function enterFromSplash(){
-        showLogin();
-      }
-      splashEnter?.addEventListener("click", enterFromSplash);
-      splashEnter?.addEventListener("keydown", (e)=>{
-        if(e.key === "Enter" || e.key === " "){
-          e.preventDefault();
-          enterFromSplash();
-        }
-      });
-
-      function doLogin(){
-        const u = loginUser?.value || "";
-        const p = loginPass?.value || "";
-
-        if(!u.trim()){
-          loginError.textContent = "Please enter a username.";
-          loginUser?.focus();
-          return;
-        }
-        if(!p.trim()){
-          loginError.textContent = "Please enter a password.";
-          loginPass?.focus();
-          return;
-        }
-
-        setUser(u);
-        showApp(sessionStorage.getItem("hub_view") || "map");
-      }
-
-      loginBtn?.addEventListener("click", doLogin);
-      [loginUser, loginPass].forEach(el=>{
-        el?.addEventListener("keydown", (e)=>{
-          if(e.key === "Enter") doLogin();
-        });
-      });
-
-      document.querySelectorAll("#globalTabs .tab[data-view]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          showOnlyView(btn.dataset.view);
-        });
-      });
-
-      logoutBtn?.addEventListener("click", ()=>{
-        localStorage.removeItem("hub_user");
-        sessionStorage.removeItem("hub_view");
-        showSplash();
-      });
-
-      const savedUser = localStorage.getItem("hub_user");
-      if(savedUser){
-        setUser(savedUser);
-        showApp(sessionStorage.getItem("hub_view") || "map");
-      } else {
-        showSplash();
-      }
-    })();
-  </script>
-
-  <script>
-    (function HFController(){
-      const $ = (id)=>document.getElementById(id);
-
-      let hfGuidelinesData = [];
-      let hfPerennialsData = [];
-      let pestsData = [];
-
-      async function loadHFData() {
-        hfGuidelinesData = await loadCSV("hf_guidelines.csv");
-        hfPerennialsData = await loadCSV("hf_perennials.csv");
-        pestsData = await loadCSV("pests.csv");
-
-        renderHFGuidelines();
-        renderHFPerennials();
-        renderPests();
-      }
-
-      function renderHFGuidelines() {
-        const container = $("hf-guidelines");
-        if (!hfGuidelinesData || hfGuidelinesData.length === 0) {
-          container.innerHTML = "<p class='loading'>No guidelines data found.</p>";
-          return;
-        }
-
-        let html = "";
-        for (let i = 1; i < hfGuidelinesData.length; i++) {
-          const row = hfGuidelinesData[i];
-          if (row.length < 3) continue;
-          html += `<div style="margin-bottom:16px;"><strong>${window.esc(row[0])}</strong><p style="color:var(--muted);margin-top:4px;">${window.esc(row[1])}</p></div>`;
-        }
-
-        container.innerHTML = html || "<p class='loading'>No data available.</p>";
-      }
-
-      function renderHFPerennials() {
-        const container = $("hf-plants");
-        if (!hfPerennialsData || hfPerennialsData.length === 0) {
-          container.innerHTML = "<p class='loading'>No perennials data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = hfPerennialsData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < Math.min(hfPerennialsData.length, 51); i++) {
-          const row = hfPerennialsData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      function renderPests() {
-        const container = $("hf-pests");
-        if (!pestsData || pestsData.length === 0) {
-          container.innerHTML = "<p class='loading'>No pests data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = pestsData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < pestsData.length; i++) {
-          const row = pestsData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      document.querySelectorAll("#view-hf .tabs .tab[data-hf-tab]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.hfTab;
-          document.querySelectorAll("#view-hf > div").forEach(el=>{
-            if(el.classList.contains("tabs")) return;
-            el.classList.add("hidden");
-          });
-          $(("hf-" + tab))?.classList.remove("hidden");
-          document.querySelectorAll("#view-hf .tabs .tab[data-hf-tab]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.hfTab === tab);
-          });
-        });
-      });
-
-      document.querySelectorAll("#hf-care .tabs .tab[data-hf-care]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.hfCare;
-          $("hf-plants")?.classList.toggle("hidden", tab !== "plants");
-          $("hf-pests")?.classList.toggle("hidden", tab !== "pests");
-          document.querySelectorAll("#hf-care .tabs .tab[data-hf-care]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.hfCare === tab);
-          });
-        });
-      });
-
-      loadHFData();
-    })();
-  </script>
-
-  <script>
-    (function HPAController(){
-      const $ = (id)=>document.getElementById(id);
-
-      let hpaGuidelinesData = [];
-      let skuData = [];
-      let orderBreakdownData = [];
-      let plantsData = [];
-      let pestsData = [];
-
-      async function loadHPAData() {
-        hpaGuidelinesData = await loadCSV("hpa_guidelines.csv");
-        skuData = await loadCSV("SKU_Name_2026.csv");
-        orderBreakdownData = await loadCSV("OrderBreakdown.csv");
-        plantsData = await loadCSV("plants.csv");
-        pestsData = await loadCSV("pests.csv");
-
-        renderHPAGuidelines();
-        renderSKUData();
-        renderOrderBreakdown();
-        renderHPAPlants();
-        renderHPAPests();
-      }
-
-      function renderHPAGuidelines() {
-        const container = $("hpa-guidelines");
-        if (!hpaGuidelinesData || hpaGuidelinesData.length === 0) {
-          container.innerHTML = "<p class='loading'>No guidelines data found.</p>";
-          return;
-        }
-
-        let html = "";
-        for (let i = 1; i < hpaGuidelinesData.length; i++) {
-          const row = hpaGuidelinesData[i];
-          if (row.length < 3) continue;
-          html += `<div style="margin-bottom:16px;"><strong>${window.esc(row[0])}</strong><p style="color:var(--muted);margin-top:4px;">${window.esc(row[1])}</p></div>`;
-        }
-
-        container.innerHTML = html || "<p class='loading'>No data available.</p>";
-      }
-
-      function renderSKUData() {
-        const container = $("products-skus");
-        if (!skuData || skuData.length === 0) {
-          container.innerHTML = "<p class='loading'>No SKU data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = skuData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < Math.min(skuData.length, 101); i++) {
-          const row = skuData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      function renderOrderBreakdown() {
-        const container = $("products-orders");
-        if (!orderBreakdownData || orderBreakdownData.length === 0) {
-          container.innerHTML = "<p class='loading'>No order data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = orderBreakdownData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < orderBreakdownData.length; i++) {
-          const row = orderBreakdownData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      function renderHPAPlants() {
-        const container = $("hpa-plants");
-        if (!plantsData || plantsData.length === 0) {
-          container.innerHTML = "<p class='loading'>No plants data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = plantsData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < Math.min(plantsData.length, 61); i++) {
-          const row = plantsData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      function renderHPAPests() {
-        const container = $("hpa-pests");
-        if (!pestsData || pestsData.length === 0) {
-          container.innerHTML = "<p class='loading'>No pests data found.</p>";
-          return;
-        }
-
-        let html = "<table class='data-table'><thead><tr>";
-        const headers = pestsData[0];
-        headers.forEach(h => html += `<th>${window.esc(h)}</th>`);
-        html += "</tr></thead><tbody>";
-
-        for (let i = 1; i < pestsData.length; i++) {
-          const row = pestsData[i];
-          html += "<tr>";
-          row.forEach(cell => html += `<td>${window.esc(cell)}</td>`);
-          html += "</tr>";
-        }
-
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }
-
-      // Main tab switching
-      document.querySelectorAll("#view-hpa .tabs:first-of-type .tab[data-hpa-tab]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.hpaTab;
-          $("hpa-guidelines")?.classList.toggle("hidden", tab !== "guidelines");
-          $("hpa-products")?.classList.toggle("hidden", tab !== "products");
-          $("hpa-care")?.classList.toggle("hidden", tab !== "care");
-          document.querySelectorAll("#view-hpa .tabs:first-of-type .tab[data-hpa-tab]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.hpaTab === tab);
-          });
-        });
-      });
-
-      // Products subtabs
-      document.querySelectorAll("#hpa-products .tab[data-products]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.products;
-          $("products-skus")?.classList.toggle("hidden", tab !== "skus");
-          $("products-orders")?.classList.toggle("hidden", tab !== "orders");
-          document.querySelectorAll("#hpa-products .tab[data-products]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.products === tab);
-          });
-        });
-      });
-
-      // Care subtabs
-      document.querySelectorAll("#hpa-care .tabs .tab[data-hpa-care]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const tab = btn.dataset.hpaCare;
-          $("hpa-plants")?.classList.toggle("hidden", tab !== "plants");
-          $("hpa-pests")?.classList.toggle("hidden", tab !== "pests");
-          document.querySelectorAll("#hpa-care .tabs .tab[data-hpa-care]").forEach(b=>{
-            b.classList.toggle("active", b.dataset.hpaCare === tab);
-          });
-        });
-      });
-
-      loadHPAData();
-    })();
-  </script>
-
 </body>
 </html>
