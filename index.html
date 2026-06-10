@@ -14,36 +14,37 @@
 
   <style>
     :root{
-      /* Surfaces */
-      --bg:#070d1a;
-      --panel:#0e1729;
-      --panel-2:#111c33;
-      --panel-raised:#16243f;
-      --line:#1f2e4a;
-      --line-soft:#192540;
+      /* Surfaces — sunlit greenhouse: cream glass on warm sage */
+      --bg:#eef3e6;
+      --panel:#ffffff;
+      --panel-2:#f7faf1;
+      --panel-raised:#eef4e4;
+      --line:#d4e0c4;
+      --line-soft:#e3ebd6;
 
-      /* Text */
-      --text:#dbe4f0;
-      --heading:#f4f8ff;
-      --muted:#8a98b0;
-      --faint:#5d6b86;
+      /* Text — deep foliage on light */
+      --text:#33402f;
+      --heading:#1f3320;
+      --muted:#6f7d63;
+      --faint:#9aa78b;
 
-      /* Accent */
-      --accent:#34d3c0;
-      --accent-2:#3ba8ff;
-      --accent-soft:rgba(52,211,192,.14);
-      --accent-line:rgba(52,211,192,.45);
+      /* Accent — leaf green + terracotta */
+      --accent:#3f8f4f;
+      --accent-2:#6bbf59;
+      --accent-soft:rgba(63,143,79,.12);
+      --accent-line:rgba(63,143,79,.40);
+      --terra:#c2683f;
 
       /* Status */
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#f87171;
+      --good:#4a9d54;
+      --warn:#e0a32e;
+      --bad:#d1573f;
 
       --radius:14px;
       --radius-sm:10px;
       --radius-pill:999px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --shadow-lg:0 24px 60px rgba(0,0,0,.5);
+      --shadow:0 8px 24px rgba(60,84,48,.12);
+      --shadow-lg:0 20px 50px rgba(45,66,38,.22);
       --t:.16s ease;
 
       --maxw:1180px;
@@ -54,8 +55,9 @@
     body{
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(1200px 600px at 15% -5%, #0d2236 0%, transparent 55%),
-        radial-gradient(900px 500px at 95% 0%, #0c1c33 0%, transparent 50%),
+        radial-gradient(1100px 560px at 12% -8%, rgba(150,200,120,.45) 0%, transparent 55%),
+        radial-gradient(900px 520px at 92% -4%, rgba(255,239,196,.55) 0%, transparent 52%),
+        radial-gradient(800px 800px at 80% 110%, rgba(120,175,110,.30) 0%, transparent 60%),
         var(--bg);
       background-attachment:fixed;
       color:var(--text);
@@ -105,7 +107,7 @@
       font-size:.78rem; padding:4px 8px; border-radius:var(--radius-pill); font-family:inherit;
       transition:color var(--t), background var(--t);
     }
-    .user-chip button:hover{ color:var(--heading); background:rgba(255,255,255,.05); }
+    .user-chip button:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
 
     /* ---------- Primary nav ---------- */
     .nav{
@@ -119,10 +121,10 @@
       background:transparent; color:var(--muted); cursor:pointer; font-size:.88rem;
       font-weight:600; white-space:nowrap; font-family:inherit; transition:all var(--t);
     }
-    .nav button:hover{ color:var(--heading); background:rgba(255,255,255,.04); }
+    .nav button:hover{ color:var(--heading); background:rgba(63,143,79,.08); }
     .nav button.active{
-      color:#04141a; background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 6px 18px rgba(52,211,192,.3);
+      color:#ffffff; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 6px 16px rgba(63,143,79,.32);
     }
     .nav button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
@@ -163,7 +165,7 @@
       padding:10px 18px; border:none; border-radius:var(--radius-sm); cursor:pointer;
       font-size:.88rem; font-weight:700; font-family:inherit; transition:transform var(--t), filter var(--t), background var(--t);
     }
-    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#04141a; box-shadow:0 8px 22px rgba(52,211,192,.28); }
+    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#ffffff; box-shadow:0 8px 20px rgba(63,143,79,.30); }
     .btn-primary:hover{ filter:brightness(1.05); transform:translateY(-1px); }
     .btn-primary:disabled{ opacity:.45; cursor:not-allowed; transform:none; filter:none; box-shadow:none; }
     .btn-ghost{ background:var(--panel-raised); color:var(--text); border:1px solid var(--line); }
@@ -230,7 +232,7 @@
     table.data th{ text-align:left; padding:11px 13px; background:var(--panel-raised); color:#c8d6ec; font-weight:600; border-bottom:1px solid var(--line); }
     table.data td{ padding:10px 13px; border-bottom:1px solid var(--line-soft); color:var(--text); }
     table.data tr:last-child td{ border-bottom:none; }
-    table.data tbody tr:hover{ background:rgba(52,211,192,.06); }
+    table.data tbody tr:hover{ background:rgba(63,143,79,.07); }
     .chip-warn{ background:var(--warn); color:#3b2c00; padding:2px 8px; border-radius:var(--radius-pill); font-weight:700; font-size:.74rem; }
 
     .ob-meta{ display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
@@ -324,7 +326,7 @@
       position:fixed; right:20px; bottom:20px; z-index:9500;
       width:60px; height:60px; border-radius:50%; border:none; cursor:pointer;
       background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 12px 30px rgba(52,211,192,.4); font-size:1.6rem;
+      box-shadow:0 12px 28px rgba(63,143,79,.42); font-size:1.6rem;
       display:flex; align-items:center; justify-content:center; transition:transform var(--t);
     }
     .sprout-fab:hover{ transform:scale(1.06); }
@@ -339,7 +341,7 @@
     }
     .sprout-panel.show{ display:flex; }
     .sprout-head{ display:flex; align-items:center; gap:11px; padding:14px 16px; border-bottom:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(52,211,192,.16), rgba(59,168,255,.12)); }
+      background:linear-gradient(135deg, rgba(107,191,89,.20), rgba(63,143,79,.12)); }
     .sprout-head .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
       background:linear-gradient(135deg, var(--accent), var(--accent-2)); font-size:1.15rem; }
     .sprout-head .who{ flex:1; }
@@ -347,12 +349,12 @@
     .sprout-head .who .status{ color:var(--muted); font-size:.74rem; }
     .sprout-head button{ border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:1.3rem; line-height:1;
       width:30px; height:30px; border-radius:8px; transition:color var(--t), background var(--t); }
-    .sprout-head button:hover{ color:var(--heading); background:rgba(255,255,255,.06); }
+    .sprout-head button:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
 
     .sprout-log{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
     .msg{ max-width:85%; padding:10px 13px; border-radius:14px; font-size:.86rem; line-height:1.45; white-space:pre-wrap; word-wrap:break-word; }
     .msg.bot{ align-self:flex-start; background:var(--panel-raised); border:1px solid var(--line); border-bottom-left-radius:4px; color:var(--text); }
-    .msg.user{ align-self:flex-end; background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#04141a; border-bottom-right-radius:4px; font-weight:500; }
+    .msg.user{ align-self:flex-end; background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#ffffff; border-bottom-right-radius:4px; font-weight:500; }
     .msg.bot a{ color:var(--accent); }
     .chips{ display:flex; flex-wrap:wrap; gap:7px; padding:0 14px 12px; }
     .chips button{ font-size:.76rem; padding:6px 11px; border-radius:var(--radius-pill); border:1px solid var(--line);
@@ -366,6 +368,18 @@
     .typing span:nth-child(2){ animation-delay:.2s; }
     .typing span:nth-child(3){ animation-delay:.4s; }
     @keyframes blink{ 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+
+    .progress-track{ height:8px; border-radius:var(--radius-pill); background:var(--bg); border:1px solid var(--line); overflow:hidden; }
+    .progress-fill{ height:100%; width:0%; border-radius:var(--radius-pill); background:var(--good); transition:width .3s ease, background .3s ease; }
+
+    .cl-live-item{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:.86rem; cursor:pointer; }
+    .cl-live-item:last-child{ border-bottom:none; }
+    .cl-live-item input{ width:auto; margin-top:3px; accent-color:var(--accent); flex:0 0 auto; }
+    .cl-live-text{ flex:1; color:var(--text); }
+    .cl-live-text.done{ color:var(--muted); text-decoration:line-through; }
+    .cl-admin{ display:inline-flex; gap:4px; flex:0 0 auto; }
+    .cl-icon{ border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:.85rem; padding:2px 5px; border-radius:6px; transition:color var(--t), background var(--t); }
+    .cl-icon:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
 
     .footer{ margin-top:22px; text-align:center; font-size:.76rem; color:var(--faint); }
 
@@ -395,7 +409,7 @@
         <div class="panel panel-pad login">
           <div class="logo-wrap"><img src="hf_logo.png" alt="" /></div>
           <h2>Sign in</h2>
-          <div class="sub">Internal tool — enter your name to continue</div>
+          <div class="sub">Internal tool — enter your name. Use the admin code to edit the shared checklist.</div>
           <div class="row">
             <label class="field-label" for="loginUser">Name</label>
             <input id="loginUser" type="text" autocomplete="username" />
@@ -448,23 +462,31 @@
             </div>
             <div id="map"></div>
             <div class="legend">
-              <span><i style="background:var(--good)"></i> Complete</span>
-              <span><i style="background:var(--warn)"></i> In progress</span>
-              <span><i style="background:var(--bad)"></i> Needs work</span>
+              <span><i style="background:var(--good)"></i> 100% complete</span>
+              <span><i style="background:var(--warn)"></i> 50–99%</span>
+              <span><i style="background:var(--bad)"></i> Under 50%</span>
             </div>
           </div>
 
           <aside class="panel panel-pad">
             <div style="font-size:.78rem;color:var(--muted);" id="spSub">No store selected</div>
             <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">—</h3>
-            <div class="kv"><span class="k">Watered today</span><span class="v" id="spWatered">—</span></div>
-            <div class="kv"><span class="k">Negatives</span><span class="v" id="spNegatives">—</span></div>
-            <div class="kv"><span class="k">Open issues</span><span class="v" id="spIssues">—</span></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
-              <button id="btnWater" class="btn btn-primary" disabled type="button">💧 Mark watered</button>
-              <button id="btnIssue" class="btn btn-ghost" disabled type="button">🚩 Add issue</button>
+
+            <div id="spProgressWrap" class="hidden" style="margin-top:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span class="field-label" style="margin:0;">Checklist complete</span>
+                <span id="spProgressPct" style="font-weight:700;color:var(--heading);">0%</span>
+              </div>
+              <div class="progress-track"><div id="spProgressBar" class="progress-fill"></div></div>
             </div>
-            <div id="spIssueList" style="margin-top:14px;"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+              <span class="field-label" style="margin:0;">Store checklist</span>
+              <button id="btnAddItem" class="btn btn-ghost admin-only hidden" disabled type="button" style="padding:6px 12px;font-size:.8rem;">＋ Add item</button>
+            </div>
+            <div id="spChecklist" style="margin-top:10px;">
+              <div style="color:var(--muted);font-size:.84rem;">Select a store to see its checklist.</div>
+            </div>
           </aside>
         </div>
       </section>
@@ -546,58 +568,15 @@
         </div>
       </section>
 
-      <!-- ===== STORE OPS ===== -->
+      <!-- ===== STORE OPS — GUIDELINES ===== -->
       <section id="view-ops" class="hidden">
-        <div class="head"><h2>Store Operations</h2><p>Damage flows, protocols, picture standards, and the store-visit checklist.</p></div>
+        <div class="head"><h2>Store Operations</h2><p>Reference guidelines for the houseplant area and the field. Admins can edit them live.</p></div>
         <div class="subnav">
-          <button class="active" data-ops="protocols" type="button">HPA Protocols</button>
-          <button data-ops="visit" type="button">Store Visit</button>
+          <button class="active" data-ops="hpa" type="button">HPA Guidelines</button>
+          <button data-ops="hf" type="button">HF Guidelines</button>
         </div>
-
-        <div id="ops-protocols">
-          <div class="subnav tight">
-            <button class="active" data-hpa="claims" type="button">Damage Claims</button>
-            <button data-hpa="nonorder" type="button">Non-Order Days</button>
-            <button data-hpa="inventory" type="button">Weekly Inventory</button>
-            <button data-hpa="bi" type="button">BI / Reporting</button>
-            <button data-hpa="pictures" type="button">Picture Standards</button>
-          </div>
-          <div id="hpa-claims">
-            <div class="subnav tight">
-              <button class="active" data-damage="cold" type="button">Cold Damage</button>
-              <button data-damage="pest" type="button">Pest Damage</button>
-            </div>
-            <div id="damage-cold" class="panel panel-pad"></div>
-            <div id="damage-pest" class="panel panel-pad hidden"></div>
-          </div>
-          <div id="hpa-nonorder" class="panel panel-pad hidden"></div>
-          <div id="hpa-inventory" class="panel panel-pad hidden"></div>
-          <div id="hpa-bi" class="hidden"></div>
-          <div id="hpa-pictures" class="hidden"></div>
-        </div>
-
-        <div id="ops-visit" class="hidden">
-          <div class="visit-meta">
-            <div><label class="field-label" for="visitStore">Store #</label><input id="visitStore" type="text" placeholder="e.g. 1234" /></div>
-            <div><label class="field-label" for="visitDate">Visit date</label><input id="visitDate" type="date" /></div>
-            <div><label class="field-label" for="visitRep">Rep / Visitor</label><input id="visitRep" type="text" placeholder="Your name" /></div>
-          </div>
-          <div class="subnav tight">
-            <button class="active" data-store="walk" type="button">Store Walk</button>
-            <button data-store="pods" type="button">Pod Merchandising</button>
-            <button data-store="cleanup" type="button">Clean Up / Water</button>
-            <button data-store="pictures" type="button">Pictures</button>
-          </div>
-          <div id="store-walk"></div>
-          <div id="store-pods" class="hidden"></div>
-          <div id="store-cleanup" class="hidden"></div>
-          <div id="store-pictures" class="hidden"></div>
-          <div style="margin-top:14px;">
-            <label class="field-label" for="visitNotes">Visit notes / follow-ups</label>
-            <textarea id="visitNotes" placeholder="Key issues, wins, follow-ups, and anything for the HF team."></textarea>
-          </div>
-          <button id="exportVisit" class="btn btn-primary" style="margin-top:14px;" type="button">📄 Download visit summary (.txt)</button>
-        </div>
+        <div id="ops-hpa"><div id="guide-hpa"></div></div>
+        <div id="ops-hf" class="hidden"><div id="guide-hf"></div></div>
       </section>
 
       <div class="footer">HF-HPA internal tool · Map · Product Info · Care &amp; ID · Store Operations</div>
@@ -637,13 +616,14 @@
     <div class="modal-actions"><button class="btn btn-primary" data-close="pestModal" type="button">Close</button></div>
   </div></div>
 
-  <div id="issueModal" class="modal-back"><div class="modal">
-    <h3>Add issue</h3><div class="latin" id="issueStoreLabel"></div>
-    <div class="fld"><label class="field-label" for="issueText">Describe the issue</label>
-      <textarea id="issueText" placeholder="e.g. POD 3 needs restock; negatives on 4&quot; foliage"></textarea></div>
+  <div id="itemEditor" class="modal-back"><div class="modal">
+    <h3 id="itemEditorTitle">Add checklist item</h3>
+    <div class="latin">This list is shared across every store.</div>
+    <div class="fld"><label class="field-label" for="itemText">Item text</label>
+      <textarea id="itemText" placeholder="e.g. Vigoro rack restocked and faced"></textarea></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" data-close="issueModal" type="button">Cancel</button>
-      <button id="issueSave" class="btn btn-primary" type="button">Save issue</button>
+      <button class="btn btn-ghost" data-close="itemEditor" type="button">Cancel</button>
+      <button id="itemSave" class="btn btn-primary" type="button">Save item</button>
     </div>
   </div></div>
 
@@ -673,7 +653,7 @@
    ============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-  getDatabase, ref, onValue, set, update, push, serverTimestamp, goOnline
+  getDatabase, ref, onValue, set, update, push, remove, get, child, serverTimestamp, goOnline
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
 /* ---------- Firebase config ---------- */
@@ -703,20 +683,37 @@ const FILES = {
   plants:     "plants.csv",
   pests:      "pests.csv"
 };
+/* Store locations are read from one of these (first that loads wins). */
+const STORE_FILES = ["stores.csv", "store.csv"];
+
+/* ====== ADMIN ACCESS ======
+   Enter this code in the "Access code" field at login to unlock checklist editing.
+   Anyone can still sign in with any other code as a normal (check-only) user.      */
+const ADMIN_CODE = "hf-admin";
+
+/* Starter checklist used the first time the database has none. Admins can edit it live. */
+const DEFAULT_CHECKLIST = [
+  "Pods reset short-to-tall",
+  "Dead/unsellable product removed",
+  "Labels faced and readable",
+  "Floor swept and clear",
+  "Product watered",
+  "Photos sent to manager"
+];
 
 const STORE_GRADES_BY_WEEK = {
   "6":"All stores","7":"All stores","8":"A/B","9":"SKIP",
   "10":"All stores","11":"All stores","12":"All stores","13":"All stores"
 };
 
-/* Default store roster with real coordinates (editable / overridden by Firebase). */
+/* Fallback roster used only if no stores CSV is found. */
 const DEFAULT_STORES = [
-  { id:"1201", name:"Elgin, IL",        lat:42.0354, lng:-88.2826, status:"ok",   negatives:2 },
-  { id:"1248", name:"Schaumburg, IL",   lat:42.0334, lng:-88.0834, status:"warn", negatives:5 },
-  { id:"1305", name:"Naperville, IL",   lat:41.7508, lng:-88.1535, status:"bad",  negatives:11 },
-  { id:"1412", name:"Aurora, IL",       lat:41.7606, lng:-88.3201, status:"ok",   negatives:0 },
-  { id:"1533", name:"Crystal Lake, IL", lat:42.2411, lng:-88.3162, status:"warn", negatives:3 },
-  { id:"1610", name:"Rockford, IL",     lat:42.2711, lng:-89.0940, status:"ok",   negatives:1 }
+  { id:"1201", name:"Elgin, IL",        lat:42.0354, lng:-88.2826 },
+  { id:"1248", name:"Schaumburg, IL",   lat:42.0334, lng:-88.0834 },
+  { id:"1305", name:"Naperville, IL",   lat:41.7508, lng:-88.1535 },
+  { id:"1412", name:"Aurora, IL",       lat:41.7606, lng:-88.3201 },
+  { id:"1533", name:"Crystal Lake, IL", lat:42.2411, lng:-88.3162 },
+  { id:"1610", name:"Rockford, IL",     lat:42.2711, lng:-89.0940 }
 ];
 
 /* ---------- helpers ---------- */
@@ -780,6 +777,14 @@ document.addEventListener("keydown", e => { if(e.key==="Escape") $$(".modal-back
 const VIEWS = ["map","products","careid","ops"];
 const setVis = (el,on) => el && el.classList.toggle("hidden", !on);
 
+let isAdmin = false;
+/* Show or hide admin-only controls wherever they appear. */
+function applyAdminUI(){
+  $$(".admin-only").forEach(el => el.classList.toggle("hidden", !isAdmin));
+  const add=$("btnAddItem"); if(add) add.disabled = !isAdmin;
+  if(typeof renderGuidelines==="function" && $("guide-hpa")) renderGuidelines();
+}
+
 function showOnlyView(name){
   VIEWS.forEach(v => setVis($("view-"+v), v===name));
   $$('.nav [data-view]').forEach(b => b.classList.toggle("active", b.dataset.view===name));
@@ -798,23 +803,28 @@ function showApp(view){
   setVis($("view-splash"),false); setVis($("view-login"),false); setVis($("app"),true);
   showOnlyView(view||"map");
 }
-function setUser(name){
+function setUser(name, admin){
   const u=(name||"User").trim()||"User";
-  $("userName").textContent=u;
-  try { localStorage.setItem("hub_user",u); } catch(e){}
+  isAdmin = !!admin;
+  $("userName").textContent = u + (isAdmin ? " · Admin" : "");
+  try {
+    localStorage.setItem("hub_user",u);
+    localStorage.setItem("hub_admin", isAdmin ? "1" : "0");
+  } catch(e){}
+  applyAdminUI();
 }
 function doLogin(){
   const u=($("loginUser").value||"").trim(), p=($("loginPass").value||"").trim();
   if(!u){ $("loginError").textContent="Enter your name to continue."; $("loginUser").focus(); return; }
   if(!p){ $("loginError").textContent="Enter the access code to continue."; $("loginPass").focus(); return; }
-  setUser(u);
+  setUser(u, p === ADMIN_CODE);
   let saved; try{ saved=sessionStorage.getItem("hub_view"); }catch(e){}
   showApp(saved||"map");
 }
 $("splashEnter").addEventListener("click", showLogin);
 $("loginBtn").addEventListener("click", doLogin);
 [$("loginUser"),$("loginPass")].forEach(el => el.addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); }));
-$("logoutBtn").addEventListener("click", () => { try{ localStorage.removeItem("hub_user"); sessionStorage.removeItem("hub_view"); }catch(e){} showSplash(); });
+$("logoutBtn").addEventListener("click", () => { try{ localStorage.removeItem("hub_user"); localStorage.removeItem("hub_admin"); sessionStorage.removeItem("hub_view"); }catch(e){} isAdmin=false; showSplash(); });
 $$('.nav [data-view]').forEach(b => b.addEventListener("click", () => showOnlyView(b.dataset.view)));
 
 /* ---------- generic subtab switcher ---------- */
@@ -974,137 +984,162 @@ function initCareId(){
 /* ============================================================
    STORE OPS — content
    ============================================================ */
-function flow(steps){
-  return '<div class="flow">'+steps.map(s=>
-    `<div class="step"><div class="num${String(s.n).length>2?" wide":""}">${esc(s.n)}</div>
-     <div class="body"><h5>${esc(s.title)}</h5>${s.role?`<div class="role">${esc(s.role)}</div>`:""}<p>${s.text}</p></div></div>`
-  ).join("")+'</div>';
-}
-const banner=(t,s)=>`<div class="info-banner"><h4>${esc(t)}</h4><p>${esc(s)}</p></div>`;
-const clSection=(t,items)=>`<div class="cl-section"><h4>${esc(t)}</h4>${items.map(i=>`<label class="cl-item"><input type="checkbox"> <span>${i}</span></label>`).join("")}</div>`;
-const ulSection=(t,items)=>`<div class="cl-section"><h4>${esc(t)}</h4><ul class="cl-list">${items.map(i=>`<li>${i}</li>`).join("")}</ul></div>`;
+/* ============================================================
+   STORE OPS — Guidelines (HPA + HF), live & admin-editable
+   ============================================================ */
+let guidelines = { hpa:"", hf:"" };
+let editingGuide = null;   // "hpa" | "hf" while an admin edits
 
-const COLD=[
-  {n:1,title:"Identify Cold Damage",role:"FS – Field Supervisor",text:"Confirm symptoms of cold damage (water-soaked or darkened tissue, limp/collapsed growth, damage showing a day or two after exposure)."},
-  {n:2,title:"Take Photos",role:"FS",text:"Capture clear photos of full tables/racks and close-ups of the worst and typical plants, plus any visible cold exposure source."},
-  {n:3,title:"Send Photos to DM / RMM",role:"FS → DM / RMM",text:"Text or email photos with store #, department, and a quick description of what you're seeing."},
-  {n:4,title:"Notify Home Depot SM / ASM",role:"FS → Store Management",text:"Let the Store or Assistant Store Manager know about the cold damage, what product is affected, and that a claim is being started."},
-  {n:5,title:"Scan Product Under Training Mode",role:"FS",text:"Scan affected product under training mode as directed so the store is not charged incorrectly at the register."},
-  {n:6,title:"Capture Receipt & Share",role:"FS → DM / RMM",text:"Photograph the receipt or transaction record tied to the adjustment and send it to your DM/RMM."},
-  {n:7,title:"Provide Copy to Store",role:"FS → Store",text:"Give a copy of the receipt to the store so they can attach it to the store claim as needed."},
-  {n:8,title:"Record Cold Damage Internally",role:"FS / Office",text:"Record the loss in the required internal system per current HF / customer procedures."},
-  {n:9,title:"Share Claim Number with RMM",role:"FS → RMM",text:"Once you have the claim number from the store, send it to your RMM for the cold damage tracking sheet."},
-  {n:10,title:"Complete Cold Damage Spreadsheet",role:"RMM",text:"RMM fills out the cold damage spreadsheet and forwards it to the right contacts to submit to Depot."},
-  {n:11,title:"Approval & Payment / Credit",role:"Office / Depot",text:"Claim is submitted to Depot for approval. Once approved, payment/credit is processed per current accounting procedures."}
-];
-const PEST=[
-  {n:1,title:"Identify Pest Damage",role:"FS – Field Supervisor",text:"Confirm damage is pest-related: webbing, speckling, sticky residue, chewing, or visible pests."},
-  {n:2,title:"Take Photos",role:"FS",text:"Take clear close-ups of pests/webbing and wide shots of affected areas to show total volume affected."},
-  {n:3,title:"Isolate Affected Product",role:"FS",text:"Pull heavily affected plants away from healthy stock and mark them HOLD / DAMAGED so they're not watered or handled normally."},
-  {n:4,title:"Document Damage",role:"FS",text:"Record affected SKUs, approximate quantities, percentage of loss, and any treatment history (product, date, etc.)."},
-  {n:5,title:"Notify HF Leadership",role:"FS → DM → RMM",text:"Send photos and documentation to your DM and RMM for review and next steps."},
-  {n:6,title:"Submit Pest Claim Internally",role:"RMM / Office",text:"RMM and Office complete internal pest-damage documentation and submit to HF systems for review and credit."}
-];
-const NONORDER=[
-  {n:1,title:"Walk the HPA & Cull",text:"Walk the entire HPA, remove dead or unsellable product, and take dead plants to the compactor."},
-  {n:2,title:"Clean Plants",text:"Deadhead blooms and remove yellowing or damaged leaves so the floor looks fresh and healthy."},
-  {n:3,title:"Merchandise by POD / Table / Racks",text:"Reset tables, PODs, and CC racks: short-to-tall, category-with-category, no empty spaces, labels faced and clean."},
-  {n:4,title:"Sweep & Clean",text:"Sweep top and bottom of PODs and the floor; remove extra material from under tables and the sales view."},
-  {n:5,title:"Water & Check Drainage",text:"Water as needed (goal: twice per week). Remove extra water from pots if overwatered."},
-  {n:6,title:"Take Pictures & Recap",text:"Photograph all PODs, tables, and racks individually and send a recap to your supervisor noting work done and inventory concerns."}
-];
-const INVENTORY=[
-  {n:"Mon",title:"Order Skips & BI Review",text:"Send skip requests to your district by the deadline (based on rack counts and prior-week notes). Review stores in BI and flag inventory opportunities or issues."},
-  {n:"Tue",title:"First Delivery & PICAS Check",text:"Be on the floor for the first weekly delivery. Check product quality, compare delivery to PICAS, and send discrepancies to the HPA team. Note fast/slow sellers."},
-  {n:"Wed–Thu",title:"Pictures & Negative Inventory",text:"Photograph stores that received the weekly order (subject: HPA/Store#/Date). Keep checking negatives and sell-through; track rack counts by store."},
-  {n:"Fri–Sat",title:"Close Out & Requests",text:"Send rack counts, negative counts, and remaining pictures to your district. Send inventory requests to the HPA team (Friday or Monday morning)."}
-];
-const POD_BASE=[
-  "Remove unsellable product; compactor or empty CC rack at the back of the HPA if directed.",
-  "Remove yellowing/dead leaves on all plants.","Sweep off your pod.",
-  "Restock short-to-tall with fresh product from your delivery or overflow racks.",
-  "Move older product to the bottom of the pod (not the highlight area).",
-  "Restock the highlight area based on the HPA Guidelines.",
-  "Restock the bottom of the pod two deep.","Make sure all labels are facing out."
-];
+const DEFAULT_GUIDELINES = {
+  hpa:
+"WEEKLY RESET\n"+
+"• Walk the HPA, cull dead or unsellable product, and take it to the compactor.\n"+
+"• Deadhead blooms and remove yellowing or damaged leaves.\n"+
+"• Reset pods, tables, and CC racks short-to-tall, category with category, no empty spaces.\n"+
+"• Move older product to the bottom of the pod (out of the highlight area).\n"+
+"• Restock the highlight area per the current week's guidance.\n"+
+"• Face all labels and keep them clean and readable.\n\n"+
+"WATERING\n"+
+"• Water as needed, aiming for roughly twice per week.\n"+
+"• Remove standing water from pots that were overwatered.\n"+
+"• Spot-water dry or wilted product first thing during a visit.\n\n"+
+"PICTURES\n"+
+"• Photograph each pod, tropical table, and rack individually.\n"+
+"• Take pictures before watering to avoid wet floors and shiny pots.\n"+
+"• Send a recap to your supervisor (subject: HPA / Store # / Date).",
+  hf:
+"FIELD STANDARDS\n"+
+"• Review the HF App Houseplant Guidelines for the week before resetting.\n"+
+"• Check all incoming product for damage and pests on delivery.\n"+
+"• Stage delivery racks in the racetrack so they are shoppable.\n\n"+
+"DAMAGE & CLAIMS\n"+
+"• Cold damage: photograph, notify DM/RMM and store management, scan under training mode, capture the receipt, and share the claim number with your RMM.\n"+
+"• Pest damage (HF-only): isolate and mark HOLD/DAMAGED, document SKUs and loss, and notify DM/RMM for internal submission.\n\n"+
+"REPORTING\n"+
+"• Track rack counts and negatives by store each week.\n"+
+"• Send skip requests to your district by the deadline.\n"+
+"• Flag fast and slow sellers to the HPA team and your supervisor."
+};
 
-function renderProtocols(){
-  $("damage-cold").innerHTML=banner("Cold Damage Claim Flow","Use when product has been damaged by cold/freezing conditions.")+flow(COLD);
-  $("damage-pest").innerHTML=banner("Pest Damage Claim Flow","HF-only workflow for pest-related damage. No store involvement.")+flow(PEST);
-  $("hpa-nonorder").innerHTML=banner("Non-Order Day Protocol","What to focus on in the HPA when no order is delivering that day.")+flow(NONORDER);
-  $("hpa-inventory").innerHTML=banner("Weekly Inventory Process (Supervisors)","High-level weekly checklist for HF HPA supervisors.")+flow(INVENTORY);
-  $("hpa-bi").innerHTML=banner("BI Check List (Supervisors)","Key BI areas: inventory, negatives, comps, and sales performance.")
-    +ulSection("Inventory & Negatives",["Use the Consignment Report tab for roll-over inventory and units on hand.","Set ship date range from 1/1/2021 to current day for accurate inventory.","Sort inventory smallest to largest; review negatives and unusually large numbers.","Review sell-through by store, by SKU, and by category."])
-    +ulSection("Sales & Comps",["Use the Dashboard tab to review comp $$ and comp sell-through vs. last year.","Use the Monthly Sales tab to compare month-to-month performance.","Use Consignment Report (units) and Consignment Analysis (sales $$) as needed."])
-    +ulSection("Transfers & Adjustments",["On the Consignment Report tab, scroll to see transfer from / transfer to details.","Use adjustment / transfer fields to understand inventory movement between locations."])
-    +ulSection("BI Features & Filters",["Use drill down / drill up on each page (by store, SKU, category, supervisor).","Experiment with filters: product line, SKU, ship dates, ship-to, sales person, etc.","Click any line to update charts to that selection."]);
-  $("hpa-pictures").innerHTML=banner("Picture Standards Checklist","Use when deciding if photos are training-only or can be sent to Home Depot.")
-    +clSection("Basic Quality",["Pictures are clear and not blurry.","Retail labels are front facing and readable."])
-    +clSection("POD / Table Layout",["Correct category is in the correct spot (if not, there is a clear reason).","Top of POD is stripped short-to-tall; décor blocked but still short-to-tall.","Bottom of POD is 2 rows deep and organized (not packed solid).","No trays for 6\" pots or larger; trays only for PW Littles / 4\" foliage.","PODs are clearly shoppable (no racks blocking access)."])
-    +clSection("Racks & Displays",["Vigoro racks are filled correctly and organized.","PW racks are filled correctly and organized.","Basket displays are organized with one variety per rod.","Surplus racks are organized by category and condensed where possible."])
-    +clSection("Inventory & Space",["No obvious empty space — product is not too sparse or too tight.","Racks and tables are not overloaded; layout fits current inventory level."])
-    +clSection("Cleanliness & Timing",["Floor is swept, clear of clutter and garbage.","Background is clear of unnecessary items and distractions.","Pictures are taken before watering (avoids wet floor / shiny pots)."])
-    +clSection("Where Should Photos Go?",["Decide if this photo goes to Home Depot or is kept for HF/HPA inventory review and training only."]);
-}
-function renderVisit(){
-  $("store-walk").innerHTML=
-    clSection("1. Readiness",["Check that pods, tables, and overflow racks are shoppable in the HPA.","Emergency spot-water any product that is dry or wilted.","Remove unsellable product and take it to the compactor.","If product might bounce back, water it and move it off main displays."])
-    +clSection("2. Delivery Check",["If a shipment is scheduled, walk the store and receiving to locate your delivery.","Unwrap your delivery and stage racks in the racetrack so they are shoppable.","Check all product for damage and pests.","Check receiving, the back of the Garden Center, and the side of the building for third-party deliveries."])
-    +clSection("3. HF App",["Open the HF App and review the Houseplant Guidelines for the week before resetting pods and tables."]);
-  $("store-pods").innerHTML=
-    clSection("1. Blooming / Orchid Pod",["Remove unsellable product; compactor or empty CC rack if directed.","Remove yellowing/dead leaves and spent blooms on all plants.","Sweep off your pod.","Restock short-to-tall from delivery/overflow; keep colors together.","Move older product to the bottom (not the highlight area).","Restock the highlight area per HPA Guidelines.","Restock the bottom of the pod two deep.","Make sure all labels are facing out."])
-    +clSection("2. Vigoro Pod",POD_BASE)+clSection("3. Specialty Pod",POD_BASE)
-    +clSection("4. Hanging Basket Pod",["Remove unsellable product; compactor or empty CC rack if directed.","Remove yellowing/dead leaves on all plants.","Restock with the same variety on each bar from deliveries or overflow racks.","Rotate baskets on the inside of the pod weekly."])
-    +clSection("5. Tropical Table(s)",["Remove unsellable product; compactor or empty CC rack if directed.","Remove yellowing/dead leaves on all plants.","Sweep off your table.","Restock short-to-tall from delivery or overflow racks.","Make sure all labels are facing out."])
-    +clSection("6. CC Racks",["Remove unsellable product; compactor or empty CC rack if directed.","Remove yellowing/dead leaves on all plants.","Restock short-to-tall from delivery or overflow racks.","Rotate product from the back of racks to the front weekly.","Condense and stage racks that will stay in the HPA.","Clean up empty racks and place them in the designated pickup location."]);
-  $("store-cleanup").innerHTML=clSection("Clean Up / Water",["Sweep around and under all tables and pods.","Water all product in the HPA, paying attention to dry or wilted plants."]);
-  $("store-pictures").innerHTML=clSection("Pictures",["Take pictures of your pods, tropical tables, and racks.","Ensure pictures are clear and show product, labels, and overall merchandising.","Send HPA pictures to your manager as directed."]);
-}
-function initVisitExport(){
-  const di=$("visitDate"); if(di&&!di.value) di.value=todayKey();
-  $("exportVisit").addEventListener("click",()=>{
-    const store=($("visitStore").value||"").trim(), date=$("visitDate").value||todayKey();
-    const rep=($("visitRep").value||"").trim(), notes=($("visitNotes").value||"").trim();
-    const lines=["STORE VISIT SUMMARY","===================","",`Store #: ${store||"N/A"}`,`Visit Date: ${date}`,`Rep / Visitor: ${rep||"N/A"}`,"","Checklist","---------"];
-    $$("#ops-visit .cl-section").forEach(sec=>{
-      const t=sec.querySelector("h4")?.textContent.trim()||"";
-      if(t){ lines.push(t); lines.push("-".repeat(t.length)); }
-      $$(".cl-item",sec).forEach(label=>{
-        const cb=label.querySelector("input[type=checkbox]");
-        const text=(label.textContent||"").replace(/\s+/g," ").trim();
-        lines.push("  "+(cb&&cb.checked?"[x]":"[ ]")+" "+text);
-      });
-      lines.push("");
-    });
-    lines.push("Notes / Follow-Ups","-------------------",notes||"None","","Generated via HF-HPA Store Visit Checklist");
-    const blob=new Blob([lines.join("\n")],{type:"text/plain;charset=utf-8"});
-    const url=URL.createObjectURL(blob), a=document.createElement("a");
-    a.href=url; a.download=`StoreVisit_${store||"Store"}_${date}.txt`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+/* Render a guidelines panel as readable sections (UPPERCASE lines become headings). */
+function guidelinesToHtml(text){
+  if(!text || !text.trim()) return '<div style="color:var(--muted);">No guidelines yet.</div>';
+  const lines = text.replace(/\r/g,"").split("\n");
+  let html="", open=false;
+  const isHeading = (l) => l.trim() && l.trim()===l.trim().toUpperCase() && /[A-Z]/.test(l) && !l.trim().startsWith("•");
+  lines.forEach(raw=>{
+    const l=raw.trimEnd();
+    if(l.trim()===""){ return; }
+    if(isHeading(l)){
+      if(open) html+="</div>";
+      html+=`<div class="guide-block"><h4>${esc(l.trim())}</h4>`;
+      open=true;
+    } else {
+      if(!open){ html+=`<div class="guide-block">`; open=true; }
+      const txt = l.trim().replace(/^•\s*/,"");
+      html+=`<p class="guide-line">${esc(txt)}</p>`;
+    }
   });
+  if(open) html+="</div>";
+  return html;
+}
+
+function renderGuidelines(){
+  ["hpa","hf"].forEach(key=>{
+    const panel=$("guide-"+key);
+    if(!panel) return;
+    if(editingGuide===key && isAdmin){
+      panel.innerHTML=`
+        <div class="guide-editor">
+          <label class="field-label" for="guideTextarea">${key==="hpa"?"HPA":"HF"} Guidelines — plain text. Put section names in CAPS; start list items with •</label>
+          <textarea id="guideTextarea" class="guide-textarea">${esc(guidelines[key]||"")}</textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
+            <button class="btn btn-ghost" data-guide-cancel type="button">Cancel</button>
+            <button class="btn btn-primary" data-guide-save="${key}" type="button">Save guidelines</button>
+          </div>
+        </div>`;
+      panel.querySelector("[data-guide-cancel]").addEventListener("click",()=>{ editingGuide=null; renderGuidelines(); });
+      panel.querySelector("[data-guide-save]").addEventListener("click",()=>{
+        guidelines[key]=panel.querySelector("#guideTextarea").value;
+        if(db) set(ref(db,`guidelines/${key}`), guidelines[key]).catch(console.error);
+        editingGuide=null;
+        if(!db) renderGuidelines();
+      });
+      setTimeout(()=>panel.querySelector("#guideTextarea")?.focus(),0);
+    } else {
+      const editBtn = isAdmin
+        ? `<button class="btn btn-ghost admin-only" data-guide-edit="${key}" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>` : "";
+      panel.innerHTML=`
+        <div class="guide-head">
+          <div class="info-banner" style="flex:1;margin:0;">
+            <h4>${key==="hpa"?"HPA Guidelines":"HF Guidelines"}</h4>
+            <p>${key==="hpa"?"Houseplant area standards for weekly resets, watering, and photos." : "Field standards, damage & claims, and weekly reporting."}</p>
+          </div>
+          ${editBtn}
+        </div>
+        <div class="guide-body">${guidelinesToHtml(guidelines[key])}</div>`;
+      const eb=panel.querySelector("[data-guide-edit]");
+      if(eb) eb.addEventListener("click",()=>{ editingGuide=key; renderGuidelines(); });
+    }
+  });
+}
+
+function initGuidelines(){
+  // seed defaults immediately (used until DB responds, and if DB is empty)
+  guidelines = { ...DEFAULT_GUIDELINES };
+  renderGuidelines();
+
+  if(db){
+    ["hpa","hf"].forEach(key=>{
+      onValue(ref(db,`guidelines/${key}`), snap=>{
+        const val=snap.val();
+        if(typeof val==="string" && val.trim()){ guidelines[key]=val; }
+        else if(isAdmin){ set(ref(db,`guidelines/${key}`), DEFAULT_GUIDELINES[key]).catch(console.error); }
+        if(editingGuide!==key) renderGuidelines();
+      }, err=>console.error("guidelines read:",err));
+    });
+  }
 }
 
 /* ============================================================
    MAP — Leaflet + Firebase live sync
    ============================================================ */
 let map=null, markers={}, stores={}, selected=null;
+let checklist=[];        // [{id, text}] shared across all stores
 const statusColor = s => s==="ok" ? "#34d399" : s==="warn" ? "#fbbf24" : "#f87171";
 
+/* Completion ratio (0..1) for a store against the shared checklist. */
+function completion(store){
+  if(!checklist.length) return 1;
+  const checked = store.checked || {};
+  let done=0;
+  checklist.forEach(it => { if(checked[it.id]) done++; });
+  return done / checklist.length;
+}
+/* <50% -> red, <100% -> amber, 100% -> green. Empty checklist -> green. */
+function storeStatus(store){
+  const r = completion(store);
+  if(r >= 1) return "ok";
+  if(r < 0.5) return "bad";
+  return "warn";
+}
+
 function makeIcon(store){
-  const st = store.state || {};
-  const ring = st.issues && Object.keys(st.issues).length ? "#f87171" : "rgba(255,255,255,.85)";
+  const pct = Math.round(completion(store)*100);
   return L.divIcon({
     className:"",
-    html:`<div style="position:relative;width:26px;height:26px;">
-      <div style="width:18px;height:18px;border-radius:50%;background:${statusColor(store.status)};
-        border:2px solid ${ring};box-shadow:0 2px 8px rgba(0,0,0,.5);position:absolute;top:4px;left:4px;"></div>
-      ${st.watered?`<div style="position:absolute;top:-4px;right:-4px;font-size:11px;">💧</div>`:""}
+    html:`<div style="position:relative;width:30px;height:30px;">
+      <div style="width:20px;height:20px;border-radius:50%;background:${statusColor(storeStatus(store))};
+        border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.5);
+        position:absolute;top:5px;left:5px;"></div>
+      <div style="position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
+        font-size:9px;font-weight:800;color:#1f3320;text-shadow:0 1px 2px rgba(255,255,255,.9);white-space:nowrap;">${pct}%</div>
     </div>`,
-    iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-12]
+    iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-14]
   });
 }
 function refreshMarker(id){
-  const s=stores[id]; if(!s||!map) return;
+  const s=stores[id]; if(!s||!map||s.lat==null||s.lng==null) return;
   if(markers[id]){
     markers[id].setIcon(makeIcon(s));
     markers[id].setPopupContent(popupHtml(s));
@@ -1114,25 +1149,114 @@ function refreshMarker(id){
     markers[id]=m;
   }
 }
+function refreshAllMarkers(){ Object.keys(stores).forEach(refreshMarker); }
+
 function popupHtml(s){
-  const st=s.state||{}, issues=st.issues?Object.keys(st.issues).length:0;
-  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}<br>${st.watered?"💧 Watered today":"Not watered"}${issues?` · 🚩 ${issues} issue${issues>1?"s":""}`:""}`;
+  const pct = Math.round(completion(s)*100);
+  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}<br>Checklist ${pct}% complete`;
 }
+
+/* Write a single checked-state toggle for the selected store. */
+function setItemChecked(storeId, itemId, on){
+  const s=stores[storeId]; if(!s) return;
+  s.checked = s.checked || {};
+  if(on) s.checked[itemId]=true; else delete s.checked[itemId];
+  if(db){
+    if(on) update(ref(db,`stores/${storeId}/checked`),{[itemId]:true}).catch(console.error);
+    else   remove(ref(db,`stores/${storeId}/checked/${itemId}`)).catch(console.error);
+  }
+  refreshMarker(storeId);
+}
+
+function renderChecklistPanel(){
+  const wrap=$("spChecklist");
+  if(!selected){ wrap.innerHTML=""; return; }
+  const s=stores[selected]; const checked=s.checked||{};
+  if(!checklist.length){
+    wrap.innerHTML=`<div style="color:var(--muted);font-size:.84rem;">No checklist items yet.${isAdmin?" Use “Add item” to create the shared list.":""}</div>`;
+    return;
+  }
+  wrap.innerHTML = checklist.map(it=>{
+    const on = !!checked[it.id];
+    const adminBtns = isAdmin
+      ? `<span class="cl-admin admin-only">
+           <button class="cl-icon" data-edit="${esc(it.id)}" title="Edit" type="button">✎</button>
+           <button class="cl-icon" data-del="${esc(it.id)}" title="Delete" type="button">🗑</button>
+         </span>` : "";
+    return `<label class="cl-live-item">
+      <input type="checkbox" data-item="${esc(it.id)}" ${on?"checked":""}>
+      <span class="cl-live-text${on?" done":""}">${esc(it.text)}</span>
+      ${adminBtns}
+    </label>`;
+  }).join("");
+
+  // wire checkbox toggles (anyone)
+  $$('input[data-item]', wrap).forEach(cb=>{
+    cb.addEventListener("change",()=> setItemChecked(selected, cb.dataset.item, cb.checked));
+  });
+  // wire admin edit/delete
+  $$('[data-edit]', wrap).forEach(b=> b.addEventListener("click",()=> openItemEditor(b.dataset.edit)));
+  $$('[data-del]', wrap).forEach(b=> b.addEventListener("click",()=> deleteItem(b.dataset.del)));
+  applyAdminUI();
+}
+
 function selectStore(id){
   selected=id; const s=stores[id]; if(!s) return;
-  const st=s.state||{}, issues=st.issues?Object.values(st.issues):[];
+  const pct=Math.round(completion(s)*100);
   $("spSub").textContent=s.name; $("spTitle").textContent="#"+s.id;
-  $("spWatered").textContent=st.watered?"Yes":"No";
-  $("spNegatives").textContent=s.negatives ?? "—";
-  $("spIssues").textContent=issues.length;
-  $("btnWater").disabled=false; $("btnIssue").disabled=false;
-  const wrap=$("spIssueList");
-  wrap.innerHTML = issues.length
-    ? `<div class="field-label">Open issues</div>`+issues.map(i=>`<div class="issue-row">🚩 ${esc(i.text||i)}</div>`).join("")
-    : `<div style="color:var(--muted);font-size:.82rem;">No open issues logged.</div>`;
+  $("spProgressPct").textContent=pct+"%";
+  $("spProgressBar").style.width=pct+"%";
+  $("spProgressBar").style.background=statusColor(storeStatus(s));
+  setVis($("spProgressWrap"), true);
+  renderChecklistPanel();
   if(map && markers[id]){ map.panTo([s.lat,s.lng]); markers[id].openPopup(); }
   $("spTitle").focus();
 }
+
+/* ----- admin: add / edit / delete shared checklist items ----- */
+function nextItemId(){ return "item-"+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+
+function persistChecklist(){
+  if(db) set(ref(db,"checklist"), checklist).catch(console.error);
+}
+function openItemEditor(itemId){
+  if(!isAdmin) return;
+  const existing = itemId ? checklist.find(i=>i.id===itemId) : null;
+  $("itemEditorTitle").textContent = existing ? "Edit item" : "Add checklist item";
+  $("itemText").value = existing ? existing.text : "";
+  $("itemEditor").dataset.editing = itemId || "";
+  openModal("itemEditor");
+  setTimeout(()=>$("itemText").focus(),0);
+}
+function saveItem(){
+  if(!isAdmin){ closeModal("itemEditor"); return; }
+  const txt=($("itemText").value||"").trim();
+  const editingId=$("itemEditor").dataset.editing||"";
+  if(!txt){ closeModal("itemEditor"); return; }
+  if(editingId){
+    const it=checklist.find(i=>i.id===editingId);
+    if(it) it.text=txt;
+  } else {
+    checklist.push({ id:nextItemId(), text:txt });
+  }
+  persistChecklist();
+  closeModal("itemEditor");
+  if(!db){ refreshAllMarkers(); renderChecklistPanel(); }   // local mode immediate refresh
+}
+function deleteItem(itemId){
+  if(!isAdmin) return;
+  checklist = checklist.filter(i=>i.id!==itemId);
+  // also clear that item's checked-state on every store
+  Object.keys(stores).forEach(sid=>{
+    if(stores[sid].checked && stores[sid].checked[itemId]){
+      delete stores[sid].checked[itemId];
+      if(db) remove(ref(db,`stores/${sid}/checked/${itemId}`)).catch(console.error);
+    }
+  });
+  persistChecklist();
+  if(!db){ refreshAllMarkers(); renderChecklistPanel(); }
+}
+
 function setConn(state){
   const el=$("connStatus"); if(!el) return;
   el.classList.remove("live","off");
@@ -1140,86 +1264,94 @@ function setConn(state){
   else { el.classList.add("off"); el.querySelector(".label").textContent="Offline · local only"; }
 }
 
-function initMap(){
+/* Load store coordinates from stores.csv / store.csv (first that loads wins). */
+async function loadStoresCsv(){
+  for(const file of STORE_FILES){
+    try{
+      const rows = await loadCSV(file);
+      const out=[];
+      rows.forEach(r=>{
+        const id   = (r["id"]||r["store"]||r["store #"]||r["store#"]||r["store number"]||"").trim();
+        const name = (r["name"]||r["store name"]||r["city"]||r["location"]||"").trim();
+        const lat  = parseFloat(r["lat"]||r["latitude"]||r["y"]);
+        const lng  = parseFloat(r["lng"]||r["lon"]||r["long"]||r["longitude"]||r["x"]);
+        if(id && !isNaN(lat) && !isNaN(lng)) out.push({ id, name:name||("#"+id), lat, lng });
+      });
+      if(out.length){ console.log(`Loaded ${out.length} stores from ${file}`); return out; }
+    }catch(e){ /* try next filename */ }
+  }
+  console.warn("No stores CSV found; using built-in default roster.");
+  return DEFAULT_STORES.slice();
+}
+
+async function initMap(){
   $("weekBadge").querySelector(".label").textContent="Week of "+todayKey();
 
   map=L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([42.0,-88.3],8);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19, subdomains:"abcd"
   }).addTo(map);
 
-  // Seed local store objects from defaults
-  DEFAULT_STORES.forEach(s=>{ stores[s.id]={...s, state:{watered:false, issues:null}}; });
-  Object.keys(stores).forEach(refreshMarker);
+  // Seed stores from CSV (coordinates are the source of truth for the map).
+  const roster = await loadStoresCsv();
+  roster.forEach(s=>{ stores[s.id]={ ...s, checked:{} }; });
+  refreshAllMarkers();
+  fitToStores();
 
-  // Buttons
-  $("btnWater").addEventListener("click",()=>{
-    if(!selected) return;
-    const dayWater = todayKey();
-    stores[selected].state = {...(stores[selected].state||{}), watered:true, wateredOn:dayWater};
-    if(db) update(ref(db,`stores/${selected}/state`),{watered:true, wateredOn:dayWater}).catch(console.error);
-    selectStore(selected); refreshMarker(selected);
-  });
-  $("btnIssue").addEventListener("click",()=>{
-    if(!selected) return;
-    const s=stores[selected];
-    $("issueStoreLabel").textContent=`Store #${selected} — ${s.name}`;
-    $("issueText").value=""; openModal("issueModal");
-    setTimeout(()=>$("issueText").focus(),0);
-  });
-  $("issueSave").addEventListener("click",()=>{
-    const txt=($("issueText").value||"").trim();
-    if(!txt||!selected){ closeModal("issueModal"); return; }
-    const entry={text:txt, by:($("userName").textContent||"User"), at:Date.now()};
-    if(db){
-      push(ref(db,`stores/${selected}/state/issues`),entry).catch(console.error);
-    } else {
-      const cur=stores[selected].state.issues||{};
-      cur["local-"+Date.now()]=entry;
-      stores[selected].state.issues=cur;
-    }
-    closeModal("issueModal"); selectStore(selected); refreshMarker(selected);
-  });
+  // seed default checklist locally (used immediately and if DB is empty)
+  checklist = DEFAULT_CHECKLIST.map((t,i)=>({ id:"seed-"+i, text:t }));
 
-  // Firebase live subscription
+  // Add-item button (admins only)
+  $("btnAddItem").addEventListener("click",()=>openItemEditor(""));
+  $("itemSave").addEventListener("click", saveItem);
+  $("itemText").addEventListener("keydown", e=>{ if(e.key==="Enter") saveItem(); });
+
   if(db){
     try{
       goOnline(db);
+
+      // Shared checklist
+      onValue(ref(db,"checklist"), snap=>{
+        const val=snap.val();
+        if(Array.isArray(val) && val.length){
+          checklist = val.filter(Boolean).map(it=> typeof it==="string" ? {id:nextItemId(),text:it} : it);
+        } else if(val && typeof val==="object"){
+          checklist = Object.keys(val).map(k=> ({ id:k, text:(val[k].text||val[k]) }));
+        } else {
+          // DB empty -> publish the seed list once (admins effectively bootstrap it)
+          if(isAdmin) persistChecklist();
+        }
+        refreshAllMarkers();
+        renderChecklistPanel();
+      }, err=>console.error("checklist read:",err));
+
+      // Per-store checked state + any store overrides
       onValue(ref(db,"stores"), snap=>{
         setConn("live");
         const val=snap.val()||{};
-        // Merge live state onto known stores (keep coords from defaults if DB lacks them)
         Object.keys(stores).forEach(id=>{
           const live=val[id];
           if(live){
-            stores[id]={
-              ...stores[id],
-              status: live.status || stores[id].status,
-              negatives: (live.negatives!=null)? live.negatives : stores[id].negatives,
-              lat: live.lat ?? stores[id].lat, lng: live.lng ?? stores[id].lng,
-              name: live.name || stores[id].name,
-              state: { watered: !!(live.state&&live.state.watered),
-                       wateredOn: live.state&&live.state.wateredOn,
-                       issues: (live.state&&live.state.issues)||null }
-            };
+            if(live.name) stores[id].name=live.name;
+            if(live.lat!=null) stores[id].lat=live.lat;
+            if(live.lng!=null) stores[id].lng=live.lng;
+            stores[id].checked = live.checked || {};
           }
           refreshMarker(id);
         });
-        // Add any DB-only stores not in defaults
-        Object.keys(val).forEach(id=>{
-          if(!stores[id] && val[id].lat && val[id].lng){
-            stores[id]={ id, name:val[id].name||("#"+id), lat:val[id].lat, lng:val[id].lng,
-              status:val[id].status||"ok", negatives:val[id].negatives??0,
-              state:{ watered:!!(val[id].state&&val[id].state.watered), issues:(val[id].state&&val[id].state.issues)||null } };
-            refreshMarker(id);
-          }
-        });
-        if(selected) selectStore(selected);
-      }, err=>{ console.error("Firebase read error:",err); setConn("off"); });
+        if(selected){ renderChecklistPanel(); selectStore(selected); }
+      }, err=>{ console.error("stores read:",err); setConn("off"); });
+
     }catch(e){ console.error(e); setConn("off"); }
   } else {
     setConn("off");
+    renderChecklistPanel();
   }
+}
+
+function fitToStores(){
+  const pts=Object.values(stores).filter(s=>s.lat!=null&&s.lng!=null).map(s=>[s.lat,s.lng]);
+  if(pts.length && map){ try{ map.fitBounds(pts,{padding:[40,40],maxZoom:11}); }catch(e){} }
 }
 
 /* ============================================================
@@ -1278,17 +1410,20 @@ function localAnswer(qRaw){
     const hit=skuData.find(s=> q.includes((s.name||"").toLowerCase()) || normSku(q).includes(normSku(s.sku)) && normSku(s.sku).length>=4);
     if(hit) return `<b>${esc(hit.name)}</b><br>SKU: ${esc(hit.sku)} · Sent in: ${esc(hit.sentIn)} · Year: ${esc(hit.yearSent)}`;
   }
-  // Protocol shortcuts
-  if(q.includes("cold")&&(q.includes("damage")||q.includes("claim")))
-    return "For <b>cold damage</b>: identify → photograph → send to DM/RMM → notify Home Depot SM/ASM → scan under training mode → capture receipt → give store a copy → record internally → share claim # with RMM → RMM completes the spreadsheet → Depot approval & credit. Full steps are under <b>Store Ops → HPA Protocols → Damage Claims → Cold Damage</b>.";
-  if(q.includes("pest")&&(q.includes("damage")||q.includes("claim")))
-    return "For <b>pest damage</b> (HF-only, no store involvement): identify → photograph → isolate &amp; mark HOLD/DAMAGED → document SKUs &amp; loss → notify DM/RMM → RMM/Office submit internally. See <b>Store Ops → HPA Protocols → Damage Claims → Pest Damage</b>.";
-  if(q.includes("non-order")||q.includes("non order")||q.includes("no order"))
-    return "On a <b>non-order day</b>: walk &amp; cull → clean plants → merchandise PODs/tables/racks → sweep &amp; clean → water &amp; check drainage → take pictures &amp; recap to your supervisor. See <b>Store Ops → HPA Protocols → Non-Order Days</b>.";
-  if(q.includes("watered")||q.includes("watering")){
-    const watered=Object.values(stores).filter(s=>s.state&&s.state.watered).length;
+  // Guidelines shortcuts
+  if(q.includes("guideline")||((q.includes("cold")||q.includes("pest"))&&(q.includes("damage")||q.includes("claim")))){
+    if(q.includes("hf")&&guidelines.hf) return `<b>HF Guidelines</b><br>${esc(guidelines.hf).replace(/\n/g,"<br>")}`;
+    if(q.includes("hpa")&&guidelines.hpa) return `<b>HPA Guidelines</b><br>${esc(guidelines.hpa).replace(/\n/g,"<br>")}`;
+    return "You'll find the full <b>HPA Guidelines</b> and <b>HF Guidelines</b> under the <b>Store Ops</b> tab. Ask me \"show HF guidelines\" or \"show HPA guidelines\" to see them here.";
+  }
+  // Checklist / completion
+  if(q.includes("checklist")||q.includes("complete")||q.includes("watered")||q.includes("watering")){
     const total=Object.keys(stores).length;
-    if(total) return `Right now <b>${watered} of ${total}</b> store${total>1?"s":""} on the map are marked watered today. Open the <b>Map</b> tab to update one.`;
+    if(total){
+      const done=Object.values(stores).filter(s=>completion(s)>=1).length;
+      const items=checklist.length;
+      return `The shared checklist has <b>${items}</b> item${items===1?"":"s"}. <b>${done} of ${total}</b> store${total>1?"s":""} are 100% complete. Open the <b>Map</b> tab and pick a store to update its checklist.`;
+    }
   }
   if((q.includes("how many")||q.includes("list"))&&q.includes("store")){
     const ids=Object.keys(stores);
@@ -1367,24 +1502,19 @@ function initSprout(){
 function init(){
   wireTabs("products",{skus:"products-skus",orders:"products-orders"},"#view-products");
   wireTabs("careid",{plants:"careid-plants",pests:"careid-pests"},"#view-careid");
-  wireTabs("ops",{protocols:"ops-protocols",visit:"ops-visit"},"#view-ops");
-  wireTabs("hpa",{claims:"hpa-claims",nonorder:"hpa-nonorder",inventory:"hpa-inventory",bi:"hpa-bi",pictures:"hpa-pictures"},"#ops-protocols");
-  wireTabs("damage",{cold:"damage-cold",pest:"damage-pest"},"#hpa-claims");
-  wireTabs("store",{walk:"store-walk",pods:"store-pods",cleanup:"store-cleanup",pictures:"store-pictures"},"#ops-visit");
+  wireTabs("ops",{hpa:"ops-hpa",hf:"ops-hf"},"#view-ops");
 
-  renderProtocols();
-  renderVisit();
+  initGuidelines();
 
   initMap();
   initSkus();
   initOrders();
   initCareId();
-  initVisitExport();
   initSprout();
 
-  let savedUser; try{ savedUser=localStorage.getItem("hub_user"); }catch(e){}
+  let savedUser, savedAdmin; try{ savedUser=localStorage.getItem("hub_user"); savedAdmin=localStorage.getItem("hub_admin")==="1"; }catch(e){}
   if(savedUser){
-    setUser(savedUser);
+    setUser(savedUser, savedAdmin);
     let v; try{ v=sessionStorage.getItem("hub_view"); }catch(e){}
     showApp(v||"map");
   } else showSplash();
