@@ -220,6 +220,8 @@
     .card .title{ font-size:.98rem; font-weight:700; color:var(--heading); padding-right:54px; margin-bottom:6px; }
     .card .meta{ font-size:.8rem; color:var(--muted); }
     .card .meta b{ color:var(--text); font-weight:600; }
+    .card-thumb{ width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm); margin-bottom:10px; border:1px solid var(--line); background:var(--panel-2); display:block; }
+    .card-photo{ display:flex; flex-direction:column; }
 
     .empty{
       text-align:center; padding:34px 20px; color:var(--muted);
@@ -469,8 +471,15 @@
           </div>
 
           <aside class="panel panel-pad">
-            <div style="font-size:.78rem;color:var(--muted);" id="spSub">No store selected</div>
-            <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">—</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <div style="font-size:.78rem;color:var(--muted);" id="spSub">No store selected</div>
+                <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">—</h3>
+              </div>
+              <button id="btnEditStore" class="btn btn-ghost hidden" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>
+            </div>
+
+            <div id="spNotes" style="display:none;margin-top:10px;padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);font-size:.82rem;color:var(--text);"></div>
 
             <div id="spProgressWrap" class="hidden" style="margin-top:12px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -627,6 +636,21 @@
     </div>
   </div></div>
 
+  <div id="storeEditor" class="modal-back"><div class="modal">
+    <h3>Edit store</h3>
+    <div class="latin" id="seStoreLabel"></div>
+    <div class="fld"><label class="field-label" for="seName">Name</label><input id="seName" type="text" /></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fld"><label class="field-label" for="seLat">Latitude</label><input id="seLat" type="text" inputmode="decimal" placeholder="42.0354" /></div>
+      <div class="fld"><label class="field-label" for="seLng">Longitude</label><input id="seLng" type="text" inputmode="decimal" placeholder="-88.2826" /></div>
+    </div>
+    <div class="fld"><label class="field-label" for="seNotes">Notes</label><textarea id="seNotes" placeholder="Anything useful about this store…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close="storeEditor" type="button">Cancel</button>
+      <button id="seSave" class="btn btn-primary" type="button">Save changes</button>
+    </div>
+  </div></div>
+
   <!-- ===== SPROUT BOT ===== -->
   <button id="sproutFab" class="sprout-fab" aria-label="Open Sprout Bot help">🌱</button>
   <div id="sproutPanel" class="sprout-panel" role="dialog" aria-label="Sprout Bot">
@@ -684,7 +708,7 @@ const FILES = {
   pests:      "pests.csv"
 };
 /* Store locations are read from one of these (first that loads wins). */
-const STORE_FILES = ["stores.csv", "store.csv"];
+const STORE_FILES = ["store.csv", "stores.csv"];
 
 /* ====== ADMIN ACCESS ======
    Enter this code in the "Access code" field at login to unlock checklist editing.
@@ -927,19 +951,96 @@ function initOrders(){
 /* ============================================================
    CARE & ID
    ============================================================ */
+/* Hardwired royalty-free photos (Wikimedia Commons, via stable Special:FilePath).
+   Keyed by a normalized common name. The matcher checks if a variety's name
+   contains any of these keys, so "Golden Pothos" matches "pothos", etc.
+   To change a photo, swap the filename after Special:FilePath/ (it must exist on Commons). */
+const WIKI = (file) => "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file) + "?width=520";
+
+const PLANT_PHOTOS = {
+  "pothos":              WIKI("Epipremnum aureum 31082012.jpg"),
+  "snake plant":         WIKI("Snake Plant (Sansevieria trifasciata 'Laurentii') 1.jpg"),
+  "sansevieria":         WIKI("Snake Plant (Sansevieria trifasciata 'Laurentii') 1.jpg"),
+  "monstera":            WIKI("Monstera deliciosa3.jpg"),
+  "philodendron":        WIKI("Philodendron hederaceum 2.jpg"),
+  "peace lily":          WIKI("Spathiphyllum cochlearispathum RTBG.jpg"),
+  "spathiphyllum":       WIKI("Spathiphyllum cochlearispathum RTBG.jpg"),
+  "zz plant":            WIKI("Zamioculcas zamiifolia 1.jpg"),
+  "zamioculcas":         WIKI("Zamioculcas zamiifolia 1.jpg"),
+  "spider plant":        WIKI("Chlorophytum comosum 'Vittatum' kz01.jpg"),
+  "chlorophytum":        WIKI("Chlorophytum comosum 'Vittatum' kz01.jpg"),
+  "fiddle leaf fig":     WIKI("Ficus lyrata1.jpg"),
+  "ficus lyrata":        WIKI("Ficus lyrata1.jpg"),
+  "rubber plant":        WIKI("Ficus elastica2.jpg"),
+  "ficus elastica":      WIKI("Ficus elastica2.jpg"),
+  "dracaena":            WIKI("Dracaena marginata1.jpg"),
+  "aloe":                WIKI("Aloe vera flower inset.png"),
+  "jade":                WIKI("Crassula ovata 2.jpg"),
+  "crassula":            WIKI("Crassula ovata 2.jpg"),
+  "succulent":           WIKI("Echeveria elegans 4.jpg"),
+  "echeveria":           WIKI("Echeveria elegans 4.jpg"),
+  "cactus":              WIKI("Mammillaria spinosissima 2.jpg"),
+  "fern":                WIKI("Nephrolepis exaltata kz02.jpg"),
+  "boston fern":         WIKI("Nephrolepis exaltata kz02.jpg"),
+  "calathea":            WIKI("Calathea orbifolia.jpg"),
+  "orchid":              WIKI("Phalaenopsis hybrid white-pink.jpg"),
+  "phalaenopsis":        WIKI("Phalaenopsis hybrid white-pink.jpg"),
+  "anthurium":           WIKI("Anthurium andraeanum (flower).jpg"),
+  "dieffenbachia":       WIKI("Dieffenbachia seguine kz01.jpg"),
+  "croton":              WIKI("Codiaeum variegatum kz01.jpg"),
+  "ivy":                 WIKI("Hedera helix kz01.jpg"),
+  "english ivy":         WIKI("Hedera helix kz01.jpg"),
+  "palm":                WIKI("Chamaedorea elegans kz01.jpg"),
+  "parlor palm":         WIKI("Chamaedorea elegans kz01.jpg"),
+  "peperomia":           WIKI("Peperomia obtusifolia kz01.jpg"),
+  "begonia":             WIKI("Begonia rex kz01.jpg"),
+  "bromeliad":           WIKI("Bromeliad - Guzmania.jpg"),
+  "succulent mix":       WIKI("Echeveria elegans 4.jpg"),
+  "money tree":          WIKI("Pachira aquatica - Madre de cacao.jpg"),
+  "pachira":             WIKI("Pachira aquatica - Madre de cacao.jpg"),
+  "mum":                 WIKI("Chrysanthemum 'Clara Curtis' Flowers 2200px.jpg"),
+  "chrysanthemum":       WIKI("Chrysanthemum 'Clara Curtis' Flowers 2200px.jpg"),
+  "poinsettia":          WIKI("Weihnachtsstern-Euphorbia-pulcherrima.jpg")
+};
+
+const PEST_PHOTOS = {
+  "spider mite":     WIKI("Tetranychus urticae with silk threads.jpg"),
+  "mite":            WIKI("Tetranychus urticae with silk threads.jpg"),
+  "aphid":           WIKI("Aphids (Aphididae) feeding on a plant stem.jpg"),
+  "mealybug":        WIKI("Mealybugs on a plant.jpg"),
+  "scale":           WIKI("Coccus hesperidum (scale insects).jpg"),
+  "whitefly":        WIKI("Trialeurodes vaporariorum 2.jpg"),
+  "fungus gnat":     WIKI("Fungus gnat (Sciaridae).jpg"),
+  "gnat":            WIKI("Fungus gnat (Sciaridae).jpg"),
+  "thrips":          WIKI("Thrips on a leaf.jpg"),
+  "fruit fly":       WIKI("Drosophila melanogaster - side (aka).jpg")
+};
+
+/* Find a hardwired photo whose key is contained in the item's common name. */
+function photoFor(name, table){
+  const n = (name||"").toLowerCase();
+  // prefer the longest matching key so "snake plant" wins over a stray short key
+  let best=null, bestLen=0;
+  for(const key in table){
+    if(n.includes(key) && key.length>bestLen){ best=table[key]; bestLen=key.length; }
+  }
+  return best;
+}
+
 let PLANTS=[], PESTS=[];
 function renderPlants(){
   const grid=$("plantGrid"); grid.innerHTML="";
   if(!PLANTS.length){ grid.innerHTML='<p style="color:var(--muted)">No plant data found.</p>'; return; }
   PLANTS.forEach(p=>{
-    const b=document.createElement("button"); b.className="card"; b.type="button";
-    b.innerHTML=`<div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.scientificName||"")}</div>`;
+    const b=document.createElement("button"); b.className="card card-photo"; b.type="button";
+    b.innerHTML=`${p.image?`<img class="card-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:""}
+      <div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.scientificName||"")}</div>`;
     b.addEventListener("click",()=>{
       $("mCareName").textContent=p.commonName||""; $("mCareLatin").textContent=p.scientificName||"";
       $("mLight").textContent=p.light||""; $("mWater").textContent=p.water||""; $("mHumidity").textContent=p.humidity||"";
       $("mTemp").textContent=p.temp||""; $("mSoil").textContent=p.soil||""; $("mFert").textContent=p.fertilizer||"";
       $("mTox").textContent=p.toxicity||""; $("mTips").textContent=p.tips||"";
-      const img=$("mCareImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; } else img.style.display="none";
+      const img=$("mCareImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none";
       openModal("careModal");
     });
     grid.appendChild(b);
@@ -949,13 +1050,14 @@ function renderPests(){
   const grid=$("pestGrid"); grid.innerHTML="";
   if(!PESTS.length){ grid.innerHTML='<p style="color:var(--muted)">No pest data found.</p>'; return; }
   PESTS.forEach(p=>{
-    const b=document.createElement("button"); b.className="card"; b.type="button";
-    b.innerHTML=`<div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.identification||p.scientificName||"")}</div>`;
+    const b=document.createElement("button"); b.className="card card-photo"; b.type="button";
+    b.innerHTML=`${p.image?`<img class="card-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:""}
+      <div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.identification||p.scientificName||"")}</div>`;
     b.addEventListener("click",()=>{
       $("mPestName").textContent=p.commonName||""; $("mPestLatin").textContent=p.scientificName||"";
       $("mLooks").textContent=p.looksLike||""; $("mPestId").textContent=p.identification||"";
       $("mPrev").textContent=p.prevention||""; $("mTreat").textContent=p.treatment||"";
-      const img=$("mPestImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; } else img.style.display="none";
+      const img=$("mPestImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none";
       openModal("pestModal");
     });
     grid.appendChild(b);
@@ -972,11 +1074,13 @@ function initCareId(){
     PLANTS=rows.map(r=>({commonName:r["common_name"]||"",scientificName:r["scientific_name"]||"",image:r["image"]||"",
       light:r["light"]||"",water:r["water"]||"",humidity:r["humidity"]||"",temp:r["temp"]||"",soil:r["soil"]||"",
       fertilizer:r["fertilizer"]||"",toxicity:r["toxicity"]||"",tips:r["tips"]||""})).filter(r=>r.commonName);
+    PLANTS.forEach(p=>{ const hw=photoFor(p.commonName,PLANT_PHOTOS); if(hw) p.image=hw; });
     renderPlants();
   }).catch(err=>{ console.error(err); renderPlants(); });
   loadCSV(FILES.pests).then(rows=>{
     PESTS=rows.map(r=>({commonName:r["common_name"]||"",scientificName:r["scientific_name"]||"",image:r["image"]||"",
       looksLike:r["what_they_look_like"]||"",identification:r["identification"]||"",prevention:r["prevention"]||"",treatment:r["treatment"]||""})).filter(r=>r.commonName);
+    PESTS.forEach(p=>{ const hw=photoFor(p.commonName,PEST_PHOTOS); if(hw) p.image=hw; });
     renderPests();
   }).catch(err=>{ console.error(err); renderPests(); });
 }
@@ -1048,7 +1152,7 @@ function renderGuidelines(){
   ["hpa","hf"].forEach(key=>{
     const panel=$("guide-"+key);
     if(!panel) return;
-    if(editingGuide===key && isAdmin){
+    if(editingGuide===key){
       panel.innerHTML=`
         <div class="guide-editor">
           <label class="field-label" for="guideTextarea">${key==="hpa"?"HPA":"HF"} Guidelines — plain text. Put section names in CAPS; start list items with •</label>
@@ -1063,23 +1167,26 @@ function renderGuidelines(){
         guidelines[key]=panel.querySelector("#guideTextarea").value;
         if(db) set(ref(db,`guidelines/${key}`), guidelines[key]).catch(console.error);
         editingGuide=null;
-        if(!db) renderGuidelines();
+        renderGuidelines();
       });
       setTimeout(()=>panel.querySelector("#guideTextarea")?.focus(),0);
     } else {
-      const editBtn = isAdmin
-        ? `<button class="btn btn-ghost admin-only" data-guide-edit="${key}" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>` : "";
+      // Edit button shows for EVERYONE; clicking prompts for the admin password.
       panel.innerHTML=`
         <div class="guide-head">
           <div class="info-banner" style="flex:1;margin:0;">
             <h4>${key==="hpa"?"HPA Guidelines":"HF Guidelines"}</h4>
             <p>${key==="hpa"?"Houseplant area standards for weekly resets, watering, and photos." : "Field standards, damage & claims, and weekly reporting."}</p>
           </div>
-          ${editBtn}
+          <button class="btn btn-ghost" data-guide-edit="${key}" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>
         </div>
         <div class="guide-body">${guidelinesToHtml(guidelines[key])}</div>`;
-      const eb=panel.querySelector("[data-guide-edit]");
-      if(eb) eb.addEventListener("click",()=>{ editingGuide=key; renderGuidelines(); });
+      panel.querySelector("[data-guide-edit]").addEventListener("click",()=>{
+        const pass = window.prompt("Enter the admin password to edit these guidelines:");
+        if(pass===null) return;
+        if(pass !== ADMIN_CODE){ window.alert("Incorrect password. No changes made."); return; }
+        editingGuide=key; renderGuidelines();
+      });
     }
   });
 }
@@ -1094,7 +1201,6 @@ function initGuidelines(){
       onValue(ref(db,`guidelines/${key}`), snap=>{
         const val=snap.val();
         if(typeof val==="string" && val.trim()){ guidelines[key]=val; }
-        else if(isAdmin){ set(ref(db,`guidelines/${key}`), DEFAULT_GUIDELINES[key]).catch(console.error); }
         if(editingGuide!==key) renderGuidelines();
       }, err=>console.error("guidelines read:",err));
     });
@@ -1208,9 +1314,54 @@ function selectStore(id){
   $("spProgressBar").style.width=pct+"%";
   $("spProgressBar").style.background=statusColor(storeStatus(s));
   setVis($("spProgressWrap"), true);
+  // store notes (if any)
+  const notesEl=$("spNotes");
+  if(notesEl){
+    if(s.notes){ notesEl.textContent=s.notes; notesEl.style.display=""; }
+    else notesEl.style.display="none";
+  }
+  // Edit button is visible to everyone; it prompts for the admin password on click.
+  setVis($("btnEditStore"), true);
   renderChecklistPanel();
   if(map && markers[id]){ map.panTo([s.lat,s.lng]); markers[id].openPopup(); }
   $("spTitle").focus();
+}
+
+/* ----- store edit (password-gated, available to everyone) ----- */
+function openStoreEditor(){
+  if(!selected) return;
+  const s=stores[selected];
+  const pass = window.prompt("Enter the admin password to edit this store:");
+  if(pass===null) return;                 // cancelled
+  if(pass !== ADMIN_CODE){ window.alert("Incorrect password. No changes made."); return; }
+  $("seName").value = s.name||"";
+  $("seLat").value  = (s.lat!=null? s.lat : "");
+  $("seLng").value  = (s.lng!=null? s.lng : "");
+  $("seNotes").value= s.notes||"";
+  $("seStoreLabel").textContent = "Store #"+s.id;
+  openModal("storeEditor");
+  setTimeout(()=>$("seName").focus(),0);
+}
+function saveStoreEdit(){
+  if(!selected){ closeModal("storeEditor"); return; }
+  const s=stores[selected];
+  const name=($("seName").value||"").trim();
+  const lat=parseFloat($("seLat").value);
+  const lng=parseFloat($("seLng").value);
+  const notes=($("seNotes").value||"").trim();
+  if(name) s.name=name;
+  if(!isNaN(lat)) s.lat=lat;
+  if(!isNaN(lng)) s.lng=lng;
+  s.notes=notes;
+  // move marker if coordinates changed
+  if(markers[selected] && s.lat!=null && s.lng!=null){
+    markers[selected].setLatLng([s.lat,s.lng]);
+  }
+  if(db) update(ref(db,`stores/${selected}`),{ name:s.name, lat:s.lat, lng:s.lng, notes:s.notes }).catch(console.error);
+  closeModal("storeEditor");
+  refreshMarker(selected);
+  selectStore(selected);
+  fitToStores();
 }
 
 /* ----- admin: add / edit / delete shared checklist items ----- */
@@ -1288,7 +1439,7 @@ async function initMap(){
   $("weekBadge").querySelector(".label").textContent="Week of "+todayKey();
 
   map=L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([42.0,-88.3],8);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19, subdomains:"abcd"
   }).addTo(map);
 
@@ -1305,6 +1456,10 @@ async function initMap(){
   $("btnAddItem").addEventListener("click",()=>openItemEditor(""));
   $("itemSave").addEventListener("click", saveItem);
   $("itemText").addEventListener("keydown", e=>{ if(e.key==="Enter") saveItem(); });
+
+  // Store edit (everyone sees the button; it prompts for the password)
+  $("btnEditStore").addEventListener("click", openStoreEditor);
+  $("seSave").addEventListener("click", saveStoreEdit);
 
   if(db){
     try{
@@ -1335,6 +1490,7 @@ async function initMap(){
             if(live.name) stores[id].name=live.name;
             if(live.lat!=null) stores[id].lat=live.lat;
             if(live.lng!=null) stores[id].lng=live.lng;
+            if(live.notes!=null) stores[id].notes=live.notes;
             stores[id].checked = live.checked || {};
           }
           refreshMarker(id);
