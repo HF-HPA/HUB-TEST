@@ -501,7 +501,10 @@
           <div class="panel panel-pad">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
               <div id="connStatus" class="conn off"><span class="dot"></span><span class="label">Connecting…</span></div>
-              <div id="weekBadge" class="conn"><span class="label"></span></div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <div id="weekBadge" class="conn"><span class="label"></span></div>
+                <button id="btnStore" class="btn btn-ghost" type="button" style="padding:7px 13px;font-size:.8rem;min-height:auto;">🏬 Edit / Add store</button>
+              </div>
             </div>
             <div id="map"></div>
             <div class="legend">
@@ -675,6 +678,25 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close="itemEditor" type="button">Cancel</button>
       <button id="itemSave" class="btn btn-primary" type="button">Save item</button>
+    </div>
+  </div></div>
+
+  <div id="storeEditor" class="modal-back"><div class="modal">
+    <h3 id="storeEditorTitle">Edit store</h3>
+    <div class="latin" id="seStoreLabel">Update this store's details, or add a new one.</div>
+    <div class="fld"><label class="field-label" for="seId">Store number</label><input id="seId" type="text" inputmode="numeric" placeholder="e.g. 1851" /></div>
+    <div class="fld"><label class="field-label" for="seName">Name</label><input id="seName" type="text" placeholder="e.g. Belleville" /></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fld"><label class="field-label" for="seLat">Latitude</label><input id="seLat" type="text" inputmode="decimal" placeholder="38.5247" /></div>
+      <div class="fld"><label class="field-label" for="seLng">Longitude</label><input id="seLng" type="text" inputmode="decimal" placeholder="-90.0303" /></div>
+    </div>
+    <div class="fld"><label class="field-label" for="seAddr">Address</label><input id="seAddr" type="text" placeholder="City, State (optional)" /></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button id="seDelete" class="btn btn-ghost hidden" type="button" style="color:var(--bad);">Delete</button>
+      <span style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" data-close="storeEditor" type="button">Cancel</button>
+        <button id="seSave" class="btn btn-primary" type="button">Save store</button>
+      </span>
     </div>
   </div></div>
 
@@ -1216,7 +1238,7 @@ function initGuidelines(){
 /* ============================================================
    MAP — Leaflet + Firebase live sync
    ============================================================ */
-let map=null, markers={}, stores={}, selected=null;
+let map=null, markers={}, stores={}, selected=null, storesFitted=false;
 let checklist=[];
 const statusColor = s => s==="ok" ? "#3ddc97" : s==="warn" ? "#f5b94a" : "#f06a6a";
 
@@ -1263,7 +1285,8 @@ function refreshAllMarkers(){ Object.keys(stores).forEach(refreshMarker); }
 
 function popupHtml(s){
   const pct = Math.round(completion(s)*100);
-  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}<br>Checklist ${pct}% complete`;
+  const addr = s.address ? `<br><span style="color:var(--muted)">${esc(s.address)}</span>` : "";
+  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}${addr}<br>Checklist ${pct}% complete`;
 }
 
 function setItemChecked(storeId, itemId, on){
@@ -1329,6 +1352,78 @@ function toggleEditMode(){
   applyAdminUI();
 }
 
+/* ----- add / edit / delete a store (password-gated) ----- */
+function openStoreEditor(){
+  const pass = window.prompt("Enter the admin password to edit or add a store:");
+  if(pass===null) return;
+  if(pass !== ADMIN_CODE){ window.alert("Incorrect password. No changes made."); return; }
+
+  const editing = selected ? stores[selected] : null;
+  $("storeEditorTitle").textContent = editing ? "Edit store" : "Add store";
+  $("seStoreLabel").textContent = editing
+    ? ("Editing store #"+editing.id+" — or change the number to add a new one.")
+    : "Fill in the details to drop a new store on the map.";
+  $("seId").value   = editing ? editing.id : "";
+  $("seName").value = editing ? (editing.name||"") : "";
+  $("seLat").value  = editing && editing.lat!=null ? editing.lat : "";
+  $("seLng").value  = editing && editing.lng!=null ? editing.lng : "";
+  $("seAddr").value = editing ? (editing.address||"") : "";
+  $("seId").dataset.original = editing ? editing.id : "";
+  setVis($("seDelete"), !!editing);
+  openModal("storeEditor");
+  setTimeout(()=>$(editing?"seName":"seId").focus(),0);
+}
+
+function saveStore(){
+  const id   = ($("seId").value||"").trim();
+  const name = ($("seName").value||"").trim();
+  const lat  = parseFloat($("seLat").value);
+  const lng  = parseFloat($("seLng").value);
+  const address = ($("seAddr").value||"").trim();
+  const original = $("seId").dataset.original||"";
+
+  if(!id){ window.alert("Enter a store number."); $("seId").focus(); return; }
+  if(isNaN(lat) || isNaN(lng)){ window.alert("Enter valid latitude and longitude."); $("seLat").focus(); return; }
+  if(id!==original && stores[id]){ window.alert("Store #"+id+" already exists. Choose a different number."); $("seId").focus(); return; }
+
+  /* If the store number changed, move the record (and its checked state). */
+  let checked = {};
+  if(original && stores[original]){
+    checked = stores[original].checked || {};
+    if(id!==original){
+      delete stores[original];
+      if(markers[original]){ map.removeLayer(markers[original]); delete markers[original]; }
+      if(db) remove(ref(db,`stores/${original}`)).catch(console.error);
+    }
+  }
+
+  stores[id] = { id, name:name||("#"+id), lat, lng, address, checked };
+  if(db) update(ref(db,`stores/${id}`), { name:stores[id].name, lat, lng, address }).catch(console.error);
+
+  closeModal("storeEditor");
+  refreshMarker(id);
+  selectStore(id);
+  fitToStores();
+}
+
+function deleteStore(){
+  const id = $("seId").dataset.original||"";
+  if(!id || !stores[id]){ closeModal("storeEditor"); return; }
+  if(!window.confirm("Remove store #"+id+" from the map?")) return;
+  delete stores[id];
+  if(markers[id]){ map.removeLayer(markers[id]); delete markers[id]; }
+  if(db) remove(ref(db,`stores/${id}`)).catch(console.error);
+  if(selected===id){
+    selected=null;
+    $("spSub").textContent="Tap a pin to begin";
+    $("spTitle").textContent="Select a store";
+    setVis($("spProgressWrap"), false);
+    $("spChecklist").innerHTML='<div style="color:var(--muted);font-size:.84rem;">Select a store to see its checklist.</div>';
+  }
+  closeModal("storeEditor");
+  fitToStores();
+}
+
 /* ----- admin: add / edit / delete shared checklist items ----- */
 function nextItemId(){ return "item-"+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 
@@ -1386,11 +1481,13 @@ async function loadStoresCsv(){
       const rows = await loadCSV(file);
       const out=[];
       rows.forEach(r=>{
-        const id   = (r["id"]||r["store"]||r["store #"]||r["store#"]||r["store number"]||"").trim();
-        const name = (r["name"]||r["store name"]||r["city"]||r["location"]||"").trim();
+        const id   = (r["store_id"]||r["id"]||r["store"]||r["store #"]||r["store#"]||r["store number"]||"").trim();
+        const name = (r["store_name"]||r["name"]||r["store name"]||r["city"]||r["location"]||"").trim();
         const lat  = parseFloat(r["lat"]||r["latitude"]||r["y"]);
-        const lng  = parseFloat(r["lng"]||r["lon"]||r["long"]||r["longitude"]||r["x"]);
-        if(id && !isNaN(lat) && !isNaN(lng)) out.push({ id, name:name||("#"+id), lat, lng });
+        const lng  = parseFloat(r["lon"]||r["lng"]||r["long"]||r["longitude"]||r["x"]);
+        const addrParts=[r["address"], r["city"], r["state"]].map(x=>(x||"").trim()).filter(Boolean);
+        const address = addrParts.join(", ");
+        if(id && !isNaN(lat) && !isNaN(lng)) out.push({ id, name:name||("#"+id), lat, lng, address });
       });
       if(out.length){ console.log(`Loaded ${out.length} stores from ${file}`); return out; }
     }catch(e){ /* try next filename */ }
@@ -1403,8 +1500,8 @@ async function initMap(){
   $("weekBadge").querySelector(".label").textContent="Week of "+todayKey();
 
   map=L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([42.0,-88.3],8);
-  /* Darker basemap to match the jungle theme. */
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+  /* Full-color street basemap (CARTO Voyager). */
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19, subdomains:"abcd"
   }).addTo(map);
 
@@ -1424,6 +1521,9 @@ async function initMap(){
 
   $("btnEditChecklist").addEventListener("click", toggleEditMode);
   $("btnDoneEditing").addEventListener("click", ()=>{ editMode=false; applyAdminUI(); });
+  $("btnStore").addEventListener("click", openStoreEditor);
+  $("seSave").addEventListener("click", saveStore);
+  $("seDelete").addEventListener("click", deleteStore);
   applyAdminUI();
 
   if(db){
@@ -1446,18 +1546,20 @@ async function initMap(){
       onValue(ref(db,"stores"), snap=>{
         setConn("live");
         const val=snap.val()||{};
-        Object.keys(stores).forEach(id=>{
-          const live=val[id];
-          if(live){
-            if(live.name) stores[id].name=live.name;
-            if(live.lat!=null) stores[id].lat=live.lat;
-            if(live.lng!=null) stores[id].lng=live.lng;
-            if(live.notes!=null) stores[id].notes=live.notes;
-            stores[id].checked = live.checked || {};
-          }
-          refreshMarker(id);
+        /* Update / merge any store present in the database (including ones added by
+           another user that aren't in the CSV roster). */
+        Object.keys(val).forEach(id=>{
+          const live=val[id]; if(!live) return;
+          if(!stores[id]) stores[id]={ id, name:"#"+id, lat:null, lng:null, checked:{} };
+          if(live.name) stores[id].name=live.name;
+          if(live.lat!=null) stores[id].lat=live.lat;
+          if(live.lng!=null) stores[id].lng=live.lng;
+          if(live.address!=null) stores[id].address=live.address;
+          stores[id].checked = live.checked || {};
         });
+        refreshAllMarkers();
         if(selected){ renderChecklistPanel(); selectStore(selected); }
+        if(!storesFitted){ storesFitted=true; fitToStores(); }
       }, err=>{ console.error("stores read:",err); setConn("off"); });
 
     }catch(e){ console.error(e); setConn("off"); }
