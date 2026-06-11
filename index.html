@@ -145,16 +145,19 @@
     .head h2{ font-size:1.2rem; font-weight:700; color:var(--heading); letter-spacing:-.01em; }
     .head p{ font-size:.85rem; color:var(--muted); margin-top:3px; }
 
-    /* ---------- Subtabs (quieter than primary nav) ---------- */
-    .subnav{ display:flex; gap:4px; margin-bottom:16px; border-bottom:1px solid var(--line); flex-wrap:wrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    /* ---------- Subtabs (clear pill buttons) ---------- */
+    .subnav{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .subnav button{
-      padding:9px 14px; border:none; background:transparent; color:var(--muted);
+      padding:9px 16px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted);
       cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit; white-space:nowrap;
-      border-bottom:2px solid transparent; margin-bottom:-1px; transition:color var(--t), border-color var(--t);
+      border-radius:var(--radius-pill); transition:color var(--t), border-color var(--t), background var(--t);
     }
-    .subnav button:hover{ color:var(--heading); }
-    .subnav button.active{ color:var(--accent); border-bottom-color:var(--accent); }
-    .subnav button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+    .subnav button:hover{ color:var(--heading); border-color:var(--accent-line); }
+    .subnav button.active{
+      color:#06203a; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color:transparent; box-shadow:0 4px 14px rgba(61,169,252,.30);
+    }
+    .subnav button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     .subnav.tight{ margin-bottom:12px; }
 
     /* ---------- Forms ---------- */
@@ -210,6 +213,7 @@
       grid-template-columns:1fr;
     }
     @media(min-width:620px){ .home-strip{ grid-template-columns:1fr 1fr; } }
+    @media(min-width:920px){ .home-strip{ grid-template-columns:repeat(3,1fr); } }
     .info-tile{
       display:flex; align-items:center; gap:14px; padding:14px 16px;
       background:linear-gradient(135deg, var(--panel-raised), var(--panel-2));
@@ -463,6 +467,34 @@
         </div>
       </header>
 
+      <!-- Global status strip — visible on every tab -->
+      <div class="home-strip" style="margin-bottom:14px;">
+        <div class="info-tile">
+          <div class="glyph">🕐</div>
+          <div>
+            <div class="lab">Local time</div>
+            <div class="big" id="homeTime">—</div>
+            <div class="sub" id="homeDate">—</div>
+          </div>
+        </div>
+        <div class="info-tile">
+          <div class="glyph" id="weatherGlyph">🌤</div>
+          <div>
+            <div class="lab" id="weatherLab">Weather</div>
+            <div class="big" id="homeTemp">Loading…</div>
+            <div class="sub" id="homeCond">Fetching local conditions</div>
+          </div>
+        </div>
+        <div class="info-tile">
+          <div class="glyph">✅</div>
+          <div>
+            <div class="lab">Stores complete</div>
+            <div class="big" id="summaryDone">—</div>
+            <div class="sub" id="summaryNote">Checklist progress</div>
+          </div>
+        </div>
+      </div>
+
       <nav class="nav" aria-label="Primary">
         <button class="active" data-view="map" type="button">🗺 Map</button>
         <button data-view="products" type="button">📦 Product Info</button>
@@ -475,26 +507,6 @@
         <div class="head">
           <h2>Store Map</h2>
           <p>Your home base. Live status synced across the team — tap a pin or a store to update watering and log issues.</p>
-        </div>
-
-        <!-- Local time + weather -->
-        <div class="home-strip">
-          <div class="info-tile">
-            <div class="glyph">🕐</div>
-            <div>
-              <div class="lab">Local time</div>
-              <div class="big" id="homeTime">—</div>
-              <div class="sub" id="homeDate">—</div>
-            </div>
-          </div>
-          <div class="info-tile">
-            <div class="glyph" id="weatherGlyph">🌤</div>
-            <div>
-              <div class="lab" id="weatherLab">Weather</div>
-              <div class="big" id="homeTemp">Loading…</div>
-              <div class="sub" id="homeCond">Fetching local conditions</div>
-            </div>
-          </div>
         </div>
 
         <div class="map-layout">
@@ -603,22 +615,22 @@
 
       <!-- ===== CARE & ID ===== -->
       <section id="view-careid" class="hidden">
-        <div class="head"><h2>Care &amp; Identification</h2><p>Quick reference for plant care and pest identification.</p></div>
+        <div class="head"><h2>Care &amp; Identification</h2><p>Care reference for houseplants and perennials. Tap a plant for full details.</p></div>
         <div class="subnav">
-          <button class="active" data-careid="plants" type="button">Care Library</button>
-          <button data-careid="pests" type="button">Pest Identification</button>
+          <button class="active" data-careid="house" type="button">Houseplant Care</button>
+          <button data-careid="perennial" type="button">Perennial Care</button>
         </div>
-        <div id="careid-plants">
+        <div id="careid-house">
           <div class="search-box" style="max-width:360px;margin-bottom:14px;">
-            <span class="ico">🔎</span><input id="careSearch" type="search" placeholder="Search plants…" />
+            <span class="ico">🔎</span><input id="houseSearch" type="search" placeholder="Search houseplants…" />
           </div>
-          <div id="plantGrid" class="grid"><p style="color:var(--muted)">Loading plants…</p></div>
+          <div id="houseGrid" class="grid"><p style="color:var(--muted)">Loading houseplants…</p></div>
         </div>
-        <div id="careid-pests" class="hidden">
+        <div id="careid-perennial" class="hidden">
           <div class="search-box" style="max-width:360px;margin-bottom:14px;">
-            <span class="ico">🔎</span><input id="pestSearch" type="search" placeholder="Search pests…" />
+            <span class="ico">🔎</span><input id="perennialSearch" type="search" placeholder="Search perennials…" />
           </div>
-          <div id="pestGrid" class="grid"><p style="color:var(--muted)">Loading pests…</p></div>
+          <div id="perennialGrid" class="grid"><p style="color:var(--muted)">Loading perennials…</p></div>
         </div>
       </section>
 
@@ -691,6 +703,7 @@
       <div class="fld"><label class="field-label" for="seLng">Longitude</label><input id="seLng" type="text" inputmode="decimal" placeholder="-90.0303" /></div>
     </div>
     <div class="fld"><label class="field-label" for="seAddr">Address</label><input id="seAddr" type="text" placeholder="City, State (optional)" /></div>
+    <div class="fld"><label class="field-label" for="seTerritory">Territory</label><input id="seTerritory" type="text" inputmode="numeric" placeholder="e.g. 3" /></div>
     <div class="modal-actions" style="justify-content:space-between;">
       <button id="seDelete" class="btn btn-ghost hidden" type="button" style="color:var(--bad);">Delete</button>
       <span style="display:flex;gap:8px;">
@@ -752,12 +765,9 @@ try {
 const FILES = {
   sku:        "SKU_Name_2026.csv",
   orderWeeks: "OrderWeeks.csv",
-  orders:     "OrderBreakdown.csv",
-  plants:     "plants.csv",
-  pests:      "pests.csv"
+  orders:     "OrderBreakdown.csv"
 };
-/* Store locations are read from one of these (first that loads wins). */
-const STORE_FILES = ["Store.csv", "store.csv", "stores.csv"];
+/* Store locations are embedded in this file (EMBEDDED_STORES) — no CSV needed. */
 
 /* ====== ADMIN ACCESS ====== */
 const ADMIN_CODE = "HF/HPA2026";
@@ -777,15 +787,177 @@ const STORE_GRADES_BY_WEEK = {
   "10":"All stores","11":"All stores","12":"All stores","13":"All stores"
 };
 
-/* Fallback roster used only if no stores CSV is found. */
-const DEFAULT_STORES = [
-  { id:"1201", name:"Elgin, IL",        lat:42.0354, lng:-88.2826 },
-  { id:"1248", name:"Schaumburg, IL",   lat:42.0334, lng:-88.0834 },
-  { id:"1305", name:"Naperville, IL",   lat:41.7508, lng:-88.1535 },
-  { id:"1412", name:"Aurora, IL",       lat:41.7606, lng:-88.3201 },
-  { id:"1533", name:"Crystal Lake, IL", lat:42.2411, lng:-88.3162 },
-  { id:"1610", name:"Rockford, IL",     lat:42.2711, lng:-89.0940 }
+/* ====== STORE ROSTER (embedded — no external CSV needed) ======
+   The full store list is baked into the page below. To change stores, either
+   edit this array or use the in-app "Edit / Add store" button (synced via Firebase). */
+const EMBEDDED_STORES = [
+  {id:"1851",name:"Belleville",lat:38.524745,lng:-90.030281,address:"5501 Belleville Crossing St, Belleville, IL",territory:"1"},
+  {id:"1901",name:"Broadview",lat:41.852765,lng:-87.849351,address:"700 Broadview Village Square, Broadview, IL",territory:"3"},
+  {id:"1902",name:"Evanston",lat:42.026609,lng:-87.704957,address:"2201 Oakton Street, Evanston, IL",territory:"3"},
+  {id:"1903",name:"Brickyard",lat:41.926082,lng:-87.792011,address:"2555 N. Normandy, Chicago, IL",territory:"3"},
+  {id:"1904",name:"Schaumburg",lat:42.026392,lng:-88.147363,address:"100 Barrington Road, Schaumburg, IL",territory:"4"},
+  {id:"1905",name:"Darien",lat:41.751359,lng:-87.994839,address:"2101 W. 75th Street, Darien, IL",territory:"2"},
+  {id:"1906",name:"Orland Park",lat:41.603217,lng:-87.796621,address:"7300 W. 159th Street, Orland Park, IL",territory:"2"},
+  {id:"1907",name:"Niles",lat:42.023832,lng:-87.799794,address:"901 Civic Center Drive, Niles, IL",territory:"4"},
+  {id:"1908",name:"Bedford Park",lat:41.762554,lng:-87.745884,address:"7200 S Cicero Ave, Bedford Park, IL",territory:"3"},
+  {id:"1909",name:"Calumet City",lat:41.588808,lng:-87.560906,address:"1550 Torrence Avenue, Calumet City, IL",territory:"3"},
+  {id:"1911",name:"Cicero",lat:41.841307,lng:-87.741213,address:"2803 S. Cicero Avenue, Cicero, IL",territory:"3"},
+  {id:"1912",name:"North Avenue",lat:41.911529,lng:-87.658399,address:"1232 W. North Avenue, Chicago, IL",territory:"3"},
+  {id:"1913",name:"Mt. Prospect",lat:42.08123,lng:-87.932278,address:"350 E. Kensington, Mt. Prospect, IL",territory:"4"},
+  {id:"1914",name:"Dan Ryan",lat:41.736201,lng:-87.627428,address:"200 W 87th St, Chicago, IL",territory:"3"},
+  {id:"1915",name:"Quincy",lat:39.932558,lng:-91.328629,address:"5432 Broadway, Quincy, IL",territory:"1"},
+  {id:"1916",name:"Downers Grove",lat:41.834886,lng:-88.031982,address:"2000 Butterfield Road, Downers Grove, IL",territory:"2"},
+  {id:"1917",name:"Glendale Heights",lat:41.934228,lng:-88.076892,address:"295 E. Army Trail Road, Glendale Heights, IL",territory:"2"},
+  {id:"1918",name:"Naperville",lat:41.74826,lng:-88.203248,address:"2920 Audrey Avenue, Naperville, IL",territory:"2"},
+  {id:"1919",name:"Northlake",lat:41.907015,lng:-87.900716,address:"37 W. North Avenue, Northlake, IL",territory:"2"},
+  {id:"1920",name:"Crystal Lake",lat:42.225302,lng:-88.285431,address:"4447 U.S. Route 14, Crystal Lake, IL",territory:"4"},
+  {id:"1921",name:"Geneva",lat:41.868171,lng:-88.340266,address:"2111 S. Randall Road, Geneva, IL",territory:"2"},
+  {id:"1922",name:"Gurnee",lat:42.383547,lng:-87.968263,address:"6625 Grand Avenue, Gurnee, IL",territory:"4"},
+  {id:"1924",name:"Fairview Heights",lat:38.592691,lng:-89.957658,address:"1706 W Hwy 50, Fairview Heights, IL",territory:"1"},
+  {id:"1926",name:"Deerfield",lat:42.151033,lng:-87.843113,address:"655 Lake Cook Road, Deerfield, IL",territory:"4"},
+  {id:"1927",name:"Palatine",lat:42.137033,lng:-88.022602,address:"825 E Dundee Road, Palatine, IL",territory:"4"},
+  {id:"1928",name:"Rockford",lat:42.273827,lng:-88.982279,address:"6930 Argus Drive, Rockford, IL",territory:"5"},
+  {id:"1932",name:"Matteson",lat:41.510299,lng:-87.734503,address:"20808 Cicero Avenue, Matteson, IL",territory:"2"},
+  {id:"1934",name:"Elgin",lat:42.050412,lng:-88.339746,address:"",territory:"4"},
+  {id:"1935",name:"Chicago Ridge",lat:41.709533,lng:-87.782118,address:"300 Commons Drive, Chicago Ridge, IL",territory:"3"},
+  {id:"1936",name:"Homewood",lat:41.565749,lng:-87.633849,address:"17845 Halstead Street, Homewood, IL",territory:"3"},
+  {id:"1937",name:"Schererville",lat:41.505109,lng:-87.473088,address:"960 U.S. Highway 41, Schererville, IN",territory:"3"},
+  {id:"1938",name:"Vernon Hills",lat:42.235093,lng:-87.939098,address:"493 N Milwaukee Ave, Vernon Hills, IL",territory:"4"},
+  {id:"1939",name:"Bolingbrook",lat:41.709235,lng:-88.127489,address:"105 N. Weber Road, Bolingbrook, IL",territory:"2"},
+  {id:"1940",name:"Algonquin",lat:42.172965,lng:-88.338531,address:"200 S. Randall Road, Algonquin, IL",territory:"4"},
+  {id:"1941",name:"Waukegan",lat:42.354361,lng:-87.839227,address:"2001 Belvedere St, Waukegan, IL",territory:"4"},
+  {id:"1942",name:"Woodridge",lat:41.75705,lng:-88.033636,address:"7200 Woodward Ave, Woodridge, IL",territory:"2"},
+  {id:"1943",name:"Carol Stream",lat:41.890173,lng:-88.104396,address:"475 Schmale Road, Carol Stream, IL",territory:"2"},
+  {id:"1944",name:"Volo",lat:42.362519,lng:-88.16502,address:"2731 W. Hartigan Road, Ingleside, IL",territory:"4"},
+  {id:"1948",name:"Carpentersville",lat:42.105131,lng:-88.295696,address:"251 Spring Hill Road, Carpentersville, IL",territory:"4"},
+  {id:"1950",name:"South Loop",lat:41.865818,lng:-87.641473,address:"1300 S. Clinton Street, Chicago, IL",territory:"3"},
+  {id:"1952",name:"Lake Zurich",lat:42.187771,lng:-88.09517,address:"670 S Rand Road, Lake Zurich, IL",territory:"4"},
+  {id:"1955",name:"Oaklawn",lat:41.720547,lng:-87.723806,address:"4060 W. 95th Street, Oaklawn, IL",territory:"3"},
+  {id:"1956",name:"Machesney Park",lat:42.367635,lng:-89.023759,address:"1580 W. Lane Road, Machesney Park, IL",territory:"5"},
+  {id:"1957",name:"West Aurora",lat:41.77324,lng:-88.366219,address:"1250 N. Orchard Road, Aurora, IL",territory:"2"},
+  {id:"1961",name:"Elston/Leavitt",lat:41.9269,lng:-87.683345,address:"2570 N. Elston Avenue, Chicago, IL",territory:"3"},
+  {id:"1962",name:"Joliet",lat:41.579175,lng:-88.158574,address:"3001 Plainfield Road, Joliet, IL",territory:"2"},
+  {id:"1964",name:"Bartlett",lat:41.973204,lng:-88.209088,address:"950 IL Route 59, Bartlett, IL",territory:"4"},
+  {id:"1967",name:"Mattoon",lat:39.481594,lng:-88.328806,address:"1301 Fort Worth Way, Mattoon, IL",territory:"1"},
+  {id:"1969",name:"Mchenry",lat:42.362075,lng:-88.270653,address:"2461 Richmond Road, McHenry, IL",territory:"4"},
+  {id:"1973",name:"Edwardsville",lat:38.779945,lng:-89.949656,address:"2500 Troy rd, Edwardsville, IL",territory:"1"},
+  {id:"1974",name:"Armitage",lat:41.916237,lng:-87.744283,address:"1919 N Cicero Ave, Chicago, IL",territory:"3"},
+  {id:"1975",name:"Oswego",lat:41.694852,lng:-88.319838,address:"3080 Route 34, Oswego, IL",territory:"2"},
+  {id:"1976",name:"Lincoln Park",lat:41.930802,lng:-87.648663,address:"2665 N. Halstead, Chicago, IL",territory:"2"},
+  {id:"1977",name:"Peru",lat:41.360571,lng:-89.129273,address:"",territory:"1"},
+  {id:"1978",name:"Peoria",lat:40.773285,lng:-89.672017,address:"5026 W. Holiday Dr, Peoria, IL",territory:"1"},
+  {id:"1979",name:"Marion",lat:37.746606,lng:-88.98425,address:"3200 Banterra Dr, Marion, IL",territory:"1"},
+  {id:"1980",name:"Kimball and Addison",lat:41.944282,lng:-87.713508,address:"3500 N. Kimball, Chicago, IL",territory:"3"},
+  {id:"1981",name:"Niles West",lat:42.041223,lng:-87.841896,address:"8650 Dempster Street, Niles, IL",territory:"4"},
+  {id:"1982",name:"Oakbrook Terrace",lat:41.84773,lng:-87.976402,address:"17W734 22nd Street, Oakbrook Terrace, IL",territory:"2"},
+  {id:"1983",name:"Countryside",lat:41.780814,lng:-87.869686,address:"140 Countryside Plaza, La Grange, IL",territory:"2"},
+  {id:"1984",name:"Champaign",lat:40.133343,lng:-88.256138,address:"820 Bloomington Rd, Champaign, IL",territory:"1"},
+  {id:"1986",name:"47th & Western",lat:41.810941,lng:-87.683204,address:"4555 S Western Blvd, Chicago, IL",territory:"3"},
+  {id:"1987",name:"Glenview",lat:42.107938,lng:-87.82349,address:"2850 Patriot Blvd, Glenview, IL",territory:"4"},
+  {id:"1989",name:"Homer Township",lat:41.633218,lng:-87.928075,address:"14053 S. Bell Road, Homer Glen, IL",territory:"2"},
+  {id:"2001",name:"Hobart",lat:41.467814,lng:-87.30019,address:"2851 East U.S. Route 30, Hobart, IN",territory:"3"},
+  {id:"2030",name:"Valparaiso",lat:41.466435,lng:-87.040046,address:"2430 LaPorte Avenue, Valparaiso, IN",territory:"3"},
+  {id:"2036",name:"Hammond",lat:41.593685,lng:-87.489742,address:"1624 E. 165th Street, Hammond, IN",territory:"3"},
+  {id:"2775",name:"Iron Mountain",lat:45.807487,lng:-88.033048,address:"",territory:"5"},
+  {id:"2801",name:"Maplewood",lat:45.012947,lng:-93.017015,address:"2360 White Bear Avenue,North, Maplewood, MN",territory:"7"},
+  {id:"2802",name:"Fridley",lat:45.070232,lng:-93.270133,address:"5650 Main Street,NE, Fridley, MN",territory:"6"},
+  {id:"2803",name:"Coon Rapids",lat:45.195148,lng:-93.356076,address:"3550 124th Avenue,NW, Coon Rapids, MN",territory:"6"},
+  {id:"2804",name:"Brooklyn Park",lat:45.077119,lng:-93.393826,address:"6701 Boone Avenue,North, Brooklyn Park, MN",territory:"7"},
+  {id:"2805",name:"Bloomington",lat:44.860721,lng:-93.284966,address:"400 W. 79th Street, Bloomington, MN",territory:"7"},
+  {id:"2806",name:"St. Louis Park",lat:44.96499,lng:-93.35248,address:"5800 Cedar Lake Road, St. Louis Park, MN",territory:"7"},
+  {id:"2807",name:"New Brighton Road",lat:45.00529,lng:-93.23398,address:"1520 New Brighton Boulevard, Minneapolis, MN",territory:"7"},
+  {id:"2808",name:"Plymouth",lat:44.99843,lng:-93.4556,address:"1705 Annapolis Lane, Plymouth, MN",territory:"7"},
+  {id:"2809",name:"Burnsville",lat:44.74963,lng:-93.282,address:"155 Nicollet Boulevard W, Burnsville, MN",territory:"7"},
+  {id:"2810",name:"Woodbury",lat:44.94422,lng:-92.94005,address:"8334 Tamarack Village, Woodbury, MN",territory:"7"},
+  {id:"2811",name:"St. Cloud",lat:45.55114,lng:-94.22252,address:"401 2nd Street,South, Waite Park, MN",territory:"6"},
+  {id:"2812",name:"Eden Prairie",lat:44.86836,lng:-93.44366,address:"13100 Valley View Rd, Eden Prairie, MN",territory:"7"},
+  {id:"2813",name:"Eagan",lat:44.84002,lng:-93.15569,address:"3220 Denmark Ave, Eagan, MN",territory:"7"},
+  {id:"2817",name:"Duluth",lat:46.80218,lng:-92.15235,address:"1101 Mall Dr, Duluth, MN",territory:"6"},
+  {id:"2818",name:"Baxter",lat:46.349113,lng:-94.251043,address:"",territory:"6"},
+  {id:"2820",name:"Forest Lake",lat:45.28083,lng:-93.00764,address:"1943 W. Broadway Avenue, Forest Lake, MN",territory:"6"},
+  {id:"2821",name:"Elk River",lat:45.29775,lng:-93.54859,address:"18011 Zane Street,NW, Elk River, MN",territory:"6"},
+  {id:"2825",name:"Chaska",lat:44.83157,lng:-93.5998,address:"300 Pioneer Trail, Chaska, MN",territory:"7"},
+  {id:"2826",name:"Rochester",lat:44.06369,lng:-92.50777,address:"3050 41st St NW, Rochester, MN",territory:"7"},
+  {id:"2828",name:"Blaine",lat:45.16646,lng:-93.15559,address:"4550 Pheasant Ridge Dr NE, Blaine, MN",territory:"6"},
+  {id:"2829",name:"Mankato",lat:44.18372,lng:-93.95619,address:"375 St. Andrews Drive, Mankato, MN",territory:"7"},
+  {id:"2830",name:"Bemidji",lat:47.49242,lng:-94.91463,address:"2425 Middle School Ave NW, Bemidji, MN",territory:"6"},
+  {id:"2831",name:"Fergus Falls",lat:46.28641,lng:-96.11119,address:"2025 W Lincoln Ave, Fergus Falls, MN",territory:"6"},
+  {id:"2832",name:"Albert Lea",lat:43.6536,lng:-93.32717,address:"2400 Consul St, Albert Lea, MN",territory:"7"},
+  {id:"2833",name:"Apple Valley",lat:44.72968,lng:-93.19996,address:"15101 Flagstaff Avenue, Apple Valley, MN",territory:"7"},
+  {id:"2834",name:"Grand Rapids",lat:47.20546,lng:-93.5259,address:"2600 S. Highway 169, Grand Rapids, MN",territory:"6"},
+  {id:"2840",name:"Monticello",lat:45.29537,lng:-93.77595,address:"1385 7th St E, Monticello, MN",territory:"6"},
+  {id:"2841",name:"Shakopee",lat:44.77327,lng:-93.41117,address:"1701 Co Rd 18, Shakopee, MN",territory:"7"},
+  {id:"2842",name:"Willmar",lat:45.09463,lng:-95.0379,address:"300 28th St SE, Willmar, MN",territory:"6"},
+  {id:"2843",name:"Inver Grove Heights",lat:44.88227,lng:-93.07621,address:"1300 E. Mendota Road, Inver Grove Heights, MN",territory:"7"},
+  {id:"2844",name:"Maple Grove",lat:45.13634,lng:-93.48146,address:"15800 Grove Circle,North, Maple Grove, MN",territory:"6"},
+  {id:"2845",name:"Richfield",lat:44.88756,lng:-93.24808,address:"6301 Richfield Pkwy, Richfield, MN",territory:"7"},
+  {id:"2847",name:"SW Blaine",lat:45.12896,lng:-93.26432,address:"99 Northtown Drive, Blaine, MN",territory:"6"},
+  {id:"3001",name:"Columbia",lat:38.96615,lng:-92.28932,address:"3215 Clark Lane, Columbia, MO",territory:"1"},
+  {id:"3002",name:"Hanley Road",lat:38.62606,lng:-90.33689,address:"1603 S Hanley Rd, Brentwood, MO",territory:"1"},
+  {id:"3003",name:"Bridgeton",lat:38.74026,lng:-90.39896,address:"11215 St Charles Rock Rd, Bridgeton, MO",territory:"1"},
+  {id:"3004",name:"Manchester Road",lat:38.59986,lng:-90.48782,address:"13929 Manchester Rd, Ballwin, MO",territory:"1"},
+  {id:"3007",name:"Sunset Hills",lat:38.55271,lng:-90.4106,address:"10830 Sunset Hills, Sunset Hills, MO",territory:"1"},
+  {id:"3009",name:"St Charles",lat:38.78733,lng:-90.56423,address:"3891 Mexico Rd, St Charles, MO",territory:"1"},
+  {id:"3010",name:"South County",lat:38.50605,lng:-90.32205,address:"7481 S Lindbergh  Blvd, South County, MO",territory:"1"},
+  {id:"3011",name:"Southtown",lat:38.60144,lng:-90.26745,address:"3202 S Kingshighway Blvd, Kings, MO",territory:"1"},
+  {id:"3013",name:"Ferguson",lat:38.76989,lng:-90.26253,address:"10930 New Halls Ferry Rd, Ferguson, MO",territory:"1"},
+  {id:"3014",name:"Arnold",lat:38.41251,lng:-90.39483,address:"3865 Vogel Rd, Arnold, MO",territory:"1"},
+  {id:"3015",name:"O'Fallon",lat:38.7884,lng:-90.70177,address:"1525 Hwy K, O'Fallon, MO",territory:"1"},
+  {id:"3018",name:"Ellisville",lat:38.59075,lng:-90.60872,address:"37 Ellisville Town Ctr Dr, Ellisville, MO",territory:"1"},
+  {id:"3022",name:"Cottleville",lat:38.7432,lng:-90.6333,address:"6190 Mid Rivers Mall Dr, St Peters, MO",territory:"1"},
+  {id:"3025",name:"Wentzville",lat:38.81575,lng:-90.87419,address:"1920 Wentzville Pkwy, Wentzville, MO",territory:"1"},
+  {id:"3027",name:"Osage Beach",lat:38.15192,lng:-92.6,address:"4030 Osage Beach Parkway, Osage Beach, MO",territory:"1"},
+  {id:"3032",name:"Festus",lat:38.21142,lng:-90.40177,address:"1131 West Gannon, Festus, Mo",territory:"1"},
+  {id:"3033",name:"Poplar Bluff",lat:36.74871,lng:-90.41344,address:"939 S Westwood Blvd, Poplar Bluff, MO",territory:"1"},
+  {id:"3034",name:"Florissant",lat:38.80504,lng:-90.29884,address:"13915 New Halls Ferry Rd, Florissant, MO",territory:"1"},
+  {id:"3036",name:"Kirksville",lat:40.22581,lng:-92.58467,address:"3015 N Baltimore, Kirksville, MO",territory:"1"},
+  {id:"3037",name:"Overland",lat:38.68805,lng:-90.35511,address:"8901 Page Ave, Overland, MO",territory:"1"},
+  {id:"3701",name:"Fargo",lat:46.85315,lng:-96.86662,address:"4700 17th Ave S, Fargo, ND",territory:"6"},
+  {id:"3703",name:"Minot",lat:48.199385,lng:-101.29331,address:"",territory:"8"},
+  {id:"4902",name:"West Allis",lat:42.99037,lng:-88.04981,address:"11071 W National Ave, West Allis, WI",territory:"5"},
+  {id:"4903",name:"Grand Chute",lat:44.26887,lng:-88.4667,address:"653 North Westhill Blvd, Grand Chute, WI",territory:"5"},
+  {id:"4905",name:"Onalaska",lat:43.87993,lng:-91.18632,address:"2927 Market Place, Onalaska, WI",territory:"7"},
+  {id:"4906",name:"East Madison",lat:43.13241,lng:-89.29548,address:"2425 East Springs Drive, Madison, WI",territory:"5"},
+  {id:"4907",name:"Franklin/Greenfield",lat:42.92682,lng:-87.95297,address:"6489 South 27th Street, Franklin, WI",territory:"5"},
+  {id:"4909",name:"West Madison",lat:43.03626,lng:-89.45738,address:"4550 Verona Road, Madison, WI",territory:"5"},
+  {id:"4910",name:"Delafield",lat:43.04906,lng:-88.36185,address:"3400 Hillside Dr, Delafield, WI",territory:"5"},
+  {id:"4911",name:"Janesville",lat:42.72014,lng:-88.98207,address:"3200 Deerfield Drive, Janesville, WI",territory:"5"},
+  {id:"4912",name:"North Shore",lat:43.09404,lng:-87.92052,address:"4155 North Port Washington Rd., Milwaukee, WI",territory:"5"},
+  {id:"4915",name:"Bellevue",lat:44.4633,lng:-87.95285,address:"2595 Eaton Road, Green Bay, WI",territory:"5"},
+  {id:"4916",name:"Lake Geneva",lat:42.5958,lng:-88.41479,address:"500 North Edwards Boulevard, Lake Geneva, WI",territory:"5"},
+  {id:"4918",name:"Waukesha",lat:43.03831,lng:-88.1802,address:"2320 West Bluemound Road, Waukesha, WI",territory:"5"},
+  {id:"4919",name:"Grafton",lat:43.31799,lng:-87.921849,address:"",territory:"5"},
+  {id:"4920",name:"West Green Bay",lat:44.5285,lng:-88.07992,address:"810 South Taylor Street, Green Bay, WI",territory:"5"},
+  {id:"4921",name:"Mukwonago",lat:42.852784,lng:-88.317516,address:"",territory:"5"},
+  {id:"4923",name:"Wauwatosa",lat:43.09205,lng:-88.06531,address:"4100 N 124th St, Wauwatosa, WI",territory:"5"},
+  {id:"4924",name:"Kohler",lat:43.71462,lng:-87.7633,address:"4025 Highway 28, Kohler, WI",territory:"5"},
+  {id:"4925",name:"West Bend",lat:43.399603,lng:-88.185329,address:"",territory:"5"},
+  {id:"4926",name:"Racine",lat:42.70201,lng:-87.84966,address:"2429 S Green Bay Road, Racine, WI",territory:"5"},
+  {id:"4928",name:"Appleton",lat:44.24179,lng:-88.36204,address:"2201 S Kensington Ave, Appleton, WI",territory:"5"},
+  {id:"4929",name:"Lake Delton",lat:43.58503,lng:-89.8102,address:"136 Commerce Street, Lake Delton, WI",territory:"5"},
+  {id:"4930",name:"Rhinlander",lat:45.631075,lng:-89.388646,address:"",territory:"5"},
+  {id:"4931",name:"Wausau",lat:43.58503,lng:-89.8102,address:"2705 Sherman Street, Wausau, WI",territory:"5"},
+  {id:"4935",name:"Hudson",lat:44.9579,lng:-92.72442,address:"2330 Crest View Dr, Hudson, WI",territory:"7"},
+  {id:"4940",name:"Menomonee Falls",lat:43.18733,lng:-88.13747,address:"N94 W 18375 Thunder Ridge, Menomonee Falls, WI",territory:"5"},
+  {id:"4941",name:"SE Milwaukee",lat:42.98403,lng:-87.91152,address:"150 W Holt Ave, Milwaukee, WI",territory:"5"},
+  {id:"4942",name:"Wisconsin Rapids",lat:44.377793,lng:-89.798244,address:"",territory:"5"},
+  {id:"6701",name:"Elk Grove Village",lat:42.00902,lng:-88.04776,address:"600 Meacham Road, Elk Grove Village, IL",territory:"4"},
+  {id:"6822",name:"Alsip",lat:41.67477,lng:-87.74217,address:"12000 S. Cicero Avenue, Alsip, IL",territory:"3"},
+  {id:"6887",name:"Yorkville",lat:41.6645,lng:-88.45918,address:"735 Edward Ln, Yorkville, IL",territory:"2"},
+  {id:"6919",name:"Frankfort",lat:41.52435,lng:-87.84731,address:"20101 LaGrange Road, Frankfort, IL",territory:"2"},
+  {id:"6920",name:"Alton",lat:38.92087,lng:-90.16527,address:"1710 Homer Adams Pkwy, Alton, IL",territory:"1"},
+  {id:"6923",name:"South Elgin",lat:41.98262,lng:-88.3439,address:"440 S. Randall Road, South Elgin, IL",territory:"2"},
+  {id:"6925",name:"Shorewood",lat:41.53342,lng:-88.20227,address:"621 Brook Forest Avenue, Shorewood, IL",territory:"2"},
+  {id:"6961",name:"Collinsville",lat:38.67411,lng:-90.01459,address:"1049 Collinsville Crossing Blv, Collinsville, IL",territory:"1"},
+  {id:"6981",name:"Mundelein",lat:42.28636,lng:-88.04653,address:"3200 W. Route 60, Mundelein, IL",territory:"4"},
+  {id:"6987",name:"Normal",lat:40.523723,lng:-88.955146,address:"",territory:"1"},
+  {id:"8430",name:"Jacksonville",lat:39.72098,lng:-90.25431,address:"1601 W Morton Ave, Jacksonville, IL",territory:"1"},
+  {id:"8431",name:"Round Lake Beach",lat:42.38537,lng:-88.06456,address:"2050 N. IL Route 83, Round Lake Beach, IL",territory:"4"},
+  {id:"8598",name:"Lincoln/McCormick",lat:41.99647,lng:-87.71405,address:"6211 N Lincoln Ave, Chicago, IL",territory:"4"},
+  {id:"8994",name:"Chesterfield",lat:38.66595,lng:-90.60549,address:"390 Thf Boulevard, Chesterfield, MO",territory:"1"}
 ];
+/* Legacy alias kept for any old references. */
+const DEFAULT_STORES = EMBEDDED_STORES;
 
 /* ---------- helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -990,110 +1162,419 @@ function initOrders(){
 }
 
 /* ============================================================
-   CARE & ID
+   CARE & ID — Houseplant Care + Perennial Care (built-in data)
+   Photos use Wikimedia Commons Special:FilePath (royalty-free, stable).
    ============================================================ */
 const WIKI = (file) => "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file) + "?width=520";
 
-const PLANT_PHOTOS = {
-  "pothos":              WIKI("Epipremnum aureum 31082012.jpg"),
-  "snake plant":         WIKI("Snake Plant (Sansevieria trifasciata 'Laurentii') 1.jpg"),
-  "sansevieria":         WIKI("Snake Plant (Sansevieria trifasciata 'Laurentii') 1.jpg"),
-  "monstera":            WIKI("Monstera deliciosa3.jpg"),
-  "philodendron":        WIKI("Philodendron hederaceum 2.jpg"),
-  "peace lily":          WIKI("Spathiphyllum cochlearispathum RTBG.jpg"),
-  "spathiphyllum":       WIKI("Spathiphyllum cochlearispathum RTBG.jpg"),
-  "zz plant":            WIKI("Zamioculcas zamiifolia 1.jpg"),
-  "zamioculcas":         WIKI("Zamioculcas zamiifolia 1.jpg"),
-  "spider plant":        WIKI("Chlorophytum comosum 'Vittatum' kz01.jpg"),
-  "chlorophytum":        WIKI("Chlorophytum comosum 'Vittatum' kz01.jpg"),
-  "fiddle leaf fig":     WIKI("Ficus lyrata1.jpg"),
-  "ficus lyrata":        WIKI("Ficus lyrata1.jpg"),
-  "rubber plant":        WIKI("Ficus elastica2.jpg"),
-  "ficus elastica":      WIKI("Ficus elastica2.jpg"),
-  "dracaena":            WIKI("Dracaena marginata1.jpg"),
-  "aloe":                WIKI("Aloe vera flower inset.png"),
-  "jade":                WIKI("Crassula ovata 2.jpg"),
-  "crassula":            WIKI("Crassula ovata 2.jpg"),
-  "succulent":           WIKI("Echeveria elegans 4.jpg"),
-  "echeveria":           WIKI("Echeveria elegans 4.jpg"),
-  "cactus":              WIKI("Mammillaria spinosissima 2.jpg"),
-  "fern":                WIKI("Nephrolepis exaltata kz02.jpg"),
-  "boston fern":         WIKI("Nephrolepis exaltata kz02.jpg"),
-  "calathea":            WIKI("Calathea orbifolia.jpg"),
-  "orchid":              WIKI("Phalaenopsis hybrid white-pink.jpg"),
-  "phalaenopsis":        WIKI("Phalaenopsis hybrid white-pink.jpg"),
-  "anthurium":           WIKI("Anthurium andraeanum (flower).jpg"),
-  "dieffenbachia":       WIKI("Dieffenbachia seguine kz01.jpg"),
-  "croton":              WIKI("Codiaeum variegatum kz01.jpg"),
-  "ivy":                 WIKI("Hedera helix kz01.jpg"),
-  "english ivy":         WIKI("Hedera helix kz01.jpg"),
-  "palm":                WIKI("Chamaedorea elegans kz01.jpg"),
-  "parlor palm":         WIKI("Chamaedorea elegans kz01.jpg"),
-  "peperomia":           WIKI("Peperomia obtusifolia kz01.jpg"),
-  "begonia":             WIKI("Begonia rex kz01.jpg"),
-  "bromeliad":           WIKI("Bromeliad - Guzmania.jpg"),
-  "succulent mix":       WIKI("Echeveria elegans 4.jpg"),
-  "money tree":          WIKI("Pachira aquatica - Madre de cacao.jpg"),
-  "pachira":             WIKI("Pachira aquatica - Madre de cacao.jpg"),
-  "mum":                 WIKI("Chrysanthemum 'Clara Curtis' Flowers 2200px.jpg"),
-  "chrysanthemum":       WIKI("Chrysanthemum 'Clara Curtis' Flowers 2200px.jpg"),
-  "poinsettia":          WIKI("Weihnachtsstern-Euphorbia-pulcherrima.jpg")
+/* image:"" entries get filled with a verified Commons filename below. */
+const HOUSEPLANTS = [
+  { commonName:"Pothos (Golden)", scientificName:"Epipremnum aureum", img:"Epipremnum aureum 31082012.jpg",
+    light:"Low to bright indirect light; tolerates low light but variegation fades.",
+    water:"Let the top 1–2 in. of soil dry out, then water thoroughly. Roughly weekly.",
+    humidity:"Average household humidity is fine (40%+).", temp:"65–85°F (18–29°C). Avoid below 50°F.",
+    soil:"Well-draining all-purpose potting mix.", fertilizer:"Balanced liquid feed monthly in spring–summer.",
+    toxicity:"Toxic to cats and dogs (calcium oxalate). Keep out of reach.",
+    tips:"Nearly indestructible. Trim leggy vines to keep it full; cuttings root easily in water." },
+  { commonName:"Snake Plant", scientificName:"Dracaena trifasciata (Sansevieria)", img:"Sansevieria trifasciata (Bow String Hemp) in Hyderabad, India.jpg",
+    light:"Tolerates low light; grows fastest in bright indirect light.",
+    water:"Drought-tolerant. Water only when soil is fully dry; every 2–4 weeks. Overwatering rots it.",
+    humidity:"Low humidity is fine.", temp:"60–85°F (15–29°C).",
+    soil:"Fast-draining cactus/succulent mix.", fertilizer:"Light feed 1–2× in growing season.",
+    toxicity:"Mildly toxic to pets if eaten (saponins).",
+    tips:"The most forgiving plant in the store. Use a pot with drainage; never let it sit in water." },
+  { commonName:"Monstera (Swiss Cheese Plant)", scientificName:"Monstera deliciosa", img:"Monstera deliciosa3.jpg",
+    light:"Bright indirect light. Some morning sun is fine; harsh midday sun scorches leaves.",
+    water:"Water when top 1–2 in. dries; keep evenly moist, not soggy.",
+    humidity:"Prefers 50%+; mist or group plants for higher humidity.", temp:"65–85°F (18–29°C).",
+    soil:"Chunky, well-draining mix with bark/perlite.", fertilizer:"Monthly balanced feed in spring–summer.",
+    toxicity:"Toxic to pets and irritating to humans if chewed (calcium oxalate).",
+    tips:"Give it a moss pole to climb; fenestrations (holes) increase with maturity and good light." },
+  { commonName:"Heartleaf Philodendron", scientificName:"Philodendron hederaceum", img:"Philodendron hederaceum 2.jpg",
+    light:"Low to bright indirect light.",
+    water:"Let top inch dry between waterings.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining peat-based mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Toxic to pets and people if ingested.",
+    tips:"Vining and very easy; pinch tips to encourage bushiness." },
+  { commonName:"Peace Lily", scientificName:"Spathiphyllum wallisii", img:"Spathiphyllum cochlearispathum RTBG.jpg",
+    light:"Low to medium indirect light; flowers best in medium light.",
+    water:"Keep evenly moist; it dramatically droops when thirsty and recovers fast after watering.",
+    humidity:"Likes higher humidity; brown tips signal dry air.", temp:"65–80°F (18–27°C).",
+    soil:"Rich, well-draining mix.", fertilizer:"Every 6–8 weeks, diluted.",
+    toxicity:"Toxic to cats and dogs (calcium oxalate).",
+    tips:"A reliable drought indicator. Wipe leaves to keep them glossy; remove spent white spathes." },
+  { commonName:"ZZ Plant", scientificName:"Zamioculcas zamiifolia", img:"Zamioculcas zamiifolia 1.jpg",
+    light:"Low to bright indirect light.",
+    water:"Very drought-tolerant; water every 2–3 weeks when dry.", humidity:"Low is fine.", temp:"65–85°F (18–29°C).",
+    soil:"Well-draining mix.", fertilizer:"2–3× per year.",
+    toxicity:"Toxic to pets and people if ingested.",
+    tips:"Stores water in rhizomes — far more plants die from overwatering than under." },
+  { commonName:"Spider Plant", scientificName:"Chlorophytum comosum", img:"Chlorophytum comosum 'Vittatum' kz01.jpg",
+    light:"Bright indirect light.",
+    water:"Keep lightly moist; let top dry slightly between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"All-purpose well-draining mix.", fertilizer:"Monthly in spring–summer.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Produces babies (\"pups\") on runners that pot up easily. Brown tips usually mean fluoride/salt in tap water." },
+  { commonName:"Fiddle Leaf Fig", scientificName:"Ficus lyrata", img:"Ficus lyrata1.jpg",
+    light:"Lots of bright indirect light; some gentle direct sun.",
+    water:"Water when top 1–2 in. dries; consistency matters.", humidity:"Prefers 40–60%.", temp:"65–75°F (18–24°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Toxic to pets if ingested; sap irritates skin.",
+    tips:"Hates being moved and drafts; pick a spot and leave it. Dust leaves regularly." },
+  { commonName:"Rubber Plant", scientificName:"Ficus elastica", img:"Ficus elastica2.jpg",
+    light:"Bright indirect light keeps color; tolerates medium.",
+    water:"Let top inch dry between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.",
+    toxicity:"Toxic to pets; milky sap irritates skin.",
+    tips:"Wipe the broad leaves to keep them shiny; prune to control height." },
+  { commonName:"Dragon Tree", scientificName:"Dracaena marginata", img:"Dracaena marginata1.jpg",
+    light:"Bright indirect; tolerates medium.",
+    water:"Allow top 1–2 in. to dry; sensitive to fluoride.", humidity:"Average.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Toxic to cats and dogs.",
+    tips:"Use filtered/distilled water if leaf tips brown. Slow-growing and architectural." },
+  { commonName:"Aloe Vera", scientificName:"Aloe vera", img:"Aloe vera flower inset.png",
+    light:"Bright light, including some direct sun.",
+    water:"Soak then dry fully; every 2–3 weeks.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"2–3× per year.",
+    toxicity:"Mildly toxic to pets if eaten.",
+    tips:"Leaf gel soothes minor burns. Wrinkled leaves mean it needs water; mushy leaves mean too much." },
+  { commonName:"Jade Plant", scientificName:"Crassula ovata", img:"Crassula ovata 2.jpg",
+    light:"Bright light with some direct sun.",
+    water:"Let soil dry fully; water sparingly.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"2–3× in growing season.",
+    toxicity:"Toxic to cats and dogs.",
+    tips:"A classic, long-lived succulent. Too little light makes it leggy." },
+  { commonName:"Echeveria (Hen & Chicks)", scientificName:"Echeveria elegans", img:"Echeveria elegans 4.jpg",
+    light:"Very bright light / direct sun.",
+    water:"Soak-and-dry; water only when fully dry.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Gritty cactus mix.", fertilizer:"Lightly, 1–2× per year.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Stretched, pale rosettes mean too little light. Water at the base, not the rosette." },
+  { commonName:"Boston Fern", scientificName:"Nephrolepis exaltata", img:"Nephrolepis exaltata kz02.jpg",
+    light:"Bright indirect light, no direct sun.",
+    water:"Keep consistently moist, never soggy.", humidity:"Loves high humidity (60%+).", temp:"60–75°F (15–24°C).",
+    soil:"Rich, moisture-retentive mix.", fertilizer:"Monthly, diluted.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Brown, crispy fronds = air too dry. Best in bathrooms or on a pebble tray." },
+  { commonName:"Calathea (Prayer Plant)", scientificName:"Calathea orbifolia", img:"Calathea orbifolia.jpg",
+    light:"Medium indirect light; direct sun fades the patterns.",
+    water:"Keep evenly moist with filtered/distilled water.", humidity:"High humidity required (60%+).", temp:"65–80°F (18–27°C).",
+    soil:"Rich, well-draining mix.", fertilizer:"Monthly, diluted, in growing season.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Fussy about tap water and dry air; crispy edges mean low humidity or mineral buildup." },
+  { commonName:"Moth Orchid", scientificName:"Phalaenopsis hybrid", img:"Phalaenopsis hybrid white-pink.jpg",
+    light:"Bright indirect light (east window is ideal).",
+    water:"Water weekly; let the bark mix nearly dry. Never let roots sit in water.", humidity:"50–70%.", temp:"65–80°F (18–27°C).",
+    soil:"Orchid bark mix, not regular soil.", fertilizer:"Weak orchid feed every 2 weeks ('weakly, weekly').",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"After blooms drop, cut the spike above a node for a chance at reblooming. Green roots = hydrated." },
+  { commonName:"Anthurium (Flamingo Flower)", scientificName:"Anthurium andraeanum", img:"Anthurium andraeanum (flower).jpg",
+    light:"Bright indirect light.",
+    water:"Water when top inch dries; keep lightly moist.", humidity:"Prefers high humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Loose, well-draining mix with bark.", fertilizer:"Diluted feed every 6–8 weeks.",
+    toxicity:"Toxic to pets and people if chewed.",
+    tips:"The red 'flowers' are waxy spathes that last weeks. More light = more blooms." },
+  { commonName:"Dumb Cane", scientificName:"Dieffenbachia seguine", img:"Dieffenbachia seguine kz01.jpg",
+    light:"Medium to bright indirect light.",
+    water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Toxic — sap causes mouth/throat swelling (the name 'dumb cane' refers to this). Keep from kids and pets.",
+    tips:"Wear gloves when pruning; wash hands after handling sap." },
+  { commonName:"Croton", scientificName:"Codiaeum variegatum", img:"Codiaeum variegatum kz01.jpg",
+    light:"Bright light with some direct sun for vivid color.",
+    water:"Keep lightly moist; let top dry slightly.", humidity:"Prefers higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.",
+    toxicity:"Toxic to pets; sap irritates skin.",
+    tips:"Drops leaves when moved or chilled. Low light dulls the colors." },
+  { commonName:"English Ivy", scientificName:"Hedera helix", img:"Hedera helix kz01.jpg",
+    light:"Bright indirect light.",
+    water:"Keep lightly moist; let top dry slightly.", humidity:"Prefers higher humidity.", temp:"55–75°F (13–24°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Toxic to pets and people if eaten.",
+    tips:"Great trailing plant; rinse leaves occasionally to discourage spider mites." },
+  { commonName:"Parlor Palm", scientificName:"Chamaedorea elegans", img:"Chamaedorea elegans kz01.jpg",
+    light:"Low to medium indirect light.",
+    water:"Let top inch dry; avoid soggy soil.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"2–3× in growing season.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"A true low-light palm. Don't overwater; brown tips often mean dry air or salt buildup." },
+  { commonName:"Baby Rubber Plant", scientificName:"Peperomia obtusifolia", img:"Peperomia obtusifolia kz01.jpg",
+    light:"Medium to bright indirect light.",
+    water:"Let top half of soil dry; semi-succulent leaves store water.", humidity:"Average.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly, diluted, in growing season.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Compact and easy; overwatering causes mushy stems." },
+  { commonName:"Rex Begonia", scientificName:"Begonia rex-cultorum", img:"Begonia rex kz01.jpg",
+    light:"Bright indirect light; no harsh sun.",
+    water:"Keep lightly moist; water the soil, not the leaves.", humidity:"Prefers high humidity.", temp:"60–75°F (15–24°C).",
+    soil:"Light, well-draining mix.", fertilizer:"Diluted feed monthly in growing season.",
+    toxicity:"Toxic to pets if eaten.",
+    tips:"Grown for dramatic foliage. Avoid wetting leaves to prevent powdery mildew." },
+  { commonName:"Bromeliad (Guzmania)", scientificName:"Guzmania lingulata", img:"Bromeliad - Guzmania.jpg",
+    light:"Bright indirect light.",
+    water:"Keep the central 'cup' filled with water; flush it weekly. Keep soil barely moist.", humidity:"Prefers high humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Fast-draining orchid/bromeliad mix.", fertilizer:"Very dilute, occasionally, in the cup or soil.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"The colorful bract lasts months; the mother plant dies after blooming but leaves offsets ('pups')." },
+  { commonName:"Money Tree", scientificName:"Pachira aquatica", img:"Pachira aquatica - Madre de cacao.jpg",
+    light:"Bright indirect light.",
+    water:"Water when top 1–2 in. dries; tolerates occasional drying.", humidity:"Prefers higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
+    toxicity:"Non-toxic — pet-safe.",
+    tips:"Often sold with a braided trunk. Yellow leaves usually mean overwatering." }
+];
+
+const PERENNIALS = [
+  { commonName:"Hosta", scientificName:"Hosta spp.", img:"Hosta 'Francee' kz01.jpg",
+    light:"Part to full shade; morning sun is fine. Blue-leaved types need the most shade.",
+    water:"1 in. of water per week; keep evenly moist in summer.", humidity:"—",
+    temp:"Hardy USDA zones 3–9; dies back and returns each spring.",
+    soil:"Rich, moist, well-draining soil with organic matter.", fertilizer:"Balanced feed in early spring.",
+    toxicity:"Toxic to cats and dogs.",
+    tips:"The go-to shade perennial, grown for foliage. Watch for slugs; lavender flower spikes appear in summer." },
+  { commonName:"Daylily", scientificName:"Hemerocallis spp.", img:"Hemerocallis 'Stella de Oro' 02.jpg",
+    light:"Full sun (6+ hrs); tolerates light shade with fewer blooms.",
+    water:"About 1 in. per week; very drought-tolerant once established.", humidity:"—",
+    temp:"Hardy zones 3–9.",
+    soil:"Adaptable; prefers well-draining soil.", fertilizer:"Light feed in spring.",
+    toxicity:"Toxic to cats (can cause kidney failure) — keep away from felines.",
+    tips:"Nearly foolproof. Each bloom lasts one day; deadhead spent blooms. 'Stella de Oro' reblooms all season." },
+  { commonName:"Coneflower (Echinacea)", scientificName:"Echinacea purpurea", img:"Echinacea purpurea (Eastern Purple Coneflower).jpg",
+    light:"Full sun.",
+    water:"About 1 in. per week; drought-tolerant once established.", humidity:"—",
+    temp:"Hardy zones 3–9.",
+    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal; too much reduces blooms.",
+    toxicity:"Non-toxic.",
+    tips:"A pollinator magnet. Leave seed heads in fall for goldfinches; deadhead to extend bloom." },
+  { commonName:"Black-Eyed Susan", scientificName:"Rudbeckia hirta", img:"Rudbeckia hirta - Black-eyed Susan.jpg",
+    light:"Full sun.",
+    water:"About 1 in. per week; drought-tolerant.", humidity:"—",
+    temp:"Hardy zones 3–9 (some grown as annuals).",
+    soil:"Average, well-draining soil.", fertilizer:"Minimal.",
+    toxicity:"Mildly toxic if eaten; sap can irritate skin.",
+    tips:"Long-blooming golden daisies. Deadhead for more flowers, or leave seed heads for birds." },
+  { commonName:"Shasta Daisy", scientificName:"Leucanthemum × superbum", img:"Leucanthemum superbum0.jpg",
+    light:"Full sun to light shade.",
+    water:"About 1 in. per week.", humidity:"—",
+    temp:"Hardy zones 5–9.",
+    soil:"Well-draining, moderately fertile soil.", fertilizer:"Light feed in spring.",
+    toxicity:"Non-toxic.",
+    tips:"Classic white daisies for cutting. Divide every 2–3 years to keep vigorous." },
+  { commonName:"Garden Phlox", scientificName:"Phlox paniculata", img:"Phlox paniculata0.jpg",
+    light:"Full sun to part shade.",
+    water:"Keep evenly moist; about 1 in. per week.", humidity:"—",
+    temp:"Hardy zones 4–8.",
+    soil:"Rich, well-draining soil.", fertilizer:"Balanced feed in spring.",
+    toxicity:"Non-toxic.",
+    tips:"Fragrant summer blooms. Give it air circulation and water at the base to avoid powdery mildew." },
+  { commonName:"Sedum (Autumn Joy)", scientificName:"Hylotelephium 'Herbstfreude'", img:"Sedum Herbstfreude 2017-08-27 2917.jpg",
+    light:"Full sun.",
+    water:"Very drought-tolerant; water sparingly.", humidity:"—",
+    temp:"Hardy zones 3–9.",
+    soil:"Lean, well-draining soil; tolerates poor ground.", fertilizer:"None needed.",
+    toxicity:"Non-toxic to mildly toxic to pets.",
+    tips:"Succulent perennial; pink fall blooms age to rust. Floppy stems mean too much water or shade." },
+  { commonName:"Russian Sage", scientificName:"Salvia yangii (Perovskia)", img:"Perovskia atriplicifolia kz03.jpg",
+    light:"Full sun.",
+    water:"Drought-tolerant once established.", humidity:"—",
+    temp:"Hardy zones 4–9.",
+    soil:"Well-draining, even poor or sandy soil.", fertilizer:"None needed.",
+    toxicity:"Non-toxic.",
+    tips:"Airy silver stems with violet-blue flowers; cut back hard in early spring. Loved by bees." },
+  { commonName:"Catmint", scientificName:"Nepeta × faassenii", img:"Nepeta faassenii kz01.jpg",
+    light:"Full sun to part shade.",
+    water:"Drought-tolerant once established.", humidity:"—",
+    temp:"Hardy zones 3–8.",
+    soil:"Well-draining soil.", fertilizer:"Minimal.",
+    toxicity:"Non-toxic (less potent than true catnip).",
+    tips:"Long-blooming lavender-blue haze. Shear after the first flush for a repeat bloom." },
+  { commonName:"Coreopsis (Tickseed)", scientificName:"Coreopsis spp.", img:"Coreopsis verticillata kz01.jpg",
+    light:"Full sun.",
+    water:"About 1 in. per week; drought-tolerant.", humidity:"—",
+    temp:"Hardy zones 4–9.",
+    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal.",
+    toxicity:"Non-toxic.",
+    tips:"Cheerful yellow daisies all summer. Deadhead or shear to keep it blooming." },
+  { commonName:"Salvia (Perennial)", scientificName:"Salvia nemorosa", img:"Salvia nemorosa0.jpg",
+    light:"Full sun.",
+    water:"Water until established, then drought-tolerant.", humidity:"—",
+    temp:"Hardy zones 4–8.",
+    soil:"Well-draining soil.", fertilizer:"Light feed in spring.",
+    toxicity:"Non-toxic.",
+    tips:"Spiky purple-blue blooms; cut back spent spikes for rebloom. Excellent for pollinators." },
+  { commonName:"Peony", scientificName:"Paeonia lactiflora", img:"Paeonia lactiflora 003.JPG",
+    light:"Full sun (6+ hrs).",
+    water:"About 1 in. per week; deep watering.", humidity:"—",
+    temp:"Hardy zones 3–8; needs winter chill to bloom.",
+    soil:"Rich, well-draining soil.", fertilizer:"Low-nitrogen feed after flowering.",
+    toxicity:"Toxic to pets if eaten.",
+    tips:"Plant eyes only 1–2 in. deep — too deep and it won't bloom. Long-lived; doesn't like being moved." },
+  { commonName:"Astilbe", scientificName:"Astilbe × arendsii", img:"Astilbe japonica kz01.jpg",
+    light:"Part to full shade.",
+    water:"Keep consistently moist; does not tolerate drying out.", humidity:"—",
+    temp:"Hardy zones 3–8.",
+    soil:"Rich, moist, well-draining soil.", fertilizer:"Balanced feed in spring.",
+    toxicity:"Non-toxic.",
+    tips:"Feathery plumes for shade. Brown, crispy edges mean it dried out — mulch to hold moisture." },
+  { commonName:"Coral Bells", scientificName:"Heuchera spp.", img:"Heuchera 'Palace Purple' kz01.jpg",
+    light:"Part shade; morning sun is fine. Darker leaves take more sun.",
+    water:"Keep evenly moist; about 1 in. per week.", humidity:"—",
+    temp:"Hardy zones 4–9.",
+    soil:"Rich, well-draining soil.", fertilizer:"Light feed in spring.",
+    toxicity:"Non-toxic.",
+    tips:"Grown for colorful foliage. Frost heaving can lift crowns — re-firm soil in spring." },
+  { commonName:"Bearded Iris", scientificName:"Iris germanica", img:"Iris germanica 02.jpg",
+    light:"Full sun.",
+    water:"Water during growth; let rhizomes dry between. Avoid soggy soil.", humidity:"—",
+    temp:"Hardy zones 3–9.",
+    soil:"Well-draining soil; rhizomes sit at the surface.", fertilizer:"Low-nitrogen feed in early spring.",
+    toxicity:"Toxic to pets if eaten.",
+    tips:"Plant rhizomes shallow with tops exposed. Divide every 3–4 years when clumps get crowded." },
+  { commonName:"Lavender", scientificName:"Lavandula angustifolia", img:"Lavandula angustifolia - Köhler–s Medizinal-Pflanzen-085 cropped.jpg",
+    light:"Full sun.",
+    water:"Drought-tolerant; water sparingly once established. Hates wet feet.", humidity:"Prefers dry air.",
+    temp:"Hardy zones 5–9 (English lavender).",
+    soil:"Lean, gritty, well-draining, slightly alkaline soil.", fertilizer:"None needed.",
+    toxicity:"Non-toxic; mildly upsetting to pets in quantity.",
+    tips:"Sharp drainage is everything — most lavender dies from soggy soil, not cold. Prune lightly after bloom." },
+  { commonName:"Daffodil", scientificName:"Narcissus spp.", img:"Narcissus pseudonarcissus kz01.jpg",
+    light:"Full sun to light shade.",
+    water:"Water during growth and bloom; let dormant in summer.", humidity:"—",
+    temp:"Hardy zones 3–8; plant bulbs in fall.",
+    soil:"Well-draining soil.", fertilizer:"Bulb fertilizer at planting and after bloom.",
+    toxicity:"Toxic to pets and people — all parts, especially the bulb.",
+    tips:"Let foliage yellow and die back naturally to feed next year's bulb. Deer- and rodent-resistant." },
+  { commonName:"Tulip", scientificName:"Tulipa spp.", img:"Tulipa suaveolens floriade to Canberra.jpg",
+    light:"Full sun.",
+    water:"Water at planting and during growth; keep dry when dormant.", humidity:"—",
+    temp:"Hardy zones 3–8; plant bulbs in fall, needs winter chill.",
+    soil:"Well-draining soil; bulbs rot in wet ground.", fertilizer:"Bulb fertilizer at planting.",
+    toxicity:"Toxic to pets, especially the bulb.",
+    tips:"Often treated as annuals in warm zones; many hybrids fade after a year or two. Plant 6–8 in. deep." },
+  { commonName:"Coral Honeysuckle", scientificName:"Lonicera sempervirens", img:"Lonicera sempervirens kz01.jpg",
+    light:"Full sun to part shade.",
+    water:"About 1 in. per week until established.", humidity:"—",
+    temp:"Hardy zones 4–9.",
+    soil:"Average, well-draining soil.", fertilizer:"Light feed in spring.",
+    toxicity:"Mildly toxic berries.",
+    tips:"A non-invasive native vine (unlike Japanese honeysuckle); hummingbirds love the red-orange tubes." },
+  { commonName:"Yarrow", scientificName:"Achillea millefolium", img:"Achillea millefolium kz03.jpg",
+    light:"Full sun.",
+    water:"Very drought-tolerant; water sparingly.", humidity:"—",
+    temp:"Hardy zones 3–9.",
+    soil:"Lean, well-draining soil; tolerates poor ground.", fertilizer:"None needed.",
+    toxicity:"Mildly toxic to pets.",
+    tips:"Flat flower clusters in many colors; tough and spreads. Shear after bloom to tidy and rebloom." }
+];
+
+/* ---- Photos via Wikipedia (correct lead image per species, fetched at runtime) ----
+   Keyed by scientific name -> Wikipedia article title. The REST summary endpoint is
+   CORS-enabled, so this works from a static site in the user's browser. */
+const WIKI_TITLE = {
+  "Epipremnum aureum":"Epipremnum aureum",
+  "Dracaena trifasciata (Sansevieria)":"Dracaena trifasciata",
+  "Monstera deliciosa":"Monstera deliciosa",
+  "Philodendron hederaceum":"Philodendron hederaceum",
+  "Spathiphyllum wallisii":"Spathiphyllum",
+  "Zamioculcas zamiifolia":"Zamioculcas zamiifolia",
+  "Chlorophytum comosum":"Chlorophytum comosum",
+  "Ficus lyrata":"Ficus lyrata",
+  "Ficus elastica":"Ficus elastica",
+  "Dracaena marginata":"Dracaena reflexa var. angustifolia",
+  "Aloe vera":"Aloe vera",
+  "Crassula ovata":"Crassula ovata",
+  "Echeveria elegans":"Echeveria elegans",
+  "Nephrolepis exaltata":"Nephrolepis exaltata",
+  "Calathea orbifolia":"Goeppertia orbifolia",
+  "Phalaenopsis hybrid":"Phalaenopsis",
+  "Anthurium andraeanum":"Anthurium andraeanum",
+  "Dieffenbachia seguine":"Dieffenbachia seguine",
+  "Codiaeum variegatum":"Codiaeum variegatum",
+  "Hedera helix":"Hedera helix",
+  "Chamaedorea elegans":"Chamaedorea elegans",
+  "Peperomia obtusifolia":"Peperomia obtusifolia",
+  "Begonia rex-cultorum":"Begonia rex",
+  "Guzmania lingulata":"Guzmania lingulata",
+  "Pachira aquatica":"Pachira aquatica",
+  /* perennials */
+  "Hosta spp.":"Hosta",
+  "Hemerocallis spp.":"Daylily",
+  "Echinacea purpurea":"Echinacea purpurea",
+  "Rudbeckia hirta":"Rudbeckia hirta",
+  "Leucanthemum × superbum":"Leucanthemum × superbum",
+  "Phlox paniculata":"Phlox paniculata",
+  "Hylotelephium 'Herbstfreude'":"Hylotelephium telephium",
+  "Salvia yangii (Perovskia)":"Salvia yangii",
+  "Nepeta × faassenii":"Nepeta × faassenii",
+  "Coreopsis spp.":"Coreopsis",
+  "Salvia nemorosa":"Salvia nemorosa",
+  "Paeonia lactiflora":"Paeonia lactiflora",
+  "Astilbe × arendsii":"Astilbe",
+  "Heuchera spp.":"Heuchera",
+  "Iris germanica":"Iris germanica",
+  "Lavandula angustifolia":"Lavandula angustifolia",
+  "Narcissus spp.":"Narcissus (plant)",
+  "Tulipa spp.":"Tulip",
+  "Lonicera sempervirens":"Lonicera sempervirens",
+  "Achillea millefolium":"Achillea millefolium"
 };
 
-const PEST_PHOTOS = {
-  "spider mite":     WIKI("Tetranychus urticae with silk threads.jpg"),
-  "mite":            WIKI("Tetranychus urticae with silk threads.jpg"),
-  "aphid":           WIKI("Aphids (Aphididae) feeding on a plant stem.jpg"),
-  "mealybug":        WIKI("Mealybugs on a plant.jpg"),
-  "scale":           WIKI("Coccus hesperidum (scale insects).jpg"),
-  "whitefly":        WIKI("Trialeurodes vaporariorum 2.jpg"),
-  "fungus gnat":     WIKI("Fungus gnat (Sciaridae).jpg"),
-  "gnat":            WIKI("Fungus gnat (Sciaridae).jpg"),
-  "thrips":          WIKI("Thrips on a leaf.jpg"),
-  "fruit fly":       WIKI("Drosophila melanogaster - side (aka).jpg")
-};
-
-function photoFor(name, table){
-  const n = (name||"").toLowerCase();
-  let best=null, bestLen=0;
-  for(const key in table){
-    if(n.includes(key) && key.length>bestLen){ best=table[key]; bestLen=key.length; }
-  }
-  return best;
+const wikiImgCache = {};   // title -> url (or null if none)
+function wikiTitlesFor(p){
+  const list=[];
+  if(p.wiki) list.push(p.wiki);
+  if(WIKI_TITLE[p.scientificName]) list.push(WIKI_TITLE[p.scientificName]);
+  // scientific name without author/variety notes, e.g. "Salvia yangii (Perovskia)" -> "Salvia yangii"
+  const sci=(p.scientificName||"").replace(/\(.*?\)/g,"").replace(/\bspp?\.?/gi,"").replace(/['"].*?['"]/g,"").trim();
+  if(sci) list.push(sci);
+  if(p.commonName) list.push(p.commonName.replace(/\(.*?\)/g,"").trim());
+  return [...new Set(list.filter(Boolean))];
 }
 
-let PLANTS=[], PESTS=[];
-function renderPlants(){
-  const grid=$("plantGrid"); grid.innerHTML="";
-  if(!PLANTS.length){ grid.innerHTML='<p style="color:var(--muted)">No plant data found.</p>'; return; }
-  PLANTS.forEach(p=>{
+async function fetchOne(title){
+  if(title in wikiImgCache) return wikiImgCache[title];
+  try{
+    const url="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title.replace(/ /g,"_"));
+    const res=await fetch(url, { headers:{ "Accept":"application/json" } });
+    if(!res.ok) throw new Error("wiki "+res.status);
+    const data=await res.json();
+    const src = (data.originalimage && data.originalimage.source)
+             || (data.thumbnail && data.thumbnail.source) || null;
+    wikiImgCache[title]=src;
+    return src;
+  }catch(e){ wikiImgCache[title]=null; return null; }
+}
+
+async function fetchWikiImage(p){
+  for(const t of wikiTitlesFor(p)){
+    const src=await fetchOne(t);
+    if(src) return src;
+  }
+  return null;
+}
+
+function renderCareGrid(list, gridId){
+  const grid=$(gridId); grid.innerHTML="";
+  if(!list.length){ grid.innerHTML='<p style="color:var(--muted)">No data found.</p>'; return; }
+  list.forEach(p=>{
     const b=document.createElement("button"); b.className="card card-photo"; b.type="button";
-    b.innerHTML=`${p.image?`<img class="card-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:""}
+    b.innerHTML=`<img class="card-thumb" alt="" loading="lazy" style="display:none">
       <div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.scientificName||"")}</div>`;
+    const thumb=b.querySelector("img.card-thumb");
+    // fetch the correct lead image for this species, then show it
+    fetchWikiImage(p).then(src=>{
+      if(src){ p._img=src; thumb.src=src; thumb.style.display=""; thumb.onerror=()=>{thumb.style.display="none";}; }
+    });
     b.addEventListener("click",()=>{
       $("mCareName").textContent=p.commonName||""; $("mCareLatin").textContent=p.scientificName||"";
       $("mLight").textContent=p.light||""; $("mWater").textContent=p.water||""; $("mHumidity").textContent=p.humidity||"";
       $("mTemp").textContent=p.temp||""; $("mSoil").textContent=p.soil||""; $("mFert").textContent=p.fertilizer||"";
       $("mTox").textContent=p.toxicity||""; $("mTips").textContent=p.tips||"";
-      const img=$("mCareImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none";
+      const img=$("mCareImg");
+      const show=(src)=>{ if(src){ img.src=src; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none"; };
+      if(p._img) show(p._img); else { img.style.display="none"; fetchWikiImage(p).then(s=>{ p._img=s; show(s); }); }
       openModal("careModal");
-    });
-    grid.appendChild(b);
-  });
-}
-function renderPests(){
-  const grid=$("pestGrid"); grid.innerHTML="";
-  if(!PESTS.length){ grid.innerHTML='<p style="color:var(--muted)">No pest data found.</p>'; return; }
-  PESTS.forEach(p=>{
-    const b=document.createElement("button"); b.className="card card-photo"; b.type="button";
-    b.innerHTML=`${p.image?`<img class="card-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:""}
-      <div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.identification||p.scientificName||"")}</div>`;
-    b.addEventListener("click",()=>{
-      $("mPestName").textContent=p.commonName||""; $("mPestLatin").textContent=p.scientificName||"";
-      $("mLooks").textContent=p.looksLike||""; $("mPestId").textContent=p.identification||"";
-      $("mPrev").textContent=p.prevention||""; $("mTreat").textContent=p.treatment||"";
-      const img=$("mPestImg"); if(p.image){ img.src=p.image; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none";
-      openModal("pestModal");
     });
     grid.appendChild(b);
   });
@@ -1103,21 +1584,10 @@ function filterCards(input, grid){
   $$(".card",grid).forEach(c=>{ c.style.display=(!q||(c.textContent||"").toLowerCase().includes(q))?"":"none"; });
 }
 function initCareId(){
-  $("careSearch").addEventListener("input",()=>filterCards($("careSearch"),$("plantGrid")));
-  $("pestSearch").addEventListener("input",()=>filterCards($("pestSearch"),$("pestGrid")));
-  loadCSV(FILES.plants).then(rows=>{
-    PLANTS=rows.map(r=>({commonName:r["common_name"]||"",scientificName:r["scientific_name"]||"",image:r["image"]||"",
-      light:r["light"]||"",water:r["water"]||"",humidity:r["humidity"]||"",temp:r["temp"]||"",soil:r["soil"]||"",
-      fertilizer:r["fertilizer"]||"",toxicity:r["toxicity"]||"",tips:r["tips"]||""})).filter(r=>r.commonName);
-    PLANTS.forEach(p=>{ const hw=photoFor(p.commonName,PLANT_PHOTOS); if(hw) p.image=hw; });
-    renderPlants();
-  }).catch(err=>{ console.error(err); renderPlants(); });
-  loadCSV(FILES.pests).then(rows=>{
-    PESTS=rows.map(r=>({commonName:r["common_name"]||"",scientificName:r["scientific_name"]||"",image:r["image"]||"",
-      looksLike:r["what_they_look_like"]||"",identification:r["identification"]||"",prevention:r["prevention"]||"",treatment:r["treatment"]||""})).filter(r=>r.commonName);
-    PESTS.forEach(p=>{ const hw=photoFor(p.commonName,PEST_PHOTOS); if(hw) p.image=hw; });
-    renderPests();
-  }).catch(err=>{ console.error(err); renderPests(); });
+  $("houseSearch").addEventListener("input",()=>filterCards($("houseSearch"),$("houseGrid")));
+  $("perennialSearch").addEventListener("input",()=>filterCards($("perennialSearch"),$("perennialGrid")));
+  renderCareGrid(HOUSEPLANTS, "houseGrid");
+  renderCareGrid(PERENNIALS, "perennialGrid");
 }
 
 /* ============================================================
@@ -1238,7 +1708,72 @@ function initGuidelines(){
 /* ============================================================
    MAP — Leaflet + Firebase live sync
    ============================================================ */
-let map=null, markers={}, stores={}, selected=null, storesFitted=false;
+let map=null, markers={}, stores={}, selected=null, storesFitted=false, territoryLayer=null;
+
+/* Distinct colors for each territory zone. */
+const TERRITORY_COLORS = {
+  "1":"#3da9fc", "2":"#5ee0d0", "3":"#7c5cff", "4":"#f5b94a",
+  "5":"#f06a6a", "6":"#3ddc97", "7":"#e879f9", "8":"#fb923c"
+};
+function territoryColor(t){ return TERRITORY_COLORS[String(t)] || "#9aa7c0"; }
+
+/* Convex hull (Andrew's monotone chain) over [lat,lng] points. */
+function convexHull(points){
+  const pts=points.map(p=>[p[1],p[0]]).sort((a,b)=> a[0]-b[0] || a[1]-b[1]); // sort by lng,lat
+  if(pts.length<3) return points;
+  const cross=(o,a,b)=> (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]);
+  const lower=[];
+  for(const p of pts){ while(lower.length>=2 && cross(lower[lower.length-2],lower[lower.length-1],p)<=0) lower.pop(); lower.push(p); }
+  const upper=[];
+  for(let i=pts.length-1;i>=0;i--){ const p=pts[i]; while(upper.length>=2 && cross(upper[upper.length-2],upper[upper.length-1],p)<=0) upper.pop(); upper.push(p); }
+  lower.pop(); upper.pop();
+  return lower.concat(upper).map(p=>[p[1],p[0]]); // back to [lat,lng]
+}
+
+/* Pad a hull outward from its centroid so zones enclose their pins with a margin. */
+function padHull(hull, factor){
+  if(hull.length<3) return hull;
+  const cLat=hull.reduce((a,p)=>a+p[0],0)/hull.length;
+  const cLng=hull.reduce((a,p)=>a+p[1],0)/hull.length;
+  return hull.map(([la,ln])=>[ cLat+(la-cLat)*factor, cLng+(ln-cLng)*factor ]);
+}
+
+/* Draw one filled, labeled zone per territory. */
+function drawTerritories(){
+  if(!map || !territoryLayer) return;
+  territoryLayer.clearLayers();
+  const groups={};
+  Object.values(stores).forEach(s=>{
+    if(s.lat==null||s.lng==null) return;
+    const t=(s.territory||"").trim(); if(!t) return;
+    (groups[t]=groups[t]||[]).push([s.lat,s.lng]);
+  });
+  Object.keys(groups).sort((a,b)=>(+a||0)-(+b||0)).forEach(t=>{
+    const pts=groups[t];
+    const color=territoryColor(t);
+    if(pts.length>=3){
+      const hull=padHull(convexHull(pts), 1.12);
+      L.polygon(hull, {
+        color, weight:2, opacity:.9, fillColor:color, fillOpacity:.14,
+        interactive:false, className:"territory-zone"
+      }).addTo(territoryLayer);
+      // label at centroid
+      const cLat=pts.reduce((a,p)=>a+p[0],0)/pts.length;
+      const cLng=pts.reduce((a,p)=>a+p[1],0)/pts.length;
+      L.marker([cLat,cLng],{ interactive:false, icon:L.divIcon({
+        className:"", iconSize:[0,0],
+        html:`<div style="transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:800;
+          color:#fff;background:${color};padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.6);
+          box-shadow:0 1px 4px rgba(0,0,0,.4);opacity:.92;">Territory ${esc(t)}</div>`
+      }) }).addTo(territoryLayer);
+    } else {
+      // 1–2 stores: draw a soft circle around each so the territory still reads as a zone
+      pts.forEach(p=>{
+        L.circle(p, { radius:9000, color, weight:2, opacity:.85, fillColor:color, fillOpacity:.12, interactive:false }).addTo(territoryLayer);
+      });
+    }
+  });
+}
 let checklist=[];
 const statusColor = s => s==="ok" ? "#3ddc97" : s==="warn" ? "#f5b94a" : "#f06a6a";
 
@@ -1281,12 +1816,27 @@ function refreshMarker(id){
     markers[id]=m;
   }
 }
-function refreshAllMarkers(){ Object.keys(stores).forEach(refreshMarker); }
+function refreshAllMarkers(){ Object.keys(stores).forEach(refreshMarker); updateSummary(); }
+
+/* Live count of fully-complete stores, shown in the global status strip. */
+function updateSummary(){
+  const el=$("summaryDone"); if(!el) return;
+  const ids=Object.keys(stores);
+  const total=ids.length;
+  if(!total){ el.textContent="—"; $("summaryNote").textContent="No stores loaded"; return; }
+  const done=ids.filter(id=>completion(stores[id])>=1).length;
+  el.textContent=`${done} / ${total}`;
+  const items=checklist.length;
+  $("summaryNote").textContent = items
+    ? `${items} checklist item${items===1?"":"s"} per store`
+    : "Checklist progress";
+}
 
 function popupHtml(s){
   const pct = Math.round(completion(s)*100);
   const addr = s.address ? `<br><span style="color:var(--muted)">${esc(s.address)}</span>` : "";
-  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}${addr}<br>Checklist ${pct}% complete`;
+  const terr = s.territory ? ` · Terr. ${esc(s.territory)}` : "";
+  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}${terr}${addr}<br>Checklist ${pct}% complete`;
 }
 
 function setItemChecked(storeId, itemId, on){
@@ -1298,6 +1848,7 @@ function setItemChecked(storeId, itemId, on){
     else   remove(ref(db,`stores/${storeId}/checked/${itemId}`)).catch(console.error);
   }
   refreshMarker(storeId);
+  updateSummary();
 }
 
 function renderChecklistPanel(){
@@ -1368,6 +1919,7 @@ function openStoreEditor(){
   $("seLat").value  = editing && editing.lat!=null ? editing.lat : "";
   $("seLng").value  = editing && editing.lng!=null ? editing.lng : "";
   $("seAddr").value = editing ? (editing.address||"") : "";
+  $("seTerritory").value = editing ? (editing.territory||"") : "";
   $("seId").dataset.original = editing ? editing.id : "";
   setVis($("seDelete"), !!editing);
   openModal("storeEditor");
@@ -1397,11 +1949,14 @@ function saveStore(){
     }
   }
 
-  stores[id] = { id, name:name||("#"+id), lat, lng, address, checked };
-  if(db) update(ref(db,`stores/${id}`), { name:stores[id].name, lat, lng, address }).catch(console.error);
+  const prevTerritory = (original && stores[original] && stores[original].territory) || "";
+  const territory = ($("seTerritory") && $("seTerritory").value.trim()) || prevTerritory;
+  stores[id] = { id, name:name||("#"+id), lat, lng, address, territory, checked };
+  if(db) update(ref(db,`stores/${id}`), { name:stores[id].name, lat, lng, address, territory }).catch(console.error);
 
   closeModal("storeEditor");
   refreshMarker(id);
+  drawTerritories();
   selectStore(id);
   fitToStores();
 }
@@ -1421,6 +1976,7 @@ function deleteStore(){
     $("spChecklist").innerHTML='<div style="color:var(--muted);font-size:.84rem;">Select a store to see its checklist.</div>';
   }
   closeModal("storeEditor");
+  drawTerritories();
   fitToStores();
 }
 
@@ -1474,26 +2030,15 @@ function setConn(state){
   else { el.classList.add("off"); el.querySelector(".label").textContent="Offline · local only"; }
 }
 
-/* Load store coordinates from Store.csv / store.csv / stores.csv (first that loads wins). */
+/* Stores are baked into the page (EMBEDDED_STORES) — no external CSV required. */
 async function loadStoresCsv(){
-  for(const file of STORE_FILES){
-    try{
-      const rows = await loadCSV(file);
-      const out=[];
-      rows.forEach(r=>{
-        const id   = (r["store_id"]||r["id"]||r["store"]||r["store #"]||r["store#"]||r["store number"]||"").trim();
-        const name = (r["store_name"]||r["name"]||r["store name"]||r["city"]||r["location"]||"").trim();
-        const lat  = parseFloat(r["lat"]||r["latitude"]||r["y"]);
-        const lng  = parseFloat(r["lon"]||r["lng"]||r["long"]||r["longitude"]||r["x"]);
-        const addrParts=[r["address"], r["city"], r["state"]].map(x=>(x||"").trim()).filter(Boolean);
-        const address = addrParts.join(", ");
-        if(id && !isNaN(lat) && !isNaN(lng)) out.push({ id, name:name||("#"+id), lat, lng, address });
-      });
-      if(out.length){ console.log(`Loaded ${out.length} stores from ${file}`); return out; }
-    }catch(e){ /* try next filename */ }
-  }
-  console.warn("No stores CSV found; using built-in default roster.");
-  return DEFAULT_STORES.slice();
+  return EMBEDDED_STORES.map(s=>({
+    id:String(s.id),
+    name:s.name||("#"+s.id),
+    lat:s.lat, lng:s.lng,
+    address:s.address||"",
+    territory:String(s.territory||"")
+  }));
 }
 
 async function initMap(){
@@ -1505,9 +2050,12 @@ async function initMap(){
     attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19, subdomains:"abcd"
   }).addTo(map);
 
+  territoryLayer = L.layerGroup().addTo(map);
+
   const roster = await loadStoresCsv();
   roster.forEach(s=>{ stores[s.id]={ ...s, checked:{} }; });
   refreshAllMarkers();
+  drawTerritories();
   fitToStores();
 
   /* Start weather using the centroid of the store roster. */
@@ -1555,9 +2103,11 @@ async function initMap(){
           if(live.lat!=null) stores[id].lat=live.lat;
           if(live.lng!=null) stores[id].lng=live.lng;
           if(live.address!=null) stores[id].address=live.address;
+          if(live.territory!=null) stores[id].territory=live.territory;
           stores[id].checked = live.checked || {};
         });
         refreshAllMarkers();
+        drawTerritories();
         if(selected){ renderChecklistPanel(); selectStore(selected); }
         if(!storesFitted){ storesFitted=true; fitToStores(); }
       }, err=>{ console.error("stores read:",err); setConn("off"); });
@@ -1798,7 +2348,7 @@ function initSprout(){
    ============================================================ */
 function init(){
   wireTabs("products",{skus:"products-skus",orders:"products-orders"},"#view-products");
-  wireTabs("careid",{plants:"careid-plants",pests:"careid-pests"},"#view-careid");
+  wireTabs("careid",{house:"careid-house",perennial:"careid-perennial"},"#view-careid");
   wireTabs("ops",{hpa:"ops-hpa",hf:"ops-hf"},"#view-ops");
 
   initGuidelines();
