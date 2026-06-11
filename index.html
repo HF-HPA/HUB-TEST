@@ -161,6 +161,33 @@
 
     /* Section back-to-map header */
     .section-top{ display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+
+    /* ---------- Sprite creator + presence ---------- */
+    .sprite-preview-wrap{ display:flex; flex-direction:column; align-items:center; gap:6px; margin:6px 0 14px; }
+    .sprite-preview{
+      width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:2rem; background:var(--accent); border:3px solid #fff; box-shadow:0 6px 18px rgba(0,0,0,.45);
+    }
+    .sprite-preview-name{ font-size:.82rem; color:var(--muted); font-weight:600; }
+    .sprite-grid{ display:flex; flex-wrap:wrap; gap:8px; }
+    .sprite-grid button{
+      width:42px; height:42px; border-radius:12px; border:1px solid var(--line); background:var(--panel-2);
+      cursor:pointer; font-size:1.25rem; display:flex; align-items:center; justify-content:center;
+      transition:transform var(--t), border-color var(--t); font-family:inherit;
+    }
+    .sprite-grid button:hover{ transform:translateY(-1px); border-color:var(--accent-line); }
+    .sprite-grid button.sel{ border-color:#fff; box-shadow:0 0 0 2px var(--accent); }
+    .sprite-grid .swatch{ font-size:0; }
+    .loc-btn{
+      position:absolute; left:12px; bottom:14px; z-index:600;
+      display:inline-flex; align-items:center; gap:7px; cursor:pointer; font-family:inherit;
+      padding:9px 14px; border-radius:var(--radius-pill); border:1px solid var(--accent-line);
+      background:rgba(10,16,32,.85); color:var(--heading); font-size:.82rem; font-weight:600;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:filter var(--t);
+    }
+    .loc-btn:hover{ filter:brightness(1.15); }
+    .loc-btn.active{ border-color:var(--good); color:var(--good); }
+    .loc-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     .btn-back{
       display:inline-flex; align-items:center; gap:7px; cursor:pointer; font-family:inherit;
       padding:8px 14px; border-radius:var(--radius-pill); border:1px solid var(--line);
@@ -417,6 +444,7 @@
     .typing span:nth-child(2){ animation-delay:.2s; }
     .typing span:nth-child(3){ animation-delay:.4s; }
     @keyframes blink{ 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+    @keyframes pulse{ 0%{ transform:scale(.8); opacity:.9; } 70%{ transform:scale(1.6); opacity:0; } 100%{ opacity:0; } }
 
     .progress-track{ height:8px; border-radius:var(--radius-pill); background:var(--bg); border:1px solid var(--line); overflow:hidden; }
     .progress-fill{ height:100%; width:0%; border-radius:var(--radius-pill); background:var(--good); transition:width .3s ease, background .3s ease; }
@@ -492,6 +520,7 @@
         <div class="user-chip">
           <span class="dot"></span>
           <span id="userName">User</span>
+          <button id="editSpriteBtn" type="button" title="Edit your map sprite">🎨</button>
           <button id="logoutBtn" type="button">Sign out</button>
         </div>
       </header>
@@ -554,6 +583,7 @@
                 </div>
               </div>
               <div id="map"></div>
+              <button id="locBtn" class="loc-btn" type="button">📍 Share my location</button>
             </div>
 
             <div class="legend">
@@ -654,10 +684,11 @@
       <!-- ===== CARE & ID ===== -->
       <section id="view-careid" class="hidden">
         <div class="section-top"><button class="btn-back" data-view="map" type="button">← Back to map</button></div>
-        <div class="head"><h2>Care &amp; Identification</h2><p>Care reference for houseplants and perennials. Tap a plant for full details.</p></div>
+        <div class="head"><h2>Care &amp; Identification</h2><p>Care reference for houseplants and perennials, plus pest identification. Tap any item for full details.</p></div>
         <div class="subnav">
           <button class="active" data-careid="house" type="button">Houseplant Care</button>
           <button data-careid="perennial" type="button">Perennial Care</button>
+          <button data-careid="pest" type="button">Pest ID</button>
         </div>
         <div id="careid-house">
           <div class="search-box" style="max-width:360px;margin-bottom:14px;">
@@ -670,6 +701,12 @@
             <span class="ico">🔎</span><input id="perennialSearch" type="search" placeholder="Search perennials…" />
           </div>
           <div id="perennialGrid" class="grid"><p style="color:var(--muted)">Loading perennials…</p></div>
+        </div>
+        <div id="careid-pest" class="hidden">
+          <div class="search-box" style="max-width:360px;margin-bottom:14px;">
+            <span class="ico">🔎</span><input id="pestSearch" type="search" placeholder="Search pests…" />
+          </div>
+          <div id="pestGrid" class="grid"><p style="color:var(--muted)">Loading pests…</p></div>
         </div>
       </section>
 
@@ -753,6 +790,29 @@
     </div>
   </div></div>
 
+  <div id="spriteEditor" class="modal-back"><div class="modal">
+    <h3 id="spriteTitle">Create your map sprite</h3>
+    <div class="latin">This is how your live location shows up to the team. You can change it later.</div>
+
+    <div class="sprite-preview-wrap">
+      <div id="spritePreview" class="sprite-preview">🙂</div>
+      <div id="spritePreviewName" class="sprite-preview-name">You</div>
+    </div>
+
+    <div class="fld">
+      <label class="field-label">Pick an icon</label>
+      <div id="spriteEmojiGrid" class="sprite-grid"></div>
+    </div>
+    <div class="fld">
+      <label class="field-label">Pick a color</label>
+      <div id="spriteColorGrid" class="sprite-grid"></div>
+    </div>
+    <div class="modal-actions">
+      <button id="spriteCancel" class="btn btn-ghost hidden" data-close="spriteEditor" type="button">Cancel</button>
+      <button id="spriteSave" class="btn btn-primary" type="button">Save sprite</button>
+    </div>
+  </div></div>
+
   <!-- ===== SPROUT BOT ===== -->
   <button id="sproutFab" class="sprout-fab" aria-label="Open Sprout Bot help">🌱</button>
   <div id="sproutPanel" class="sprout-panel" role="dialog" aria-label="Sprout Bot">
@@ -779,7 +839,7 @@
    ============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-  getDatabase, ref, onValue, set, update, push, remove, get, child, serverTimestamp, goOnline
+  getDatabase, ref, onValue, set, update, push, remove, get, child, serverTimestamp, goOnline, onDisconnect
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
 /* ---------- Firebase config ---------- */
@@ -1007,6 +1067,16 @@ const esc = (v) => String(v == null ? "" : v)
   .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 const normSku = (s) => (s||"").toLowerCase().replace(/[^0-9a-z]/g,"");
 const todayKey = () => new Date().toISOString().slice(0,10);
+/* Key for the current Mon–Sun week: the date (YYYY-MM-DD) of this week's Monday.
+   Checklists reset whenever this value changes (i.e. every Monday). */
+function weekKey(d){
+  const t = d ? new Date(d) : new Date();
+  t.setHours(0,0,0,0);
+  const dow = t.getDay();               // 0=Sun, 1=Mon, ... 6=Sat
+  const back = (dow + 6) % 7;           // days since Monday
+  t.setDate(t.getDate() - back);
+  return t.toISOString().slice(0,10);
+}
 
 function parseCSV(text){
   const rows=[]; let row=[], cur="", q=false, atStart=true;
@@ -1095,8 +1165,26 @@ function showApp(view){
   /* Map is the home page — always default to it unless an explicit other view was saved. */
   showOnlyView(view||"map");
 }
+/* ---------- User identity + sprite ---------- */
+const SPRITE_EMOJIS = ["🙂","🌱","🌿","🍃","🌵","🌻","🧑‍🌾","👷","🦊","🐝","🐢","🦉","🐙","🚐","⭐","🔥","💧","🍀","🌸","🌴"];
+const SPRITE_COLORS = ["#3da9fc","#5ee0d0","#7c5cff","#f5b94a","#f06a6a","#3ddc97","#e879f9","#fb923c","#22d3ee","#a3e635"];
+let me = { uid:"", name:"User", color:SPRITE_COLORS[0], emoji:"🙂" };
+
+function loadIdentity(){
+  try{
+    let uid=localStorage.getItem("hub_uid");
+    if(!uid){ uid="u-"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); localStorage.setItem("hub_uid",uid); }
+    me.uid=uid;
+    me.name=localStorage.getItem("hub_user")||"User";
+    me.color=localStorage.getItem("hub_color")||"";
+    me.emoji=localStorage.getItem("hub_emoji")||"";
+  }catch(e){ me.uid="u-"+Math.random().toString(36).slice(2,9); }
+}
+function hasSprite(){ return !!(me.color && me.emoji); }
+
 function setUser(name){
   const u=(name||"User").trim()||"User";
+  me.name=u;
   $("userName").textContent = u;
   try { localStorage.setItem("hub_user",u); } catch(e){}
 }
@@ -1104,13 +1192,16 @@ function doLogin(){
   const u=($("loginUser").value||"").trim();
   if(!u){ $("loginError").textContent="Enter your name to continue."; $("loginUser").focus(); return; }
   setUser(u);
-  /* Land on the Map home page after signing in. */
   showApp("map");
+  /* First time in: let them build their map sprite. */
+  if(!hasSprite()) setTimeout(()=>openSpriteEditor(true), 250);
+  else startPresence();
 }
 $("splashEnter").addEventListener("click", showLogin);
 $("loginBtn").addEventListener("click", doLogin);
 $("loginUser").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
-$("logoutBtn").addEventListener("click", () => { try{ localStorage.removeItem("hub_user"); sessionStorage.removeItem("hub_view"); }catch(e){} editMode=false; applyAdminUI(); showSplash(); });
+$("logoutBtn").addEventListener("click", () => { try{ stopPresence(); }catch(e){} try{ localStorage.removeItem("hub_user"); sessionStorage.removeItem("hub_view"); }catch(e){} editMode=false; applyAdminUI(); showSplash(); });
+$("editSpriteBtn").addEventListener("click", ()=> openSpriteEditor(false));
 /* Directory dropdown + back buttons drive view switching (no top tab bar). */
 $$('[data-view]').forEach(b => b.addEventListener("click", () => showOnlyView(b.dataset.view)));
 (function wireDirMenu(){
@@ -1230,356 +1321,307 @@ const WIKI = (file) => "https://commons.wikimedia.org/wiki/Special:FilePath/" + 
 
 /* image:"" entries get filled with a verified Commons filename below. */
 const HOUSEPLANTS = [
-  { commonName:"Pothos (Golden)", scientificName:"Epipremnum aureum", img:"Epipremnum aureum 31082012.jpg",
-    light:"Low to bright indirect light; tolerates low light but variegation fades.",
-    water:"Let the top 1–2 in. of soil dry out, then water thoroughly. Roughly weekly.",
-    humidity:"Average household humidity is fine (40%+).", temp:"65–85°F (18–29°C). Avoid below 50°F.",
-    soil:"Well-draining all-purpose potting mix.", fertilizer:"Balanced liquid feed monthly in spring–summer.",
-    toxicity:"Toxic to cats and dogs (calcium oxalate). Keep out of reach.",
-    tips:"Nearly indestructible. Trim leggy vines to keep it full; cuttings root easily in water." },
-  { commonName:"Snake Plant", scientificName:"Dracaena trifasciata (Sansevieria)", img:"Sansevieria trifasciata (Bow String Hemp) in Hyderabad, India.jpg",
-    light:"Tolerates low light; grows fastest in bright indirect light.",
-    water:"Drought-tolerant. Water only when soil is fully dry; every 2–4 weeks. Overwatering rots it.",
-    humidity:"Low humidity is fine.", temp:"60–85°F (15–29°C).",
-    soil:"Fast-draining cactus/succulent mix.", fertilizer:"Light feed 1–2× in growing season.",
-    toxicity:"Mildly toxic to pets if eaten (saponins).",
-    tips:"The most forgiving plant in the store. Use a pot with drainage; never let it sit in water." },
-  { commonName:"Monstera (Swiss Cheese Plant)", scientificName:"Monstera deliciosa", img:"Monstera deliciosa3.jpg",
-    light:"Bright indirect light. Some morning sun is fine; harsh midday sun scorches leaves.",
-    water:"Water when top 1–2 in. dries; keep evenly moist, not soggy.",
-    humidity:"Prefers 50%+; mist or group plants for higher humidity.", temp:"65–85°F (18–29°C).",
-    soil:"Chunky, well-draining mix with bark/perlite.", fertilizer:"Monthly balanced feed in spring–summer.",
-    toxicity:"Toxic to pets and irritating to humans if chewed (calcium oxalate).",
-    tips:"Give it a moss pole to climb; fenestrations (holes) increase with maturity and good light." },
-  { commonName:"Heartleaf Philodendron", scientificName:"Philodendron hederaceum", img:"Philodendron hederaceum 2.jpg",
-    light:"Low to bright indirect light.",
-    water:"Let top inch dry between waterings.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining peat-based mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Toxic to pets and people if ingested.",
-    tips:"Vining and very easy; pinch tips to encourage bushiness." },
-  { commonName:"Peace Lily", scientificName:"Spathiphyllum wallisii", img:"Spathiphyllum cochlearispathum RTBG.jpg",
-    light:"Low to medium indirect light; flowers best in medium light.",
-    water:"Keep evenly moist; it dramatically droops when thirsty and recovers fast after watering.",
-    humidity:"Likes higher humidity; brown tips signal dry air.", temp:"65–80°F (18–27°C).",
-    soil:"Rich, well-draining mix.", fertilizer:"Every 6–8 weeks, diluted.",
-    toxicity:"Toxic to cats and dogs (calcium oxalate).",
-    tips:"A reliable drought indicator. Wipe leaves to keep them glossy; remove spent white spathes." },
-  { commonName:"ZZ Plant", scientificName:"Zamioculcas zamiifolia", img:"Zamioculcas zamiifolia 1.jpg",
-    light:"Low to bright indirect light.",
-    water:"Very drought-tolerant; water every 2–3 weeks when dry.", humidity:"Low is fine.", temp:"65–85°F (18–29°C).",
-    soil:"Well-draining mix.", fertilizer:"2–3× per year.",
-    toxicity:"Toxic to pets and people if ingested.",
-    tips:"Stores water in rhizomes — far more plants die from overwatering than under." },
-  { commonName:"Spider Plant", scientificName:"Chlorophytum comosum", img:"Chlorophytum comosum 'Vittatum' kz01.jpg",
-    light:"Bright indirect light.",
-    water:"Keep lightly moist; let top dry slightly between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
-    soil:"All-purpose well-draining mix.", fertilizer:"Monthly in spring–summer.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Produces babies (\"pups\") on runners that pot up easily. Brown tips usually mean fluoride/salt in tap water." },
-  { commonName:"Fiddle Leaf Fig", scientificName:"Ficus lyrata", img:"Ficus lyrata1.jpg",
-    light:"Lots of bright indirect light; some gentle direct sun.",
-    water:"Water when top 1–2 in. dries; consistency matters.", humidity:"Prefers 40–60%.", temp:"65–75°F (18–24°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Toxic to pets if ingested; sap irritates skin.",
-    tips:"Hates being moved and drafts; pick a spot and leave it. Dust leaves regularly." },
-  { commonName:"Rubber Plant", scientificName:"Ficus elastica", img:"Ficus elastica2.jpg",
-    light:"Bright indirect light keeps color; tolerates medium.",
-    water:"Let top inch dry between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.",
-    toxicity:"Toxic to pets; milky sap irritates skin.",
-    tips:"Wipe the broad leaves to keep them shiny; prune to control height." },
-  { commonName:"Dragon Tree", scientificName:"Dracaena marginata", img:"Dracaena marginata1.jpg",
-    light:"Bright indirect; tolerates medium.",
-    water:"Allow top 1–2 in. to dry; sensitive to fluoride.", humidity:"Average.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Toxic to cats and dogs.",
-    tips:"Use filtered/distilled water if leaf tips brown. Slow-growing and architectural." },
-  { commonName:"Aloe Vera", scientificName:"Aloe vera", img:"Aloe vera flower inset.png",
-    light:"Bright light, including some direct sun.",
-    water:"Soak then dry fully; every 2–3 weeks.", humidity:"Low.", temp:"55–80°F (13–27°C).",
-    soil:"Cactus/succulent mix.", fertilizer:"2–3× per year.",
-    toxicity:"Mildly toxic to pets if eaten.",
-    tips:"Leaf gel soothes minor burns. Wrinkled leaves mean it needs water; mushy leaves mean too much." },
-  { commonName:"Jade Plant", scientificName:"Crassula ovata", img:"Crassula ovata 2.jpg",
-    light:"Bright light with some direct sun.",
-    water:"Let soil dry fully; water sparingly.", humidity:"Low.", temp:"55–80°F (13–27°C).",
-    soil:"Cactus/succulent mix.", fertilizer:"2–3× in growing season.",
-    toxicity:"Toxic to cats and dogs.",
-    tips:"A classic, long-lived succulent. Too little light makes it leggy." },
-  { commonName:"Echeveria (Hen & Chicks)", scientificName:"Echeveria elegans", img:"Echeveria elegans 4.jpg",
-    light:"Very bright light / direct sun.",
-    water:"Soak-and-dry; water only when fully dry.", humidity:"Low.", temp:"55–80°F (13–27°C).",
-    soil:"Gritty cactus mix.", fertilizer:"Lightly, 1–2× per year.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Stretched, pale rosettes mean too little light. Water at the base, not the rosette." },
-  { commonName:"Boston Fern", scientificName:"Nephrolepis exaltata", img:"Nephrolepis exaltata kz02.jpg",
-    light:"Bright indirect light, no direct sun.",
-    water:"Keep consistently moist, never soggy.", humidity:"Loves high humidity (60%+).", temp:"60–75°F (15–24°C).",
-    soil:"Rich, moisture-retentive mix.", fertilizer:"Monthly, diluted.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Brown, crispy fronds = air too dry. Best in bathrooms or on a pebble tray." },
-  { commonName:"Calathea (Prayer Plant)", scientificName:"Calathea orbifolia", img:"Calathea orbifolia.jpg",
-    light:"Medium indirect light; direct sun fades the patterns.",
-    water:"Keep evenly moist with filtered/distilled water.", humidity:"High humidity required (60%+).", temp:"65–80°F (18–27°C).",
-    soil:"Rich, well-draining mix.", fertilizer:"Monthly, diluted, in growing season.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Fussy about tap water and dry air; crispy edges mean low humidity or mineral buildup." },
-  { commonName:"Moth Orchid", scientificName:"Phalaenopsis hybrid", img:"Phalaenopsis hybrid white-pink.jpg",
-    light:"Bright indirect light (east window is ideal).",
-    water:"Water weekly; let the bark mix nearly dry. Never let roots sit in water.", humidity:"50–70%.", temp:"65–80°F (18–27°C).",
-    soil:"Orchid bark mix, not regular soil.", fertilizer:"Weak orchid feed every 2 weeks ('weakly, weekly').",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"After blooms drop, cut the spike above a node for a chance at reblooming. Green roots = hydrated." },
-  { commonName:"Anthurium (Flamingo Flower)", scientificName:"Anthurium andraeanum", img:"Anthurium andraeanum (flower).jpg",
-    light:"Bright indirect light.",
-    water:"Water when top inch dries; keep lightly moist.", humidity:"Prefers high humidity.", temp:"65–80°F (18–27°C).",
-    soil:"Loose, well-draining mix with bark.", fertilizer:"Diluted feed every 6–8 weeks.",
-    toxicity:"Toxic to pets and people if chewed.",
-    tips:"The red 'flowers' are waxy spathes that last weeks. More light = more blooms." },
-  { commonName:"Dumb Cane", scientificName:"Dieffenbachia seguine", img:"Dieffenbachia seguine kz01.jpg",
-    light:"Medium to bright indirect light.",
-    water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Toxic — sap causes mouth/throat swelling (the name 'dumb cane' refers to this). Keep from kids and pets.",
-    tips:"Wear gloves when pruning; wash hands after handling sap." },
-  { commonName:"Croton", scientificName:"Codiaeum variegatum", img:"Codiaeum variegatum kz01.jpg",
-    light:"Bright light with some direct sun for vivid color.",
-    water:"Keep lightly moist; let top dry slightly.", humidity:"Prefers higher humidity.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.",
-    toxicity:"Toxic to pets; sap irritates skin.",
-    tips:"Drops leaves when moved or chilled. Low light dulls the colors." },
-  { commonName:"English Ivy", scientificName:"Hedera helix", img:"Hedera helix kz01.jpg",
-    light:"Bright indirect light.",
-    water:"Keep lightly moist; let top dry slightly.", humidity:"Prefers higher humidity.", temp:"55–75°F (13–24°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Toxic to pets and people if eaten.",
-    tips:"Great trailing plant; rinse leaves occasionally to discourage spider mites." },
-  { commonName:"Parlor Palm", scientificName:"Chamaedorea elegans", img:"Chamaedorea elegans kz01.jpg",
-    light:"Low to medium indirect light.",
-    water:"Let top inch dry; avoid soggy soil.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"2–3× in growing season.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"A true low-light palm. Don't overwater; brown tips often mean dry air or salt buildup." },
-  { commonName:"Baby Rubber Plant", scientificName:"Peperomia obtusifolia", img:"Peperomia obtusifolia kz01.jpg",
-    light:"Medium to bright indirect light.",
-    water:"Let top half of soil dry; semi-succulent leaves store water.", humidity:"Average.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly, diluted, in growing season.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Compact and easy; overwatering causes mushy stems." },
-  { commonName:"Rex Begonia", scientificName:"Begonia rex-cultorum", img:"Begonia rex kz01.jpg",
-    light:"Bright indirect light; no harsh sun.",
-    water:"Keep lightly moist; water the soil, not the leaves.", humidity:"Prefers high humidity.", temp:"60–75°F (15–24°C).",
-    soil:"Light, well-draining mix.", fertilizer:"Diluted feed monthly in growing season.",
-    toxicity:"Toxic to pets if eaten.",
-    tips:"Grown for dramatic foliage. Avoid wetting leaves to prevent powdery mildew." },
-  { commonName:"Bromeliad (Guzmania)", scientificName:"Guzmania lingulata", img:"Bromeliad - Guzmania.jpg",
-    light:"Bright indirect light.",
-    water:"Keep the central 'cup' filled with water; flush it weekly. Keep soil barely moist.", humidity:"Prefers high humidity.", temp:"65–80°F (18–27°C).",
-    soil:"Fast-draining orchid/bromeliad mix.", fertilizer:"Very dilute, occasionally, in the cup or soil.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"The colorful bract lasts months; the mother plant dies after blooming but leaves offsets ('pups')." },
-  { commonName:"Money Tree", scientificName:"Pachira aquatica", img:"Pachira aquatica - Madre de cacao.jpg",
-    light:"Bright indirect light.",
-    water:"Water when top 1–2 in. dries; tolerates occasional drying.", humidity:"Prefers higher humidity.", temp:"65–80°F (18–27°C).",
-    soil:"Well-draining mix.", fertilizer:"Monthly in growing season.",
-    toxicity:"Non-toxic — pet-safe.",
-    tips:"Often sold with a braided trunk. Yellow leaves usually mean overwatering." }
+  { commonName:"Pothos (Golden)", scientificName:"Epipremnum aureum", wiki:"Epipremnum aureum",
+    light:"Low to bright indirect; tolerates low light but variegation fades.", water:"Let top 1–2 in. dry, then water thoroughly — roughly weekly.", humidity:"Average household (40%+).", temp:"65–85°F (18–29°C).",
+    soil:"Well-draining all-purpose mix.", fertilizer:"Balanced liquid feed monthly in spring–summer.", toxicity:"Toxic to cats and dogs (calcium oxalate).", tips:"Nearly indestructible; trim leggy vines, cuttings root in water." },
+  { commonName:"Snake Plant", scientificName:"Dracaena trifasciata", wiki:"Dracaena trifasciata",
+    light:"Tolerates low light; fastest in bright indirect.", water:"Water only when fully dry; every 2–4 weeks.", humidity:"Low is fine.", temp:"60–85°F (15–29°C).",
+    soil:"Fast-draining cactus mix.", fertilizer:"Light feed 1–2× in season.", toxicity:"Mildly toxic to pets (saponins).", tips:"The most forgiving plant in the store; never let it sit in water." },
+  { commonName:"Monstera (Swiss Cheese)", scientificName:"Monstera deliciosa", wiki:"Monstera deliciosa",
+    light:"Bright indirect; harsh midday sun scorches.", water:"Water when top 1–2 in. dries; evenly moist.", humidity:"Prefers 50%+.", temp:"65–85°F (18–29°C).",
+    soil:"Chunky mix with bark/perlite.", fertilizer:"Monthly in spring–summer.", toxicity:"Toxic to pets and people if chewed.", tips:"Give a moss pole to climb; holes increase with maturity and light." },
+  { commonName:"Heartleaf Philodendron", scientificName:"Philodendron hederaceum", wiki:"Philodendron hederaceum",
+    light:"Low to bright indirect.", water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining peat-based mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Vining and very easy; pinch tips to bush out." },
+  { commonName:"Peace Lily", scientificName:"Spathiphyllum wallisii", wiki:"Spathiphyllum",
+    light:"Low to medium indirect; flowers best in medium.", water:"Keep evenly moist; droops dramatically when thirsty.", humidity:"Likes higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Rich, well-draining mix.", fertilizer:"Every 6–8 weeks, diluted.", toxicity:"Toxic to cats and dogs.", tips:"A reliable drought indicator; remove spent white spathes." },
+  { commonName:"ZZ Plant", scientificName:"Zamioculcas zamiifolia", wiki:"Zamioculcas zamiifolia",
+    light:"Low to bright indirect.", water:"Very drought-tolerant; water every 2–3 weeks when dry.", humidity:"Low is fine.", temp:"65–85°F (18–29°C).",
+    soil:"Well-draining mix.", fertilizer:"2–3× per year.", toxicity:"Toxic to pets and people.", tips:"Stores water in rhizomes — far more die from overwatering." },
+  { commonName:"Spider Plant", scientificName:"Chlorophytum comosum", wiki:"Chlorophytum comosum",
+    light:"Bright indirect.", water:"Keep lightly moist; let top dry slightly.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"All-purpose well-draining mix.", fertilizer:"Monthly in spring–summer.", toxicity:"Non-toxic — pet-safe.", tips:"Makes babies on runners; brown tips usually mean fluoride/salt in tap water." },
+  { commonName:"Fiddle Leaf Fig", scientificName:"Ficus lyrata", wiki:"Ficus lyrata",
+    light:"Lots of bright indirect; some gentle direct.", water:"Water when top 1–2 in. dries; consistency matters.", humidity:"40–60%.", temp:"65–75°F (18–24°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets; sap irritates skin.", tips:"Hates being moved and drafts — pick a spot and leave it." },
+  { commonName:"Rubber Plant", scientificName:"Ficus elastica", wiki:"Ficus elastica",
+    light:"Bright indirect keeps color; tolerates medium.", water:"Let top inch dry between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.", toxicity:"Toxic to pets; milky sap irritates skin.", tips:"Wipe broad leaves to keep them shiny; prune to control height." },
+  { commonName:"Dragon Tree", scientificName:"Dracaena marginata", wiki:"Dracaena reflexa var. angustifolia",
+    light:"Bright indirect; tolerates medium.", water:"Allow top 1–2 in. to dry; sensitive to fluoride.", humidity:"Average.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to cats and dogs.", tips:"Use filtered water if tips brown; slow-growing and architectural." },
+  { commonName:"Aloe Vera", scientificName:"Aloe vera", wiki:"Aloe vera",
+    light:"Bright light incl. some direct sun.", water:"Soak then dry fully; every 2–3 weeks.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"2–3× per year.", toxicity:"Mildly toxic to pets.", tips:"Gel soothes minor burns; mushy leaves = too much water." },
+  { commonName:"Jade Plant", scientificName:"Crassula ovata", wiki:"Crassula ovata",
+    light:"Bright light with some direct sun.", water:"Let soil dry fully; water sparingly.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"2–3× in season.", toxicity:"Toxic to cats and dogs.", tips:"Classic long-lived succulent; too little light makes it leggy." },
+  { commonName:"Echeveria (Hen & Chicks)", scientificName:"Echeveria elegans", wiki:"Echeveria elegans",
+    light:"Very bright light / direct sun.", water:"Soak-and-dry; only when fully dry.", humidity:"Low.", temp:"55–80°F (13–27°C).",
+    soil:"Gritty cactus mix.", fertilizer:"Lightly, 1–2× per year.", toxicity:"Non-toxic — pet-safe.", tips:"Stretched, pale rosettes mean too little light; water at the base." },
+  { commonName:"Boston Fern", scientificName:"Nephrolepis exaltata", wiki:"Nephrolepis exaltata",
+    light:"Bright indirect, no direct sun.", water:"Keep consistently moist, never soggy.", humidity:"Loves high humidity (60%+).", temp:"60–75°F (15–24°C).",
+    soil:"Rich, moisture-retentive mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Crispy fronds = air too dry; best in bathrooms or on a pebble tray." },
+  { commonName:"Calathea (Prayer Plant)", scientificName:"Calathea orbifolia", wiki:"Goeppertia orbifolia",
+    light:"Medium indirect; direct sun fades patterns.", water:"Evenly moist with filtered water.", humidity:"High humidity (60%+).", temp:"65–80°F (18–27°C).",
+    soil:"Rich, well-draining mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Fussy about tap water and dry air; crispy edges = low humidity." },
+  { commonName:"Moth Orchid", scientificName:"Phalaenopsis hybrid", wiki:"Phalaenopsis",
+    light:"Bright indirect (east window).", water:"Weekly; let bark nearly dry. Never let roots sit in water.", humidity:"50–70%.", temp:"65–80°F (18–27°C).",
+    soil:"Orchid bark mix, not soil.", fertilizer:"Weak orchid feed every 2 weeks.", toxicity:"Non-toxic — pet-safe.", tips:"After blooms drop, cut spike above a node for a rebloom chance." },
+  { commonName:"Anthurium (Flamingo Flower)", scientificName:"Anthurium andraeanum", wiki:"Anthurium andraeanum",
+    light:"Bright indirect.", water:"Water when top inch dries; lightly moist.", humidity:"High humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Loose, well-draining mix with bark.", fertilizer:"Diluted every 6–8 weeks.", toxicity:"Toxic to pets and people if chewed.", tips:"Red 'flowers' are waxy spathes lasting weeks; more light = more blooms." },
+  { commonName:"Dumb Cane", scientificName:"Dieffenbachia seguine", wiki:"Dieffenbachia seguine",
+    light:"Medium to bright indirect.", water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic — sap swells mouth/throat. Keep from kids and pets.", tips:"Wear gloves when pruning; wash hands after handling sap." },
+  { commonName:"Croton", scientificName:"Codiaeum variegatum", wiki:"Codiaeum variegatum",
+    light:"Bright light with some direct sun for color.", water:"Keep lightly moist; let top dry slightly.", humidity:"Higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in spring–summer.", toxicity:"Toxic to pets; sap irritates skin.", tips:"Drops leaves when moved or chilled; low light dulls colors." },
+  { commonName:"English Ivy", scientificName:"Hedera helix", wiki:"Hedera helix",
+    light:"Bright indirect.", water:"Lightly moist; let top dry slightly.", humidity:"Higher humidity.", temp:"55–75°F (13–24°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Great trailer; rinse leaves to discourage spider mites." },
+  { commonName:"Parlor Palm", scientificName:"Chamaedorea elegans", wiki:"Chamaedorea elegans",
+    light:"Low to medium indirect.", water:"Let top inch dry; avoid soggy soil.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"2–3× in season.", toxicity:"Non-toxic — pet-safe.", tips:"A true low-light palm; brown tips = dry air or salt buildup." },
+  { commonName:"Baby Rubber Plant", scientificName:"Peperomia obtusifolia", wiki:"Peperomia obtusifolia",
+    light:"Medium to bright indirect.", water:"Let top half dry; semi-succulent leaves store water.", humidity:"Average.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Compact and easy; overwatering causes mushy stems." },
+  { commonName:"Rex Begonia", scientificName:"Begonia rex-cultorum", wiki:"Begonia rex",
+    light:"Bright indirect; no harsh sun.", water:"Lightly moist; water soil not leaves.", humidity:"High humidity.", temp:"60–75°F (15–24°C).",
+    soil:"Light, well-draining mix.", fertilizer:"Diluted monthly in season.", toxicity:"Toxic to pets if eaten.", tips:"Grown for dramatic foliage; keep leaves dry to avoid mildew." },
+  { commonName:"Bromeliad (Guzmania)", scientificName:"Guzmania lingulata", wiki:"Guzmania lingulata",
+    light:"Bright indirect.", water:"Keep central 'cup' filled; flush weekly. Soil barely moist.", humidity:"High humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Fast-draining orchid/bromeliad mix.", fertilizer:"Very dilute, occasionally.", toxicity:"Non-toxic — pet-safe.", tips:"Colorful bract lasts months; mother dies after bloom, leaving pups." },
+  { commonName:"Money Tree", scientificName:"Pachira aquatica", wiki:"Pachira aquatica",
+    light:"Bright indirect.", water:"Water when top 1–2 in. dries.", humidity:"Higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Non-toxic — pet-safe.", tips:"Often sold braided; yellow leaves usually mean overwatering." },
+  { commonName:"Chinese Evergreen", scientificName:"Aglaonema commutatum", wiki:"Aglaonema",
+    light:"Low to medium indirect; darker types take the least light.", water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Tough, colorful low-light foliage plant; keep above 60°F." },
+  { commonName:"Pancake / Chinese Money Plant", scientificName:"Pilea peperomioides", wiki:"Pilea peperomioides",
+    light:"Bright indirect.", water:"Let top half dry; leaves droop when thirsty.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Rotate regularly for an even shape; produces easy-to-share pups." },
+  { commonName:"String of Pearls", scientificName:"Curio rowleyanus", wiki:"Senecio rowleyanus",
+    light:"Bright light incl. some direct sun.", water:"Soak then dry fully; very drought-tolerant.", humidity:"Low.", temp:"65–80°F (18–27°C).",
+    soil:"Gritty cactus mix.", fertilizer:"Lightly 1–2× per year.", toxicity:"Toxic to pets and people.", tips:"Shriveled pearls = thirsty; mushy = overwatered. Shallow roots." },
+  { commonName:"Burro's Tail", scientificName:"Sedum morganianum", wiki:"Sedum morganianum",
+    light:"Bright light / some direct sun.", water:"Soak-and-dry; water sparingly.", humidity:"Low.", temp:"60–80°F (15–27°C).",
+    soil:"Gritty cactus mix.", fertilizer:"Lightly in season.", toxicity:"Non-toxic — pet-safe.", tips:"Beads drop at the lightest touch — handle minimally." },
+  { commonName:"Christmas Cactus", scientificName:"Schlumbergera bridgesii", wiki:"Schlumbergera",
+    light:"Bright indirect.", water:"Keep lightly moist in growth; drier in fall to set buds.", humidity:"Higher humidity.", temp:"60–75°F (15–24°C).",
+    soil:"Well-draining mix with some grit.", fertilizer:"Monthly spring–summer.", toxicity:"Non-toxic — pet-safe.", tips:"Needs cool nights and long darkness in fall to bloom; don't move when budding." },
+  { commonName:"Air Plant", scientificName:"Tillandsia ionantha", wiki:"Tillandsia",
+    light:"Bright indirect.", water:"Soak 20–30 min weekly; shake out and dry fully.", humidity:"Likes humidity.", temp:"60–80°F (15–27°C).",
+    soil:"No soil — mount or display loose.", fertilizer:"Dilute bromeliad feed monthly in water.", toxicity:"Non-toxic — pet-safe.", tips:"Rotting center = trapped water; always dry upside-down after soaking." },
+  { commonName:"Hoya (Wax Plant)", scientificName:"Hoya carnosa", wiki:"Hoya carnosa",
+    light:"Bright indirect; some morning sun.", water:"Let dry between; thick leaves store water.", humidity:"Average to high.", temp:"60–80°F (15–27°C).",
+    soil:"Chunky, well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Non-toxic — pet-safe.", tips:"Don't cut spent flower spurs — it reblooms from them." },
+  { commonName:"Nerve Plant", scientificName:"Fittonia albivenis", wiki:"Fittonia",
+    light:"Medium indirect; no direct sun.", water:"Keep consistently moist; dramatic fainting when dry.", humidity:"High humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Rich, moisture-retentive mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Great terrarium plant; recovers fast after watering when it wilts." },
+  { commonName:"Polka Dot Plant", scientificName:"Hypoestes phyllostachya", wiki:"Hypoestes phyllostachya",
+    light:"Bright indirect for vivid spots.", water:"Keep lightly moist.", humidity:"Higher humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Non-toxic — pet-safe.", tips:"Pinch tips to keep bushy; leggy growth means more light needed." },
+  { commonName:"Arrowhead Plant", scientificName:"Syngonium podophyllum", wiki:"Syngonium podophyllum",
+    light:"Low to bright indirect.", water:"Let top inch dry between.", humidity:"Average to high.", temp:"60–80°F (15–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Vines as it matures; pinch to keep a compact mound." },
+  { commonName:"Lucky Bamboo", scientificName:"Dracaena sanderiana", wiki:"Dracaena sanderiana",
+    light:"Bright indirect; no direct sun.", water:"Grow in water (1–2 in.) or soil; change water weekly.", humidity:"Average.", temp:"65–90°F (18–32°C).",
+    soil:"Pebbles + water, or well-draining soil.", fertilizer:"Very dilute monthly.", toxicity:"Toxic to cats and dogs.", tips:"Use filtered/distilled water — sensitive to fluoride and chlorine." },
+  { commonName:"Umbrella Tree", scientificName:"Schefflera arboricola", wiki:"Schefflera arboricola",
+    light:"Bright indirect.", water:"Let top inch dry between.", humidity:"Average.", temp:"60–80°F (15–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Leggy growth means more light; prune to keep full." },
+  { commonName:"Norfolk Island Pine", scientificName:"Araucaria heterophylla", wiki:"Araucaria heterophylla",
+    light:"Bright light incl. some direct sun.", water:"Keep lightly moist; don't let it dry fully.", humidity:"Higher humidity.", temp:"60–75°F (15–24°C).",
+    soil:"Well-draining, slightly acidic mix.", fertilizer:"Monthly in season.", toxicity:"Non-toxic — pet-safe.", tips:"A true conifer, not a true pine; browning needles rarely regrow." },
+  { commonName:"Ponytail Palm", scientificName:"Beaucarnea recurvata", wiki:"Beaucarnea recurvata",
+    light:"Bright light / some direct sun.", water:"Very drought-tolerant; soak then dry fully.", humidity:"Low.", temp:"60–80°F (15–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"2–3× per year.", toxicity:"Non-toxic — pet-safe.", tips:"Swollen base stores water; it's a succulent, not a true palm." },
+  { commonName:"African Violet", scientificName:"Saintpaulia ionantha", wiki:"Streptocarpus sect. Saintpaulia",
+    light:"Bright indirect.", water:"Keep lightly moist; water from below to keep leaves dry.", humidity:"Higher humidity.", temp:"65–75°F (18–24°C).",
+    soil:"Light African violet mix.", fertilizer:"Dilute violet feed every 2 weeks.", toxicity:"Non-toxic — pet-safe.", tips:"Cold water spots the fuzzy leaves; use room-temp water from the bottom." },
+  { commonName:"Kalanchoe", scientificName:"Kalanchoe blossfeldiana", wiki:"Kalanchoe blossfeldiana",
+    light:"Bright light / some direct sun.", water:"Soak-and-dry; water sparingly.", humidity:"Low.", temp:"60–80°F (15–27°C).",
+    soil:"Cactus/succulent mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to cats and dogs.", tips:"Long-lasting clustered blooms; needs long fall darkness to rebloom." },
+  { commonName:"Weeping Fig", scientificName:"Ficus benjamina", wiki:"Ficus benjamina",
+    light:"Bright indirect.", water:"Let top inch dry between; hates inconsistency.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets; sap irritates skin.", tips:"Drops leaves at any change in light, water, or location — keep it stable." },
+  { commonName:"Cast Iron Plant", scientificName:"Aspidistra elatior", wiki:"Aspidistra elatior",
+    light:"Low light; tolerates deep shade.", water:"Let top inch dry; very forgiving.", humidity:"Average.", temp:"50–80°F (10–27°C).",
+    soil:"Well-draining mix.", fertilizer:"2–3× per year.", toxicity:"Non-toxic — pet-safe.", tips:"Almost impossible to kill; perfect for dark corners." },
+  { commonName:"Swiss Cheese Vine", scientificName:"Monstera adansonii", wiki:"Monstera adansonii",
+    light:"Bright indirect.", water:"Let top inch dry between; evenly moist.", humidity:"Higher humidity.", temp:"65–85°F (18–29°C).",
+    soil:"Chunky mix with bark/perlite.", fertilizer:"Monthly in season.", toxicity:"Toxic to pets and people.", tips:"Vining cousin of the big Monstera; trains beautifully on a trellis." },
+  { commonName:"Prayer Plant", scientificName:"Maranta leuconeura", wiki:"Maranta leuconeura",
+    light:"Medium indirect; no direct sun.", water:"Keep evenly moist with filtered water.", humidity:"High humidity.", temp:"65–80°F (18–27°C).",
+    soil:"Rich, well-draining mix.", fertilizer:"Monthly, diluted.", toxicity:"Non-toxic — pet-safe.", tips:"Leaves fold up at night like praying hands; sensitive to hard water." },
+  { commonName:"Snake Plant 'Bird's Nest'", scientificName:"Sansevieria trifasciata 'Hahnii'", wiki:"Dracaena trifasciata",
+    light:"Low to bright indirect.", water:"Only when fully dry; every 2–4 weeks.", humidity:"Low.", temp:"60–85°F (15–29°C).",
+    soil:"Cactus mix.", fertilizer:"Light feed 1–2× in season.", toxicity:"Mildly toxic to pets.", tips:"Compact rosette form of the snake plant; same easy care." },
+  { commonName:"Dieffenbachia 'Camille'", scientificName:"Dieffenbachia 'Camille'", wiki:"Dieffenbachia",
+    light:"Medium to bright indirect.", water:"Let top inch dry between.", humidity:"Average to high.", temp:"65–80°F (18–27°C).",
+    soil:"Well-draining mix.", fertilizer:"Monthly in season.", toxicity:"Toxic — irritating sap. Keep from kids/pets.", tips:"Bright cream-centered leaves; wear gloves when pruning." }
 ];
 
 const PERENNIALS = [
-  { commonName:"Hosta", scientificName:"Hosta spp.", img:"Hosta 'Francee' kz01.jpg",
-    light:"Part to full shade; morning sun is fine. Blue-leaved types need the most shade.",
-    water:"1 in. of water per week; keep evenly moist in summer.", humidity:"—",
-    temp:"Hardy USDA zones 3–9; dies back and returns each spring.",
-    soil:"Rich, moist, well-draining soil with organic matter.", fertilizer:"Balanced feed in early spring.",
-    toxicity:"Toxic to cats and dogs.",
-    tips:"The go-to shade perennial, grown for foliage. Watch for slugs; lavender flower spikes appear in summer." },
-  { commonName:"Daylily", scientificName:"Hemerocallis spp.", img:"Hemerocallis 'Stella de Oro' 02.jpg",
-    light:"Full sun (6+ hrs); tolerates light shade with fewer blooms.",
-    water:"About 1 in. per week; very drought-tolerant once established.", humidity:"—",
-    temp:"Hardy zones 3–9.",
-    soil:"Adaptable; prefers well-draining soil.", fertilizer:"Light feed in spring.",
-    toxicity:"Toxic to cats (can cause kidney failure) — keep away from felines.",
-    tips:"Nearly foolproof. Each bloom lasts one day; deadhead spent blooms. 'Stella de Oro' reblooms all season." },
-  { commonName:"Coneflower (Echinacea)", scientificName:"Echinacea purpurea", img:"Echinacea purpurea (Eastern Purple Coneflower).jpg",
-    light:"Full sun.",
-    water:"About 1 in. per week; drought-tolerant once established.", humidity:"—",
-    temp:"Hardy zones 3–9.",
-    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal; too much reduces blooms.",
-    toxicity:"Non-toxic.",
-    tips:"A pollinator magnet. Leave seed heads in fall for goldfinches; deadhead to extend bloom." },
-  { commonName:"Black-Eyed Susan", scientificName:"Rudbeckia hirta", img:"Rudbeckia hirta - Black-eyed Susan.jpg",
-    light:"Full sun.",
-    water:"About 1 in. per week; drought-tolerant.", humidity:"—",
-    temp:"Hardy zones 3–9 (some grown as annuals).",
-    soil:"Average, well-draining soil.", fertilizer:"Minimal.",
-    toxicity:"Mildly toxic if eaten; sap can irritate skin.",
-    tips:"Long-blooming golden daisies. Deadhead for more flowers, or leave seed heads for birds." },
-  { commonName:"Shasta Daisy", scientificName:"Leucanthemum × superbum", img:"Leucanthemum superbum0.jpg",
-    light:"Full sun to light shade.",
-    water:"About 1 in. per week.", humidity:"—",
-    temp:"Hardy zones 5–9.",
-    soil:"Well-draining, moderately fertile soil.", fertilizer:"Light feed in spring.",
-    toxicity:"Non-toxic.",
-    tips:"Classic white daisies for cutting. Divide every 2–3 years to keep vigorous." },
-  { commonName:"Garden Phlox", scientificName:"Phlox paniculata", img:"Phlox paniculata0.jpg",
-    light:"Full sun to part shade.",
-    water:"Keep evenly moist; about 1 in. per week.", humidity:"—",
-    temp:"Hardy zones 4–8.",
-    soil:"Rich, well-draining soil.", fertilizer:"Balanced feed in spring.",
-    toxicity:"Non-toxic.",
-    tips:"Fragrant summer blooms. Give it air circulation and water at the base to avoid powdery mildew." },
-  { commonName:"Sedum (Autumn Joy)", scientificName:"Hylotelephium 'Herbstfreude'", img:"Sedum Herbstfreude 2017-08-27 2917.jpg",
-    light:"Full sun.",
-    water:"Very drought-tolerant; water sparingly.", humidity:"—",
-    temp:"Hardy zones 3–9.",
-    soil:"Lean, well-draining soil; tolerates poor ground.", fertilizer:"None needed.",
-    toxicity:"Non-toxic to mildly toxic to pets.",
-    tips:"Succulent perennial; pink fall blooms age to rust. Floppy stems mean too much water or shade." },
-  { commonName:"Russian Sage", scientificName:"Salvia yangii (Perovskia)", img:"Perovskia atriplicifolia kz03.jpg",
-    light:"Full sun.",
-    water:"Drought-tolerant once established.", humidity:"—",
-    temp:"Hardy zones 4–9.",
-    soil:"Well-draining, even poor or sandy soil.", fertilizer:"None needed.",
-    toxicity:"Non-toxic.",
-    tips:"Airy silver stems with violet-blue flowers; cut back hard in early spring. Loved by bees." },
-  { commonName:"Catmint", scientificName:"Nepeta × faassenii", img:"Nepeta faassenii kz01.jpg",
-    light:"Full sun to part shade.",
-    water:"Drought-tolerant once established.", humidity:"—",
-    temp:"Hardy zones 3–8.",
-    soil:"Well-draining soil.", fertilizer:"Minimal.",
-    toxicity:"Non-toxic (less potent than true catnip).",
-    tips:"Long-blooming lavender-blue haze. Shear after the first flush for a repeat bloom." },
-  { commonName:"Coreopsis (Tickseed)", scientificName:"Coreopsis spp.", img:"Coreopsis verticillata kz01.jpg",
-    light:"Full sun.",
-    water:"About 1 in. per week; drought-tolerant.", humidity:"—",
-    temp:"Hardy zones 4–9.",
-    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal.",
-    toxicity:"Non-toxic.",
-    tips:"Cheerful yellow daisies all summer. Deadhead or shear to keep it blooming." },
-  { commonName:"Salvia (Perennial)", scientificName:"Salvia nemorosa", img:"Salvia nemorosa0.jpg",
-    light:"Full sun.",
-    water:"Water until established, then drought-tolerant.", humidity:"—",
-    temp:"Hardy zones 4–8.",
-    soil:"Well-draining soil.", fertilizer:"Light feed in spring.",
-    toxicity:"Non-toxic.",
-    tips:"Spiky purple-blue blooms; cut back spent spikes for rebloom. Excellent for pollinators." },
-  { commonName:"Peony", scientificName:"Paeonia lactiflora", img:"Paeonia lactiflora 003.JPG",
-    light:"Full sun (6+ hrs).",
-    water:"About 1 in. per week; deep watering.", humidity:"—",
-    temp:"Hardy zones 3–8; needs winter chill to bloom.",
-    soil:"Rich, well-draining soil.", fertilizer:"Low-nitrogen feed after flowering.",
-    toxicity:"Toxic to pets if eaten.",
-    tips:"Plant eyes only 1–2 in. deep — too deep and it won't bloom. Long-lived; doesn't like being moved." },
-  { commonName:"Astilbe", scientificName:"Astilbe × arendsii", img:"Astilbe japonica kz01.jpg",
-    light:"Part to full shade.",
-    water:"Keep consistently moist; does not tolerate drying out.", humidity:"—",
-    temp:"Hardy zones 3–8.",
-    soil:"Rich, moist, well-draining soil.", fertilizer:"Balanced feed in spring.",
-    toxicity:"Non-toxic.",
-    tips:"Feathery plumes for shade. Brown, crispy edges mean it dried out — mulch to hold moisture." },
-  { commonName:"Coral Bells", scientificName:"Heuchera spp.", img:"Heuchera 'Palace Purple' kz01.jpg",
-    light:"Part shade; morning sun is fine. Darker leaves take more sun.",
-    water:"Keep evenly moist; about 1 in. per week.", humidity:"—",
-    temp:"Hardy zones 4–9.",
-    soil:"Rich, well-draining soil.", fertilizer:"Light feed in spring.",
-    toxicity:"Non-toxic.",
-    tips:"Grown for colorful foliage. Frost heaving can lift crowns — re-firm soil in spring." },
-  { commonName:"Bearded Iris", scientificName:"Iris germanica", img:"Iris germanica 02.jpg",
-    light:"Full sun.",
-    water:"Water during growth; let rhizomes dry between. Avoid soggy soil.", humidity:"—",
-    temp:"Hardy zones 3–9.",
-    soil:"Well-draining soil; rhizomes sit at the surface.", fertilizer:"Low-nitrogen feed in early spring.",
-    toxicity:"Toxic to pets if eaten.",
-    tips:"Plant rhizomes shallow with tops exposed. Divide every 3–4 years when clumps get crowded." },
-  { commonName:"Lavender", scientificName:"Lavandula angustifolia", img:"Lavandula angustifolia - Köhler–s Medizinal-Pflanzen-085 cropped.jpg",
-    light:"Full sun.",
-    water:"Drought-tolerant; water sparingly once established. Hates wet feet.", humidity:"Prefers dry air.",
-    temp:"Hardy zones 5–9 (English lavender).",
-    soil:"Lean, gritty, well-draining, slightly alkaline soil.", fertilizer:"None needed.",
-    toxicity:"Non-toxic; mildly upsetting to pets in quantity.",
-    tips:"Sharp drainage is everything — most lavender dies from soggy soil, not cold. Prune lightly after bloom." },
-  { commonName:"Daffodil", scientificName:"Narcissus spp.", img:"Narcissus pseudonarcissus kz01.jpg",
-    light:"Full sun to light shade.",
-    water:"Water during growth and bloom; let dormant in summer.", humidity:"—",
-    temp:"Hardy zones 3–8; plant bulbs in fall.",
-    soil:"Well-draining soil.", fertilizer:"Bulb fertilizer at planting and after bloom.",
-    toxicity:"Toxic to pets and people — all parts, especially the bulb.",
-    tips:"Let foliage yellow and die back naturally to feed next year's bulb. Deer- and rodent-resistant." },
-  { commonName:"Tulip", scientificName:"Tulipa spp.", img:"Tulipa suaveolens floriade to Canberra.jpg",
-    light:"Full sun.",
-    water:"Water at planting and during growth; keep dry when dormant.", humidity:"—",
-    temp:"Hardy zones 3–8; plant bulbs in fall, needs winter chill.",
-    soil:"Well-draining soil; bulbs rot in wet ground.", fertilizer:"Bulb fertilizer at planting.",
-    toxicity:"Toxic to pets, especially the bulb.",
-    tips:"Often treated as annuals in warm zones; many hybrids fade after a year or two. Plant 6–8 in. deep." },
-  { commonName:"Coral Honeysuckle", scientificName:"Lonicera sempervirens", img:"Lonicera sempervirens kz01.jpg",
-    light:"Full sun to part shade.",
-    water:"About 1 in. per week until established.", humidity:"—",
-    temp:"Hardy zones 4–9.",
-    soil:"Average, well-draining soil.", fertilizer:"Light feed in spring.",
-    toxicity:"Mildly toxic berries.",
-    tips:"A non-invasive native vine (unlike Japanese honeysuckle); hummingbirds love the red-orange tubes." },
-  { commonName:"Yarrow", scientificName:"Achillea millefolium", img:"Achillea millefolium kz03.jpg",
-    light:"Full sun.",
-    water:"Very drought-tolerant; water sparingly.", humidity:"—",
-    temp:"Hardy zones 3–9.",
-    soil:"Lean, well-draining soil; tolerates poor ground.", fertilizer:"None needed.",
-    toxicity:"Mildly toxic to pets.",
-    tips:"Flat flower clusters in many colors; tough and spreads. Shear after bloom to tidy and rebloom." }
+  { commonName:"Hosta", scientificName:"Hosta spp.", wiki:"Hosta",
+    light:"Part to full shade; morning sun ok. Blue types need most shade.", water:"1 in./week; evenly moist in summer.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Rich, moist, well-draining soil.", fertilizer:"Balanced feed in early spring.", toxicity:"Toxic to cats and dogs.", tips:"The go-to shade perennial; watch for slugs." },
+  { commonName:"Daylily", scientificName:"Hemerocallis spp.", wiki:"Daylily",
+    light:"Full sun (6+ hrs); light shade ok.", water:"~1 in./week; very drought-tolerant once established.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Adaptable; prefers well-draining.", fertilizer:"Light feed in spring.", toxicity:"Toxic to cats (kidney failure).", tips:"Each bloom lasts one day; 'Stella de Oro' reblooms all season." },
+  { commonName:"Coneflower (Echinacea)", scientificName:"Echinacea purpurea", wiki:"Echinacea purpurea",
+    light:"Full sun.", water:"~1 in./week; drought-tolerant.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal.", toxicity:"Non-toxic.", tips:"Pollinator magnet; leave seed heads for goldfinches." },
+  { commonName:"Black-Eyed Susan", scientificName:"Rudbeckia hirta", wiki:"Rudbeckia hirta",
+    light:"Full sun.", water:"~1 in./week; drought-tolerant.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Average, well-draining.", fertilizer:"Minimal.", toxicity:"Mildly toxic if eaten.", tips:"Long-blooming golden daisies; deadhead for more." },
+  { commonName:"Shasta Daisy", scientificName:"Leucanthemum × superbum", wiki:"Leucanthemum × superbum",
+    light:"Full sun to light shade.", water:"~1 in./week.", humidity:"—", temp:"Zones 5–9.",
+    soil:"Well-draining, moderately fertile.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Classic cutting daisy; divide every 2–3 years." },
+  { commonName:"Garden Phlox", scientificName:"Phlox paniculata", wiki:"Phlox paniculata",
+    light:"Full sun to part shade.", water:"Evenly moist; ~1 in./week.", humidity:"—", temp:"Zones 4–8.",
+    soil:"Rich, well-draining.", fertilizer:"Balanced feed in spring.", toxicity:"Non-toxic.", tips:"Fragrant; give airflow and water at base to avoid mildew." },
+  { commonName:"Sedum (Autumn Joy)", scientificName:"Hylotelephium 'Herbstfreude'", wiki:"Hylotelephium telephium",
+    light:"Full sun.", water:"Very drought-tolerant; water sparingly.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Lean, well-draining.", fertilizer:"None needed.", toxicity:"Non-toxic to mildly toxic to pets.", tips:"Pink fall blooms age to rust; floppy = too much water/shade." },
+  { commonName:"Russian Sage", scientificName:"Salvia yangii", wiki:"Salvia yangii",
+    light:"Full sun.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Well-draining, even poor/sandy.", fertilizer:"None needed.", toxicity:"Non-toxic.", tips:"Airy silver stems, violet-blue flowers; cut back hard in spring." },
+  { commonName:"Catmint", scientificName:"Nepeta × faassenii", wiki:"Nepeta × faassenii",
+    light:"Full sun to part shade.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Well-draining.", fertilizer:"Minimal.", toxicity:"Non-toxic.", tips:"Long-blooming lavender-blue; shear after first flush to rebloom." },
+  { commonName:"Coreopsis (Tickseed)", scientificName:"Coreopsis spp.", wiki:"Coreopsis",
+    light:"Full sun.", water:"~1 in./week; drought-tolerant.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Well-draining; tolerates poor soil.", fertilizer:"Minimal.", toxicity:"Non-toxic.", tips:"Cheerful yellow daisies all summer; deadhead to keep going." },
+  { commonName:"Salvia (Perennial)", scientificName:"Salvia nemorosa", wiki:"Salvia nemorosa",
+    light:"Full sun.", water:"Water until established, then drought-tolerant.", humidity:"—", temp:"Zones 4–8.",
+    soil:"Well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Spiky purple-blue blooms; cut spent spikes for rebloom." },
+  { commonName:"Peony", scientificName:"Paeonia lactiflora", wiki:"Paeonia lactiflora",
+    light:"Full sun (6+ hrs).", water:"~1 in./week; deep watering.", humidity:"—", temp:"Zones 3–8; needs winter chill.",
+    soil:"Rich, well-draining.", fertilizer:"Low-nitrogen after flowering.", toxicity:"Toxic to pets if eaten.", tips:"Plant eyes only 1–2 in. deep or it won't bloom; long-lived." },
+  { commonName:"Astilbe", scientificName:"Astilbe × arendsii", wiki:"Astilbe",
+    light:"Part to full shade.", water:"Keep consistently moist; won't tolerate drying.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Balanced feed in spring.", toxicity:"Non-toxic.", tips:"Feathery plumes for shade; mulch to hold moisture." },
+  { commonName:"Coral Bells", scientificName:"Heuchera spp.", wiki:"Heuchera",
+    light:"Part shade; darker leaves take more sun.", water:"Evenly moist; ~1 in./week.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Rich, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Grown for colorful foliage; re-firm frost-heaved crowns in spring." },
+  { commonName:"Bearded Iris", scientificName:"Iris germanica", wiki:"Iris germanica",
+    light:"Full sun.", water:"Water in growth; let rhizomes dry between.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Well-draining; rhizomes at the surface.", fertilizer:"Low-nitrogen in early spring.", toxicity:"Toxic to pets if eaten.", tips:"Plant shallow with tops exposed; divide every 3–4 years." },
+  { commonName:"Lavender", scientificName:"Lavandula angustifolia", wiki:"Lavandula angustifolia",
+    light:"Full sun.", water:"Drought-tolerant; hates wet feet.", humidity:"Prefers dry air.", temp:"Zones 5–9.",
+    soil:"Lean, gritty, well-draining, slightly alkaline.", fertilizer:"None needed.", toxicity:"Non-toxic; upsets pets in quantity.", tips:"Sharp drainage is everything; prune lightly after bloom." },
+  { commonName:"Daffodil", scientificName:"Narcissus spp.", wiki:"Narcissus (plant)",
+    light:"Full sun to light shade.", water:"Water in growth/bloom; dormant in summer.", humidity:"—", temp:"Zones 3–8; plant bulbs in fall.",
+    soil:"Well-draining.", fertilizer:"Bulb fertilizer at planting and after bloom.", toxicity:"Toxic to pets and people (esp. bulb).", tips:"Let foliage die back naturally; deer- and rodent-resistant." },
+  { commonName:"Tulip", scientificName:"Tulipa spp.", wiki:"Tulip",
+    light:"Full sun.", water:"Water at planting/growth; dry when dormant.", humidity:"—", temp:"Zones 3–8; needs winter chill.",
+    soil:"Well-draining; bulbs rot in wet ground.", fertilizer:"Bulb fertilizer at planting.", toxicity:"Toxic to pets (esp. bulb).", tips:"Often short-lived in warm zones; plant 6–8 in. deep." },
+  { commonName:"Coral Honeysuckle", scientificName:"Lonicera sempervirens", wiki:"Lonicera sempervirens",
+    light:"Full sun to part shade.", water:"~1 in./week until established.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Average, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Mildly toxic berries.", tips:"Non-invasive native vine; hummingbirds love the red-orange tubes." },
+  { commonName:"Yarrow", scientificName:"Achillea millefolium", wiki:"Achillea millefolium",
+    light:"Full sun.", water:"Very drought-tolerant; water sparingly.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Lean, well-draining; tolerates poor soil.", fertilizer:"None needed.", toxicity:"Mildly toxic to pets.", tips:"Flat flower clusters in many colors; shear after bloom to rebloom." },
+  { commonName:"Bee Balm", scientificName:"Monarda didyma", wiki:"Monarda didyma",
+    light:"Full sun to part shade.", water:"Keep evenly moist; ~1 in./week.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Balanced feed in spring.", toxicity:"Non-toxic.", tips:"Magnet for bees and hummingbirds; give airflow to avoid mildew." },
+  { commonName:"Blanket Flower", scientificName:"Gaillardia × grandiflora", wiki:"Gaillardia",
+    light:"Full sun.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 3–10.",
+    soil:"Lean, well-draining.", fertilizer:"Minimal.", toxicity:"Non-toxic.", tips:"Red-and-gold daisies all summer; deadhead to keep blooming." },
+  { commonName:"Daylily / Stella d'Oro", scientificName:"Hemerocallis 'Stella de Oro'", wiki:"Daylily",
+    light:"Full sun.", water:"~1 in./week; drought-tolerant.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Adaptable, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Toxic to cats.", tips:"Compact reblooming daylily; deadhead to extend the show." },
+  { commonName:"Catnip", scientificName:"Nepeta cataria", wiki:"Nepeta cataria",
+    light:"Full sun to part shade.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Well-draining.", fertilizer:"Minimal.", toxicity:"Non-toxic (stimulates cats).", tips:"True catnip; can self-seed freely — shear to control." },
+  { commonName:"Hardy Geranium (Cranesbill)", scientificName:"Geranium sanguineum", wiki:"Geranium sanguineum",
+    light:"Full sun to part shade.", water:"~1 in./week.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Average, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Long-blooming mounding groundcover; shear midsummer to refresh." },
+  { commonName:"Stonecrop (Creeping Sedum)", scientificName:"Sedum spurium", wiki:"Phedimus spurius",
+    light:"Full sun.", water:"Very drought-tolerant.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Lean, gritty, well-draining.", fertilizer:"None needed.", toxicity:"Non-toxic to mildly toxic.", tips:"Tough mat-forming groundcover for hot, dry spots." },
+  { commonName:"Daisy / Painted Daisy", scientificName:"Tanacetum coccineum", wiki:"Tanacetum coccineum",
+    light:"Full sun.", water:"~1 in./week.", humidity:"—", temp:"Zones 3–7.",
+    soil:"Well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Ferny foliage with bright daisies; good cut flower." },
+  { commonName:"Lungwort", scientificName:"Pulmonaria officinalis", wiki:"Pulmonaria officinalis",
+    light:"Part to full shade.", water:"Keep evenly moist.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Early spring blooms; silver-spotted leaves brighten shade." },
+  { commonName:"Bleeding Heart", scientificName:"Lamprocapnos spectabilis", wiki:"Lamprocapnos spectabilis",
+    light:"Part to full shade.", water:"Keep evenly moist; goes dormant by midsummer.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Toxic to pets and people if eaten.", tips:"Heart-shaped spring flowers; don't panic when it dies back in heat." },
+  { commonName:"Columbine", scientificName:"Aquilegia spp.", wiki:"Aquilegia",
+    light:"Full sun to part shade.", water:"~1 in./week.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Well-draining.", fertilizer:"Light feed in spring.", toxicity:"Mildly toxic if eaten.", tips:"Spurred spring flowers loved by hummingbirds; self-seeds readily." },
+  { commonName:"Creeping Phlox", scientificName:"Phlox subulata", wiki:"Phlox subulata",
+    light:"Full sun.", water:"~1 in./week until established; then drought-tolerant.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Carpet of spring color on slopes and edges; shear after bloom." },
+  { commonName:"Lily-of-the-Valley", scientificName:"Convallaria majalis", wiki:"Convallaria majalis",
+    light:"Part to full shade.", water:"Keep evenly moist.", humidity:"—", temp:"Zones 2–7.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Highly toxic to pets and people.", tips:"Fragrant white bells; spreads aggressively as a shade groundcover." },
+  { commonName:"Sneezeweed (Helenium)", scientificName:"Helenium autumnale", wiki:"Helenium autumnale",
+    light:"Full sun.", water:"Keep evenly moist; ~1 in./week.", humidity:"—", temp:"Zones 3–8.",
+    soil:"Rich, moist, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Toxic if eaten in quantity.", tips:"Warm-toned late-summer daisies; pinch early for bushier plants." },
+  { commonName:"Joe-Pye Weed", scientificName:"Eutrochium purpureum", wiki:"Eutrochium purpureum",
+    light:"Full sun to part shade.", water:"Keep evenly moist; tolerates wet soil.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Rich, moist soil.", fertilizer:"Minimal.", toxicity:"Non-toxic.", tips:"Tall native with mauve butterfly-magnet blooms in late summer." },
+  { commonName:"Goldenrod", scientificName:"Solidago spp.", wiki:"Solidago",
+    light:"Full sun.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Average, well-draining.", fertilizer:"None needed.", toxicity:"Non-toxic.", tips:"Late-season pollinator powerhouse; doesn't cause hay fever (that's ragweed)." },
+  { commonName:"Aster", scientificName:"Symphyotrichum novae-angliae", wiki:"Symphyotrichum novae-angliae",
+    light:"Full sun.", water:"~1 in./week.", humidity:"—", temp:"Zones 4–8.",
+    soil:"Average, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Non-toxic.", tips:"Fall color for pollinators; pinch until midsummer for bushier plants." },
+  { commonName:"Baptisia (False Indigo)", scientificName:"Baptisia australis", wiki:"Baptisia australis",
+    light:"Full sun.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 3–9.",
+    soil:"Lean, well-draining.", fertilizer:"None needed.", toxicity:"Mildly toxic if eaten.", tips:"Long-lived with deep roots; don't move it once settled." },
+  { commonName:"Lenten Rose", scientificName:"Helleborus orientalis", wiki:"Helleborus orientalis",
+    light:"Part to full shade.", water:"Keep evenly moist.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Rich, well-draining.", fertilizer:"Light feed in spring.", toxicity:"Toxic to pets and people.", tips:"Blooms in late winter/early spring; evergreen in mild climates." },
+  { commonName:"Tall Garden Phlox 'David'", scientificName:"Phlox paniculata 'David'", wiki:"Phlox paniculata",
+    light:"Full sun to part shade.", water:"Evenly moist; ~1 in./week.", humidity:"—", temp:"Zones 4–8.",
+    soil:"Rich, well-draining.", fertilizer:"Balanced feed in spring.", toxicity:"Non-toxic.", tips:"Mildew-resistant white phlox; fragrant midsummer blooms." },
+  { commonName:"Switchgrass", scientificName:"Panicum virgatum", wiki:"Panicum virgatum",
+    light:"Full sun.", water:"Drought-tolerant once established.", humidity:"—", temp:"Zones 4–9.",
+    soil:"Adaptable, well-draining.", fertilizer:"None needed.", toxicity:"Non-toxic.", tips:"Upright native ornamental grass; cut back in late winter." }
 ];
 
-/* ---- Photos via Wikipedia (correct lead image per species, fetched at runtime) ----
-   Keyed by scientific name -> Wikipedia article title. The REST summary endpoint is
-   CORS-enabled, so this works from a static site in the user's browser. */
-const WIKI_TITLE = {
-  "Epipremnum aureum":"Epipremnum aureum",
-  "Dracaena trifasciata (Sansevieria)":"Dracaena trifasciata",
-  "Monstera deliciosa":"Monstera deliciosa",
-  "Philodendron hederaceum":"Philodendron hederaceum",
-  "Spathiphyllum wallisii":"Spathiphyllum",
-  "Zamioculcas zamiifolia":"Zamioculcas zamiifolia",
-  "Chlorophytum comosum":"Chlorophytum comosum",
-  "Ficus lyrata":"Ficus lyrata",
-  "Ficus elastica":"Ficus elastica",
-  "Dracaena marginata":"Dracaena reflexa var. angustifolia",
-  "Aloe vera":"Aloe vera",
-  "Crassula ovata":"Crassula ovata",
-  "Echeveria elegans":"Echeveria elegans",
-  "Nephrolepis exaltata":"Nephrolepis exaltata",
-  "Calathea orbifolia":"Goeppertia orbifolia",
-  "Phalaenopsis hybrid":"Phalaenopsis",
-  "Anthurium andraeanum":"Anthurium andraeanum",
-  "Dieffenbachia seguine":"Dieffenbachia seguine",
-  "Codiaeum variegatum":"Codiaeum variegatum",
-  "Hedera helix":"Hedera helix",
-  "Chamaedorea elegans":"Chamaedorea elegans",
-  "Peperomia obtusifolia":"Peperomia obtusifolia",
-  "Begonia rex-cultorum":"Begonia rex",
-  "Guzmania lingulata":"Guzmania lingulata",
-  "Pachira aquatica":"Pachira aquatica",
-  /* perennials */
-  "Hosta spp.":"Hosta",
-  "Hemerocallis spp.":"Daylily",
-  "Echinacea purpurea":"Echinacea purpurea",
-  "Rudbeckia hirta":"Rudbeckia hirta",
-  "Leucanthemum × superbum":"Leucanthemum × superbum",
-  "Phlox paniculata":"Phlox paniculata",
-  "Hylotelephium 'Herbstfreude'":"Hylotelephium telephium",
-  "Salvia yangii (Perovskia)":"Salvia yangii",
-  "Nepeta × faassenii":"Nepeta × faassenii",
-  "Coreopsis spp.":"Coreopsis",
-  "Salvia nemorosa":"Salvia nemorosa",
-  "Paeonia lactiflora":"Paeonia lactiflora",
-  "Astilbe × arendsii":"Astilbe",
-  "Heuchera spp.":"Heuchera",
-  "Iris germanica":"Iris germanica",
-  "Lavandula angustifolia":"Lavandula angustifolia",
-  "Narcissus spp.":"Narcissus (plant)",
-  "Tulipa spp.":"Tulip",
-  "Lonicera sempervirens":"Lonicera sempervirens",
-  "Achillea millefolium":"Achillea millefolium"
-};
+const PESTS = [
+  { commonName:"Spider Mites", scientificName:"Tetranychus urticae", wiki:"Tetranychus urticae",
+    looksLike:"Tiny (<1mm) yellow-green to reddish specks, often with fine webbing on leaf undersides.", identification:"Fine stippling/speckling on leaves; webbing between stems; leaves go bronze then dry. Tap a leaf over white paper — moving dots.", prevention:"Keep humidity up (they love hot, dry air); rinse foliage; isolate and inspect new plants.", treatment:"Rinse plant thoroughly, then treat with insecticidal soap or horticultural oil; repeat every 5–7 days for 3 cycles." },
+  { commonName:"Aphids", scientificName:"Aphididae", wiki:"Aphididae",
+    looksLike:"Soft, pear-shaped insects 1–3mm in green, black, yellow, or pink, clustered on new growth.", identification:"Clusters on tender shoots and buds; sticky 'honeydew' and sooty mold; curled or distorted new leaves; ants farming them.", prevention:"Inspect new growth; avoid over-fertilizing (lush growth attracts them); encourage ladybugs.", treatment:"Blast off with water, then insecticidal soap or neem; wipe honeydew to deter sooty mold." },
+  { commonName:"Mealybugs", scientificName:"Pseudococcidae", wiki:"Pseudococcidae",
+    looksLike:"White, soft, cottony or waxy blobs in leaf joints and stem crevices.", identification:"Fuzzy white masses where leaves meet stems; sticky honeydew; stunted, yellowing growth.", prevention:"Quarantine new plants; wipe leaves; avoid overwatering and excess nitrogen.", treatment:"Dab each with a 70% isopropyl alcohol cotton swab, then treat with insecticidal soap/neem weekly until clear." },
+  { commonName:"Scale Insects", scientificName:"Coccus hesperidum", wiki:"Coccus hesperidum",
+    looksLike:"Small brown, tan, or black bumps (1–5mm) firmly stuck to stems and leaf undersides.", identification:"Immobile shell-like bumps along stems/veins; sticky honeydew and sooty mold; yellowing leaves.", prevention:"Inspect stems regularly; isolate new plants; keep plants healthy and unstressed.", treatment:"Scrape off with a fingernail or alcohol swab; treat with horticultural oil to smother; repeat every 1–2 weeks." },
+  { commonName:"Whiteflies", scientificName:"Trialeurodes vaporariorum", wiki:"Trialeurodes vaporariorum",
+    looksLike:"Tiny white moth-like flies (~1.5mm) that flutter up in a cloud when the plant is disturbed.", identification:"White cloud when leaves shaken; yellow stippling; honeydew and sooty mold; eggs on leaf undersides.", prevention:"Use yellow sticky traps; inspect undersides; isolate new arrivals.", treatment:"Vacuum adults early morning; insecticidal soap or neem on undersides every few days; sticky traps to monitor." },
+  { commonName:"Fungus Gnats", scientificName:"Sciaridae", wiki:"Sciaridae",
+    looksLike:"Small (~2mm) dark mosquito-like flies running across or hovering over the soil surface.", identification:"Tiny flies around soil and windows; larvae are clear with black heads in the top inch of wet soil.", prevention:"Let soil dry between waterings; use well-draining mix; avoid standing water in trays.", treatment:"Let top 1–2 in. dry out; yellow sticky traps for adults; BTI (mosquito bits) or a sand top-layer for larvae." },
+  { commonName:"Thrips", scientificName:"Thysanoptera", wiki:"Thysanoptera",
+    looksLike:"Slender, tiny (1–2mm) yellow, brown, or black insects that look like moving slivers.", identification:"Silvery streaks and tiny black fecal specks on leaves; deformed new growth; smudgy discoloration.", prevention:"Inspect and isolate new plants; use blue sticky traps; keep plants clean.", treatment:"Prune badly affected leaves; insecticidal soap, neem, or spinosad; repeat every 5–7 days as eggs hatch." },
+  { commonName:"Broad / Cyclamen Mites", scientificName:"Polyphagotarsonemus latus", wiki:"Polyphagotarsonemus latus",
+    looksLike:"Microscopic — invisible to the naked eye; damage shows before the mite does.", identification:"Twisted, brittle, distorted new growth; bronzed or scarred buds; symptoms concentrate at growing tips.", prevention:"Isolate new plants; avoid sharing tools between plants; discard heavily infested specimens.", treatment:"Hard to treat — remove affected growth; miticide or hot-water dips; often best to discard severe cases." },
+  { commonName:"Slugs & Snails", scientificName:"Gastropoda", wiki:"Gastropoda",
+    looksLike:"Soft-bodied mollusks; snails have shells, slugs don't. Leave silvery slime trails.", identification:"Irregular holes chewed in leaves (esp. hostas); silvery slime trails; worst in damp, shady spots and at night.", prevention:"Reduce damp hiding spots; water in the morning; copper tape barriers around pots/beds.", treatment:"Hand-pick at night; beer traps; iron-phosphate slug bait (pet-safe) around susceptible plants." },
+  { commonName:"Japanese Beetles", scientificName:"Popillia japonica", wiki:"Popillia japonica",
+    looksLike:"Metallic green-and-copper beetles ~1cm, often feeding in groups.", identification:"Lacy, skeletonized leaves (veins left intact); beetles clustered on roses, lindens, and many perennials in summer.", prevention:"Hand-pick in early morning; avoid lure traps near plants (they attract more); healthy turf reduces grubs.", treatment:"Knock beetles into soapy water; neem as a deterrent; treat lawn grubs in late summer to cut next year's numbers." },
+  { commonName:"Caterpillars", scientificName:"Lepidoptera", wiki:"Lepidoptera",
+    looksLike:"Soft, segmented larvae of moths and butterflies in many colors and sizes.", identification:"Chewed leaf edges and holes; dark frass (droppings) on leaves; some roll or web leaves together.", prevention:"Inspect undersides for eggs; encourage birds and parasitic wasps; floating row covers on edibles.", treatment:"Hand-pick; BT (Bacillus thuringiensis) is a selective, low-impact spray; remove rolled/webbed leaves." },
+  { commonName:"Leaf Miners", scientificName:"Agromyzidae", wiki:"Agromyzidae",
+    looksLike:"Larvae live inside the leaf — you see the damage, not the insect.", identification:"Winding white or tan squiggly tunnels (mines) within the leaf tissue; blistered patches.", prevention:"Remove and destroy mined leaves; use row covers; clean up debris.", treatment:"Pick off mined leaves; spinosad or neem for active infestations; encourage parasitic wasps." },
+  { commonName:"Vine Weevil", scientificName:"Otiorhynchus sulcatus", wiki:"Otiorhynchus sulcatus",
+    looksLike:"Adults are dull black beetles ~1cm; larvae are white C-shaped grubs in the soil.", identification:"Adults notch leaf edges at night; larvae chew roots, causing sudden wilting/collapse of potted plants.", prevention:"Inspect soil of new plants; remove leaf litter; check roots when repotting.", treatment:"Hand-pick adults at night; beneficial nematodes for larvae; replace soil of badly infested pots." },
+  { commonName:"Boxwood / Hedge Spider Mite", scientificName:"Eurytetranychus buxi", wiki:"Eurytetranychus buxi",
+    looksLike:"Tiny mites on needled and broadleaf evergreens; pinprick-sized.", identification:"Fine yellow stippling and bronzing on boxwood/conifer foliage; fine webbing in heavy infestations.", prevention:"Hose down foliage in hot dry spells; avoid drought stress; inspect undersides.", treatment:"Strong water spray, then horticultural oil or miticide; repeat per label as eggs hatch." },
+  { commonName:"Powdery Mildew (fungal)", scientificName:"Powdery mildew", wiki:"Powdery mildew",
+    looksLike:"Not an insect — a fungus appearing as white powdery patches on leaves and stems.", identification:"White-to-gray powdery coating on upper leaf surfaces; leaves yellow, curl, and drop; worst in crowded, humid, low-airflow spots.", prevention:"Space plants for airflow; water at the base in the morning; choose resistant varieties.", treatment:"Remove affected leaves; neem, potassium bicarbonate, or a sulfur fungicide; improve air circulation." }
+];
+
+/* Per-item Wikipedia titles now live on each entry's `wiki` field. */
+const WIKI_TITLE = {};
 
 const wikiImgCache = {};   // title -> url (or null if none)
 function wikiTitlesFor(p){
@@ -1640,6 +1682,29 @@ function renderCareGrid(list, gridId){
     grid.appendChild(b);
   });
 }
+function renderPestGrid(list, gridId){
+  const grid=$(gridId); grid.innerHTML="";
+  if(!list.length){ grid.innerHTML='<p style="color:var(--muted)">No data found.</p>'; return; }
+  list.forEach(p=>{
+    const b=document.createElement("button"); b.className="card card-photo"; b.type="button";
+    b.innerHTML=`<img class="card-thumb" alt="" loading="lazy" style="display:none">
+      <div class="title">${esc(p.commonName)}</div><div class="meta">${esc(p.scientificName||"")}</div>`;
+    const thumb=b.querySelector("img.card-thumb");
+    fetchWikiImage(p).then(src=>{
+      if(src){ p._img=src; thumb.src=src; thumb.style.display=""; thumb.onerror=()=>{thumb.style.display="none";}; }
+    });
+    b.addEventListener("click",()=>{
+      $("mPestName").textContent=p.commonName||""; $("mPestLatin").textContent=p.scientificName||"";
+      $("mLooks").textContent=p.looksLike||""; $("mPestId").textContent=p.identification||"";
+      $("mPrev").textContent=p.prevention||""; $("mTreat").textContent=p.treatment||"";
+      const img=$("mPestImg");
+      const show=(src)=>{ if(src){ img.src=src; img.alt=p.commonName||""; img.style.display=""; img.onerror=()=>{img.style.display="none";}; } else img.style.display="none"; };
+      if(p._img) show(p._img); else { img.style.display="none"; fetchWikiImage(p).then(s=>{ p._img=s; show(s); }); }
+      openModal("pestModal");
+    });
+    grid.appendChild(b);
+  });
+}
 function filterCards(input, grid){
   const q=(input.value||"").toLowerCase().trim();
   $$(".card",grid).forEach(c=>{ c.style.display=(!q||(c.textContent||"").toLowerCase().includes(q))?"":"none"; });
@@ -1647,8 +1712,10 @@ function filterCards(input, grid){
 function initCareId(){
   $("houseSearch").addEventListener("input",()=>filterCards($("houseSearch"),$("houseGrid")));
   $("perennialSearch").addEventListener("input",()=>filterCards($("perennialSearch"),$("perennialGrid")));
+  $("pestSearch").addEventListener("input",()=>filterCards($("pestSearch"),$("pestGrid")));
   renderCareGrid(HOUSEPLANTS, "houseGrid");
   renderCareGrid(PERENNIALS, "perennialGrid");
+  renderPestGrid(PESTS, "pestGrid");
 }
 
 /* ============================================================
@@ -1837,6 +1904,30 @@ function drawTerritories(){
 }
 let checklist=[];
 const statusColor = s => s==="ok" ? "#3ddc97" : s==="warn" ? "#f5b94a" : "#f06a6a";
+
+/* ----- weekly auto-reset (every Monday) ----- */
+let storedWeek = undefined;   // last week key recorded in Firebase
+let weekResetBusy = false;
+/* If the database's recorded week is behind the current week, clear every
+   store's checklist and stamp the new week. The first client online in a new
+   week triggers this for the whole team. */
+function maybeWeeklyReset(){
+  if(!db || weekResetBusy) return;
+  if(storedWeek===undefined) return;            // wait until we've read meta/week at least once
+  const current = weekKey();
+  if(storedWeek === current) return;            // same week, nothing to do
+  weekResetBusy = true;
+  const updates = {};
+  Object.keys(stores).forEach(id=>{
+    updates["stores/"+id+"/checked"] = null;    // clear checked state for every store
+    if(stores[id]) stores[id].checked = {};
+  });
+  updates["meta/week"] = current;
+  update(ref(db), updates)
+    .then(()=>{ storedWeek = current; refreshAllMarkers(); renderChecklistPanel(); })
+    .catch(err=>{ console.error("weekly reset:",err); })
+    .finally(()=>{ weekResetBusy = false; });
+}
 
 function completion(store){
   if(!checklist.length) return 1;
@@ -2103,7 +2194,7 @@ async function loadStoresCsv(){
 }
 
 async function initMap(){
-  $("weekBadge").querySelector(".label").textContent="Week of "+todayKey();
+  $("weekBadge").querySelector(".label").textContent="Week of "+weekKey();
 
   map=L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([42.0,-88.3],8);
   /* Full-color street basemap (CARTO Voyager). */
@@ -2133,7 +2224,13 @@ async function initMap(){
   $("btnStore").addEventListener("click", openStoreEditor);
   $("seSave").addEventListener("click", saveStore);
   $("seDelete").addEventListener("click", deleteStore);
+  $("spriteSave").addEventListener("click", saveSprite);
+  $("locBtn").addEventListener("click", ()=>{ if(presenceOn) stopPresence(); else startPresence(); });
   applyAdminUI();
+
+  if(db) watchPresence();
+  /* If the user already has a sprite saved, begin sharing location right away. */
+  if(hasSprite()) startPresence();
 
   if(db){
     try{
@@ -2171,7 +2268,17 @@ async function initMap(){
         drawTerritories();
         if(selected){ renderChecklistPanel(); selectStore(selected); }
         if(!storesFitted){ storesFitted=true; fitToStores(); }
+        maybeWeeklyReset();          // clear everything if a new week (Monday) has begun
       }, err=>{ console.error("stores read:",err); setConn("off"); });
+
+      /* Track the stored week so we know when a Monday rollover happens. */
+      onValue(ref(db,"meta/week"), snap=>{
+        storedWeek = snap.val() || null;
+        maybeWeeklyReset();
+      }, err=>console.error("week read:",err));
+
+      /* Catch rollover on a tab left open across Monday midnight. */
+      setInterval(maybeWeeklyReset, 5*60*1000);
 
     }catch(e){ console.error(e); setConn("off"); }
   } else {
@@ -2184,6 +2291,139 @@ function fitToStores(){
   const pts=Object.values(stores).filter(s=>s.lat!=null&&s.lng!=null).map(s=>[s.lat,s.lng]);
   if(pts.length && map){ try{ map.fitBounds(pts,{padding:[40,40],maxZoom:11}); }catch(e){} }
 }
+
+/* ============================================================
+   SPRITE CREATOR  (per-user map marker: color + emoji)
+   ============================================================ */
+let spriteDraft = { color:"", emoji:"" };
+
+function paintSpritePreview(){
+  const pv=$("spritePreview");
+  pv.textContent = spriteDraft.emoji || "🙂";
+  pv.style.background = spriteDraft.color || "var(--accent)";
+  $("spritePreviewName").textContent = me.name || "You";
+}
+function buildSpriteGrids(){
+  const eg=$("spriteEmojiGrid"); eg.innerHTML="";
+  SPRITE_EMOJIS.forEach(em=>{
+    const b=document.createElement("button"); b.type="button"; b.textContent=em;
+    b.classList.toggle("sel", em===spriteDraft.emoji);
+    b.addEventListener("click",()=>{ spriteDraft.emoji=em; buildSpriteGrids(); paintSpritePreview(); });
+    eg.appendChild(b);
+  });
+  const cg=$("spriteColorGrid"); cg.innerHTML="";
+  SPRITE_COLORS.forEach(col=>{
+    const b=document.createElement("button"); b.type="button"; b.className="swatch";
+    b.style.background=col; b.title=col;
+    b.classList.toggle("sel", col===spriteDraft.color);
+    b.addEventListener("click",()=>{ spriteDraft.color=col; buildSpriteGrids(); paintSpritePreview(); });
+    cg.appendChild(b);
+  });
+}
+function openSpriteEditor(firstTime){
+  spriteDraft.color = me.color || SPRITE_COLORS[Math.floor(Math.random()*SPRITE_COLORS.length)];
+  spriteDraft.emoji = me.emoji || SPRITE_EMOJIS[Math.floor(Math.random()*SPRITE_EMOJIS.length)];
+  $("spriteTitle").textContent = firstTime ? "Create your map sprite" : "Edit your map sprite";
+  setVis($("spriteCancel"), !firstTime);
+  buildSpriteGrids(); paintSpritePreview();
+  openModal("spriteEditor");
+}
+function saveSprite(){
+  me.color = spriteDraft.color || SPRITE_COLORS[0];
+  me.emoji = spriteDraft.emoji || "🙂";
+  try{ localStorage.setItem("hub_color",me.color); localStorage.setItem("hub_emoji",me.emoji); }catch(e){}
+  closeModal("spriteEditor");
+  writePresence();      // push updated sprite immediately
+  startPresence();      // ensure location tracking is running
+}
+
+/* ============================================================
+   LIVE LOCATION / PRESENCE  (team-wide, via Firebase)
+   ============================================================ */
+let geoWatchId=null, presenceRef=null, lastPos=null, presenceMarkers={}, presenceLayer=null, presenceOn=false;
+const PRESENCE_STALE_MS = 5*60*1000;   // hide users not seen in 5 min
+
+function presenceIcon(p, isMe){
+  const color=p.color||"#3da9fc";
+  const emoji=p.emoji||"🙂";
+  const ring=isMe ? "#ffffff" : "rgba(255,255,255,.85)";
+  return L.divIcon({
+    className:"",
+    html:`<div style="position:relative;transform:translate(-50%,-50%);">
+      <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+        font-size:18px;background:${color};border:3px solid ${ring};
+        box-shadow:0 0 0 ${isMe?"3px rgba(61,169,252,.35),":""}0 3px 10px rgba(0,0,0,.6);">${emoji}</div>
+      ${isMe?'<div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(61,169,252,.5);animation:pulse 2s infinite;"></div>':''}
+    </div>`,
+    iconSize:[0,0], iconAnchor:[0,0]
+  });
+}
+function renderPresence(val){
+  if(!map) return;
+  if(!presenceLayer) presenceLayer=L.layerGroup().addTo(map);
+  const now=Date.now();
+  const seen={};
+  Object.keys(val||{}).forEach(uid=>{
+    const p=val[uid]; if(!p||p.lat==null||p.lng==null) return;
+    if(p.ts && (now-p.ts)>PRESENCE_STALE_MS) return;   // skip stale
+    seen[uid]=true;
+    const isMe = uid===me.uid;
+    const label = `${esc(p.emoji||"🙂")} <b>${esc(p.name||"User")}</b>${isMe?" (you)":""}`;
+    if(presenceMarkers[uid]){
+      presenceMarkers[uid].setLatLng([p.lat,p.lng]).setIcon(presenceIcon(p,isMe)).setPopupContent(label);
+    } else {
+      presenceMarkers[uid]=L.marker([p.lat,p.lng],{icon:presenceIcon(p,isMe),zIndexOffset:1000}).addTo(presenceLayer).bindPopup(label);
+    }
+  });
+  // remove markers for users no longer present
+  Object.keys(presenceMarkers).forEach(uid=>{
+    if(!seen[uid]){ presenceLayer.removeLayer(presenceMarkers[uid]); delete presenceMarkers[uid]; }
+  });
+}
+function watchPresence(){
+  if(!db) return;
+  onValue(ref(db,"presence"), snap=> renderPresence(snap.val()||{}), err=>console.error("presence read:",err));
+}
+function writePresence(){
+  if(!db || !lastPos) return;
+  const data={ name:me.name, color:me.color, emoji:me.emoji, lat:lastPos.lat, lng:lastPos.lng, ts:Date.now() };
+  try{ set(ref(db,"presence/"+me.uid), data).catch(console.error); }catch(e){}
+}
+function startPresence(){
+  if(presenceOn) { writePresence(); return; }
+  if(!("geolocation" in navigator)){
+    if($("locBtn")) $("locBtn").textContent="📍 Location not supported";
+    return;
+  }
+  presenceOn=true;
+  setLocBtn(true);
+  // set up disconnect cleanup + remove on tab close
+  if(db){
+    presenceRef=ref(db,"presence/"+me.uid);
+    try{ onDisconnect(presenceRef).remove(); }catch(e){}
+  }
+  geoWatchId=navigator.geolocation.watchPosition(pos=>{
+    lastPos={ lat:+pos.coords.latitude.toFixed(6), lng:+pos.coords.longitude.toFixed(6) };
+    writePresence();
+    // gently center the first time we get a fix
+    if(map && !startPresence._centered){ startPresence._centered=true; map.setView([lastPos.lat,lastPos.lng], Math.max(map.getZoom(),11)); }
+  }, err=>{
+    console.warn("geolocation:",err);
+    presenceOn=false; setLocBtn(false);
+    if($("locBtn")) $("locBtn").textContent = err.code===1 ? "📍 Location blocked" : "📍 Share my location";
+  }, { enableHighAccuracy:true, maximumAge:15000, timeout:20000 });
+}
+function stopPresence(){
+  presenceOn=false; setLocBtn(false);
+  if(geoWatchId!=null && navigator.geolocation){ navigator.geolocation.clearWatch(geoWatchId); geoWatchId=null; }
+  if(db){ try{ remove(ref(db,"presence/"+me.uid)).catch(()=>{}); }catch(e){} }
+}
+function setLocBtn(on){
+  const b=$("locBtn"); if(!b) return;
+  b.classList.toggle("active", on);
+  b.textContent = on ? "📍 Sharing — tap to stop" : "📍 Share my location";
+}
+window.addEventListener("beforeunload", ()=>{ if(db && presenceOn){ try{ remove(ref(db,"presence/"+me.uid)); }catch(e){} } });
 
 /* ============================================================
    LOCAL TIME + WEATHER  (Open-Meteo — no API key required)
@@ -2296,7 +2536,7 @@ function localAnswer(qRaw){
     return `Local time is <b>${esc($("homeTime").textContent)}</b> — ${esc($("homeDate").textContent)}. See it any time on the Map home page.`;
   }
 
-  for(const p of PLANTS){
+  for(const p of HOUSEPLANTS.concat(PERENNIALS)){
     if(p.commonName && q.includes(p.commonName.toLowerCase())){
       const bits=[];
       if(p.light) bits.push(`<b>Light:</b> ${esc(p.light)}`);
@@ -2408,8 +2648,9 @@ function initSprout(){
    INIT
    ============================================================ */
 function init(){
+  loadIdentity();
   wireTabs("products",{skus:"products-skus",orders:"products-orders"},"#view-products");
-  wireTabs("careid",{house:"careid-house",perennial:"careid-perennial"},"#view-careid");
+  wireTabs("careid",{house:"careid-house",perennial:"careid-perennial",pest:"careid-pest"},"#view-careid");
   wireTabs("ops",{hpa:"ops-hpa",hf:"ops-hf"},"#view-ops");
 
   initGuidelines();
@@ -2425,6 +2666,8 @@ function init(){
     setUser(savedUser);
     /* Returning users land on the Map home page. */
     showApp("map");
+    /* No sprite yet (e.g. cleared storage)? prompt for one; else presence starts in initMap. */
+    if(!hasSprite()) setTimeout(()=>openSpriteEditor(true), 250);
   } else showSplash();
 }
 
