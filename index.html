@@ -654,7 +654,7 @@
         <div class="map-layout">
           <div class="panel panel-pad">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
-              <div id="connStatus" class="conn off"><span class="dot"></span><span class="label">Connecting…</span></div>
+              <div id="connStatus" class="conn off" style="cursor:pointer;" title="Tap to run a connection check"><span class="dot"></span><span class="label">Connecting…</span></div>
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                 <div id="weekBadge" class="conn"><span class="label"></span></div>
                 <button id="btnStore" class="btn btn-ghost" type="button" style="padding:7px 13px;font-size:.8rem;min-height:auto;">🏬 Edit / Add store</button>
@@ -1066,10 +1066,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import {
   getDatabase, ref, onValue, set, update, push, remove, get, child, serverTimestamp, goOnline, onDisconnect
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  signOut, updatePassword, fetchSignInMethodsForEmail
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
 /* ---------- Firebase config ---------- */
 const firebaseConfig = {
@@ -1082,38 +1078,41 @@ const firebaseConfig = {
   appId: "1:24804620954:web:a31d9e25aced43f4aabd23"
 };
 
-let db = null, auth = null, fbApp = null;
+let db = null, fbApp = null;
 try {
   fbApp = initializeApp(firebaseConfig);
   db = getDatabase(fbApp);
 } catch (e) {
   console.error("Firebase init failed:", e);
 }
-try { auth = getAuth(fbApp); } catch(e){ console.warn("Auth init failed:", e); }
 
 /* Usernames are first-initial + last name (e.g. jsmith). We map them to a fake
    email domain so Firebase email/password auth works without real inboxes. */
-const AUTH_DOMAIN_SUFFIX = "@hampshirefarms.local";
-const userToEmail = (u) => (u||"").trim().toLowerCase() + AUTH_DOMAIN_SUFFIX;
-const emailToUser = (e) => (e||"").split("@")[0];
-
-/* ====== MANAGERS ======
-   Usernames (first initial + last name) with manager rights. EDIT THIS LIST.
-   Managers can assign stores, edit territories/checklists/guidelines, and reset passwords. */
-const MANAGER_USERS = ["admin"];   // e.g. ["jsmith","mjones"]
-function isManagerUser(username){ return MANAGER_USERS.includes((username||"").trim().toLowerCase()); }
-/* Gate a manager-only action. In real-auth mode, managers pass automatically and
-   everyone else is blocked. In fallback (name-only) mode, fall back to the shared password. */
+/* ====== TEAM ROSTER (from users.csv — login is checked against this list) ======
+   NOTE: these passwords are visible in the page source. This is the explicitly chosen
+   CSV-login mode (no Firebase Auth). To add/remove people, edit this array.
+   role "RMM" (or "manager"/"admin") grants manager rights. */
+const TEAM_USERS = [
+  { "username": "Thudson", "password": "HF_HPA2026", "name": "Travis Hudson", "role": "RMM" },
+  { "username": "Jtuttle", "password": "HF_HPA2026", "name": "Jason Tuttle", "role": "RMM" },
+  { "username": "Kadams", "password": "HF_HPA2026", "name": "Kelly Adams", "role": "RMM" },
+  { "username": "Lellis", "password": "HPA2026", "name": "Lucas Ellis", "role": "RMM" },
+  { "username": "Jbernau", "password": "HPA2026", "name": "Joe Bernau", "role": "RMM" }
+];
+const MANAGER_ROLES = ["rmm","manager","admin","dm"];
+function findTeamUser(username){
+  const u=(username||"").trim().toLowerCase();
+  return TEAM_USERS.find(x => (x.username||"").trim().toLowerCase()===u) || null;
+}
+function isManagerUser(username){
+  const rec=findTeamUser(username);
+  return !!(rec && MANAGER_ROLES.includes((rec.role||"").trim().toLowerCase()));
+}
+/* Gate a manager-only action: managers pass; everyone else is blocked. */
 function requireManager(actionLabel){
-  if(authMode==="firebase"){
-    if(me.isManager) return true;
-    alert("Only managers can "+(actionLabel||"do that")+". Ask a manager for access.");
-    return false;
-  }
-  const pass = window.prompt("Enter the team password to "+(actionLabel||"continue")+":");
-  if(pass===null) return false;
-  if(pass!==ADMIN_CODE){ alert("Incorrect password. No changes made."); return false; }
-  return true;
+  if(me.isManager) return true;
+  alert("Only managers (RMM) can "+(actionLabel||"do that")+". Ask a manager for access.");
+  return false;
 }
 
 /* ---------- CONFIG ---------- */
@@ -1391,7 +1390,7 @@ function applyAdminUI(){
   const btn=$("btnEditChecklist");
   if(btn) btn.textContent = editMode ? "🔒 Lock" : "✎ Edit checklist";
   // manager tools button only for managers in real-auth mode
-  const mgr=$("mgrBtn"); if(mgr) mgr.classList.toggle("hidden", !(authMode==="firebase" && me.isManager));
+  const mgr=$("mgrBtn"); if(mgr) mgr.classList.add("hidden");
   if(typeof renderChecklistPanel==="function") renderChecklistPanel();
 }
 
@@ -1441,8 +1440,7 @@ const STATUS_LABELS = {
   done:"✅ Done for the day"
 };
 const STATUS_ORDER = ["working","delivery","watering","training","merchandising","driving","break","done",""];
-let me = { uid:"", username:"", name:"User", color:SPRITE_COLORS[0], emoji:"🙂", status:"", isManager:false, mustReset:false };
-let authMode = "firebase";   // "firebase" (real auth) or "fallback" (name only)
+let me = { uid:"", username:"", name:"User", color:SPRITE_COLORS[0], emoji:"🙂", status:"", isManager:false };
 
 /* Sprite prefs are stored per-username so different people on one device stay distinct. */
 function prefKey(k){ return "hub_"+k+"_"+(me.username||"anon"); }
@@ -1462,116 +1460,35 @@ function setUser(name){
   $("userName").textContent = u + (me.isManager ? " · Manager" : "");
 }
 
-/* ---------- AUTH FLOW ---------- */
-let pendingForgot=false;   // forgot-password mode in the login form
+/* ---------- CSV-BASED LOGIN ----------
+   Logins are validated against the embedded TEAM_USERS list. NOTE: this is the
+   explicitly chosen non-secure mode — passwords are visible in the page source and
+   the database runs on open rules. To return to secure logins later, re-enable
+   Firebase Auth. */
 
-function setAuthFormMode(mode){
-  // mode: "signin" | "create" | "forgot"
-  pendingForgot = (mode==="forgot");
-  setVis($("loginPass2Row"), mode==="create");
-  setVis($("loginPassRow"), mode!=="forgot");
-  $("loginHeading").textContent = mode==="create" ? "Create your password" : (mode==="forgot" ? "Forgot password" : "Sign in");
-  $("loginPassLabel").textContent = mode==="create" ? "Choose a password" : "Password";
-  $("loginBtn").textContent = mode==="create" ? "Create account" : (mode==="forgot" ? "Request reset" : "Sign in");
-  $("loginSub").textContent = mode==="create"
-    ? "First time signing in — pick a password (at least 6 characters)."
-    : (mode==="forgot" ? "Enter your username; a manager will reset your password for you."
-                       : "Username is your first initial + last name (e.g. jsmith).");
-}
-
-async function handleLogin(){
-  const username=($("loginUser").value||"").trim().toLowerCase();
-  $("loginError").textContent="";
-  if(!username){ $("loginError").textContent="Enter your username."; $("loginUser").focus(); return; }
-
-  /* FALLBACK MODE: no real auth available — name-only sign in (legacy behavior). */
-  if(authMode==="fallback"){
-    enterApp(username, username);
-    return;
-  }
-
-  /* FORGOT MODE: file a reset request for a manager. */
-  if(pendingForgot){
-    if(db){
-      try{
-        await set(ref(db,"resetRequests/"+username), { username, ts:Date.now() });
-        $("loginError").style.color="var(--good)";
-        $("loginError").textContent="Reset requested. A manager will set a temporary password for you.";
-      }catch(e){ $("loginError").style.color=""; $("loginError").textContent="Couldn't file the request. Tell your manager directly."; }
-    }
-    return;
-  }
-
-  const email=userToEmail(username);
+function handleLogin(){
+  const raw=($("loginUser").value||"").trim();
+  const username=raw.toLowerCase();
   const pass=($("loginPass").value||"");
-  const pass2=($("loginPass2").value||"");
-  const creating = !$("loginPass2Row").classList.contains("hidden");
+  $("loginError").style.color="";
+  $("loginError").textContent="";
+  if(!raw){ $("loginError").textContent="Enter your username."; $("loginUser").focus(); return; }
 
-  try{
-    if(creating){
-      if(pass.length<6){ $("loginError").textContent="Password must be at least 6 characters."; return; }
-      if(pass!==pass2){ $("loginError").textContent="Passwords don't match."; return; }
-      await createUserWithEmailAndPassword(auth, email, pass);
-      // profile gets set by onAuthStateChanged → finishSignIn
-      return;
-    }
-    if(!pass){ $("loginError").textContent="Enter your password."; $("loginPass").focus(); return; }
-    await signInWithEmailAndPassword(auth, email, pass);
-  }catch(err){
-    handleAuthError(err, username, email);
-  }
+  const rec=findTeamUser(username);
+  if(!rec){ $("loginError").textContent="Username not found. Check spelling (e.g. Jsmith)."; $("loginUser").focus(); return; }
+  if(!pass){ $("loginError").textContent="Enter your password."; $("loginPass").focus(); return; }
+  if(pass!==rec.password){ $("loginError").textContent="Incorrect password."; $("loginPass").focus(); return; }
+
+  // success — remember the session and enter
+  try{ localStorage.setItem("hub_session", rec.username); }catch(e){}
+  enterApp(rec.username, rec.name || rec.username);
 }
 
-async function handleAuthError(err, username, email){
-  const code=err && err.code || "";
-  // No account yet → switch to create-password mode
-  if(code==="auth/user-not-found" || code==="auth/invalid-credential"){
-    // Could be wrong password on existing account, or a brand-new user.
-    // Probe whether the account exists.
-    let exists=true;
-    try{ const methods=await fetchSignInMethodsForEmail(auth, email); exists=methods && methods.length>0; }catch(e){ exists=false; }
-    if(!exists){
-      setAuthFormMode("create");
-      $("loginError").style.color="";
-      $("loginError").textContent="New user — set a password to create your account.";
-      $("loginPass").focus();
-      return;
-    }
-    $("loginError").textContent="Incorrect password. Try again, or use “Forgot password”.";
-    return;
-  }
-  if(code==="auth/wrong-password"){ $("loginError").textContent="Incorrect password."; return; }
-  if(code==="auth/weak-password"){ $("loginError").textContent="Password must be at least 6 characters."; return; }
-  if(code==="auth/email-already-in-use"){ $("loginError").textContent="That account already exists — just enter your password."; setAuthFormMode("signin"); return; }
-  if(code==="auth/operation-not-allowed" || code==="auth/configuration-not-found"){
-    // Email/password auth isn't enabled in the Firebase console → fall back gracefully.
-    enableFallbackMode();
-    $("loginError").style.color="";
-    $("loginError").textContent="Signing you in (accounts not enabled yet).";
-    setTimeout(()=>enterApp(username, username), 400);
-    return;
-  }
-  console.error("auth error:",err);
-  $("loginError").textContent="Sign-in problem: "+(err.message||code||"unknown");
-}
-
-function enableFallbackMode(){
-  authMode="fallback";
-  setVis($("loginPassRow"), false);
-  setVis($("loginPass2Row"), false);
-  $("authNotice").classList.remove("hidden");
-  $("authNotice").textContent="⚠ Secure accounts aren't enabled in Firebase yet — using name-only sign-in. Enable Email/Password in the Firebase console to turn on real logins.";
-}
-
-/* Common path once we have an authenticated (or fallback) identity. */
+/* Establish identity from a TEAM_USERS record and open the app. */
 function enterApp(username, displayName){
   loadIdentityFor(username);
-  /* In fallback (no real auth) mode there's no Firebase uid — derive a stable one from the username. */
-  if(!me.uid) me.uid = "u-"+(username||"anon").replace(/[^a-z0-9]/g,"");
+  me.uid = "u-"+(username||"anon").toString().toLowerCase().replace(/[^a-z0-9]/g,"");
   setUser(displayName || username);
-  // remember last username for sprite-pref scoping + convenience
-  try{ localStorage.setItem("hub_lastuser", username); }catch(e){}
-  // write/update my profile in the DB so others see name/role
   if(db){
     update(ref(db,"users/"+me.uid), { username, name:displayName||username, isManager:me.isManager, ts:Date.now() }).catch(()=>{});
   }
@@ -1579,96 +1496,43 @@ function enterApp(username, displayName){
   showApp("map");
   if(!hasSprite()) setTimeout(()=>openSpriteEditor(true), 250);
   else startPresence();
-  // if a manager flagged this user for reset, prompt them to set a new password
-  if(me.mustReset) setTimeout(promptChangePassword, 600);
 }
 
-/* React to Firebase auth state (real auth mode). */
+/* On load: if a session was saved, go straight in; otherwise show the splash. */
 function initAuth(){
-  if(!auth){ enableFallbackMode(); showAuthEntry(); return; }
-  try{
-    onAuthStateChanged(auth, (user)=>{
-      if(user){
-        const username=emailToUser(user.email);
-        me.uid=user.uid;
-        // check if a reset was requested/forced for this user
-        if(db){
-          get(ref(db,"resetForce/"+username)).then(s=>{ me.mustReset = !!s.val(); }).catch(()=>{});
-        }
-        enterApp(username, username);
-      } else {
-        // signed out → show splash/login
-        if(!$("app").classList.contains("hidden")) showSplash();
-      }
-    });
-  }catch(e){ console.warn("onAuthStateChanged failed:",e); enableFallbackMode(); }
-}
-
-async function promptChangePassword(){
-  if(authMode!=="firebase" || !auth || !auth.currentUser) return;
-  const np=window.prompt("A manager reset your account. Set a new password (min 6 chars):");
-  if(!np) return;
-  if(np.length<6){ alert("Too short."); return; }
-  try{
-    await updatePassword(auth.currentUser, np);
-    me.mustReset=false;
-    if(db){ remove(ref(db,"resetForce/"+me.username)).catch(()=>{}); remove(ref(db,"resetRequests/"+me.username)).catch(()=>{}); }
-    alert("Password updated.");
-  }catch(e){ alert("Couldn't update password — you may need to sign out and back in first."); }
+  let saved=null;
+  try{ saved=localStorage.getItem("hub_session"); }catch(e){}
+  const rec = saved ? findTeamUser(saved) : null;
+  if(rec){ enterApp(rec.username, rec.name || rec.username); }
+  else { showSplash(); }
 }
 
 function showAuthEntry(){
-  setAuthFormMode("signin");
+  $("loginHeading").textContent="Sign in";
+  $("loginSub").textContent="Enter your username and password.";
+  $("loginPassLabel").textContent="Password";
+  $("loginBtn").textContent="Sign in";
+  setVis($("loginPassRow"), true);
+  setVis($("loginPass2Row"), false);
+  $("loginError").textContent="";
   showLogin();
 }
 
 /* ---------- login wiring ---------- */
 $("splashEnter").addEventListener("click", showAuthEntry);
 $("loginBtn").addEventListener("click", handleLogin);
-["loginUser","loginPass","loginPass2"].forEach(id=> $(id) && $(id).addEventListener("keydown", e=>{ if(e.key==="Enter") handleLogin(); }));
+["loginUser","loginPass"].forEach(id=> $(id) && $(id).addEventListener("keydown", e=>{ if(e.key==="Enter") handleLogin(); }));
 $("forgotBtn").addEventListener("click", ()=>{
-  if(authMode==="fallback"){ $("loginError").textContent="No passwords in name-only mode."; return; }
-  if(pendingForgot){ setAuthFormMode("signin"); $("forgotBtn").textContent="Forgot password?"; }
-  else { setAuthFormMode("forgot"); $("forgotBtn").textContent="← Back to sign in"; }
-  $("loginError").style.color=""; $("loginError").textContent="";
+  $("loginError").style.color="";
+  $("loginError").textContent="Password resets are handled by your manager (RMM). Reach out to them directly.";
 });
-$("logoutBtn").addEventListener("click", async () => {
+$("logoutBtn").addEventListener("click", () => {
   try{ stopPresence(); }catch(e){}
-  try{ sessionStorage.removeItem("hub_view"); }catch(e){}
+  try{ sessionStorage.removeItem("hub_view"); localStorage.removeItem("hub_session"); }catch(e){}
   editMode=false; applyAdminUI();
-  if(authMode==="firebase" && auth){ try{ await signOut(auth); }catch(e){} }
   showSplash();
 });
 $("editSpriteBtn").addEventListener("click", ()=> openSpriteEditor(false));
-$("mgrBtn").addEventListener("click", openManagerTools);
-
-function openManagerTools(){
-  if(!(authMode==="firebase" && me.isManager)){ return; }
-  openModal("mgrModal");
-  const list=$("resetReqList");
-  list.innerHTML='<div class="hub-empty">Loading…</div>';
-  if(!db){ list.innerHTML='<div class="hub-empty">Offline.</div>'; return; }
-  get(ref(db,"resetRequests")).then(snap=>{
-    const val=snap.val()||{};
-    const keys=Object.keys(val);
-    if(!keys.length){ list.innerHTML='<div class="hub-empty">No pending reset requests. 🎉</div>'; return; }
-    list.innerHTML="";
-    keys.forEach(u=>{
-      const row=document.createElement("div"); row.className="dm-person";
-      row.innerHTML=`<div class="nm">${esc(u)}</div>
-        <button class="btn btn-ghost" type="button" style="padding:6px 11px;font-size:.78rem;min-height:auto;">Mark reset done</button>`;
-      row.querySelector("button").addEventListener("click",()=>{
-        // We can't set another user's Firebase password from the browser. Flag the
-        // account so the user is prompted to set a new password next time they're in,
-        // and clear the request. (See note in the app docs about server-side reset.)
-        if(db){ set(ref(db,"resetForce/"+u), true).catch(()=>{}); remove(ref(db,"resetRequests/"+u)).catch(()=>{}); }
-        alert("Tell "+u+" their temporary password out-of-band. They'll be prompted to set a new one. (Full automatic reset needs the optional server function — see notes.)");
-        openManagerTools();
-      });
-      list.appendChild(row);
-    });
-  }).catch(()=>{ list.innerHTML='<div class="hub-empty">Couldn\'t load requests.</div>'; });
-}
 /* Directory dropdown + back buttons drive view switching (no top tab bar). */
 $$('[data-view]').forEach(b => b.addEventListener("click", () => showOnlyView(b.dataset.view)));
 (function wireDirMenu(){
@@ -3725,9 +3589,8 @@ function init(){
   initCareId();
   initHub();
 
-  /* Auth drives entry. In firebase mode, onAuthStateChanged restores a session and
-     calls enterApp; if signed out we show the splash. In fallback mode we just wait
-     for the user to type a name. */
+  /* Login is validated against the embedded TEAM_USERS list. initAuth() restores a
+     saved session if there is one, otherwise the splash/login screen is shown. */
   showSplash();
   initAuth();
 }
