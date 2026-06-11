@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>HF-HPA Merchandising Hub</title>
 
   <link rel="icon" type="image/png" href="hf_logo.png" />
   <link rel="apple-touch-icon" href="hf_logo.png" />
+  <meta name="theme-color" content="#0a1020" />
 
   <!-- Leaflet (open-source map, no API key required) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -14,40 +15,43 @@
 
   <style>
     :root{
-      /* Surfaces — sunlit greenhouse: cream glass on warm sage */
-      --bg:#eef3e6;
-      --panel:#ffffff;
-      --panel-2:#f7faf1;
-      --panel-raised:#eef4e4;
-      --line:#d4e0c4;
-      --line-soft:#e3ebd6;
+      /* Surfaces — deep midnight blue, layered glass */
+      --bg:#0a1020;
+      --panel:#121b30;
+      --panel-2:#141e36;
+      --panel-raised:#1b2741;
+      --line:#26345a;
+      --line-soft:#1e2a49;
 
-      /* Text — deep foliage on light */
-      --text:#33402f;
-      --heading:#1f3320;
-      --muted:#6f7d63;
-      --faint:#9aa78b;
+      /* Text — cool moonlight on navy */
+      --text:#c5d2ea;
+      --heading:#eef3ff;
+      --muted:#8294b8;
+      --faint:#5a6b88;
 
-      /* Accent — leaf green + terracotta */
-      --accent:#3f8f4f;
-      --accent-2:#6bbf59;
-      --accent-soft:rgba(63,143,79,.12);
-      --accent-line:rgba(63,143,79,.40);
-      --terra:#c2683f;
+      /* Accent — electric cyan + soft teal */
+      --accent:#3da9fc;
+      --accent-2:#5ee0d0;
+      --accent-soft:rgba(61,169,252,.16);
+      --accent-line:rgba(61,169,252,.45);
+      --terra:#7c5cff;
 
       /* Status */
-      --good:#4a9d54;
-      --warn:#e0a32e;
-      --bad:#d1573f;
+      --good:#3ddc97;
+      --warn:#f5b94a;
+      --bad:#f06a6a;
 
-      --radius:14px;
-      --radius-sm:10px;
+      --radius:16px;
+      --radius-sm:11px;
       --radius-pill:999px;
-      --shadow:0 8px 24px rgba(60,84,48,.12);
-      --shadow-lg:0 20px 50px rgba(45,66,38,.22);
-      --t:.16s ease;
+      --shadow:0 8px 30px rgba(0,0,0,.42);
+      --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+      --glow:0 0 0 1px rgba(61,169,252,.10), 0 8px 30px rgba(61,169,252,.10);
+      --t:.18s cubic-bezier(.2,.7,.3,1);
 
       --maxw:1180px;
+      --safe-top:env(safe-area-inset-top, 0px);
+      --safe-bottom:env(safe-area-inset-bottom, 0px);
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
@@ -55,9 +59,10 @@
     body{
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(1100px 560px at 12% -8%, rgba(150,200,120,.45) 0%, transparent 55%),
-        radial-gradient(900px 520px at 92% -4%, rgba(255,239,196,.55) 0%, transparent 52%),
-        radial-gradient(800px 800px at 80% 110%, rgba(120,175,110,.30) 0%, transparent 60%),
+        radial-gradient(1100px 560px at 12% -8%, rgba(61,169,252,.22) 0%, transparent 55%),
+        radial-gradient(900px 520px at 92% -4%, rgba(94,224,208,.16) 0%, transparent 52%),
+        radial-gradient(820px 820px at 80% 112%, rgba(124,92,255,.20) 0%, transparent 60%),
+        radial-gradient(700px 500px at 50% 50%, rgba(20,40,80,.30) 0%, transparent 70%),
         var(--bg);
       background-attachment:fixed;
       color:var(--text);
@@ -68,7 +73,11 @@
 
     .hidden{ display:none !important; }
 
-    .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:18px 18px 60px; }
+    .wrap{
+      width:100%; max-width:var(--maxw); margin:0 auto;
+      padding:calc(14px + var(--safe-top)) 14px calc(80px + var(--safe-bottom));
+    }
+    @media(min-width:760px){ .wrap{ padding:18px 18px 60px; } }
 
     /* ---------- Surfaces ---------- */
     .panel{
@@ -76,24 +85,27 @@
       border:1px solid var(--line);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
     }
-    .panel-pad{ padding:18px; }
+    .panel-pad{ padding:16px; }
+    @media(min-width:760px){ .panel-pad{ padding:18px; } }
 
     /* ---------- Header ---------- */
     .topbar{
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-      padding:14px 18px; margin-bottom:14px; flex-wrap:wrap;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px; margin-bottom:12px; flex-wrap:wrap;
     }
-    .brand{ display:flex; align-items:center; gap:13px; }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .brand img{
-      width:48px; height:48px; border-radius:12px; object-fit:cover;
+      width:44px; height:44px; border-radius:12px; object-fit:cover; flex:0 0 auto;
       background:var(--accent-soft); border:1px solid var(--line);
     }
     .brand h1{
-      font-size:1.05rem; font-weight:700; color:var(--heading);
+      font-size:1rem; font-weight:700; color:var(--heading);
       letter-spacing:.02em; line-height:1.1;
     }
-    .brand .tag{ font-size:.78rem; color:var(--muted); margin-top:2px; }
+    .brand .tag{ font-size:.74rem; color:var(--muted); margin-top:2px; }
 
     .user-chip{
       display:flex; align-items:center; gap:8px;
@@ -101,43 +113,43 @@
       background:var(--panel-raised); border:1px solid var(--line);
       font-size:.82rem; color:var(--text);
     }
-    .user-chip .dot{ width:8px; height:8px; border-radius:50%; background:var(--good); }
+    .user-chip .dot{ width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 8px var(--good); }
     .user-chip button{
       border:none; background:transparent; color:var(--muted); cursor:pointer;
       font-size:.78rem; padding:4px 8px; border-radius:var(--radius-pill); font-family:inherit;
       transition:color var(--t), background var(--t);
     }
-    .user-chip button:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
+    .user-chip button:hover{ color:var(--heading); background:rgba(61,169,252,.12); }
 
     /* ---------- Primary nav ---------- */
     .nav{
-      display:flex; gap:6px; padding:6px; margin-bottom:18px;
+      display:flex; gap:6px; padding:6px; margin-bottom:16px;
       background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-pill);
-      overflow-x:auto; scrollbar-width:none;
+      overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
     }
     .nav::-webkit-scrollbar{ display:none; }
     .nav button{
       flex:1 0 auto; padding:9px 16px; border:none; border-radius:var(--radius-pill);
-      background:transparent; color:var(--muted); cursor:pointer; font-size:.88rem;
+      background:transparent; color:var(--muted); cursor:pointer; font-size:.86rem;
       font-weight:600; white-space:nowrap; font-family:inherit; transition:all var(--t);
     }
-    .nav button:hover{ color:var(--heading); background:rgba(63,143,79,.08); }
+    .nav button:hover{ color:var(--heading); background:rgba(61,169,252,.10); }
     .nav button.active{
-      color:#ffffff; background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 6px 16px rgba(63,143,79,.32);
+      color:#06203a; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 6px 18px rgba(61,169,252,.38);
     }
     .nav button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
     /* ---------- Section headers ---------- */
     .head{ margin-bottom:14px; }
-    .head h2{ font-size:1.25rem; font-weight:700; color:var(--heading); letter-spacing:-.01em; }
-    .head p{ font-size:.88rem; color:var(--muted); margin-top:3px; }
+    .head h2{ font-size:1.2rem; font-weight:700; color:var(--heading); letter-spacing:-.01em; }
+    .head p{ font-size:.85rem; color:var(--muted); margin-top:3px; }
 
     /* ---------- Subtabs (quieter than primary nav) ---------- */
-    .subnav{ display:flex; gap:4px; margin-bottom:16px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+    .subnav{ display:flex; gap:4px; margin-bottom:16px; border-bottom:1px solid var(--line); flex-wrap:wrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .subnav button{
       padding:9px 14px; border:none; background:transparent; color:var(--muted);
-      cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit;
+      cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit; white-space:nowrap;
       border-bottom:2px solid transparent; margin-bottom:-1px; transition:color var(--t), border-color var(--t);
     }
     .subnav button:hover{ color:var(--heading); }
@@ -146,12 +158,12 @@
     .subnav.tight{ margin-bottom:12px; }
 
     /* ---------- Forms ---------- */
-    label.field-label{ display:block; font-size:.74rem; color:var(--muted); letter-spacing:.06em;
+    label.field-label{ display:block; font-size:.72rem; color:var(--muted); letter-spacing:.06em;
       text-transform:uppercase; margin-bottom:5px; font-weight:600; }
     input[type=text], input[type=password], input[type=search], input[type=date], select, textarea{
       width:100%; background:var(--bg); color:var(--heading);
       border:1px solid var(--line); border-radius:var(--radius-sm);
-      padding:10px 12px; font-size:.9rem; font-family:inherit; transition:border-color var(--t), box-shadow var(--t);
+      padding:11px 12px; font-size:16px; font-family:inherit; transition:border-color var(--t), box-shadow var(--t);
     }
     input::placeholder, textarea::placeholder{ color:var(--faint); }
     input:focus, select:focus, textarea:focus{
@@ -159,14 +171,16 @@
     }
     :focus-visible{ outline-offset:2px; }
     textarea{ resize:vertical; min-height:84px; }
+    select{ appearance:none; -webkit-appearance:none; }
 
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:7px;
-      padding:10px 18px; border:none; border-radius:var(--radius-sm); cursor:pointer;
-      font-size:.88rem; font-weight:700; font-family:inherit; transition:transform var(--t), filter var(--t), background var(--t);
+      padding:11px 18px; border:none; border-radius:var(--radius-sm); cursor:pointer;
+      font-size:.88rem; font-weight:700; font-family:inherit; min-height:44px;
+      transition:transform var(--t), filter var(--t), background var(--t);
     }
-    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#ffffff; box-shadow:0 8px 20px rgba(63,143,79,.30); }
-    .btn-primary:hover{ filter:brightness(1.05); transform:translateY(-1px); }
+    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#06203a; box-shadow:0 8px 22px rgba(61,169,252,.34); }
+    .btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
     .btn-primary:disabled{ opacity:.45; cursor:not-allowed; transform:none; filter:none; box-shadow:none; }
     .btn-ghost{ background:var(--panel-raised); color:var(--text); border:1px solid var(--line); }
     .btn-ghost:hover{ border-color:var(--accent-line); color:var(--heading); }
@@ -174,13 +188,14 @@
 
     /* ---------- Splash + login ---------- */
     .center-stage{ min-height:72vh; display:flex; align-items:center; justify-content:center; }
-    .splash{ text-align:center; padding:44px 28px; max-width:420px; }
-    .splash .eyebrow{ font-size:.75rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-weight:700; }
-    .splash h1{ font-size:1.7rem; color:var(--heading); margin-top:10px; letter-spacing:-.02em; }
-    .splash p{ color:var(--muted); margin-top:8px; font-size:.9rem; }
-    .splash-btn{ margin-top:26px; border:none; background:none; cursor:pointer; border-radius:24px; transition:transform var(--t); }
+    .splash{ text-align:center; padding:40px 24px; max-width:420px; }
+    .splash .eyebrow{ font-size:.74rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-weight:700; }
+    .splash h1{ font-size:1.6rem; color:var(--heading); margin-top:10px; letter-spacing:-.02em; }
+    .splash p{ color:var(--muted); margin-top:8px; font-size:.88rem; }
+    .splash-btn{ margin-top:0; border:none; background:none; cursor:pointer; padding:0; transition:transform var(--t); }
     .splash-btn:hover{ transform:translateY(-3px); }
-    .splash-btn img{ width:120px; height:120px; border-radius:24px; box-shadow:var(--shadow-lg); background:var(--accent-soft); border:1px solid var(--line); }
+    .splash-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:6px; border-radius:24px; }
+    .splash-btn img{ width:140px; height:140px; border-radius:24px; object-fit:contain; }
     .login{ width:100%; max-width:360px; }
     .login .logo-wrap{ text-align:center; margin-bottom:6px; }
     .login .logo-wrap img{ width:64px; height:64px; border-radius:16px; background:var(--accent-soft); border:1px solid var(--line); }
@@ -189,6 +204,26 @@
     .login .row{ margin-bottom:12px; }
     .err{ color:var(--bad); font-size:.83rem; text-align:center; margin-top:10px; min-height:1em; }
 
+    /* ---------- Map home banner (time + weather) ---------- */
+    .home-strip{
+      display:grid; gap:10px; margin-bottom:14px;
+      grid-template-columns:1fr;
+    }
+    @media(min-width:620px){ .home-strip{ grid-template-columns:1fr 1fr; } }
+    .info-tile{
+      display:flex; align-items:center; gap:14px; padding:14px 16px;
+      background:linear-gradient(135deg, var(--panel-raised), var(--panel-2));
+      border:1px solid var(--line); border-radius:var(--radius);
+    }
+    .info-tile .glyph{
+      flex:0 0 auto; width:46px; height:46px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+      background:var(--accent-soft); border:1px solid var(--accent-line);
+    }
+    .info-tile .lab{ font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700; }
+    .info-tile .big{ font-size:1.32rem; font-weight:700; color:var(--heading); line-height:1.15; margin-top:1px; }
+    .info-tile .sub{ font-size:.78rem; color:var(--muted); margin-top:2px; }
+
     /* ---------- Product Info ---------- */
     .toolbar{
       display:grid; gap:10px; margin-bottom:14px;
@@ -196,14 +231,14 @@
     }
     @media(min-width:760px){ .toolbar{ grid-template-columns:2fr 1.2fr 1.2fr 1fr; } }
     .search-box{ position:relative; }
-    .search-box input{ padding-left:36px; }
+    .search-box input{ padding-left:38px; }
     .search-box .ico{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--faint); pointer-events:none; }
 
     .count-row{ font-size:.82rem; color:var(--muted); margin:4px 2px 12px; }
     .count-row strong{ color:var(--heading); }
 
     .grid{ display:grid; gap:12px; grid-template-columns:1fr; }
-    @media(min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(min-width:520px){ .grid{ grid-template-columns:repeat(2,1fr); } }
     @media(min-width:920px){ .grid{ grid-template-columns:repeat(3,1fr); } }
 
     .card{
@@ -217,7 +252,7 @@
       position:absolute; top:12px; right:12px; font-size:.68rem; color:var(--muted);
       background:var(--bg); border:1px solid var(--line); padding:3px 9px; border-radius:var(--radius-pill);
     }
-    .card .title{ font-size:.98rem; font-weight:700; color:var(--heading); padding-right:54px; margin-bottom:6px; }
+    .card .title{ font-size:.96rem; font-weight:700; color:var(--heading); padding-right:54px; margin-bottom:6px; }
     .card .meta{ font-size:.8rem; color:var(--muted); }
     .card .meta b{ color:var(--text); font-weight:600; }
     .card-thumb{ width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm); margin-bottom:10px; border:1px solid var(--line); background:var(--panel-2); display:block; }
@@ -231,70 +266,52 @@
     /* ---------- Order table ---------- */
     .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--radius-sm); border:1px solid var(--line); }
     table.data{ width:100%; border-collapse:collapse; font-size:.86rem; min-width:560px; }
-    table.data th{ text-align:left; padding:11px 13px; background:var(--panel-raised); color:#c8d6ec; font-weight:600; border-bottom:1px solid var(--line); }
+    table.data th{ text-align:left; padding:11px 13px; background:var(--panel-raised); color:var(--accent-2); font-weight:600; border-bottom:1px solid var(--line); }
     table.data td{ padding:10px 13px; border-bottom:1px solid var(--line-soft); color:var(--text); }
     table.data tr:last-child td{ border-bottom:none; }
-    table.data tbody tr:hover{ background:rgba(63,143,79,.07); }
-    .chip-warn{ background:var(--warn); color:#3b2c00; padding:2px 8px; border-radius:var(--radius-pill); font-weight:700; font-size:.74rem; }
+    table.data tbody tr:hover{ background:rgba(61,169,252,.08); }
+    .chip-warn{ background:var(--warn); color:#2a1f00; padding:2px 8px; border-radius:var(--radius-pill); font-weight:700; font-size:.74rem; }
 
     .ob-meta{ display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
     .ob-meta .stat{ flex:1 1 200px; background:var(--accent-soft); border:1px solid var(--accent-line); border-radius:var(--radius-sm); padding:11px 14px; }
     .ob-meta .stat .k{ font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; }
     .ob-meta .stat .v{ font-size:1.05rem; color:var(--heading); font-weight:700; margin-top:2px; }
     .ob-grid{ display:grid; gap:12px; grid-template-columns:1fr; }
-    @media(min-width:640px){ .ob-grid{ grid-template-columns:repeat(3,1fr); } }
+    @media(min-width:520px){ .ob-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(min-width:760px){ .ob-grid{ grid-template-columns:repeat(3,1fr); } }
     .ob-box{ background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px; min-height:92px; }
     .ob-box h4{ text-align:center; color:var(--accent); font-size:.82rem; letter-spacing:.05em; margin-bottom:7px; padding-bottom:7px; border-bottom:1px solid var(--line-soft); }
     .ob-box .body{ white-space:pre-line; font-size:.78rem; color:var(--text); }
     .ob-box .body:empty::after{ content:"—"; color:var(--faint); }
 
-    /* ---------- Flow steps ---------- */
+    /* ---------- Guidelines ---------- */
     .info-banner{
       background:var(--accent-soft); border:1px solid var(--accent-line); border-radius:var(--radius-sm);
       padding:12px 15px; margin-bottom:14px;
     }
     .info-banner h4{ color:var(--heading); font-size:.95rem; margin-bottom:3px; }
     .info-banner p{ color:var(--muted); font-size:.83rem; }
-
-    .flow{ display:flex; flex-direction:column; gap:0; max-width:720px; }
-    .flow .step{ display:flex; gap:13px; padding:13px 0; }
-    .flow .num{
-      flex:0 0 auto; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-      background:var(--accent-soft); border:1px solid var(--accent-line); color:var(--accent); font-weight:700; font-size:.8rem;
-    }
-    .flow .num.wide{ width:auto; padding:0 10px; border-radius:var(--radius-pill); font-size:.74rem; }
-    .flow .step:not(:last-child) .num::after{
-      content:""; position:absolute; margin-top:32px; width:1px; height:calc(100% - 30px); background:var(--line);
-    }
-    .flow .step{ position:relative; }
-    .flow .step:not(:last-child){ border-bottom:1px solid var(--line-soft); }
-    .flow .body h5{ color:var(--heading); font-size:.92rem; margin-bottom:2px; }
-    .flow .body .role{ color:var(--accent); font-size:.74rem; font-weight:600; margin-bottom:4px; }
-    .flow .body p{ color:var(--muted); font-size:.83rem; }
-
-    /* ---------- Checklists ---------- */
-    .cl-section{ background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px; margin-bottom:12px; }
-    .cl-section h4{ color:var(--heading); font-size:.95rem; margin-bottom:9px; }
-    .cl-item{ display:flex; gap:10px; align-items:flex-start; padding:6px 0; font-size:.86rem; color:var(--text); cursor:pointer; }
-    .cl-item input{ width:auto; margin-top:3px; accent-color:var(--accent); flex:0 0 auto; }
-    .cl-list{ margin:0; padding-left:20px; font-size:.85rem; color:var(--text); }
-    .cl-list li{ margin-bottom:5px; }
-
-    .visit-meta{ display:grid; gap:12px; grid-template-columns:1fr; margin-bottom:16px; }
-    @media(min-width:640px){ .visit-meta{ grid-template-columns:repeat(3,1fr); } }
+    .guide-head{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; }
+    .guide-block{ background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:13px 15px; margin-bottom:11px; }
+    .guide-block h4{ color:var(--accent); font-size:.82rem; letter-spacing:.05em; text-transform:uppercase; margin-bottom:8px; }
+    .guide-line{ position:relative; padding-left:16px; font-size:.86rem; color:var(--text); margin-bottom:6px; }
+    .guide-line::before{ content:""; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+    .guide-textarea{ min-height:340px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.84rem; line-height:1.55; }
 
     /* ---------- Map ---------- */
     .map-layout{ display:grid; gap:14px; grid-template-columns:1fr; }
-    @media(min-width:900px){ .map-layout{ grid-template-columns:1fr 320px; } }
-    #map{ height:60vh; min-height:380px; width:100%; border-radius:var(--radius); border:1px solid var(--line); background:var(--panel); z-index:1; }
-    .leaflet-popup-content-wrapper{ background:var(--panel-raised); color:var(--text); border-radius:10px; }
+    @media(min-width:900px){ .map-layout{ grid-template-columns:1fr 330px; } }
+    #map{ height:54vh; min-height:340px; width:100%; border-radius:var(--radius); border:1px solid var(--line); background:var(--panel); z-index:1; }
+    @media(min-width:900px){ #map{ height:62vh; min-height:420px; } }
+    .leaflet-popup-content-wrapper{ background:var(--panel-raised); color:var(--text); border-radius:10px; border:1px solid var(--line); }
     .leaflet-popup-tip{ background:var(--panel-raised); }
     .leaflet-popup-content{ margin:11px 14px; font-size:.85rem; }
     .leaflet-popup-content b{ color:var(--heading); }
+    .leaflet-bar a, .leaflet-bar a:hover{ background:var(--panel-raised); color:var(--heading); border-color:var(--line); }
 
     .conn{ display:inline-flex; align-items:center; gap:7px; font-size:.78rem; color:var(--muted); }
     .conn .dot{ width:8px; height:8px; border-radius:50%; background:var(--faint); transition:background var(--t); }
-    .conn.live .dot{ background:var(--good); box-shadow:0 0 0 3px rgba(52,211,151,.2); }
+    .conn.live .dot{ background:var(--good); box-shadow:0 0 0 3px rgba(86,196,106,.22); }
     .conn.off .dot{ background:var(--bad); }
 
     .kv{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:11px 13px; margin-top:9px;
@@ -302,15 +319,12 @@
     .kv .k{ font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; }
     .kv .v{ font-weight:700; color:var(--heading); }
 
-    .issue-row{ display:flex; gap:8px; align-items:flex-start; padding:9px 11px; margin-top:7px;
-      background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm); font-size:.82rem; color:var(--text); }
-
     .legend{ display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:.78rem; color:var(--muted); }
     .legend span{ display:inline-flex; align-items:center; gap:6px; }
     .legend i{ width:11px; height:11px; border-radius:50%; display:inline-block; }
 
     /* ---------- Modal ---------- */
-    .modal-back{ position:fixed; inset:0; background:rgba(3,8,17,.72); backdrop-filter:blur(6px);
+    .modal-back{ position:fixed; inset:0; background:rgba(2,7,4,.78); backdrop-filter:blur(6px);
       display:none; align-items:flex-start; justify-content:center; padding:24px 16px; z-index:9000; overflow-y:auto; }
     .modal-back.show{ display:flex; }
     .modal{ width:100%; max-width:460px; background:linear-gradient(180deg, var(--panel-2), var(--panel));
@@ -325,25 +339,25 @@
 
     /* ---------- Sprout Bot ---------- */
     .sprout-fab{
-      position:fixed; right:20px; bottom:20px; z-index:9500;
-      width:60px; height:60px; border-radius:50%; border:none; cursor:pointer;
+      position:fixed; right:16px; bottom:calc(16px + var(--safe-bottom)); z-index:9500;
+      width:58px; height:58px; border-radius:50%; border:none; cursor:pointer;
       background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 12px 28px rgba(63,143,79,.42); font-size:1.6rem;
+      box-shadow:0 12px 28px rgba(61,169,252,.5); font-size:1.55rem;
       display:flex; align-items:center; justify-content:center; transition:transform var(--t);
     }
     .sprout-fab:hover{ transform:scale(1.06); }
     .sprout-fab:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
 
     .sprout-panel{
-      position:fixed; right:20px; bottom:20px; z-index:9600;
-      width:min(380px, calc(100vw - 32px)); height:min(560px, calc(100vh - 40px));
+      position:fixed; right:16px; bottom:calc(16px + var(--safe-bottom)); z-index:9600;
+      width:min(380px, calc(100vw - 24px)); height:min(560px, calc(100vh - 36px));
       display:none; flex-direction:column; overflow:hidden;
       background:linear-gradient(180deg, var(--panel-2), var(--panel));
       border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow-lg);
     }
     .sprout-panel.show{ display:flex; }
     .sprout-head{ display:flex; align-items:center; gap:11px; padding:14px 16px; border-bottom:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(107,191,89,.20), rgba(63,143,79,.12)); }
+      background:linear-gradient(135deg, rgba(127,216,106,.22), rgba(61,169,252,.14)); }
     .sprout-head .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
       background:linear-gradient(135deg, var(--accent), var(--accent-2)); font-size:1.15rem; }
     .sprout-head .who{ flex:1; }
@@ -351,12 +365,12 @@
     .sprout-head .who .status{ color:var(--muted); font-size:.74rem; }
     .sprout-head button{ border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:1.3rem; line-height:1;
       width:30px; height:30px; border-radius:8px; transition:color var(--t), background var(--t); }
-    .sprout-head button:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
+    .sprout-head button:hover{ color:var(--heading); background:rgba(61,169,252,.12); }
 
     .sprout-log{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
     .msg{ max-width:85%; padding:10px 13px; border-radius:14px; font-size:.86rem; line-height:1.45; white-space:pre-wrap; word-wrap:break-word; }
     .msg.bot{ align-self:flex-start; background:var(--panel-raised); border:1px solid var(--line); border-bottom-left-radius:4px; color:var(--text); }
-    .msg.user{ align-self:flex-end; background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#ffffff; border-bottom-right-radius:4px; font-weight:500; }
+    .msg.user{ align-self:flex-end; background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#06203a; border-bottom-right-radius:4px; font-weight:500; }
     .msg.bot a{ color:var(--accent); }
     .chips{ display:flex; flex-wrap:wrap; gap:7px; padding:0 14px 12px; }
     .chips button{ font-size:.76rem; padding:6px 11px; border-radius:var(--radius-pill); border:1px solid var(--line);
@@ -374,16 +388,31 @@
     .progress-track{ height:8px; border-radius:var(--radius-pill); background:var(--bg); border:1px solid var(--line); overflow:hidden; }
     .progress-fill{ height:100%; width:0%; border-radius:var(--radius-pill); background:var(--good); transition:width .3s ease, background .3s ease; }
 
-    .cl-live-item{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:.86rem; cursor:pointer; }
+    .cl-live-item{ display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--line-soft); font-size:.88rem; cursor:pointer; }
     .cl-live-item:last-child{ border-bottom:none; }
-    .cl-live-item input{ width:auto; margin-top:3px; accent-color:var(--accent); flex:0 0 auto; }
+    .cl-live-item input{ width:auto; margin-top:2px; accent-color:var(--accent); flex:0 0 auto; width:18px; height:18px; }
     .cl-live-text{ flex:1; color:var(--text); }
     .cl-live-text.done{ color:var(--muted); text-decoration:line-through; }
     .cl-admin{ display:inline-flex; gap:4px; flex:0 0 auto; }
-    .cl-icon{ border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:.85rem; padding:2px 5px; border-radius:6px; transition:color var(--t), background var(--t); }
-    .cl-icon:hover{ color:var(--heading); background:rgba(63,143,79,.10); }
+    .cl-icon{ border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:.85rem; padding:4px 6px; border-radius:6px; transition:color var(--t), background var(--t); }
+    .cl-icon:hover{ color:var(--heading); background:rgba(61,169,252,.12); }
 
     .footer{ margin-top:22px; text-align:center; font-size:.76rem; color:var(--faint); }
+
+    /* ---------- Streamlined polish ---------- */
+    .info-tile{ position:relative; overflow:hidden; transition:border-color var(--t), transform var(--t); }
+    .info-tile::before{
+      content:""; position:absolute; inset:0 auto 0 0; width:3px;
+      background:linear-gradient(180deg, var(--accent), var(--accent-2)); opacity:.9;
+    }
+    .info-tile:hover{ border-color:var(--accent-line); transform:translateY(-1px); }
+    #app{ animation:rise .4s cubic-bezier(.2,.7,.3,1) both; }
+    @keyframes rise{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+    .nav button.active{ position:relative; }
+    .btn-ghost{ backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    .cl-live-item{ border-radius:8px; padding-left:8px; padding-right:4px; transition:background var(--t); }
+    .cl-live-item:hover{ background:rgba(61,169,252,.06); }
+    ::selection{ background:var(--accent-soft); color:var(--heading); }
 
     @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
   </style>
@@ -394,14 +423,9 @@
     <!-- ===== SPLASH ===== -->
     <section id="view-splash">
       <div class="center-stage">
-        <div class="panel splash">
-          <div class="eyebrow">Field Operations</div>
-          <h1>HF-HPA Merchandising Hub</h1>
-          <p>Live store map, product info, plant &amp; pest reference, and store-visit workflows — in one place.</p>
-          <button id="splashEnter" class="splash-btn" aria-label="Enter the hub">
-            <img src="hf_logo.png" alt="" />
-          </button>
-        </div>
+        <button id="splashEnter" class="splash-btn" aria-label="Enter the hub">
+          <img src="hf_logo.png" alt="HF-HPA Hub" />
+        </button>
       </div>
     </section>
 
@@ -411,14 +435,10 @@
         <div class="panel panel-pad login">
           <div class="logo-wrap"><img src="hf_logo.png" alt="" /></div>
           <h2>Sign in</h2>
-          <div class="sub">Internal tool — enter your name. Use the admin code to edit the shared checklist.</div>
+          <div class="sub">Internal tool — enter your name to continue. Editing the checklist or guidelines needs the team password.</div>
           <div class="row">
             <label class="field-label" for="loginUser">Name</label>
             <input id="loginUser" type="text" autocomplete="username" />
-          </div>
-          <div class="row">
-            <label class="field-label" for="loginPass">Access code</label>
-            <input id="loginPass" type="password" autocomplete="current-password" />
           </div>
           <button id="loginBtn" class="btn btn-primary" style="width:100%;">Sign in</button>
           <div id="loginError" class="err"></div>
@@ -450,12 +470,33 @@
         <button data-view="ops" type="button">🛠 Store Ops</button>
       </nav>
 
-      <!-- ===== MAP ===== -->
+      <!-- ===== MAP (HOME) ===== -->
       <section id="view-map">
         <div class="head">
           <h2>Store Map</h2>
-          <p>Live status synced across the team. Tap a pin or a store to update watering and log issues.</p>
+          <p>Your home base. Live status synced across the team — tap a pin or a store to update watering and log issues.</p>
         </div>
+
+        <!-- Local time + weather -->
+        <div class="home-strip">
+          <div class="info-tile">
+            <div class="glyph">🕐</div>
+            <div>
+              <div class="lab">Local time</div>
+              <div class="big" id="homeTime">—</div>
+              <div class="sub" id="homeDate">—</div>
+            </div>
+          </div>
+          <div class="info-tile">
+            <div class="glyph" id="weatherGlyph">🌤</div>
+            <div>
+              <div class="lab" id="weatherLab">Weather</div>
+              <div class="big" id="homeTemp">Loading…</div>
+              <div class="sub" id="homeCond">Fetching local conditions</div>
+            </div>
+          </div>
+        </div>
+
         <div class="map-layout">
           <div class="panel panel-pad">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
@@ -471,17 +512,12 @@
           </div>
 
           <aside class="panel panel-pad">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div>
-                <div style="font-size:.78rem;color:var(--muted);" id="spSub">No store selected</div>
-                <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">—</h3>
-              </div>
-              <button id="btnEditStore" class="btn btn-ghost hidden" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>
+            <div>
+              <div style="font-size:.78rem;color:var(--muted);" id="spSub">Tap a pin to begin</div>
+              <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">Select a store</h3>
             </div>
 
-            <div id="spNotes" style="display:none;margin-top:10px;padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);font-size:.82rem;color:var(--text);"></div>
-
-            <div id="spProgressWrap" class="hidden" style="margin-top:12px;">
+            <div id="spProgressWrap" class="hidden" style="margin-top:14px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                 <span class="field-label" style="margin:0;">Checklist complete</span>
                 <span id="spProgressPct" style="font-weight:700;color:var(--heading);">0%</span>
@@ -489,12 +525,18 @@
               <div class="progress-track"><div id="spProgressBar" class="progress-fill"></div></div>
             </div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:8px;">
               <span class="field-label" style="margin:0;">Store checklist</span>
-              <button id="btnAddItem" class="btn btn-ghost admin-only hidden" disabled type="button" style="padding:6px 12px;font-size:.8rem;">＋ Add item</button>
+              <button id="btnEditChecklist" class="btn btn-ghost" type="button" style="padding:7px 13px;font-size:.8rem;min-height:auto;">✎ Edit checklist</button>
             </div>
-            <div id="spChecklist" style="margin-top:10px;">
+            <p style="font-size:.74rem;color:var(--faint);margin-top:4px;">The same checklist applies to every store on the map.</p>
+            <div id="spChecklist" style="margin-top:12px;">
               <div style="color:var(--muted);font-size:.84rem;">Select a store to see its checklist.</div>
+            </div>
+
+            <div id="adminBar" class="hidden" style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button id="btnAddItem" class="btn btn-primary" type="button" style="padding:8px 14px;font-size:.82rem;min-height:auto;flex:1;">＋ Add item</button>
+              <button id="btnDoneEditing" class="btn btn-ghost" type="button" style="padding:8px 14px;font-size:.82rem;min-height:auto;">Done</button>
             </div>
           </aside>
         </div>
@@ -636,21 +678,6 @@
     </div>
   </div></div>
 
-  <div id="storeEditor" class="modal-back"><div class="modal">
-    <h3>Edit store</h3>
-    <div class="latin" id="seStoreLabel"></div>
-    <div class="fld"><label class="field-label" for="seName">Name</label><input id="seName" type="text" /></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="fld"><label class="field-label" for="seLat">Latitude</label><input id="seLat" type="text" inputmode="decimal" placeholder="42.0354" /></div>
-      <div class="fld"><label class="field-label" for="seLng">Longitude</label><input id="seLng" type="text" inputmode="decimal" placeholder="-88.2826" /></div>
-    </div>
-    <div class="fld"><label class="field-label" for="seNotes">Notes</label><textarea id="seNotes" placeholder="Anything useful about this store…"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" data-close="storeEditor" type="button">Cancel</button>
-      <button id="seSave" class="btn btn-primary" type="button">Save changes</button>
-    </div>
-  </div></div>
-
   <!-- ===== SPROUT BOT ===== -->
   <button id="sproutFab" class="sprout-fab" aria-label="Open Sprout Bot help">🌱</button>
   <div id="sproutPanel" class="sprout-panel" role="dialog" aria-label="Sprout Bot">
@@ -708,14 +735,12 @@ const FILES = {
   pests:      "pests.csv"
 };
 /* Store locations are read from one of these (first that loads wins). */
-const STORE_FILES = ["store.csv", "stores.csv"];
+const STORE_FILES = ["Store.csv", "store.csv", "stores.csv"];
 
-/* ====== ADMIN ACCESS ======
-   Enter this code in the "Access code" field at login to unlock checklist editing.
-   Anyone can still sign in with any other code as a normal (check-only) user.      */
-const ADMIN_CODE = "hf-admin";
+/* ====== ADMIN ACCESS ====== */
+const ADMIN_CODE = "HF/HPA2026";
 
-/* Starter checklist used the first time the database has none. Admins can edit it live. */
+/* Starter checklist used the first time the database has none. */
 const DEFAULT_CHECKLIST = [
   "Pods reset short-to-tall",
   "Dead/unsellable product removed",
@@ -749,8 +774,6 @@ const esc = (v) => String(v == null ? "" : v)
 const normSku = (s) => (s||"").toLowerCase().replace(/[^0-9a-z]/g,"");
 const todayKey = () => new Date().toISOString().slice(0,10);
 
-/* CSV parser tolerant of literal inch marks (6") mid-field. A quote only opens a
-   quoted field at the start of a field; elsewhere it's a literal character. */
 function parseCSV(text){
   const rows=[]; let row=[], cur="", q=false, atStart=true;
   for(let i=0;i<text.length;i++){
@@ -801,12 +824,13 @@ document.addEventListener("keydown", e => { if(e.key==="Escape") $$(".modal-back
 const VIEWS = ["map","products","careid","ops"];
 const setVis = (el,on) => el && el.classList.toggle("hidden", !on);
 
-let isAdmin = false;
-/* Show or hide admin-only controls wherever they appear. */
+/* "editMode" = the shared checklist is unlocked for editing (password-gated). */
+let editMode = false;
 function applyAdminUI(){
-  $$(".admin-only").forEach(el => el.classList.toggle("hidden", !isAdmin));
-  const add=$("btnAddItem"); if(add) add.disabled = !isAdmin;
-  if(typeof renderGuidelines==="function" && $("guide-hpa")) renderGuidelines();
+  setVis($("adminBar"), editMode);
+  const btn=$("btnEditChecklist");
+  if(btn) btn.textContent = editMode ? "🔒 Lock" : "✎ Edit checklist";
+  if(typeof renderChecklistPanel==="function") renderChecklistPanel();
 }
 
 function showOnlyView(name){
@@ -825,30 +849,25 @@ function showLogin(){
 }
 function showApp(view){
   setVis($("view-splash"),false); setVis($("view-login"),false); setVis($("app"),true);
+  /* Map is the home page — always default to it unless an explicit other view was saved. */
   showOnlyView(view||"map");
 }
-function setUser(name, admin){
+function setUser(name){
   const u=(name||"User").trim()||"User";
-  isAdmin = !!admin;
-  $("userName").textContent = u + (isAdmin ? " · Admin" : "");
-  try {
-    localStorage.setItem("hub_user",u);
-    localStorage.setItem("hub_admin", isAdmin ? "1" : "0");
-  } catch(e){}
-  applyAdminUI();
+  $("userName").textContent = u;
+  try { localStorage.setItem("hub_user",u); } catch(e){}
 }
 function doLogin(){
-  const u=($("loginUser").value||"").trim(), p=($("loginPass").value||"").trim();
+  const u=($("loginUser").value||"").trim();
   if(!u){ $("loginError").textContent="Enter your name to continue."; $("loginUser").focus(); return; }
-  if(!p){ $("loginError").textContent="Enter the access code to continue."; $("loginPass").focus(); return; }
-  setUser(u, p === ADMIN_CODE);
-  let saved; try{ saved=sessionStorage.getItem("hub_view"); }catch(e){}
-  showApp(saved||"map");
+  setUser(u);
+  /* Land on the Map home page after signing in. */
+  showApp("map");
 }
 $("splashEnter").addEventListener("click", showLogin);
 $("loginBtn").addEventListener("click", doLogin);
-[$("loginUser"),$("loginPass")].forEach(el => el.addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); }));
-$("logoutBtn").addEventListener("click", () => { try{ localStorage.removeItem("hub_user"); localStorage.removeItem("hub_admin"); sessionStorage.removeItem("hub_view"); }catch(e){} isAdmin=false; showSplash(); });
+$("loginUser").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+$("logoutBtn").addEventListener("click", () => { try{ localStorage.removeItem("hub_user"); sessionStorage.removeItem("hub_view"); }catch(e){} editMode=false; applyAdminUI(); showSplash(); });
 $$('.nav [data-view]').forEach(b => b.addEventListener("click", () => showOnlyView(b.dataset.view)));
 
 /* ---------- generic subtab switcher ---------- */
@@ -951,10 +970,6 @@ function initOrders(){
 /* ============================================================
    CARE & ID
    ============================================================ */
-/* Hardwired royalty-free photos (Wikimedia Commons, via stable Special:FilePath).
-   Keyed by a normalized common name. The matcher checks if a variety's name
-   contains any of these keys, so "Golden Pothos" matches "pothos", etc.
-   To change a photo, swap the filename after Special:FilePath/ (it must exist on Commons). */
 const WIKI = (file) => "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file) + "?width=520";
 
 const PLANT_PHOTOS = {
@@ -1016,10 +1031,8 @@ const PEST_PHOTOS = {
   "fruit fly":       WIKI("Drosophila melanogaster - side (aka).jpg")
 };
 
-/* Find a hardwired photo whose key is contained in the item's common name. */
 function photoFor(name, table){
   const n = (name||"").toLowerCase();
-  // prefer the longest matching key so "snake plant" wins over a stray short key
   let best=null, bestLen=0;
   for(const key in table){
     if(n.includes(key) && key.length>bestLen){ best=table[key]; bestLen=key.length; }
@@ -1086,13 +1099,10 @@ function initCareId(){
 }
 
 /* ============================================================
-   STORE OPS — content
-   ============================================================ */
-/* ============================================================
    STORE OPS — Guidelines (HPA + HF), live & admin-editable
    ============================================================ */
 let guidelines = { hpa:"", hf:"" };
-let editingGuide = null;   // "hpa" | "hf" while an admin edits
+let editingGuide = null;
 
 const DEFAULT_GUIDELINES = {
   hpa:
@@ -1125,7 +1135,6 @@ const DEFAULT_GUIDELINES = {
 "• Flag fast and slow sellers to the HPA team and your supervisor."
 };
 
-/* Render a guidelines panel as readable sections (UPPERCASE lines become headings). */
 function guidelinesToHtml(text){
   if(!text || !text.trim()) return '<div style="color:var(--muted);">No guidelines yet.</div>';
   const lines = text.replace(/\r/g,"").split("\n");
@@ -1171,14 +1180,13 @@ function renderGuidelines(){
       });
       setTimeout(()=>panel.querySelector("#guideTextarea")?.focus(),0);
     } else {
-      // Edit button shows for EVERYONE; clicking prompts for the admin password.
       panel.innerHTML=`
         <div class="guide-head">
           <div class="info-banner" style="flex:1;margin:0;">
             <h4>${key==="hpa"?"HPA Guidelines":"HF Guidelines"}</h4>
             <p>${key==="hpa"?"Houseplant area standards for weekly resets, watering, and photos." : "Field standards, damage & claims, and weekly reporting."}</p>
           </div>
-          <button class="btn btn-ghost" data-guide-edit="${key}" type="button" style="padding:6px 12px;font-size:.8rem;">✎ Edit</button>
+          <button class="btn btn-ghost" data-guide-edit="${key}" type="button" style="padding:6px 12px;font-size:.8rem;min-height:auto;">✎ Edit</button>
         </div>
         <div class="guide-body">${guidelinesToHtml(guidelines[key])}</div>`;
       panel.querySelector("[data-guide-edit]").addEventListener("click",()=>{
@@ -1192,10 +1200,8 @@ function renderGuidelines(){
 }
 
 function initGuidelines(){
-  // seed defaults immediately (used until DB responds, and if DB is empty)
   guidelines = { ...DEFAULT_GUIDELINES };
   renderGuidelines();
-
   if(db){
     ["hpa","hf"].forEach(key=>{
       onValue(ref(db,`guidelines/${key}`), snap=>{
@@ -1211,10 +1217,9 @@ function initGuidelines(){
    MAP — Leaflet + Firebase live sync
    ============================================================ */
 let map=null, markers={}, stores={}, selected=null;
-let checklist=[];        // [{id, text}] shared across all stores
-const statusColor = s => s==="ok" ? "#34d399" : s==="warn" ? "#fbbf24" : "#f87171";
+let checklist=[];
+const statusColor = s => s==="ok" ? "#3ddc97" : s==="warn" ? "#f5b94a" : "#f06a6a";
 
-/* Completion ratio (0..1) for a store against the shared checklist. */
 function completion(store){
   if(!checklist.length) return 1;
   const checked = store.checked || {};
@@ -1222,7 +1227,6 @@ function completion(store){
   checklist.forEach(it => { if(checked[it.id]) done++; });
   return done / checklist.length;
 }
-/* <50% -> red, <100% -> amber, 100% -> green. Empty checklist -> green. */
 function storeStatus(store){
   const r = completion(store);
   if(r >= 1) return "ok";
@@ -1236,10 +1240,10 @@ function makeIcon(store){
     className:"",
     html:`<div style="position:relative;width:30px;height:30px;">
       <div style="width:20px;height:20px;border-radius:50%;background:${statusColor(storeStatus(store))};
-        border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.5);
+        border:2px solid rgba(255,255,255,.9);box-shadow:0 0 10px ${statusColor(storeStatus(store))},0 2px 8px rgba(0,0,0,.6);
         position:absolute;top:5px;left:5px;"></div>
       <div style="position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
-        font-size:9px;font-weight:800;color:#1f3320;text-shadow:0 1px 2px rgba(255,255,255,.9);white-space:nowrap;">${pct}%</div>
+        font-size:9px;font-weight:800;color:#eef3ff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;">${pct}%</div>
     </div>`,
     iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-14]
   });
@@ -1262,7 +1266,6 @@ function popupHtml(s){
   return `<b>#${esc(s.id)}</b> — ${esc(s.name)}<br>Checklist ${pct}% complete`;
 }
 
-/* Write a single checked-state toggle for the selected store. */
 function setItemChecked(storeId, itemId, on){
   const s=stores[storeId]; if(!s) return;
   s.checked = s.checked || {};
@@ -1279,13 +1282,13 @@ function renderChecklistPanel(){
   if(!selected){ wrap.innerHTML=""; return; }
   const s=stores[selected]; const checked=s.checked||{};
   if(!checklist.length){
-    wrap.innerHTML=`<div style="color:var(--muted);font-size:.84rem;">No checklist items yet.${isAdmin?" Use “Add item” to create the shared list.":""}</div>`;
+    wrap.innerHTML=`<div style="color:var(--muted);font-size:.84rem;">No checklist items yet.${editMode?" Use “Add item” to build the shared list.":""}</div>`;
     return;
   }
   wrap.innerHTML = checklist.map(it=>{
     const on = !!checked[it.id];
-    const adminBtns = isAdmin
-      ? `<span class="cl-admin admin-only">
+    const adminBtns = editMode
+      ? `<span class="cl-admin">
            <button class="cl-icon" data-edit="${esc(it.id)}" title="Edit" type="button">✎</button>
            <button class="cl-icon" data-del="${esc(it.id)}" title="Delete" type="button">🗑</button>
          </span>` : "";
@@ -1296,14 +1299,11 @@ function renderChecklistPanel(){
     </label>`;
   }).join("");
 
-  // wire checkbox toggles (anyone)
   $$('input[data-item]', wrap).forEach(cb=>{
     cb.addEventListener("change",()=> setItemChecked(selected, cb.dataset.item, cb.checked));
   });
-  // wire admin edit/delete
   $$('[data-edit]', wrap).forEach(b=> b.addEventListener("click",()=> openItemEditor(b.dataset.edit)));
   $$('[data-del]', wrap).forEach(b=> b.addEventListener("click",()=> deleteItem(b.dataset.del)));
-  applyAdminUI();
 }
 
 function selectStore(id){
@@ -1314,54 +1314,19 @@ function selectStore(id){
   $("spProgressBar").style.width=pct+"%";
   $("spProgressBar").style.background=statusColor(storeStatus(s));
   setVis($("spProgressWrap"), true);
-  // store notes (if any)
-  const notesEl=$("spNotes");
-  if(notesEl){
-    if(s.notes){ notesEl.textContent=s.notes; notesEl.style.display=""; }
-    else notesEl.style.display="none";
-  }
-  // Edit button is visible to everyone; it prompts for the admin password on click.
-  setVis($("btnEditStore"), true);
   renderChecklistPanel();
   if(map && markers[id]){ map.panTo([s.lat,s.lng]); markers[id].openPopup(); }
   $("spTitle").focus();
 }
 
-/* ----- store edit (password-gated, available to everyone) ----- */
-function openStoreEditor(){
-  if(!selected) return;
-  const s=stores[selected];
-  const pass = window.prompt("Enter the admin password to edit this store:");
-  if(pass===null) return;                 // cancelled
+/* ----- shared checklist edit mode (password-gated, one button for all stores) ----- */
+function toggleEditMode(){
+  if(editMode){ editMode=false; applyAdminUI(); return; }
+  const pass = window.prompt("Enter the team password to edit the shared checklist:");
+  if(pass===null) return;
   if(pass !== ADMIN_CODE){ window.alert("Incorrect password. No changes made."); return; }
-  $("seName").value = s.name||"";
-  $("seLat").value  = (s.lat!=null? s.lat : "");
-  $("seLng").value  = (s.lng!=null? s.lng : "");
-  $("seNotes").value= s.notes||"";
-  $("seStoreLabel").textContent = "Store #"+s.id;
-  openModal("storeEditor");
-  setTimeout(()=>$("seName").focus(),0);
-}
-function saveStoreEdit(){
-  if(!selected){ closeModal("storeEditor"); return; }
-  const s=stores[selected];
-  const name=($("seName").value||"").trim();
-  const lat=parseFloat($("seLat").value);
-  const lng=parseFloat($("seLng").value);
-  const notes=($("seNotes").value||"").trim();
-  if(name) s.name=name;
-  if(!isNaN(lat)) s.lat=lat;
-  if(!isNaN(lng)) s.lng=lng;
-  s.notes=notes;
-  // move marker if coordinates changed
-  if(markers[selected] && s.lat!=null && s.lng!=null){
-    markers[selected].setLatLng([s.lat,s.lng]);
-  }
-  if(db) update(ref(db,`stores/${selected}`),{ name:s.name, lat:s.lat, lng:s.lng, notes:s.notes }).catch(console.error);
-  closeModal("storeEditor");
-  refreshMarker(selected);
-  selectStore(selected);
-  fitToStores();
+  editMode=true;
+  applyAdminUI();
 }
 
 /* ----- admin: add / edit / delete shared checklist items ----- */
@@ -1371,7 +1336,7 @@ function persistChecklist(){
   if(db) set(ref(db,"checklist"), checklist).catch(console.error);
 }
 function openItemEditor(itemId){
-  if(!isAdmin) return;
+  if(!editMode) return;
   const existing = itemId ? checklist.find(i=>i.id===itemId) : null;
   $("itemEditorTitle").textContent = existing ? "Edit item" : "Add checklist item";
   $("itemText").value = existing ? existing.text : "";
@@ -1380,7 +1345,7 @@ function openItemEditor(itemId){
   setTimeout(()=>$("itemText").focus(),0);
 }
 function saveItem(){
-  if(!isAdmin){ closeModal("itemEditor"); return; }
+  if(!editMode){ closeModal("itemEditor"); return; }
   const txt=($("itemText").value||"").trim();
   const editingId=$("itemEditor").dataset.editing||"";
   if(!txt){ closeModal("itemEditor"); return; }
@@ -1392,12 +1357,11 @@ function saveItem(){
   }
   persistChecklist();
   closeModal("itemEditor");
-  if(!db){ refreshAllMarkers(); renderChecklistPanel(); }   // local mode immediate refresh
+  if(!db){ refreshAllMarkers(); renderChecklistPanel(); }
 }
 function deleteItem(itemId){
-  if(!isAdmin) return;
+  if(!editMode) return;
   checklist = checklist.filter(i=>i.id!==itemId);
-  // also clear that item's checked-state on every store
   Object.keys(stores).forEach(sid=>{
     if(stores[sid].checked && stores[sid].checked[itemId]){
       delete stores[sid].checked[itemId];
@@ -1415,7 +1379,7 @@ function setConn(state){
   else { el.classList.add("off"); el.querySelector(".label").textContent="Offline · local only"; }
 }
 
-/* Load store coordinates from stores.csv / store.csv (first that loads wins). */
+/* Load store coordinates from Store.csv / store.csv / stores.csv (first that loads wins). */
 async function loadStoresCsv(){
   for(const file of STORE_FILES){
     try{
@@ -1439,33 +1403,33 @@ async function initMap(){
   $("weekBadge").querySelector(".label").textContent="Week of "+todayKey();
 
   map=L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([42.0,-88.3],8);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
+  /* Darker basemap to match the jungle theme. */
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19, subdomains:"abcd"
   }).addTo(map);
 
-  // Seed stores from CSV (coordinates are the source of truth for the map).
   const roster = await loadStoresCsv();
   roster.forEach(s=>{ stores[s.id]={ ...s, checked:{} }; });
   refreshAllMarkers();
   fitToStores();
 
-  // seed default checklist locally (used immediately and if DB is empty)
+  /* Start weather using the centroid of the store roster. */
+  startWeather();
+
   checklist = DEFAULT_CHECKLIST.map((t,i)=>({ id:"seed-"+i, text:t }));
 
-  // Add-item button (admins only)
   $("btnAddItem").addEventListener("click",()=>openItemEditor(""));
   $("itemSave").addEventListener("click", saveItem);
   $("itemText").addEventListener("keydown", e=>{ if(e.key==="Enter") saveItem(); });
 
-  // Store edit (everyone sees the button; it prompts for the password)
-  $("btnEditStore").addEventListener("click", openStoreEditor);
-  $("seSave").addEventListener("click", saveStoreEdit);
+  $("btnEditChecklist").addEventListener("click", toggleEditMode);
+  $("btnDoneEditing").addEventListener("click", ()=>{ editMode=false; applyAdminUI(); });
+  applyAdminUI();
 
   if(db){
     try{
       goOnline(db);
 
-      // Shared checklist
       onValue(ref(db,"checklist"), snap=>{
         const val=snap.val();
         if(Array.isArray(val) && val.length){
@@ -1473,14 +1437,12 @@ async function initMap(){
         } else if(val && typeof val==="object"){
           checklist = Object.keys(val).map(k=> ({ id:k, text:(val[k].text||val[k]) }));
         } else {
-          // DB empty -> publish the seed list once (admins effectively bootstrap it)
-          if(isAdmin) persistChecklist();
+          if(editMode) persistChecklist();
         }
         refreshAllMarkers();
         renderChecklistPanel();
       }, err=>console.error("checklist read:",err));
 
-      // Per-store checked state + any store overrides
       onValue(ref(db,"stores"), snap=>{
         setConn("live");
         const val=snap.val()||{};
@@ -1511,12 +1473,87 @@ function fitToStores(){
 }
 
 /* ============================================================
+   LOCAL TIME + WEATHER  (Open-Meteo — no API key required)
+   ============================================================ */
+const WX = {
+  // WMO weather code -> {emoji, label}
+  0:["☀️","Clear sky"], 1:["🌤","Mainly clear"], 2:["⛅","Partly cloudy"], 3:["☁️","Overcast"],
+  45:["🌫","Fog"], 48:["🌫","Rime fog"],
+  51:["🌦","Light drizzle"], 53:["🌦","Drizzle"], 55:["🌦","Heavy drizzle"],
+  56:["🌧","Freezing drizzle"], 57:["🌧","Freezing drizzle"],
+  61:["🌧","Light rain"], 63:["🌧","Rain"], 65:["🌧","Heavy rain"],
+  66:["🌧","Freezing rain"], 67:["🌧","Freezing rain"],
+  71:["🌨","Light snow"], 73:["🌨","Snow"], 75:["❄️","Heavy snow"], 77:["❄️","Snow grains"],
+  80:["🌦","Rain showers"], 81:["🌦","Rain showers"], 82:["⛈","Violent showers"],
+  85:["🌨","Snow showers"], 86:["🌨","Snow showers"],
+  95:["⛈","Thunderstorm"], 96:["⛈","Thunderstorm + hail"], 99:["⛈","Severe thunderstorm"]
+};
+let wxTimer=null, wxTimeZone=null;
+
+function rosterCentroid(){
+  const pts=Object.values(stores).filter(s=>s.lat!=null&&s.lng!=null);
+  if(!pts.length) return { lat:42.0, lng:-88.3 };
+  const lat=pts.reduce((a,s)=>a+s.lat,0)/pts.length;
+  const lng=pts.reduce((a,s)=>a+s.lng,0)/pts.length;
+  return { lat, lng };
+}
+
+function startClock(){
+  function tick(){
+    try{
+      const now=new Date();
+      const opts={ hour:"numeric", minute:"2-digit", hour12:true };
+      const dateOpts={ weekday:"long", month:"short", day:"numeric" };
+      if(wxTimeZone){ opts.timeZone=wxTimeZone; dateOpts.timeZone=wxTimeZone; }
+      $("homeTime").textContent = new Intl.DateTimeFormat(undefined, opts).format(now);
+      $("homeDate").textContent = new Intl.DateTimeFormat(undefined, dateOpts).format(now)
+        + (wxTimeZone ? ` · ${wxTimeZone.split("/").pop().replace(/_/g," ")}` : "");
+    }catch(e){}
+  }
+  tick();
+  setInterval(tick, 1000*15);
+}
+
+async function fetchWeather(){
+  const { lat, lng } = rosterCentroid();
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}`
+    + `&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`
+    + `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+  try{
+    const res=await fetch(url);
+    if(!res.ok) throw new Error("wx "+res.status);
+    const data=await res.json();
+    wxTimeZone = data.timezone || wxTimeZone;
+    const c=data.current||{};
+    const code=Number(c.weather_code);
+    const [emoji,label]=WX[code]||["🌡","Current conditions"];
+    $("weatherGlyph").textContent=emoji;
+    $("weatherLab").textContent=label;
+    $("homeTemp").textContent = (c.temperature_2m!=null? Math.round(c.temperature_2m)+"°F" : "—");
+    const bits=[];
+    if(c.relative_humidity_2m!=null) bits.push(`${Math.round(c.relative_humidity_2m)}% humidity`);
+    if(c.wind_speed_10m!=null) bits.push(`${Math.round(c.wind_speed_10m)} mph wind`);
+    $("homeCond").textContent = bits.length? bits.join(" · ") : "Local conditions";
+  }catch(e){
+    console.error("weather:",e);
+    $("weatherGlyph").textContent="🌡";
+    $("weatherLab").textContent="Weather unavailable";
+    $("homeTemp").textContent="—";
+    $("homeCond").textContent="Couldn't reach the weather service";
+  }
+}
+
+function startWeather(){
+  startClock();
+  fetchWeather();
+  if(wxTimer) clearInterval(wxTimer);
+  wxTimer=setInterval(fetchWeather, 1000*60*10); // refresh every 10 min
+}
+
+/* ============================================================
    SPROUT BOT  (local knowledge first, Claude API fallback)
    ============================================================ */
-const sprout = {
-  open:false,
-  history:[]  // {role, content} for API continuity
-};
+const sprout = { open:false, history:[] };
 
 function botPush(text, who){
   const log=$("sproutLog");
@@ -1534,11 +1571,18 @@ function botTyping(){
   return div;
 }
 
-/* Try to answer from the tool's own loaded data. Returns HTML string or null. */
 function localAnswer(qRaw){
   const q=qRaw.toLowerCase().trim();
 
-  // Plant care
+  // Weather / time
+  if(q.includes("weather")||q.includes("temperature")||q.includes("forecast")||q.includes("rain")){
+    const t=$("homeTemp").textContent, c=$("homeCond").textContent, l=$("weatherLab").textContent;
+    if(t && t!=="—" && t!=="Loading…") return `Right now near your stores: <b>${esc(l)}</b>, <b>${esc(t)}</b> (${esc(c)}). The Map home page keeps this live.`;
+  }
+  if(q.includes("time")&&(q.includes("local")||q.includes("what"))){
+    return `Local time is <b>${esc($("homeTime").textContent)}</b> — ${esc($("homeDate").textContent)}. See it any time on the Map home page.`;
+  }
+
   for(const p of PLANTS){
     if(p.commonName && q.includes(p.commonName.toLowerCase())){
       const bits=[];
@@ -1551,7 +1595,6 @@ function localAnswer(qRaw){
       if(bits.length) return `Here's the care info for <b>${esc(p.commonName)}</b>:<br>`+bits.join("<br>");
     }
   }
-  // Pests
   for(const p of PESTS){
     if(p.commonName && q.includes(p.commonName.toLowerCase())){
       const bits=[];
@@ -1561,18 +1604,15 @@ function localAnswer(qRaw){
       if(bits.length) return `On <b>${esc(p.commonName)}</b>:<br>`+bits.join("<br>");
     }
   }
-  // SKU lookup
   if(q.includes("sku")||/\d{3,}/.test(q)){
     const hit=skuData.find(s=> q.includes((s.name||"").toLowerCase()) || normSku(q).includes(normSku(s.sku)) && normSku(s.sku).length>=4);
     if(hit) return `<b>${esc(hit.name)}</b><br>SKU: ${esc(hit.sku)} · Sent in: ${esc(hit.sentIn)} · Year: ${esc(hit.yearSent)}`;
   }
-  // Guidelines shortcuts
   if(q.includes("guideline")||((q.includes("cold")||q.includes("pest"))&&(q.includes("damage")||q.includes("claim")))){
     if(q.includes("hf")&&guidelines.hf) return `<b>HF Guidelines</b><br>${esc(guidelines.hf).replace(/\n/g,"<br>")}`;
     if(q.includes("hpa")&&guidelines.hpa) return `<b>HPA Guidelines</b><br>${esc(guidelines.hpa).replace(/\n/g,"<br>")}`;
     return "You'll find the full <b>HPA Guidelines</b> and <b>HF Guidelines</b> under the <b>Store Ops</b> tab. Ask me \"show HF guidelines\" or \"show HPA guidelines\" to see them here.";
   }
-  // Checklist / completion
   if(q.includes("checklist")||q.includes("complete")||q.includes("watered")||q.includes("watering")){
     const total=Object.keys(stores).length;
     if(total){
@@ -1588,7 +1628,6 @@ function localAnswer(qRaw){
   return null;
 }
 
-/* Claude API fallback (works in the Claude environment without a key). */
 async function claudeAnswer(question){
   const system = "You are Sprout Bot, a friendly assistant inside the HF-HPA Merchandising Hub — an internal tool for Home Depot houseplant-area (HPA) field merchandising teams. Help with plant care, pest ID, merchandising, store visits, damage claims, and general questions. Keep answers concise and practical. If a question is outside houseplant/retail work, still help briefly and kindly.";
   const messages = sprout.history.concat([{ role:"user", content:question }]);
@@ -1623,12 +1662,12 @@ async function sproutAsk(question){
   }catch(e){
     console.error(e);
     typing.remove();
-    botPush("I couldn't reach the AI service just now. I can still answer questions about plants, pests, SKUs, store status, and HPA protocols from the hub's own data — try asking about one of those.","bot");
+    botPush("I couldn't reach the AI service just now. I can still answer questions about plants, pests, SKUs, store status, weather, and HPA protocols from the hub's own data — try asking about one of those.","bot");
   }
 }
 
 function initSprout(){
-  const starters=["How do I handle a cold damage claim?","Care for a snake plant","What do spider mites look like?","How many stores are watered?"];
+  const starters=["How do I handle a cold damage claim?","Care for a snake plant","What do spider mites look like?","What's the weather right now?"];
   function showStarters(){
     $("sproutChips").innerHTML="";
     starters.forEach(s=>{ const b=document.createElement("button"); b.type="button"; b.textContent=s;
@@ -1640,7 +1679,7 @@ function initSprout(){
     setVis($("sproutFab"), !sprout.open);
     if(sprout.open){
       if(!$("sproutLog").children.length){
-        botPush("Hi! I'm <b>Sprout Bot</b> 🌱 — I can help with plant care, pest ID, SKUs, store status, and HPA protocols. Ask me anything.","bot");
+        botPush("Hi! I'm <b>Sprout Bot</b> 🌱 — I can help with plant care, pest ID, SKUs, store status, weather, and HPA protocols. Ask me anything.","bot");
         showStarters();
       }
       setTimeout(()=>$("sproutInput").focus(),50);
@@ -1668,11 +1707,11 @@ function init(){
   initCareId();
   initSprout();
 
-  let savedUser, savedAdmin; try{ savedUser=localStorage.getItem("hub_user"); savedAdmin=localStorage.getItem("hub_admin")==="1"; }catch(e){}
+  let savedUser; try{ savedUser=localStorage.getItem("hub_user"); }catch(e){}
   if(savedUser){
-    setUser(savedUser, savedAdmin);
-    let v; try{ v=sessionStorage.getItem("hub_view"); }catch(e){}
-    showApp(v||"map");
+    setUser(savedUser);
+    /* Returning users land on the Map home page. */
+    showApp("map");
   } else showSplash();
 }
 
