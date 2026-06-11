@@ -439,6 +439,111 @@
     .sprout-input{ display:flex; gap:8px; padding:12px 14px; border-top:1px solid var(--line); }
     .sprout-input input{ flex:1; }
     .sprout-input button{ flex:0 0 auto; padding:10px 14px; }
+
+    /* ---------- Social hub ---------- */
+    .hub-panel{ height:min(600px, calc(100vh - 36px)); }
+    .hub-badge{ position:absolute; top:-2px; right:-2px; min-width:18px; height:18px; padding:0 5px;
+      border-radius:9px; background:var(--bad); color:#fff; font-size:.66rem; font-weight:800;
+      display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+    .hub-tabs{ display:flex; gap:2px; padding:6px 8px; border-bottom:1px solid var(--line); }
+    .hub-tab{ flex:1; padding:8px 4px; border:none; background:transparent; color:var(--muted);
+      cursor:pointer; font-family:inherit; font-size:.78rem; font-weight:600; border-radius:8px;
+      transition:color var(--t), background var(--t); white-space:nowrap; }
+    .hub-tab:hover{ color:var(--heading); }
+    .hub-tab.active{ color:#06203a; background:linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    .hub-view{ flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .hub-view.hidden{ display:none; }
+    .hub-log{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
+    .hub-input{ display:flex; gap:8px; padding:12px 14px; border-top:1px solid var(--line); }
+    .hub-input input{ flex:1; }
+    .hub-input button{ flex:0 0 auto; padding:10px 14px; }
+
+    .cmsg{ max-width:88%; display:flex; flex-direction:column; gap:2px; }
+    .cmsg.mine{ align-self:flex-end; align-items:flex-end; }
+    .cmsg .who{ font-size:.7rem; color:var(--muted); font-weight:700; padding:0 4px; }
+    .cmsg .bub{ padding:9px 12px; border-radius:14px; font-size:.86rem; line-height:1.45; word-wrap:break-word;
+      background:var(--panel-raised); border:1px solid var(--line); color:var(--text); border-bottom-left-radius:4px; }
+    .cmsg.mine .bub{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#06203a; border:none; border-bottom-right-radius:4px; border-bottom-left-radius:14px; }
+    .cmsg .when{ font-size:.64rem; color:var(--faint); padding:0 4px; }
+    .feed-item{ display:flex; gap:10px; padding:10px 11px; background:var(--panel-2); border:1px solid var(--line); border-radius:12px; }
+    .feed-item .dot{ flex:0 0 auto; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; border:2px solid rgba(255,255,255,.7); }
+    .feed-item .body{ flex:1; min-width:0; }
+    .feed-item .body .top{ font-size:.82rem; color:var(--heading); font-weight:700; }
+    .feed-item .body .txt{ font-size:.85rem; color:var(--text); margin-top:1px; word-wrap:break-word; }
+    .feed-item .body .when{ font-size:.66rem; color:var(--faint); margin-top:3px; }
+    .feed-item .photo{ display:block; margin-top:8px; width:100%; max-height:220px; object-fit:cover;
+      border-radius:10px; border:1px solid var(--line); cursor:zoom-in; background:var(--panel); }
+    .feed-preview{ position:relative; margin:0 14px 4px; }
+    .feed-preview.hidden{ display:none; }
+    .feed-preview img{ width:100%; max-height:140px; object-fit:cover; border-radius:10px; border:1px solid var(--line); }
+    .feed-preview button{ position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:50%;
+      border:none; background:rgba(2,7,4,.7); color:#fff; cursor:pointer; font-size:1rem; line-height:1; }
+    .lightbox{ position:fixed; inset:0; z-index:9800; display:none; align-items:center; justify-content:center;
+      background:rgba(2,7,4,.9); padding:24px; cursor:zoom-out; }
+    .lightbox.show{ display:flex; }
+    .lightbox img{ max-width:100%; max-height:100%; border-radius:12px; box-shadow:var(--shadow-lg); }
+    .feed-item.shout{ background:linear-gradient(135deg, rgba(245,185,74,.16), rgba(124,92,255,.12)); border-color:rgba(245,185,74,.45); }
+    .feed-item.shout .top::before{ content:"🎉 "; }
+    .feed-item.shout .txt{ color:var(--heading); }
+    .dm-person{ display:flex; align-items:center; gap:10px; padding:10px 11px; border:1px solid var(--line); border-radius:12px;
+      background:var(--panel-2); cursor:pointer; transition:border-color var(--t); }
+    .dm-person:hover{ border-color:var(--accent-line); }
+    .dm-person .dot{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; border:2px solid rgba(255,255,255,.7); flex:0 0 auto; }
+    .dm-person .nm{ flex:1; font-size:.88rem; font-weight:600; color:var(--heading); }
+    .dm-person .st{ font-size:.72rem; color:var(--muted); }
+    .dm-back{ align-self:flex-start; border:none; background:transparent; color:var(--accent); cursor:pointer; font-family:inherit; font-size:.82rem; font-weight:600; padding:4px 0; }
+    .hub-empty{ text-align:center; color:var(--muted); font-size:.84rem; padding:24px 12px; }
+
+    /* ---------- Status picker on the map ---------- */
+    .status-btn{
+      position:absolute; right:12px; bottom:14px; z-index:600;
+      display:inline-flex; align-items:center; gap:7px; cursor:pointer; font-family:inherit;
+      padding:9px 14px; border-radius:var(--radius-pill); border:1px solid var(--line);
+      background:rgba(10,16,32,.85); color:var(--heading); font-size:.82rem; font-weight:600;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:filter var(--t); }
+    .status-btn:hover{ filter:brightness(1.15); }
+    .status-grid{ display:flex; flex-direction:column; gap:6px; }
+    .status-grid button{ display:flex; align-items:center; gap:10px; text-align:left; padding:11px 13px;
+      border:1px solid var(--line); background:var(--panel-2); color:var(--text); border-radius:10px;
+      cursor:pointer; font-family:inherit; font-size:.9rem; font-weight:600; transition:border-color var(--t), background var(--t); }
+    .status-grid button:hover{ border-color:var(--accent-line); }
+    .status-grid button.sel{ border-color:var(--accent); background:var(--accent-soft); }
+
+    /* ---------- Assignment + My Day ---------- */
+    .assign-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;
+      padding:8px 11px; background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm); }
+    .assign-row.hidden{ display:none; }
+    .assign-who{ font-size:.82rem; color:var(--text); font-weight:600; }
+    .assign-who .badge{ display:inline-flex; align-items:center; gap:6px; }
+    .assign-who .chip{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; font-size:12px; border:2px solid rgba(255,255,255,.7); }
+    .today-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; }
+    .today-head{ display:flex; align-items:center; gap:12px; padding:14px 15px; cursor:pointer; }
+    .today-head .meta{ flex:1; min-width:0; }
+    .today-head .nm{ font-size:1rem; font-weight:700; color:var(--heading); }
+    .today-head .sub{ font-size:.78rem; color:var(--muted); margin-top:1px; }
+    .today-head .pct{ font-size:.82rem; font-weight:800; padding:4px 10px; border-radius:var(--radius-pill); }
+    .today-head .caret{ color:var(--muted); transition:transform var(--t); }
+    .today-card.open .today-head .caret{ transform:rotate(90deg); }
+    .today-body{ display:none; padding:0 15px 14px; border-top:1px solid var(--line-soft); }
+    .today-card.open .today-body{ display:block; }
+    .today-item{ display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line-soft); }
+    .today-item:last-child{ border-bottom:none; }
+    .today-item input[type=checkbox]{ width:18px; height:18px; margin-top:2px; accent-color:var(--accent); flex:0 0 auto; }
+    .today-item .lbl{ flex:1; font-size:.9rem; color:var(--text); }
+    .today-item .lbl.done{ color:var(--muted); text-decoration:line-through; }
+    .today-item .cam{ flex:0 0 auto; border:1px solid var(--line); background:var(--panel); color:var(--text);
+      border-radius:8px; padding:4px 8px; cursor:pointer; font-size:.9rem; }
+    .today-item .cam.has{ border-color:var(--accent); }
+    .today-item .thumb{ width:40px; height:40px; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:zoom-in; flex:0 0 auto; }
+    .today-progress{ height:6px; border-radius:var(--radius-pill); background:var(--bg); overflow:hidden; margin-top:4px; }
+    .today-progress > div{ height:100%; border-radius:var(--radius-pill); }
+
+    /* ---------- Territory editor ---------- */
+    .terr-store{ display:flex; align-items:center; gap:9px; padding:7px 6px; border-radius:8px; cursor:pointer; font-size:.86rem; color:var(--text); }
+    .terr-store:hover{ background:rgba(61,169,252,.08); }
+    .terr-store input{ width:18px; height:18px; accent-color:var(--accent); flex:0 0 auto; }
+    .terr-store .nm{ flex:1; }
+    .terr-store .cur{ font-size:.72rem; color:var(--faint); }
     .typing{ display:inline-flex; gap:4px; }
     .typing span{ width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite both; }
     .typing span:nth-child(2){ animation-delay:.2s; }
@@ -576,6 +681,7 @@
                   </button>
                   <div id="dirMenu" class="dir-menu" role="menu">
                     <button class="dir-item active" data-view="map" type="button" role="menuitem">🗺 Map</button>
+                    <button class="dir-item" data-view="today" type="button" role="menuitem">📋 My Day</button>
                     <button class="dir-item" data-view="products" type="button" role="menuitem">📦 Product Info</button>
                     <button class="dir-item" data-view="careid" type="button" role="menuitem">🌿 Care &amp; ID</button>
                     <button class="dir-item" data-view="ops" type="button" role="menuitem">🛠 Store Ops</button>
@@ -584,6 +690,7 @@
               </div>
               <div id="map"></div>
               <button id="locBtn" class="loc-btn" type="button">📍 Share my location</button>
+              <button id="statusBtn" class="status-btn" type="button">🟢 Set status</button>
             </div>
 
             <div class="legend">
@@ -597,6 +704,11 @@
             <div>
               <div style="font-size:.78rem;color:var(--muted);" id="spSub">Tap a pin to begin</div>
               <h3 id="spTitle" tabindex="-1" style="color:var(--heading);font-size:1.3rem;margin-top:2px;">Select a store</h3>
+            </div>
+
+            <div id="spAssign" class="assign-row hidden">
+              <span id="spAssignWho" class="assign-who">Unassigned</span>
+              <button id="btnAssign" class="btn btn-ghost" type="button" style="padding:6px 11px;font-size:.78rem;min-height:auto;">Assign</button>
             </div>
 
             <div id="spProgressWrap" class="hidden" style="margin-top:14px;">
@@ -622,6 +734,13 @@
             </div>
           </aside>
         </div>
+      </section>
+
+      <!-- ===== MY DAY ===== -->
+      <section id="view-today" class="hidden">
+        <div class="section-top"><button class="btn-back" data-view="map" type="button">← Back to map</button></div>
+        <div class="head"><h2>My Day</h2><p>Your assigned stores, nearest first. Tap to work the checklist and attach photos.</p></div>
+        <div id="todayList"><div class="hub-empty">Loading your stores…</div></div>
       </section>
 
       <!-- ===== PRODUCT INFO ===== -->
@@ -813,19 +932,121 @@
     </div>
   </div></div>
 
-  <!-- ===== SPROUT BOT ===== -->
-  <button id="sproutFab" class="sprout-fab" aria-label="Open Sprout Bot help">🌱</button>
-  <div id="sproutPanel" class="sprout-panel" role="dialog" aria-label="Sprout Bot">
-    <div class="sprout-head">
-      <div class="avatar">🌱</div>
-      <div class="who"><div class="name">Sprout Bot</div><div class="status">Here to help</div></div>
-      <button id="sproutClose" aria-label="Close">×</button>
+  <div id="statusEditor" class="modal-back"><div class="modal">
+    <h3>Set your status</h3>
+    <div class="latin">Shows on your map sprite and posts an update to the team feed.</div>
+    <div id="statusGrid" class="status-grid" style="margin-top:14px;"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" data-close="statusEditor" type="button">Close</button></div>
+  </div></div>
+
+  <div id="photoLightbox" class="lightbox"><img id="lightboxImg" alt="" /></div>
+
+  <div id="shoutEditor" class="modal-back"><div class="modal">
+    <h3>🎉 Give a shout-out</h3>
+    <div class="latin">Recognize a teammate for great work — it posts to the feed.</div>
+    <div class="fld"><label class="field-label" for="shoutWho">Teammate</label>
+      <select id="shoutWho"></select></div>
+    <div class="fld"><label class="field-label" for="shoutMsg">What did they do?</label>
+      <textarea id="shoutMsg" placeholder="e.g. crushed the Aurora reset and helped me catch a pest issue"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close="shoutEditor" type="button">Cancel</button>
+      <button id="shoutSend" class="btn btn-primary" type="button">Post shout-out</button>
     </div>
-    <div id="sproutLog" class="sprout-log"></div>
-    <div id="sproutChips" class="chips"></div>
-    <div class="sprout-input">
-      <input id="sproutInput" type="text" placeholder="Ask Sprout Bot anything…" />
-      <button id="sproutSend" class="btn btn-primary" type="button">Send</button>
+  </div></div>
+
+  <div id="assignEditor" class="modal-back"><div class="modal">
+    <h3>Assign store</h3>
+    <div class="latin" id="assignStoreLabel">Pick who's responsible for this store.</div>
+    <div class="fld"><label class="field-label" for="assignWho">Assign to</label>
+      <select id="assignWho"></select></div>
+    <div class="modal-actions">
+      <button id="assignClear" class="btn btn-ghost" type="button">Unassign</button>
+      <span style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" data-close="assignEditor" type="button">Cancel</button>
+        <button id="assignSave" class="btn btn-primary" type="button">Save</button>
+      </span>
+    </div>
+  </div></div>
+
+  <div id="territoryEditor" class="modal-back"><div class="modal">
+    <h3 id="terrTitle">Edit territory</h3>
+    <div class="latin">Rename, recolor, and choose which stores belong to this territory.</div>
+    <div class="fld"><label class="field-label" for="terrName">Name</label><input id="terrName" type="text" placeholder="e.g. North Suburbs" /></div>
+    <div class="fld"><label class="field-label">Color</label><div id="terrColorGrid" class="sprite-grid"></div></div>
+    <div class="fld">
+      <label class="field-label">Stores in this territory</label>
+      <div style="display:flex;gap:8px;margin:4px 0 8px;">
+        <input id="terrStoreSearch" type="search" placeholder="Filter stores…" style="flex:1;" />
+      </div>
+      <div id="terrStores" style="max-height:230px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px;"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close="territoryEditor" type="button">Cancel</button>
+      <button id="terrSave" class="btn btn-primary" type="button">Save territory</button>
+    </div>
+  </div></div>
+
+  <!-- ===== SOCIAL HUB ===== -->
+  <button id="hubFab" class="sprout-fab" aria-label="Open the team hub">💬<span id="hubBadge" class="hub-badge hidden"></span></button>
+  <div id="hubPanel" class="sprout-panel hub-panel" role="dialog" aria-label="Team hub">
+    <div class="sprout-head">
+      <div class="avatar" id="hubAvatar">🙂</div>
+      <div class="who"><div class="name">Hampshire Farms</div><div class="status" id="hubSubtitle">Team hub</div></div>
+      <button id="hubClose" aria-label="Close">×</button>
+    </div>
+
+    <div class="hub-tabs">
+      <button class="hub-tab active" data-hub="feed" type="button">📣 Feed</button>
+      <button class="hub-tab" data-hub="chat" type="button">💬 Team</button>
+      <button class="hub-tab" data-hub="dms" type="button">✉ DMs</button>
+      <button class="hub-tab" data-hub="ask" type="button">🌱 Ask</button>
+    </div>
+
+    <!-- FEED -->
+    <div id="hub-feed" class="hub-view">
+      <div id="feedLog" class="hub-log"></div>
+      <div id="feedPreview" class="feed-preview hidden">
+        <img id="feedPreviewImg" alt="" />
+        <button id="feedPreviewClear" type="button" aria-label="Remove photo">×</button>
+      </div>
+      <div class="hub-input">
+        <input id="feedPhoto" type="file" accept="image/*" capture="environment" class="hidden" />
+        <button id="feedShoutBtn" class="btn btn-ghost" type="button" title="Give a shout-out" style="flex:0 0 auto;padding:10px 12px;">🎉</button>
+        <button id="feedPhotoBtn" class="btn btn-ghost" type="button" title="Add a photo" style="flex:0 0 auto;padding:10px 12px;">📷</button>
+        <input id="feedInput" type="text" placeholder="Share an update with the team…" />
+        <button id="feedSend" class="btn btn-primary" type="button">Post</button>
+      </div>
+    </div>
+
+    <!-- TEAM CHAT -->
+    <div id="hub-chat" class="hub-view hidden">
+      <div id="chatLog" class="hub-log"></div>
+      <div class="hub-input">
+        <input id="chatInput" type="text" placeholder="Message the whole team…" />
+        <button id="chatSend" class="btn btn-primary" type="button">Send</button>
+      </div>
+    </div>
+
+    <!-- DIRECT MESSAGES -->
+    <div id="hub-dms" class="hub-view hidden">
+      <div id="dmList" class="hub-log">
+        <div id="dmPeople"></div>
+      </div>
+      <div id="dmThread" class="hub-log hidden"></div>
+      <div id="dmComposer" class="hub-input hidden">
+        <input id="dmInput" type="text" placeholder="Message…" />
+        <button id="dmSend" class="btn btn-primary" type="button">Send</button>
+      </div>
+    </div>
+
+    <!-- ASK (Sprout) -->
+    <div id="hub-ask" class="hub-view hidden">
+      <div id="sproutLog" class="hub-log sprout-log"></div>
+      <div id="sproutChips" class="chips"></div>
+      <div class="hub-input">
+        <input id="sproutInput" type="text" placeholder="Ask Sprout Bot anything…" />
+        <button id="sproutSend" class="btn btn-primary" type="button">Send</button>
+      </div>
     </div>
   </div>
 
@@ -1125,8 +1346,9 @@ document.addEventListener("keydown", e => { if(e.key==="Escape") $$(".modal-back
 /* ============================================================
    AUTH SHELL
    ============================================================ */
-const VIEWS = ["map","products","careid","ops"];
+const VIEWS = ["map","today","products","careid","ops"];
 const setVis = (el,on) => el && el.classList.toggle("hidden", !on);
+let curView = "map";
 
 /* "editMode" = the shared checklist is unlocked for editing (password-gated). */
 let editMode = false;
@@ -1137,8 +1359,9 @@ function applyAdminUI(){
   if(typeof renderChecklistPanel==="function") renderChecklistPanel();
 }
 
-const VIEW_LABELS = { map:"🗺 Map", products:"📦 Product Info", careid:"🌿 Care & ID", ops:"🛠 Store Ops" };
+const VIEW_LABELS = { map:"🗺 Map", today:"📋 My Day", products:"📦 Product Info", careid:"🌿 Care & ID", ops:"🛠 Store Ops" };
 function showOnlyView(name){
+  curView = name;
   VIEWS.forEach(v => setVis($("view-"+v), v===name));
   /* update directory dropdown state */
   $$('.dir-item[data-view]').forEach(b => b.classList.toggle("active", b.dataset.view===name));
@@ -1146,6 +1369,7 @@ function showOnlyView(name){
   closeDirMenu();
   try { sessionStorage.setItem("hub_view", name); } catch(e){}
   if(name==="map" && map) setTimeout(()=>map.invalidateSize(), 80);
+  if(name==="today" && typeof renderToday==="function") renderToday();
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 function closeDirMenu(){
@@ -1168,7 +1392,20 @@ function showApp(view){
 /* ---------- User identity + sprite ---------- */
 const SPRITE_EMOJIS = ["🙂","🌱","🌿","🍃","🌵","🌻","🧑‍🌾","👷","🦊","🐝","🐢","🦉","🐙","🚐","⭐","🔥","💧","🍀","🌸","🌴"];
 const SPRITE_COLORS = ["#3da9fc","#5ee0d0","#7c5cff","#f5b94a","#f06a6a","#3ddc97","#e879f9","#fb923c","#22d3ee","#a3e635"];
-let me = { uid:"", name:"User", color:SPRITE_COLORS[0], emoji:"🙂" };
+/* Work statuses people can set. */
+const STATUS_LABELS = {
+  "":"No status",
+  working:"🛠 Working",
+  delivery:"🚚 On a delivery",
+  watering:"💧 Watering",
+  training:"📋 Training",
+  merchandising:"📦 Merchandising",
+  driving:"🚐 Driving",
+  break:"☕ On break",
+  done:"✅ Done for the day"
+};
+const STATUS_ORDER = ["working","delivery","watering","training","merchandising","driving","break","done",""];
+let me = { uid:"", name:"User", color:SPRITE_COLORS[0], emoji:"🙂", status:"" };
 
 function loadIdentity(){
   try{
@@ -1178,6 +1415,7 @@ function loadIdentity(){
     me.name=localStorage.getItem("hub_user")||"User";
     me.color=localStorage.getItem("hub_color")||"";
     me.emoji=localStorage.getItem("hub_emoji")||"";
+    me.status=localStorage.getItem("hub_status")||"";
   }catch(e){ me.uid="u-"+Math.random().toString(36).slice(2,9); }
 }
 function hasSprite(){ return !!(me.color && me.emoji); }
@@ -1837,13 +2075,31 @@ function initGuidelines(){
    MAP — Leaflet + Firebase live sync
    ============================================================ */
 let map=null, markers={}, stores={}, selected=null, storesFitted=false, territoryLayer=null;
+let assignments={};   // storeId -> { uid, name, emoji, color }
 
-/* Distinct colors for each territory zone. */
+/* Default colors; overridable per territory via territoryMeta (synced from Firebase). */
 const TERRITORY_COLORS = {
   "1":"#3da9fc", "2":"#5ee0d0", "3":"#7c5cff", "4":"#f5b94a",
   "5":"#f06a6a", "6":"#3ddc97", "7":"#e879f9", "8":"#fb923c"
 };
-function territoryColor(t){ return TERRITORY_COLORS[String(t)] || "#9aa7c0"; }
+const TERRITORY_PALETTE = ["#3da9fc","#5ee0d0","#7c5cff","#f5b94a","#f06a6a","#3ddc97","#e879f9","#fb923c","#22d3ee","#a3e635","#f472b6","#facc15"];
+let territoryMeta = {};   // territory key -> { name, color }
+function territoryColor(t){
+  const m=territoryMeta[String(t)];
+  if(m && m.color) return m.color;
+  return TERRITORY_COLORS[String(t)] || TERRITORY_PALETTE[(parseInt(t,10)||0) % TERRITORY_PALETTE.length] || "#9aa7c0";
+}
+function territoryName(t){
+  const m=territoryMeta[String(t)];
+  return (m && m.name) ? m.name : ("Territory "+t);
+}
+/* All territory keys currently in use across the store roster. */
+function allTerritories(){
+  const set={};
+  Object.values(stores).forEach(s=>{ const t=(s.territory||"").trim(); if(t) set[t]=true; });
+  Object.keys(territoryMeta).forEach(t=>{ if(t) set[t]=true; });
+  return Object.keys(set).sort((a,b)=>(+a||0)-(+b||0) || a.localeCompare(b));
+}
 
 /* Convex hull (Andrew's monotone chain) over [lat,lng] points. */
 function convexHull(points){
@@ -1879,28 +2135,104 @@ function drawTerritories(){
   Object.keys(groups).sort((a,b)=>(+a||0)-(+b||0)).forEach(t=>{
     const pts=groups[t];
     const color=territoryColor(t);
+    const cLat=pts.reduce((a,p)=>a+p[0],0)/pts.length;
+    const cLng=pts.reduce((a,p)=>a+p[1],0)/pts.length;
     if(pts.length>=3){
       const hull=padHull(convexHull(pts), 1.12);
-      L.polygon(hull, {
+      const poly=L.polygon(hull, {
         color, weight:2, opacity:.9, fillColor:color, fillOpacity:.14,
-        interactive:false, className:"territory-zone"
+        interactive:true, className:"territory-zone"
       }).addTo(territoryLayer);
-      // label at centroid
-      const cLat=pts.reduce((a,p)=>a+p[0],0)/pts.length;
-      const cLng=pts.reduce((a,p)=>a+p[1],0)/pts.length;
-      L.marker([cLat,cLng],{ interactive:false, icon:L.divIcon({
-        className:"", iconSize:[0,0],
-        html:`<div style="transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:800;
-          color:#fff;background:${color};padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.6);
-          box-shadow:0 1px 4px rgba(0,0,0,.4);opacity:.92;">Territory ${esc(t)}</div>`
-      }) }).addTo(territoryLayer);
+      poly.on("click",()=>openTerritoryEditor(t));
     } else {
       // 1–2 stores: draw a soft circle around each so the territory still reads as a zone
       pts.forEach(p=>{
-        L.circle(p, { radius:9000, color, weight:2, opacity:.85, fillColor:color, fillOpacity:.12, interactive:false }).addTo(territoryLayer);
+        L.circle(p, { radius:9000, color, weight:2, opacity:.85, fillColor:color, fillOpacity:.12, interactive:true })
+          .addTo(territoryLayer).on("click",()=>openTerritoryEditor(t));
       });
     }
+    // clickable label at centroid
+    const lab=L.marker([cLat,cLng],{ interactive:true, icon:L.divIcon({
+      className:"", iconSize:[0,0],
+      html:`<div class="territory-label" style="transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:800;
+        color:#fff;background:${color};padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.7);
+        box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:pointer;">${esc(territoryName(t))} ✎</div>`
+    }) }).addTo(territoryLayer);
+    lab.on("click",()=>openTerritoryEditor(t));
   });
+}
+
+/* ----- territory editor (password-gated): rename, recolor, set membership ----- */
+let terrEditing=null, terrDraftColor="";
+function openTerritoryEditor(t){
+  const pass=window.prompt("Enter the admin password to edit Territory "+t+":");
+  if(pass===null) return;
+  if(pass!==ADMIN_CODE){ alert("Incorrect password. No changes made."); return; }
+  terrEditing=String(t);
+  terrDraftColor=territoryColor(t);
+  $("terrTitle").textContent="Edit "+territoryName(t);
+  $("terrName").value = (territoryMeta[terrEditing] && territoryMeta[terrEditing].name) || "";
+  $("terrName").placeholder = "Territory "+terrEditing;
+  buildTerrColorGrid();
+  buildTerrStores("");
+  $("terrStoreSearch").value="";
+  openModal("territoryEditor");
+}
+function buildTerrColorGrid(){
+  const grid=$("terrColorGrid"); grid.innerHTML="";
+  TERRITORY_PALETTE.forEach(col=>{
+    const b=document.createElement("button"); b.type="button"; b.className="swatch"+(col===terrDraftColor?" sel":"");
+    b.style.background=col; b.title=col;
+    b.addEventListener("click",()=>{ terrDraftColor=col; buildTerrColorGrid(); });
+    grid.appendChild(b);
+  });
+}
+function buildTerrStores(filter){
+  const wrap=$("terrStores"); wrap.innerHTML="";
+  const q=(filter||"").toLowerCase().trim();
+  const ids=Object.keys(stores).sort((a,b)=>{
+    const an=(stores[a].name||"").toLowerCase(), bn=(stores[b].name||"").toLowerCase();
+    return an.localeCompare(bn);
+  });
+  let shown=0;
+  ids.forEach(id=>{
+    const s=stores[id];
+    const text=("#"+id+" "+(s.name||"")).toLowerCase();
+    if(q && !text.includes(q)) return;
+    shown++;
+    const inThis = String(s.territory||"")===terrEditing;
+    const row=document.createElement("label"); row.className="terr-store";
+    const otherTerr = s.territory && String(s.territory)!==terrEditing ? `Terr. ${esc(s.territory)}` : "";
+    row.innerHTML=`<input type="checkbox" data-id="${esc(id)}" ${inThis?"checked":""}>
+      <span class="nm">#${esc(id)} · ${esc(s.name||"")}</span>
+      <span class="cur">${otherTerr}</span>`;
+    wrap.appendChild(row);
+  });
+  if(!shown) wrap.innerHTML='<div class="hub-empty" style="padding:14px">No stores match.</div>';
+}
+function saveTerritory(){
+  if(!terrEditing) return;
+  const name=($("terrName").value||"").trim();
+  // 1) save name + color meta
+  territoryMeta[terrEditing] = { name: name, color: terrDraftColor || territoryColor(terrEditing) };
+  if(db) set(ref(db,"territoryMeta/"+terrEditing), territoryMeta[terrEditing]).catch(console.error);
+
+  // 2) apply membership: checked stores join this territory; unchecked stores that
+  //    were in it get cleared (left unassigned).
+  const boxes=$$('#terrStores input[type=checkbox]');
+  const updates={};
+  boxes.forEach(cb=>{
+    const id=cb.dataset.id; const s=stores[id]; if(!s) return;
+    const wasThis = String(s.territory||"")===terrEditing;
+    if(cb.checked && !wasThis){ s.territory=terrEditing; updates["stores/"+id+"/territory"]=terrEditing; }
+    else if(!cb.checked && wasThis){ s.territory=""; updates["stores/"+id+"/territory"]=""; }
+  });
+  if(db && Object.keys(updates).length) update(ref(db), updates).catch(console.error);
+
+  closeModal("territoryEditor");
+  refreshAllMarkers();
+  drawTerritories();
+  if(selected) selectStore(selected);
 }
 let checklist=[];
 const statusColor = s => s==="ok" ? "#3ddc97" : s==="warn" ? "#f5b94a" : "#f06a6a";
@@ -1988,7 +2320,9 @@ function popupHtml(s){
   const pct = Math.round(completion(s)*100);
   const addr = s.address ? `<br><span style="color:var(--muted)">${esc(s.address)}</span>` : "";
   const terr = s.territory ? ` · Terr. ${esc(s.territory)}` : "";
-  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}${terr}${addr}<br>Checklist ${pct}% complete`;
+  const a = assignments[s.id];
+  const who = (a && a.uid) ? `<br><span style="color:var(--muted)">${esc(a.emoji||'🙂')} ${esc(a.name||'User')}</span>` : "";
+  return `<b>#${esc(s.id)}</b> — ${esc(s.name)}${terr}${addr}${who}<br>Checklist ${pct}% complete`;
 }
 
 function setItemChecked(storeId, itemId, on){
@@ -2040,9 +2374,178 @@ function selectStore(id){
   $("spProgressBar").style.width=pct+"%";
   $("spProgressBar").style.background=statusColor(storeStatus(s));
   setVis($("spProgressWrap"), true);
+  renderAssignRow(id);
   renderChecklistPanel();
   if(map && markers[id]){ map.panTo([s.lat,s.lng]); markers[id].openPopup(); }
   $("spTitle").focus();
+}
+
+/* ----- store assignment (manager-gated) ----- */
+function peopleRoster(){
+  // people who've appeared via presence, plus anyone already assigned
+  const map_={};
+  Object.values(hub.dmPeers||{}).forEach(p=>{ if(p && p.uid) map_[p.uid]={uid:p.uid,name:p.name,emoji:p.emoji,color:p.color}; });
+  Object.values(assignments||{}).forEach(a=>{ if(a && a.uid && !map_[a.uid]) map_[a.uid]={uid:a.uid,name:a.name,emoji:a.emoji,color:a.color}; });
+  if(!map_[me.uid]) map_[me.uid]={uid:me.uid,name:me.name,emoji:me.emoji,color:me.color};
+  return Object.values(map_).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+}
+function renderAssignRow(id){
+  const row=$("spAssign"); if(!row) return;
+  setVis(row, true);
+  const a=assignments[id];
+  const who=$("spAssignWho");
+  if(a && a.uid){
+    who.innerHTML=`<span class="badge"><span class="chip" style="background:${esc(a.color||'#3da9fc')}">${esc(a.emoji||'🙂')}</span> ${esc(a.name||'User')}</span>`;
+  } else {
+    who.textContent="Unassigned";
+  }
+}
+function openAssignEditor(){
+  if(!selected) return;
+  const pass=window.prompt("Enter the manager password to assign this store:");
+  if(pass===null) return;
+  if(pass!==ADMIN_CODE){ alert("Incorrect password."); return; }
+  $("assignStoreLabel").textContent="Store #"+selected+" — "+(stores[selected]?stores[selected].name:"");
+  const sel=$("assignWho"); sel.innerHTML="";
+  peopleRoster().forEach(p=>{ const o=document.createElement("option"); o.value=p.uid; o.textContent=`${p.emoji||'🙂'} ${p.name||'User'}`; sel.appendChild(o); });
+  const cur=assignments[selected];
+  if(cur && cur.uid) sel.value=cur.uid;
+  openModal("assignEditor");
+}
+function saveAssign(){
+  if(!selected) return;
+  const sel=$("assignWho"); const uid=sel.value;
+  const person=peopleRoster().find(p=>p.uid===uid);
+  if(!person){ closeModal("assignEditor"); return; }
+  const rec={ uid:person.uid, name:person.name||"User", emoji:person.emoji||"🙂", color:person.color||"#3da9fc" };
+  assignments[selected]=rec;
+  if(db) set(ref(db,"assignments/"+selected), rec).catch(console.error);
+  closeModal("assignEditor");
+  renderAssignRow(selected);
+  refreshMarker(selected);
+}
+function clearAssign(){
+  if(!selected) return;
+  delete assignments[selected];
+  if(db) remove(ref(db,"assignments/"+selected)).catch(console.error);
+  closeModal("assignEditor");
+  renderAssignRow(selected);
+  refreshMarker(selected);
+}
+
+/* ----- My Day (assigned stores, nearest first, photo per item) ----- */
+function haversine(a,b){
+  if(!a||!b) return Infinity;
+  const R=6371, toR=x=>x*Math.PI/180;
+  const dLat=toR(b.lat-a.lat), dLng=toR(b.lng-a.lng);
+  const s=Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function myAssignedStoreIds(){
+  return Object.keys(assignments).filter(id=> assignments[id] && assignments[id].uid===me.uid && stores[id]);
+}
+function renderToday(){
+  const wrap=$("todayList"); if(!wrap) return;
+  let ids=myAssignedStoreIds();
+  if(!ids.length){
+    wrap.innerHTML='<div class="hub-empty">No stores assigned to you yet. A manager can assign stores from the map (tap a store → Assign).</div>';
+    return;
+  }
+  // sort by distance from current position if known
+  if(lastPos){
+    ids.sort((a,b)=> haversine(lastPos,stores[a]) - haversine(lastPos,stores[b]));
+  } else {
+    ids.sort((a,b)=> (stores[a].name||"").localeCompare(stores[b].name||""));
+  }
+  wrap.innerHTML="";
+  ids.forEach(id=>{
+    const s=stores[id];
+    const pct=Math.round(completion(s)*100);
+    const dist = lastPos ? haversine(lastPos,s) : null;
+    const distTxt = dist!=null ? `${(dist*0.621371).toFixed(dist<16?1:0)} mi away` : (s.address||"");
+    const col=statusColor(storeStatus(s));
+    const card=document.createElement("div"); card.className="today-card";
+    card.innerHTML=`
+      <div class="today-head">
+        <div class="meta">
+          <div class="nm">#${esc(s.id)} · ${esc(s.name)}</div>
+          <div class="sub">${esc(distTxt)}</div>
+          <div class="today-progress"><div style="width:${pct}%;background:${col}"></div></div>
+        </div>
+        <div class="pct" style="background:${col}22;color:${col}">${pct}%</div>
+        <div class="caret">▸</div>
+      </div>
+      <div class="today-body"></div>`;
+    const head=card.querySelector(".today-head");
+    const body=card.querySelector(".today-body");
+    head.addEventListener("click",()=>{
+      card.classList.toggle("open");
+      if(card.classList.contains("open")) renderTodayItems(body, id);
+    });
+    wrap.appendChild(card);
+  });
+}
+function renderTodayItems(body, id){
+  const s=stores[id]; if(!s) return;
+  const checked=s.checked||{}; const photos=s.photos||{};
+  if(!checklist.length){ body.innerHTML='<div class="hub-empty" style="padding:14px">No checklist items yet.</div>'; return; }
+  body.innerHTML="";
+  checklist.forEach(it=>{
+    const on=!!checked[it.id];
+    const photo=photos[it.id];
+    const row=document.createElement("div"); row.className="today-item";
+    row.innerHTML=`
+      <input type="checkbox" ${on?"checked":""}>
+      <div class="lbl${on?" done":""}">${esc(it.text)}</div>
+      ${photo?`<img class="thumb" src="${esc(photo)}" alt="">`:""}
+      <button class="cam${photo?" has":""}" title="Attach photo" type="button">📷</button>`;
+    const cb=row.querySelector('input[type=checkbox]');
+    cb.addEventListener("change",()=>{ setItemChecked(id, it.id, cb.checked); row.querySelector(".lbl").classList.toggle("done", cb.checked); updateTodayCard(id); });
+    const cam=row.querySelector(".cam");
+    cam.addEventListener("click",()=> pickItemPhoto(id, it.id));
+    const thumb=row.querySelector(".thumb");
+    if(thumb) thumb.addEventListener("click",()=>openLightbox(photo));
+    body.appendChild(row);
+  });
+}
+function updateTodayCard(id){
+  const s=stores[id]; if(!s) return;
+  const pct=Math.round(completion(s)*100);
+  const col=statusColor(storeStatus(s));
+  $$('#todayList .today-card').forEach(card=>{
+    const nm=card.querySelector(".nm");
+    if(nm && nm.textContent.indexOf("#"+id+" ")===0){
+      const pe=card.querySelector(".pct"); if(pe){ pe.textContent=pct+"%"; pe.style.background=col+"22"; pe.style.color=col; }
+      const bar=card.querySelector(".today-progress > div"); if(bar){ bar.style.width=pct+"%"; bar.style.background=col; }
+    }
+  });
+  updateSummary();
+}
+let itemPhotoTarget=null, itemPhotoInput=null;
+function pickItemPhoto(storeId, itemId){
+  itemPhotoTarget={ storeId, itemId };
+  if(!itemPhotoInput){
+    itemPhotoInput=document.createElement("input");
+    itemPhotoInput.type="file"; itemPhotoInput.accept="image/*"; itemPhotoInput.capture="environment";
+    itemPhotoInput.style.display="none";
+    document.body.appendChild(itemPhotoInput);
+    itemPhotoInput.addEventListener("change", async (e)=>{
+      const file=e.target.files && e.target.files[0]; itemPhotoInput.value="";
+      if(!file || !itemPhotoTarget) return;
+      try{
+        const data=await compressImage(file, 1000, 0.7);
+        const { storeId, itemId }=itemPhotoTarget;
+        if(!stores[storeId].photos) stores[storeId].photos={};
+        stores[storeId].photos[itemId]=data;
+        if(db) set(ref(db,`stores/${storeId}/photos/${itemId}`), data).catch(console.error);
+        // auto-check the item when a photo is added
+        if(!(stores[storeId].checked||{})[itemId]) setItemChecked(storeId, itemId, true);
+        if(curView==="today") renderToday();
+        if(selected===storeId) renderChecklistPanel();
+      }catch(err){ console.error(err); alert("Couldn't read that photo."); }
+    });
+  }
+  itemPhotoInput.click();
 }
 
 /* ----- shared checklist edit mode (password-gated, one button for all stores) ----- */
@@ -2090,10 +2593,12 @@ function saveStore(){
   if(isNaN(lat) || isNaN(lng)){ window.alert("Enter valid latitude and longitude."); $("seLat").focus(); return; }
   if(id!==original && stores[id]){ window.alert("Store #"+id+" already exists. Choose a different number."); $("seId").focus(); return; }
 
-  /* If the store number changed, move the record (and its checked state). */
-  let checked = {};
+  /* Capture existing data before any move. */
+  let checked = {}, photos = {}, prevTerritory = "";
   if(original && stores[original]){
     checked = stores[original].checked || {};
+    photos = stores[original].photos || {};
+    prevTerritory = stores[original].territory || "";
     if(id!==original){
       delete stores[original];
       if(markers[original]){ map.removeLayer(markers[original]); delete markers[original]; }
@@ -2101,9 +2606,9 @@ function saveStore(){
     }
   }
 
-  const prevTerritory = (original && stores[original] && stores[original].territory) || "";
-  const territory = ($("seTerritory") && $("seTerritory").value.trim()) || prevTerritory;
-  stores[id] = { id, name:name||("#"+id), lat, lng, address, territory, checked };
+  /* Territory field is authoritative; empty means unassigned. */
+  const territory = $("seTerritory") ? $("seTerritory").value.trim() : prevTerritory;
+  stores[id] = { id, name:name||("#"+id), lat, lng, address, territory, checked, photos };
   if(db) update(ref(db,`stores/${id}`), { name:stores[id].name, lat, lng, address, territory }).catch(console.error);
 
   closeModal("storeEditor");
@@ -2226,6 +2731,11 @@ async function initMap(){
   $("seDelete").addEventListener("click", deleteStore);
   $("spriteSave").addEventListener("click", saveSprite);
   $("locBtn").addEventListener("click", ()=>{ if(presenceOn) stopPresence(); else startPresence(); });
+  $("btnAssign").addEventListener("click", openAssignEditor);
+  $("assignSave").addEventListener("click", saveAssign);
+  $("assignClear").addEventListener("click", clearAssign);
+  $("terrSave").addEventListener("click", saveTerritory);
+  $("terrStoreSearch").addEventListener("input",()=> buildTerrStores($("terrStoreSearch").value));
   applyAdminUI();
 
   if(db) watchPresence();
@@ -2263,13 +2773,29 @@ async function initMap(){
           if(live.address!=null) stores[id].address=live.address;
           if(live.territory!=null) stores[id].territory=live.territory;
           stores[id].checked = live.checked || {};
+          stores[id].photos = live.photos || {};
         });
         refreshAllMarkers();
         drawTerritories();
         if(selected){ renderChecklistPanel(); selectStore(selected); }
         if(!storesFitted){ storesFitted=true; fitToStores(); }
         maybeWeeklyReset();          // clear everything if a new week (Monday) has begun
+        if(curView==="today") renderToday();
       }, err=>{ console.error("stores read:",err); setConn("off"); });
+
+      /* Store assignments (manager → person). */
+      onValue(ref(db,"assignments"), snap=>{
+        assignments = snap.val() || {};
+        refreshAllMarkers();
+        if(selected) renderAssignRow(selected);
+        if(curView==="today") renderToday();
+      }, err=>console.error("assignments read:",err));
+
+      /* Territory names + colors (admin-editable). */
+      onValue(ref(db,"territoryMeta"), snap=>{
+        territoryMeta = snap.val() || {};
+        drawTerritories();
+      }, err=>console.error("territoryMeta read:",err));
 
       /* Track the stored week so we know when a Monday rollover happens. */
       onValue(ref(db,"meta/week"), snap=>{
@@ -2341,7 +2867,7 @@ function saveSprite(){
    LIVE LOCATION / PRESENCE  (team-wide, via Firebase)
    ============================================================ */
 let geoWatchId=null, presenceRef=null, lastPos=null, presenceMarkers={}, presenceLayer=null, presenceOn=false;
-const PRESENCE_STALE_MS = 5*60*1000;   // hide users not seen in 5 min
+const PRESENCE_STALE_MS = 30*60*1000;   // hide users not seen in 30 min
 
 function presenceIcon(p, isMe){
   const color=p.color||"#3da9fc";
@@ -2368,7 +2894,8 @@ function renderPresence(val){
     if(p.ts && (now-p.ts)>PRESENCE_STALE_MS) return;   // skip stale
     seen[uid]=true;
     const isMe = uid===me.uid;
-    const label = `${esc(p.emoji||"🙂")} <b>${esc(p.name||"User")}</b>${isMe?" (you)":""}`;
+    const status = p.status ? `<br><span style="color:var(--muted)">${esc(STATUS_LABELS[p.status]||p.status)}</span>` : "";
+    const label = `${esc(p.emoji||"🙂")} <b>${esc(p.name||"User")}</b>${isMe?" (you)":""}${status}`;
     if(presenceMarkers[uid]){
       presenceMarkers[uid].setLatLng([p.lat,p.lng]).setIcon(presenceIcon(p,isMe)).setPopupContent(label);
     } else {
@@ -2386,31 +2913,46 @@ function watchPresence(){
 }
 function writePresence(){
   if(!db || !lastPos) return;
-  const data={ name:me.name, color:me.color, emoji:me.emoji, lat:lastPos.lat, lng:lastPos.lng, ts:Date.now() };
+  const data={ name:me.name, color:me.color, emoji:me.emoji, lat:lastPos.lat, lng:lastPos.lng, status:me.status||"", ts:Date.now() };
   try{ set(ref(db,"presence/"+me.uid), data).catch(console.error); }catch(e){}
 }
+/* A reasonable starting point so the sprite appears instantly, before GPS resolves:
+   last saved location → current map center → store roster centroid. */
+function seedPosition(){
+  try{
+    const saved=localStorage.getItem("hub_lastpos");
+    if(saved){ const o=JSON.parse(saved); if(o && o.lat!=null && o.lng!=null) return o; }
+  }catch(e){}
+  if(map){ const c=map.getCenter(); return { lat:+c.lat.toFixed(6), lng:+c.lng.toFixed(6) }; }
+  return { lat:42.0, lng:-88.3 };
+}
 function startPresence(){
-  if(presenceOn) { writePresence(); return; }
-  if(!("geolocation" in navigator)){
-    if($("locBtn")) $("locBtn").textContent="📍 Location not supported";
-    return;
-  }
+  if(!hasSprite()) return;          // need a sprite first
   presenceOn=true;
   setLocBtn(true);
-  // set up disconnect cleanup + remove on tab close
   if(db){
     presenceRef=ref(db,"presence/"+me.uid);
     try{ onDisconnect(presenceRef).remove(); }catch(e){}
   }
+  /* Show the sprite RIGHT AWAY at a seeded position, then refine with GPS. */
+  if(!lastPos) lastPos = seedPosition();
+  writePresence();
+
+  if(!("geolocation" in navigator)){
+    if($("locBtn")) $("locBtn").textContent="📍 Shown (no GPS)";
+    return;
+  }
+  if(geoWatchId!=null){ try{ navigator.geolocation.clearWatch(geoWatchId); }catch(e){} }
   geoWatchId=navigator.geolocation.watchPosition(pos=>{
     lastPos={ lat:+pos.coords.latitude.toFixed(6), lng:+pos.coords.longitude.toFixed(6) };
+    try{ localStorage.setItem("hub_lastpos", JSON.stringify(lastPos)); }catch(e){}
     writePresence();
-    // gently center the first time we get a fix
+    setLocBtn(true);
     if(map && !startPresence._centered){ startPresence._centered=true; map.setView([lastPos.lat,lastPos.lng], Math.max(map.getZoom(),11)); }
   }, err=>{
+    // Geolocation denied/unavailable — keep the seeded sprite visible, just note it.
     console.warn("geolocation:",err);
-    presenceOn=false; setLocBtn(false);
-    if($("locBtn")) $("locBtn").textContent = err.code===1 ? "📍 Location blocked" : "📍 Share my location";
+    if($("locBtn")) $("locBtn").textContent = err.code===1 ? "📍 Shown (location blocked)" : "📍 Shown (GPS unavailable)";
   }, { enableHighAccuracy:true, maximumAge:15000, timeout:20000 });
 }
 function stopPresence(){
@@ -2421,7 +2963,8 @@ function stopPresence(){
 function setLocBtn(on){
   const b=$("locBtn"); if(!b) return;
   b.classList.toggle("active", on);
-  b.textContent = on ? "📍 Sharing — tap to stop" : "📍 Share my location";
+  if(on) b.textContent = "📍 Sharing — tap to stop";
+  else b.textContent = "📍 Share my location";
 }
 window.addEventListener("beforeunload", ()=>{ if(db && presenceOn){ try{ remove(ref(db,"presence/"+me.uid)); }catch(e){} } });
 
@@ -2619,29 +3162,314 @@ async function sproutAsk(question){
   }
 }
 
-function initSprout(){
-  const starters=["How do I handle a cold damage claim?","Care for a snake plant","What do spider mites look like?","What's the weather right now?"];
-  function showStarters(){
-    $("sproutChips").innerHTML="";
-    starters.forEach(s=>{ const b=document.createElement("button"); b.type="button"; b.textContent=s;
-      b.addEventListener("click",()=>sproutAsk(s)); $("sproutChips").appendChild(b); });
-  }
-  function toggle(open){
-    sprout.open = open ?? !sprout.open;
-    setVis($("sproutPanel"), sprout.open); $("sproutPanel").classList.toggle("show", sprout.open);
-    setVis($("sproutFab"), !sprout.open);
-    if(sprout.open){
-      if(!$("sproutLog").children.length){
-        botPush("Hi! I'm <b>Sprout Bot</b> 🌱 — I can help with plant care, pest ID, SKUs, store status, weather, and HPA protocols. Ask me anything.","bot");
-        showStarters();
-      }
-      setTimeout(()=>$("sproutInput").focus(),50);
+/* ============================================================
+   SOCIAL HUB — Feed, Team Chat, DMs, Ask (Sprout), Status
+   ============================================================ */
+const hub = { open:false, view:"feed", dmPeers:{}, dmOpenUid:null, lastSeenFeed:0, lastSeenChat:0 };
+function fmtTime(ts){
+  if(!ts) return "";
+  const d=new Date(ts), now=new Date();
+  const sameDay = d.toDateString()===now.toDateString();
+  return sameDay ? d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})
+                 : d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+}
+function dmKey(a,b){ return [a,b].sort().join("__"); }
+
+/* ----- shared bubble renderer for chat-like logs ----- */
+function renderMessages(logEl, messages){
+  logEl.innerHTML="";
+  const arr=Object.keys(messages||{}).map(k=>messages[k]).filter(Boolean).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  if(!arr.length){ logEl.innerHTML='<div class="hub-empty">No messages yet. Say hello! 👋</div>'; return; }
+  arr.forEach(m=>{
+    const mine=m.uid===me.uid;
+    const el=document.createElement("div"); el.className="cmsg"+(mine?" mine":"");
+    el.innerHTML=`${mine?"":`<div class="who">${esc(m.emoji||"")} ${esc(m.name||"User")}</div>`}
+      <div class="bub">${esc(m.text||"")}</div>
+      <div class="when">${esc(fmtTime(m.ts))}</div>`;
+    logEl.appendChild(el);
+  });
+  logEl.scrollTop=logEl.scrollHeight;
+}
+
+/* ----- FEED ----- */
+function renderFeed(val){
+  const log=$("feedLog"); if(!log) return;
+  const arr=Object.keys(val||{}).map(k=>val[k]).filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  if(!arr.length){ log.innerHTML='<div class="hub-empty">No updates yet. Post the first one below. 📣</div>'; return; }
+  log.innerHTML="";
+  arr.forEach(p=>{
+    const isShout = p.kind==="shout";
+    const el=document.createElement("div"); el.className="feed-item"+(isShout?" shout":"");
+    const txt = p.text ? `<div class="txt">${esc(p.text)}</div>` : "";
+    const photo = p.photo ? `<img class="photo" src="${esc(p.photo)}" alt="photo" loading="lazy">` : "";
+    const top = isShout && p.toName
+      ? `${esc(p.name||'User')} → <b>${esc(p.toName)}</b>`
+      : `${esc(p.name||'User')}`;
+    el.innerHTML=`<div class="dot" style="background:${esc(p.color||'#3da9fc')}">${esc(p.emoji||'🙂')}</div>
+      <div class="body"><div class="top">${top}</div>
+        ${txt}${photo}
+        <div class="when">${esc(fmtTime(p.ts))}</div></div>`;
+    if(p.photo){
+      const img=el.querySelector(".photo");
+      img.addEventListener("click",()=>openLightbox(p.photo));
     }
+    log.appendChild(el);
+  });
+}
+function postFeed(text, kind, photo){
+  if(!db) return;
+  const t=(text||"").trim();
+  if(!t && !photo) return;
+  const node=push(ref(db,"feed"));
+  const entry={ uid:me.uid, name:me.name, emoji:me.emoji, color:me.color, text:t, kind:kind||"post", ts:Date.now() };
+  if(photo) entry.photo=photo;
+  set(node, entry).catch(err=>{ console.error("post feed:",err); alert("Couldn't post — the photo may be too large, or the database rejected it."); });
+}
+function openShoutEditor(){
+  const sel=$("shoutWho"); sel.innerHTML="";
+  const peers=Object.values(hub.dmPeers).filter(p=>p.uid!==me.uid);
+  if(!peers.length){
+    sel.innerHTML='<option value="">No teammates online yet</option>';
+  } else {
+    peers.sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(p=>{
+      const o=document.createElement("option"); o.value=p.uid; o.textContent=`${p.emoji||"🙂"} ${p.name||"User"}`; sel.appendChild(o);
+    });
   }
-  $("sproutFab").addEventListener("click",()=>toggle(true));
-  $("sproutClose").addEventListener("click",()=>toggle(false));
+  $("shoutMsg").value="";
+  openModal("shoutEditor");
+}
+function sendShout(){
+  if(!db) return;
+  const sel=$("shoutWho");
+  const toUid=sel.value;
+  const toName=sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent.replace(/^[^\s]+\s/,"") : "";
+  const msg=($("shoutMsg").value||"").trim();
+  if(!toUid){ alert("Pick a teammate to recognize."); return; }
+  if(!msg){ $("shoutMsg").focus(); return; }
+  const node=push(ref(db,"feed"));
+  set(node, { uid:me.uid, name:me.name, emoji:me.emoji, color:me.color,
+    kind:"shout", toUid, toName, text:msg, ts:Date.now() }).catch(console.error);
+  closeModal("shoutEditor");
+}
+/* Downscale + compress an image File to a small JPEG data URL for storage in the DB. */
+function compressImage(file, maxDim, quality){
+  return new Promise((resolve, reject)=>{
+    if(!file || !file.type.startsWith("image/")){ reject(new Error("not an image")); return; }
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        let {width:w, height:h}=img;
+        const scale=Math.min(1, (maxDim||1000)/Math.max(w,h));
+        w=Math.round(w*scale); h=Math.round(h*scale);
+        const canvas=document.createElement("canvas"); canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext("2d"); ctx.drawImage(img,0,0,w,h);
+        let dataUrl=canvas.toDataURL("image/jpeg", quality||0.7);
+        // if still big, step the quality down until it's under ~700KB
+        let q=quality||0.7;
+        while(dataUrl.length>700000 && q>0.3){ q-=0.1; dataUrl=canvas.toDataURL("image/jpeg", q); }
+        resolve(dataUrl);
+      };
+      img.onerror=()=>reject(new Error("decode failed"));
+      img.src=reader.result;
+    };
+    reader.onerror=()=>reject(new Error("read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+function openLightbox(src){
+  $("lightboxImg").src=src;
+  $("photoLightbox").classList.add("show");
+}
+
+/* ----- TEAM CHAT ----- */
+function sendChat(text){
+  if(!db || !text.trim()) return;
+  const node=push(ref(db,"chat"));
+  set(node, { uid:me.uid, name:me.name, emoji:me.emoji, text:text.trim(), ts:Date.now() }).catch(console.error);
+}
+
+/* ----- DIRECT MESSAGES ----- */
+function renderDmPeople(){
+  const wrap=$("dmPeople"); if(!wrap) return;
+  const peers=Object.values(hub.dmPeers).filter(p=>p.uid!==me.uid);
+  if(!peers.length){ wrap.innerHTML='<div class="hub-empty">No teammates online yet. People appear here once they share their location or post.</div>'; return; }
+  wrap.innerHTML="";
+  peers.sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(p=>{
+    const row=document.createElement("div"); row.className="dm-person";
+    row.innerHTML=`<div class="dot" style="background:${esc(p.color||'#3da9fc')}">${esc(p.emoji||'🙂')}</div>
+      <div class="nm">${esc(p.name||'User')}</div>
+      <div class="st">${esc(STATUS_LABELS[p.status]||'')}</div>`;
+    row.addEventListener("click",()=>openDm(p.uid));
+    wrap.appendChild(row);
+  });
+}
+let dmUnsub=null;
+function openDm(uid){
+  hub.dmOpenUid=uid;
+  const peer=hub.dmPeers[uid]||{name:"User"};
+  setVis($("dmList"), false);
+  setVis($("dmThread"), true);
+  setVis($("dmComposer"), true);
+  $("hubSubtitle").textContent="DM · "+(peer.name||"User");
+  const thread=$("dmThread");
+  thread.innerHTML=`<button class="dm-back" id="dmBack" type="button">← All messages</button><div id="dmMsgs"></div>`;
+  $("dmBack").addEventListener("click", closeDm);
+  if(db){
+    const key=dmKey(me.uid, uid);
+    onValue(ref(db,"dms/"+key), snap=> renderMessages($("dmMsgs")||thread, snap.val()||{}), err=>console.error("dm read:",err));
+  }
+  setTimeout(()=>$("dmInput")?.focus(),50);
+}
+function closeDm(){
+  hub.dmOpenUid=null;
+  setVis($("dmThread"), false);
+  setVis($("dmComposer"), false);
+  setVis($("dmList"), true);
+  $("hubSubtitle").textContent="Team hub";
+  renderDmPeople();
+}
+function sendDm(text){
+  if(!db || !text.trim() || !hub.dmOpenUid) return;
+  const key=dmKey(me.uid, hub.dmOpenUid);
+  const node=push(ref(db,"dms/"+key));
+  set(node, { uid:me.uid, name:me.name, emoji:me.emoji, text:text.trim(), ts:Date.now() }).catch(console.error);
+}
+
+/* ----- STATUS ----- */
+function openStatusEditor(){
+  const grid=$("statusGrid"); grid.innerHTML="";
+  STATUS_ORDER.forEach(key=>{
+    const b=document.createElement("button"); b.type="button";
+    b.className=(me.status===key?"sel":"");
+    b.textContent=STATUS_LABELS[key];
+    b.addEventListener("click",()=>{ setStatus(key); closeModal("statusEditor"); });
+    grid.appendChild(b);
+  });
+  openModal("statusEditor");
+}
+function setStatus(key){
+  me.status=key||"";
+  try{ localStorage.setItem("hub_status",me.status); }catch(e){}
+  updateStatusBtn();
+  writePresence();   // updates sprite popup with status
+  if(me.status) postFeed(`is now ${STATUS_LABELS[me.status]}`, "status");
+}
+function updateStatusBtn(){
+  const b=$("statusBtn"); if(!b) return;
+  b.textContent = me.status ? STATUS_LABELS[me.status] : "🟢 Set status";
+}
+
+/* ----- HUB SHELL ----- */
+function switchHub(view){
+  hub.view=view;
+  ["feed","chat","dms","ask"].forEach(v=> setVis($("hub-"+v), v===view));
+  $$('.hub-tab').forEach(t=> t.classList.toggle("active", t.dataset.hub===view));
+  if(view==="dms"){ closeDm(); }
+  if(view==="ask" && !$("sproutLog").children.length){ sproutGreet(); }
+}
+function updateHubBadge(){
+  // simple unread hint: show a dot if hub is closed (cleared when opened)
+  const badge=$("hubBadge"); if(!badge) return;
+  setVis(badge, hub._unread>0);
+  if(hub._unread>0) badge.textContent = hub._unread>9 ? "9+" : String(hub._unread);
+}
+function toggleHub(open){
+  hub.open = (open===undefined) ? !hub.open : open;
+  setVis($("hubPanel"), hub.open); $("hubPanel").classList.toggle("show", hub.open);
+  setVis($("hubFab"), !hub.open);
+  if(hub.open){
+    $("hubAvatar").textContent = me.emoji || "🙂";
+    hub._unread=0; hub._lastSeen=Date.now(); updateHubBadge();
+    switchHub(hub.view||"feed");
+  }
+}
+
+/* ----- SPROUT (Ask) — reuse existing bot logic ----- */
+function sproutGreet(){
+  botPush("Hi! I'm <b>Sprout Bot</b> 🌱 — plant care, pest ID, SKUs, store status, weather, and HPA protocols. Ask me anything.","bot");
+  const starters=["How do I handle a cold damage claim?","Care for a snake plant","What do spider mites look like?","What's the weather right now?"];
+  $("sproutChips").innerHTML="";
+  starters.forEach(s=>{ const b=document.createElement("button"); b.type="button"; b.textContent=s;
+    b.addEventListener("click",()=>sproutAsk(s)); $("sproutChips").appendChild(b); });
+}
+
+function initHub(){
+  $("hubFab").addEventListener("click",()=>toggleHub(true));
+  $("hubClose").addEventListener("click",()=>toggleHub(false));
+  $$('.hub-tab').forEach(t=> t.addEventListener("click",()=>switchHub(t.dataset.hub)));
+
+  // Feed
+  let pendingPhoto=null;
+  function clearPhoto(){ pendingPhoto=null; $("feedPhoto").value=""; setVis($("feedPreview"), false); $("feedPreviewImg").src=""; }
+  const feedSend=()=>{
+    const v=$("feedInput").value;
+    if(!v.trim() && !pendingPhoto) return;
+    postFeed(v, "post", pendingPhoto);
+    $("feedInput").value=""; clearPhoto();
+  };
+  $("feedSend").addEventListener("click", feedSend);
+  $("feedInput").addEventListener("keydown",e=>{ if(e.key==="Enter") feedSend(); });
+  $("feedPhotoBtn").addEventListener("click",()=> $("feedPhoto").click());
+  $("feedShoutBtn").addEventListener("click", openShoutEditor);
+  $("shoutSend").addEventListener("click", sendShout);
+  $("feedPhoto").addEventListener("change", async (e)=>{
+    const file=e.target.files && e.target.files[0]; if(!file) return;
+    $("feedPhotoBtn").textContent="⏳";
+    try{
+      pendingPhoto=await compressImage(file, 1000, 0.7);
+      $("feedPreviewImg").src=pendingPhoto;
+      setVis($("feedPreview"), true);
+    }catch(err){ console.error(err); alert("Couldn't read that image."); pendingPhoto=null; }
+    $("feedPhotoBtn").textContent="📷";
+  });
+  $("feedPreviewClear").addEventListener("click", clearPhoto);
+  $("photoLightbox").addEventListener("click",()=> $("photoLightbox").classList.remove("show"));
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") $("photoLightbox").classList.remove("show"); });
+  // Team chat
+  const chatSend=()=>{ const v=$("chatInput").value; if(v.trim()){ sendChat(v); $("chatInput").value=""; } };
+  $("chatSend").addEventListener("click", chatSend);
+  $("chatInput").addEventListener("keydown",e=>{ if(e.key==="Enter") chatSend(); });
+  // DMs
+  const dmSend=()=>{ const v=$("dmInput").value; if(v.trim()){ sendDm(v); $("dmInput").value=""; } };
+  $("dmSend").addEventListener("click", dmSend);
+  $("dmInput").addEventListener("keydown",e=>{ if(e.key==="Enter") dmSend(); });
+  // Sprout
   $("sproutSend").addEventListener("click",()=>sproutAsk($("sproutInput").value));
   $("sproutInput").addEventListener("keydown",e=>{ if(e.key==="Enter") sproutAsk($("sproutInput").value); });
+  // Status
+  $("statusBtn").addEventListener("click", openStatusEditor);
+  updateStatusBtn();
+
+  // Live subscriptions
+  if(db){
+    onValue(ref(db,"feed"), snap=>{
+      const val=snap.val()||{};
+      renderFeed(val);
+      flagActivity(Math.max(0,...Object.values(val).map(p=>p&&p.ts||0)));
+    }, err=>console.error("feed read:",err));
+    onValue(ref(db,"chat"), snap=>{
+      const val=snap.val()||{};
+      renderMessages($("chatLog"), val);
+      flagActivity(Math.max(0,...Object.values(val).map(p=>p&&p.ts||0)));
+    }, err=>console.error("chat read:",err));
+    // DM peers come from presence (people who've appeared on the map)
+    onValue(ref(db,"presence"), snap=>{
+      const val=snap.val()||{};
+      hub.dmPeers={};
+      Object.keys(val).forEach(uid=>{ const p=val[uid]; if(p) hub.dmPeers[uid]={ uid, name:p.name, emoji:p.emoji, color:p.color, status:p.status }; });
+      if(hub.open && hub.view==="dms" && !hub.dmOpenUid) renderDmPeople();
+    }, err=>console.error("dm peers read:",err));
+  }
+}
+/* Show a badge dot when new activity arrives while the hub is closed. */
+function flagActivity(newestTs){
+  if(!newestTs) return;
+  if(hub._init===undefined){ hub._init=newestTs; return; }   // ignore the initial load
+  if(!hub.open && newestTs>(hub._lastSeen||hub._init)){
+    hub._unread=(hub._unread||0)+1;
+    updateHubBadge();
+  }
 }
 
 /* ============================================================
@@ -2659,7 +3487,7 @@ function init(){
   initSkus();
   initOrders();
   initCareId();
-  initSprout();
+  initHub();
 
   let savedUser; try{ savedUser=localStorage.getItem("hub_user"); }catch(e){}
   if(savedUser){
